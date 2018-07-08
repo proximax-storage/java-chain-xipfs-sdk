@@ -1,0 +1,84 @@
+{
+  "candies": [
+    {
+      "name": "marked",
+      "version": "0.0.0-20170726",
+      "lastUpdateTimestamp": 1501713000000,
+      "modelVersion": "unknown",
+      "transpilerVersion": "2.0.0",
+      "jsOutputDirPath": "D:\\Projects\\eworkspace\\proximaxsdks\\xpx-java-sdk\\target\\candies",
+      "jsDirPath": "META-INF/resources/webjars/marked/0.0.0-20170726",
+      "jsFilesPaths": []
+    },
+    {
+      "name": "es6-promise",
+      "version": "0.0.0-20170726",
+      "lastUpdateTimestamp": 1501765492000,
+      "modelVersion": "unknown",
+      "transpilerVersion": "2.0.0",
+      "jsOutputDirPath": "D:\\Projects\\eworkspace\\proximaxsdks\\xpx-java-sdk\\target\\candies",
+      "jsDirPath": "META-INF/resources/webjars/es6-promise/0.0.0-20170726",
+      "jsFilesPaths": []
+    },
+    {
+      "name": "angular-route",
+      "version": "1.2.0-20170726",
+      "lastUpdateTimestamp": 1501712830000,
+      "modelVersion": "unknown",
+      "transpilerVersion": "2.0.0",
+      "jsOutputDirPath": "D:\\Projects\\eworkspace\\proximaxsdks\\xpx-java-sdk\\target\\candies",
+      "jsDirPath": "META-INF/resources/webjars/angular-route/1.2.0-20170726",
+      "jsFilesPaths": []
+    },
+    {
+      "name": "angular",
+      "version": "1.4.0-20170726",
+      "lastUpdateTimestamp": 1501106630000,
+      "modelVersion": "unknown",
+      "transpilerVersion": "2.0.0",
+      "jsOutputDirPath": "D:\\Projects\\eworkspace\\proximaxsdks\\xpx-java-sdk\\target\\candies",
+      "jsDirPath": "META-INF/resources/webjars/angular/1.4.0-20170726",
+      "jsFilesPaths": []
+    },
+    {
+      "name": "jquery",
+      "version": "1.10.0-20170726",
+      "lastUpdateTimestamp": 1501712904000,
+      "modelVersion": "unknown",
+      "transpilerVersion": "2.0.0",
+      "jsOutputDirPath": "D:\\Projects\\eworkspace\\proximaxsdks\\xpx-java-sdk\\target\\candies",
+      "jsDirPath": "META-INF/resources/webjars/jquery/1.10.0-20170726",
+      "jsFilesPaths": []
+    },
+    {
+      "name": "knockout",
+      "version": "3.4.0-20170726",
+      "lastUpdateTimestamp": 1501712924000,
+      "modelVersion": "unknown",
+      "transpilerVersion": "2.0.0",
+      "jsOutputDirPath": "D:\\Projects\\eworkspace\\proximaxsdks\\xpx-java-sdk\\target\\candies",
+      "jsDirPath": "META-INF/resources/webjars/knockout/3.4.0-20170726",
+      "jsFilesPaths": []
+    },
+    {
+      "name": "backbone",
+      "version": "1.3.0-20170726",
+      "lastUpdateTimestamp": 1501712846000,
+      "modelVersion": "unknown",
+      "transpilerVersion": "2.0.0",
+      "jsOutputDirPath": "D:\\Projects\\eworkspace\\proximaxsdks\\xpx-java-sdk\\target\\candies",
+      "jsDirPath": "META-INF/resources/webjars/backbone/1.3.0-20170726",
+      "jsFilesPaths": []
+    },
+    {
+      "name": "underscore",
+      "version": "1.7.0-20170726",
+      "lastUpdateTimestamp": 1501712876000,
+      "modelVersion": "unknown",
+      "transpilerVersion": "2.0.0",
+      "jsOutputDirPath": "D:\\Projects\\eworkspace\\proximaxsdks\\xpx-java-sdk\\target\\candies",
+      "jsDirPath": "META-INF/resources/webjars/underscore/1.7.0-20170726",
+      "jsFilesPaths": []
+    }
+  ]
+}
