@@ -12,8 +12,8 @@ import io.ipfs.api.IPFS;
 import io.ipfs.api.NamedStreamable;
 import io.proximax.model.ProximaxChildMessage;
 import io.proximax.model.ProximaxMessage;
+import io.proximax.privacystrategy.PrivacyStrategy;
 import io.proximax.utils.JsonUtils;
-import jnr.posix.windows.SystemTime;
 
 public class UploadPayloadBuilder {
 
@@ -21,8 +21,12 @@ public class UploadPayloadBuilder {
 
 	}
 
-	public static IData create() {
-		return new UploadPayloadBuilder.Builder();
+	public static IData create(IPFS ipfsConnection) {
+		return new UploadPayloadBuilder.Builder(ipfsConnection);
+	}
+	
+	public static IData create(String ipfsConnection) {
+		return new UploadPayloadBuilder.Builder(ipfsConnection);
 	}
 	public interface IData {
 		IPrivacyType data(String data);
@@ -30,7 +34,7 @@ public class UploadPayloadBuilder {
 	}
 
 	public interface IPrivacyType {
-		IByteFile privacyType(String privacyType);
+		IByteFile privacyType(PrivacyStrategy privacyType);
 	}
 	public interface IByteFile {
 
@@ -39,6 +43,8 @@ public class UploadPayloadBuilder {
 		IByteFile addFileOrResource(byte[] resource, String name);
 
 		IByteFile addFileOrResource(byte[] resource, String name, String data);
+		
+		IByteFile addFileOrResource(byte[] resource, String name, String data, String type);
 
 		IByteFile addFileOrResource(File resource, String data) throws IOException;
 		
@@ -52,6 +58,15 @@ public class UploadPayloadBuilder {
 		List<ChildMessageParameter> children = new ArrayList<ChildMessageParameter>();
 		private String data;
 		private String privacyType;
+		private IPFS ipfs;
+		
+		public Builder(IPFS ipfsConnection) {
+			ipfs = ipfsConnection;
+		}
+		
+		public Builder(String ipfsConnection) {
+			ipfs = new IPFS(ipfsConnection);
+		}
 		@Override
 		public IPrivacyType data(String data) {
 			this.data = data;
@@ -59,8 +74,8 @@ public class UploadPayloadBuilder {
 		}
 
 		@Override
-		public IByteFile privacyType(String privacyType) {
-			this.privacyType = privacyType;
+		public IByteFile privacyType(PrivacyStrategy privacyType) {
+			this.privacyType = String.valueOf(privacyType.getValue());
 			return this;
 		}
 
@@ -104,7 +119,7 @@ public class UploadPayloadBuilder {
 		public ProximaxMessage build() throws IOException {
 
 			// For testing only
-			IPFS ipfs = new IPFS("/ip4/127.0.0.1/tcp/5001");
+//			IPFS ipfs = new IPFS("/ip4/127.0.0.1/tcp/5001");
 			ProximaxMessage message = new ProximaxMessage();
 			List<ProximaxChildMessage> childMessageGroup = new ArrayList<ProximaxChildMessage>();
 			for (ChildMessageParameter child : children) {
@@ -128,6 +143,16 @@ public class UploadPayloadBuilder {
 			
 			
 			return message;
+		}
+
+		@Override
+		public IByteFile addFileOrResource(byte[] resource, String name, String data, String type) {
+			ChildMessageParameter child = new ChildMessageParameter();
+			child.setResource(resource);
+			child.setData(data);
+			child.setType(type);
+			children.add(child);
+			return this;
 		}
 	}
 }
