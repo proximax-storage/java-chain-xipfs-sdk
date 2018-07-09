@@ -1,4 +1,4 @@
-package io.proximax.privacystrategy;
+package io.proximax.privacy.strategy;
 
 public enum PrivacyStrategy {
 

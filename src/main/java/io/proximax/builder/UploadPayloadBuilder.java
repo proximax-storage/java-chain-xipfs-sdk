@@ -12,7 +12,7 @@ import io.ipfs.api.IPFS;
 import io.ipfs.api.NamedStreamable;
 import io.proximax.model.ProximaxChildMessage;
 import io.proximax.model.ProximaxMessage;
-import io.proximax.privacystrategy.PrivacyStrategy;
+import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.utils.JsonUtils;
 
 public class UploadPayloadBuilder {
