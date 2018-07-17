@@ -1,22 +1,17 @@
 package io.proximax.utils;
 
-
 /**
- * The Class ParameterValidationUtils.
+ * Utility class to verify method parameters
  */
 public class ParameterValidationUtils {
 
-    /**
-     * Instantiates a new parameter validation utils.
-     */
     private ParameterValidationUtils() {
     }
 
     /**
-     * Check parameter.
-     *
-     * @param isValid the is valid
-     * @param invalidMessage the invalid message
+     * When a given parameter is invalid, this throws an IllegalArgumentException with the provided message.
+     * @param isValid a resolved validation result for a given parameter
+     * @param invalidMessage the exception message to use when throwing exception
      */
     public static void checkParameter(boolean isValid, String invalidMessage) {
         if (!isValid) throw new IllegalArgumentException(invalidMessage);

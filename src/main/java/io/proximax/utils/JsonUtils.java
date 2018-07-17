@@ -3,11 +3,6 @@ package io.proximax.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-
-
-
-
-
 /**
  * Utility class for handling JSON serialization and deserialization.
  * 
@@ -73,11 +68,6 @@ public class JsonUtils {
 		return getGson().toJson(src);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "JsonUtils []";

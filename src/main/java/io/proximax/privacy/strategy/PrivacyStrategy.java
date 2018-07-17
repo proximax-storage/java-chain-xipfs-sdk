@@ -1,18 +1,32 @@
 package io.proximax.privacy.strategy;
 
-public enum PrivacyStrategy {
+import io.nem.sdk.model.transaction.Message;
 
-	PLAIN(1001), NEM_KEYS(1002),
+import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
-	SHAMIR(1003), PASSPHRASE(1004);
+public abstract class PrivacyStrategy {
 
-	private final int value;
+    private final String privacySearchTag;
 
-	private PrivacyStrategy(int value) {
-		this.value = value;
-	}
+    public PrivacyStrategy(String privacySearchTag) {
+        checkParameter(privacySearchTag == null || privacySearchTag.length() <= 50,
+                "privacy search tag cannot be more than 50 characters");
 
-	public int getValue() {
-		return value;
-	}
+        this.privacySearchTag = privacySearchTag;
+    }
+
+    public final String getPrivacySearchTag() {
+        return privacySearchTag;
+    }
+
+    public abstract int getPrivacyType();
+
+    public abstract byte[] encryptData(final byte[] data);
+
+    public abstract byte[] decryptData(final byte[] data);
+
+    public abstract Message encodePayloadAsMessage(final String payload);
+
+    public abstract String decodePayloadFromMessage(final Message message);
+
 }
