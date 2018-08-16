@@ -1,6 +1,5 @@
 package io.proximax.download;
 
-import io.proximax.model.StoreType;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
@@ -17,7 +16,6 @@ public class DownloadDataParameterBuilder {
     private String dataHash;
     private PrivacyStrategy privacyStrategy;
     private String digest;
-    private StoreType storeType;
 
     DownloadDataParameterBuilder(String dataHash) {
         checkParameter(dataHash != null, "dataHash is required");
@@ -27,11 +25,6 @@ public class DownloadDataParameterBuilder {
 
     public DownloadDataParameterBuilder digest(String digest) {
         this.digest = digest;
-        return this;
-    }
-
-    public DownloadDataParameterBuilder storeType(StoreType storeType) {
-        this.storeType = storeType;
         return this;
     }
 
@@ -82,9 +75,7 @@ public class DownloadDataParameterBuilder {
     public DownloadDataParameter build() {
         if (this.privacyStrategy == null)
             this.privacyStrategy = PlainPrivacyStrategy.create(null);
-        if (this.storeType == null)
-            this.storeType = StoreType.RESOURCE;
-        return new DownloadDataParameter(dataHash, privacyStrategy, digest, storeType);
+        return new DownloadDataParameter(dataHash, privacyStrategy, digest);
     }
 
 }

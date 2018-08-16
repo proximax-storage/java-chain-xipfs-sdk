@@ -1,7 +1,6 @@
 package io.proximax.download;
 
 import io.proximax.model.PrivacyType;
-import io.proximax.model.StoreType;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy;
@@ -41,7 +40,6 @@ public class DownloadDataParameterTest {
         assertThat(param, is(notNullValue()));
         assertThat(param.getDigest(), is(nullValue()));
         assertThat(param.getDataHash(), is(SAMPLE_DATA_HASH));
-        assertThat(param.getStoreType(), is(StoreType.RESOURCE));
         assertThat(param.getPrivacyStrategy(), is(notNullValue()));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
     }
@@ -55,13 +53,11 @@ public class DownloadDataParameterTest {
                         "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577",
                         "test"
                 ))
-                .storeType(StoreType.BLOCK)
                 .build();
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getDigest(), is(SAMPLE_DIGEST));
         assertThat(param.getDataHash(), is(SAMPLE_DATA_HASH));
-        assertThat(param.getStoreType(), is(StoreType.BLOCK));
         assertThat(param.getPrivacyStrategy(), is(notNullValue()));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
     }

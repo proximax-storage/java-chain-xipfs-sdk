@@ -1,6 +1,5 @@
 package io.proximax.upload;
 
-import io.proximax.model.StoreType;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 
 import java.util.List;
@@ -15,18 +14,16 @@ public class UploadParameter {
     private final String description;
     private final PrivacyStrategy privacyStrategy;
     private final Boolean computeDigest;
-    private final StoreType storeType;
     private final String version;
     private final List<UploadParameterData> dataList;
 
     UploadParameter(String signerPrivateKey, String recipientPublicKey, String description, PrivacyStrategy privacyStrategy,
-                           Boolean computeDigest, StoreType storeType, List<UploadParameterData> dataList) {
+                           Boolean computeDigest, List<UploadParameterData> dataList) {
         this.signerPrivateKey = signerPrivateKey;
         this.recipientPublicKey = recipientPublicKey;
         this.description = description;
         this.privacyStrategy = privacyStrategy;
         this.computeDigest = computeDigest;
-        this.storeType = storeType;
         this.dataList = dataList;
         this.version = VERSION;
     }
@@ -49,10 +46,6 @@ public class UploadParameter {
 
     public Boolean getComputeDigest() {
         return computeDigest;
-    }
-
-    public StoreType getStoreType() {
-        return storeType;
     }
 
     public String getVersion() {

@@ -4,7 +4,6 @@ import io.proximax.connection.IpfsConnection;
 import io.proximax.download.DownloadParameter;
 import io.proximax.model.ProximaxMessagePayloadModel;
 import io.proximax.model.ProximaxRootDataModel;
-import io.proximax.model.StoreType;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.utils.DigestUtils;
 import io.proximax.utils.JsonUtils;
@@ -55,7 +54,7 @@ public class RetrieveProximaxRootDataService {
     }
 
     private Observable<byte[]> downloadRootData(String rootDataHash) {
-        return ipfsDownloadService.download(rootDataHash, StoreType.RESOURCE);
+        return ipfsDownloadService.download(rootDataHash);
     }
 
     private Observable<byte[]> verifyDataWithRootDigest(String rootDigest, Observable<byte[]> undecryptedRootDataOb) {

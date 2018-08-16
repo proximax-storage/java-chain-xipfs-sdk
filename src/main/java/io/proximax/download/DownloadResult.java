@@ -1,7 +1,6 @@
 package io.proximax.download;
 
 import io.proximax.model.ProximaxRootDataModel;
-import io.proximax.model.StoreType;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,16 +13,14 @@ public class DownloadResult {
     private final int privacyType;
     private final String privacySearchTag;
     private final String description;
-    private final StoreType storeType;
     private final String version;
     private final List<DownloadResultData> dataList;
 
-    private DownloadResult(int privacyType, String privacySearchTag, String description, StoreType storeType,
+    private DownloadResult(int privacyType, String privacySearchTag, String description,
                           String version, List<DownloadResultData> dataList) {
         this.privacyType = privacyType;
         this.privacySearchTag = privacySearchTag;
         this.description = description;
-        this.storeType = storeType;
         this.version = version;
         this.dataList = dataList == null ? Collections.emptyList() : Collections.unmodifiableList(dataList);
     }
@@ -38,10 +35,6 @@ public class DownloadResult {
 
     public String getDescription() {
         return description;
-    }
-
-    public StoreType getStoreType() {
-        return storeType;
     }
 
     public String getVersion() {
@@ -61,7 +54,6 @@ public class DownloadResult {
                         rootData.getDataList().get(index).getMetadata())).collect(toList());
 
         return new DownloadResult(rootData.getPrivacyType(),
-                rootData.getPrivacySearchTag(), rootData.getDescription(), rootData.getStoreType(),
-                rootData.getVersion(), downloadDataList);
+                rootData.getPrivacySearchTag(), rootData.getDescription(), rootData.getVersion(), downloadDataList);
     }
 }

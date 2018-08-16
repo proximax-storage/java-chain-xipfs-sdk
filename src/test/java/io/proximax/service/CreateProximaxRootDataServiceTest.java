@@ -2,7 +2,6 @@ package io.proximax.service;
 
 import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxRootDataModel;
-import io.proximax.model.StoreType;
 import io.proximax.upload.StringParameterData;
 import io.proximax.upload.UploadParameter;
 import io.proximax.utils.ContentTypeUtils;
@@ -85,7 +84,7 @@ public class CreateProximaxRootDataServiceTest {
                 .willReturn(Observable.just(asList(DUMMY_DIGEST_1, DUMMY_DIGEST_2)));
         given(mockContentTypeUtils.detectContentTypeForList(any(), any()))
                 .willReturn(Observable.just(asList(DUMMY_CONTENT_TYPE_1, DUMMY_CONTENT_TYPE_2)));
-        given(mockIpfsUploadService.uploadList(any(), any()))
+        given(mockIpfsUploadService.uploadList(any()))
                 .willReturn(Observable.just(asList(
                         new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH_1, DUMMY_TIMESTAMP_1),
                         new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH_2, DUMMY_TIMESTAMP_2))));
@@ -112,7 +111,6 @@ public class CreateProximaxRootDataServiceTest {
         assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
         assertThat(result.getPrivacySearchTag(), is(nullValue()));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
-        assertThat(result.getStoreType(), is(StoreType.RESOURCE));
         assertThat(result.getVersion(), is(DUMMY_VERSION));
     }
 
@@ -122,7 +120,7 @@ public class CreateProximaxRootDataServiceTest {
                 .willReturn(Observable.just(asList(DUMMY_ENCRYPTED_DATA_1, DUMMY_ENCRYPTED_DATA_2)));
         given(mockContentTypeUtils.detectContentTypeForList(any(), any()))
                 .willReturn(Observable.just(asList(DUMMY_CONTENT_TYPE_1, DUMMY_CONTENT_TYPE_2)));
-        given(mockIpfsUploadService.uploadList(any(), any()))
+        given(mockIpfsUploadService.uploadList(any()))
                 .willReturn(Observable.just(asList(
                         new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH_1, DUMMY_TIMESTAMP_1),
                         new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH_2, DUMMY_TIMESTAMP_2))));
@@ -149,7 +147,6 @@ public class CreateProximaxRootDataServiceTest {
         assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
         assertThat(result.getPrivacySearchTag(), is(nullValue()));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
-        assertThat(result.getStoreType(), is(StoreType.RESOURCE));
         assertThat(result.getVersion(), is(DUMMY_VERSION));
     }
 

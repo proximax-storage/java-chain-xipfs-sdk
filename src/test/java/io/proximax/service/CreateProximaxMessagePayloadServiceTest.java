@@ -4,7 +4,6 @@ import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.model.ProximaxMessagePayloadModel;
 import io.proximax.model.ProximaxRootDataModel;
-import io.proximax.model.StoreType;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.upload.StringParameterData;
@@ -62,9 +61,6 @@ public class CreateProximaxMessagePayloadServiceTest {
     @Captor
     private ArgumentCaptor<byte[]> uploadArgumentCaptor;
 
-    @Captor
-    private ArgumentCaptor<StoreType> storeTypeArgumentCaptor;
-
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -86,7 +82,7 @@ public class CreateProximaxMessagePayloadServiceTest {
         given(mockPrivacyDataEncryptionUtils.encrypt(any(), any()))
                 .willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
         given(mockDigestUtils.digest(any())).willReturn(Observable.just(DUMMY_DIGEST));
-        given(mockIpfsUploadService.upload(any(), any()))
+        given(mockIpfsUploadService.upload(any()))
                 .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH, 9999L)));
 
         final ProximaxMessagePayloadModel result =
@@ -105,7 +101,7 @@ public class CreateProximaxMessagePayloadServiceTest {
     public void shouldReturnMessagePayloadWhenComputeDigestFalse() throws UnsupportedEncodingException {
         given(mockPrivacyDataEncryptionUtils.encrypt(any(), any()))
                 .willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
-        given(mockIpfsUploadService.upload(any(), any()))
+        given(mockIpfsUploadService.upload(any()))
                 .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH, 9999L)));
 
         final ProximaxMessagePayloadModel result =
@@ -125,7 +121,7 @@ public class CreateProximaxMessagePayloadServiceTest {
         given(mockPrivacyDataEncryptionUtils.encrypt(privacyStrategyArgumentCaptor.capture(), rootDataByteArgumentCaptor.capture()))
                 .willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
         given(mockDigestUtils.digest(digestArgumentCaptor.capture())).willReturn(Observable.just(DUMMY_DIGEST));
-        given(mockIpfsUploadService.upload(uploadArgumentCaptor.capture(), storeTypeArgumentCaptor.capture()))
+        given(mockIpfsUploadService.upload(uploadArgumentCaptor.capture()))
                 .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH, 9999L)));
 
         final ProximaxMessagePayloadModel result =
@@ -137,7 +133,6 @@ public class CreateProximaxMessagePayloadServiceTest {
                 "{\"privacyType\":1001," +
                         "\"privacySearchTag\":\"test\"," +
                         "\"description\":\"ewqeqwewqeqweqw\"," +
-                        "\"storeType\":\"RESOURCE\"," +
                         "\"version\":\"1.0\"," +
                         "\"dataList\":[" +
                             "{" +
@@ -162,12 +157,11 @@ public class CreateProximaxMessagePayloadServiceTest {
                         "}"));
         assertThat(digestArgumentCaptor.getValue(), is(DUMMY_ENCRYPTED_DATA));
         assertThat(uploadArgumentCaptor.getValue(), is(DUMMY_ENCRYPTED_DATA));
-        assertThat(storeTypeArgumentCaptor.getValue(), is(StoreType.RESOURCE));
     }
 
     private ProximaxRootDataModel sampleRootData() {
         return new ProximaxRootDataModel(PrivacyType.PLAIN.getValue(), "test", DUMMY_ROOT_DESCRIPTION,
-                StoreType.RESOURCE, DUMMY_VERSION, asList(
+                DUMMY_VERSION, asList(
                         new ProximaxDataModel("iowuqoieuqowueoiqw", "Qmdahdksadjksahjk", "data 1",
                                 singletonMap("key1", "value1"), 1000L, "data name 1", "text/plain"),
                         new ProximaxDataModel("sadasdsadsadasdads", "Qmcxzczxczxczxcxz", "data 2",

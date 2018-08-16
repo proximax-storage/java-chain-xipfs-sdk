@@ -1,7 +1,6 @@
 package io.proximax.upload;
 
 import io.proximax.exceptions.UploadParameterBuildFailureException;
-import io.proximax.model.StoreType;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
@@ -27,8 +26,6 @@ public class UploadParameterBuilder {
     private String description;
     private PrivacyStrategy privacyStrategy;
     private Boolean computeDigest;
-    private StoreType storeType;
-    private String version;
     private List<UploadParameterData> dataList;
 
     public UploadParameterBuilder(String signerPrivateKey, String recipientPublicKey) {
@@ -145,11 +142,6 @@ public class UploadParameterBuilder {
         return this;
     }
 
-    public UploadParameterBuilder storeType(StoreType storeType) {
-        this.storeType = storeType;
-        return this;
-    }
-
     public UploadParameterBuilder computeDigest(boolean computeDigest) {
         this.computeDigest = computeDigest;
         return this;
@@ -251,11 +243,8 @@ public class UploadParameterBuilder {
             this.computeDigest = true;
         if (this.privacyStrategy == null)
             this.privacyStrategy = PlainPrivacyStrategy.create(null);
-        if (this.storeType == null)
-            this.storeType = StoreType.RESOURCE;
 
-        return new UploadParameter(signerPrivateKey, recipientPublicKey, description, privacyStrategy, computeDigest,
-                storeType, dataList);
+        return new UploadParameter(signerPrivateKey, recipientPublicKey, description, privacyStrategy, computeDigest, dataList);
     }
 
 }

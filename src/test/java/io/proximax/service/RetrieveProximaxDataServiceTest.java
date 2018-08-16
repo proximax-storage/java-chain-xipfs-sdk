@@ -5,7 +5,6 @@ import io.proximax.download.DownloadParameter;
 import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.model.ProximaxRootDataModel;
-import io.proximax.model.StoreType;
 import io.proximax.utils.DigestUtils;
 import io.proximax.utils.PrivacyDataEncryptionUtils;
 import io.reactivex.Observable;
@@ -59,7 +58,7 @@ public class RetrieveProximaxDataServiceTest {
 
     @Test
     public void shouldReturnByteArrayOnGetData() {
-        given(mockIpfsDownloadService.downloadList(any(), any())).willReturn(Observable.just(asList(DUMMY_DOWNLOADED_DATA_1)));
+        given(mockIpfsDownloadService.downloadList(any())).willReturn(Observable.just(asList(DUMMY_DOWNLOADED_DATA_1)));
         given(mockDigestUtils.validateDigestList(any(), any())).willReturn(Observable.just(true));
         given(mockPrivacyDataEncryptionUtils.decryptList(any(), any())).willReturn(Observable.just(asList(DUMMY_DECRYPTED_DATA_1)));
 
@@ -81,7 +80,7 @@ public class RetrieveProximaxDataServiceTest {
 
     @Test
     public void shouldReturnByteArrayOnGetDataList() {
-        given(mockIpfsDownloadService.downloadList(any(), any())).willReturn(Observable.just(
+        given(mockIpfsDownloadService.downloadList(any())).willReturn(Observable.just(
                 asList(DUMMY_DOWNLOADED_DATA_1, DUMMY_DOWNLOADED_DATA_2)));
         given(mockDigestUtils.validateDigestList(any(), any())).willReturn(Observable.just(true));
         given(mockPrivacyDataEncryptionUtils.decryptList(any(), any())).willReturn(Observable.just(
@@ -97,7 +96,6 @@ public class RetrieveProximaxDataServiceTest {
 
     private DownloadDataParameter sampleDownloadDataParameter() {
         return DownloadDataParameter.create("hdksjahdkhsakjdhkjsahkdsahjkdsa")
-                .storeType(StoreType.RESOURCE)
                 .digest("dkjhsakjdhskjahdsahkdhsa")
                 .build();
     }
@@ -109,7 +107,7 @@ public class RetrieveProximaxDataServiceTest {
 
     private ProximaxRootDataModel sampleRootData() {
         return new ProximaxRootDataModel(PrivacyType.PLAIN.getValue(), "test", DUMMY_ROOT_DESCRIPTION,
-                StoreType.RESOURCE, DUMMY_VERSION, asList(
+                DUMMY_VERSION, asList(
                 new ProximaxDataModel("iowuqoieuqowueoiqw", "Qmdahdksadjksahjk", "data 1",
                         singletonMap("key1", "value1"), 1000L, "data name 1", "text/plain"),
                 new ProximaxDataModel("sadasdsadsadasdads", "Qmcxzczxczxczxcxz", "data 2",

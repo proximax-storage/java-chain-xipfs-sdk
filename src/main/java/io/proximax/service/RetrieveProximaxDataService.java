@@ -5,7 +5,6 @@ import io.proximax.download.DownloadDataParameter;
 import io.proximax.download.DownloadParameter;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.model.ProximaxRootDataModel;
-import io.proximax.model.StoreType;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.utils.DigestUtils;
 import io.proximax.utils.PrivacyDataEncryptionUtils;
@@ -41,7 +40,7 @@ public class RetrieveProximaxDataService {
 
         final List<String> dataHashList = singletonList(downloadDataParameter.getDataHash());
         final List<String> digestList = singletonList(downloadDataParameter.getDigest());
-        return getDataList(dataHashList, digestList, downloadDataParameter.getPrivacyStrategy(), downloadDataParameter.getStoreType())
+        return getDataList(dataHashList, digestList, downloadDataParameter.getPrivacyStrategy())
                 .map(dataList -> dataList.get(0));
     }
 
@@ -51,12 +50,12 @@ public class RetrieveProximaxDataService {
 
         final List<String> dataHashList = getDataHashList(rootData.getDataList());
         final List<String> digestList = getDigestList(rootData.getDataList());
-        return getDataList(dataHashList, digestList, downloadParam.getPrivacyStrategy(), rootData.getStoreType());
+        return getDataList(dataHashList, digestList, downloadParam.getPrivacyStrategy());
     }
 
     private Observable<List<byte[]>> getDataList(List<String> dataHashList, List<String> digestList,
-                                                 PrivacyStrategy privacyStrategy, StoreType storeType) {
-        final Observable<List<byte[]>> undecryptedDataListOb = downloadDataList(storeType, dataHashList);
+                                                 PrivacyStrategy privacyStrategy) {
+        final Observable<List<byte[]>> undecryptedDataListOb = downloadDataList(dataHashList);
         final Observable<List<byte[]>> undecryptedAndVerifiedDataListOb = verifyDataListWithDigest(digestList, undecryptedDataListOb);
 
         return decryptDataList(privacyStrategy, undecryptedAndVerifiedDataListOb);
@@ -70,8 +69,8 @@ public class RetrieveProximaxDataService {
         return dataList.stream().map(ProximaxDataModel::getDataHash).collect(toList());
     }
 
-    private Observable<List<byte[]>> downloadDataList(StoreType storeType, List<String> dataHashList) {
-        return ipfsDownloadService.downloadList(dataHashList, storeType);
+    private Observable<List<byte[]>> downloadDataList(List<String> dataHashList) {
+        return ipfsDownloadService.downloadList(dataHashList);
     }
 
     private Observable<List<byte[]>> verifyDataListWithDigest(List<String> digestList, Observable<List<byte[]>> undecryptedDataListOb) {

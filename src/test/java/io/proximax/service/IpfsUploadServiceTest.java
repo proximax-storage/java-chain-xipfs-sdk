@@ -1,6 +1,5 @@
 package io.proximax.service;
 
-import io.proximax.model.StoreType;
 import io.proximax.service.client.IpfsClient;
 import io.reactivex.Observable;
 import org.junit.Before;
@@ -35,34 +34,15 @@ public class IpfsUploadServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failOnUploadListWhenNullDataList() {
-        unitUnderTest.uploadList(null, StoreType.BLOCK);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failOnUploadListWhenNullStoreType() {
-        unitUnderTest.uploadList(asList(SAMPLE_DATA), null);
+        unitUnderTest.uploadList(null);
     }
 
     @Test
-    public void shouldReturnDataHashListOnUploadListWhenStoreTypeIsResource() {
+    public void shouldReturnDataHashListOnUploadList() {
         given(mockIpfsClient.add(SAMPLE_DATA)).willReturn(Observable.just(SAMPLE_DATAHASH));
 
         final List<IpfsUploadResponse> ipfsUploadResponses =
-                unitUnderTest.uploadList(asList(SAMPLE_DATA), StoreType.RESOURCE).blockingFirst();
-
-        assertThat(ipfsUploadResponses, is(notNullValue()));
-        assertThat(ipfsUploadResponses, hasSize(1));
-        assertThat(ipfsUploadResponses.get(0).getDataHash(), is(SAMPLE_DATAHASH));
-        assertThat(ipfsUploadResponses.get(0).getTimestamp(), is(notNullValue()));
-    }
-
-    @Test
-    public void shouldReturnDataHashListOnUploadListWhenStoreTypeIsBlock() {
-        given(mockIpfsClient.addBlock(SAMPLE_DATA)).willReturn(Observable.just(SAMPLE_DATAHASH));
-        given(mockIpfsClient.pin(SAMPLE_DATAHASH)).willReturn(Observable.just(asList(SAMPLE_DATAHASH)));
-
-        final List<IpfsUploadResponse> ipfsUploadResponses =
-                unitUnderTest.uploadList(asList(SAMPLE_DATA), StoreType.BLOCK).blockingFirst();
+                unitUnderTest.uploadList(asList(SAMPLE_DATA)).blockingFirst();
 
         assertThat(ipfsUploadResponses, is(notNullValue()));
         assertThat(ipfsUploadResponses, hasSize(1));
@@ -72,37 +52,18 @@ public class IpfsUploadServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failOnUploadWhenNullDataList() {
-        unitUnderTest.upload(null, StoreType.BLOCK);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failOnUploadWhenNullStoreType() {
-        unitUnderTest.upload(SAMPLE_DATA, null);
+        unitUnderTest.upload(null);
     }
 
     @Test
-    public void shouldReturnDataHashOnUploadWhenStoreTypeIsResource() {
+    public void shouldReturnDataHashOnUpload() {
         given(mockIpfsClient.add(SAMPLE_DATA)).willReturn(Observable.just(SAMPLE_DATAHASH));
 
         final IpfsUploadResponse ipfsUploadResponse =
-                unitUnderTest.upload(SAMPLE_DATA, StoreType.RESOURCE).blockingFirst();
+                unitUnderTest.upload(SAMPLE_DATA).blockingFirst();
 
         assertThat(ipfsUploadResponse, is(notNullValue()));
         assertThat(ipfsUploadResponse.getDataHash(), is(SAMPLE_DATAHASH));
         assertThat(ipfsUploadResponse.getTimestamp(), is(notNullValue()));
     }
-
-    @Test
-    public void shouldReturnDataHashOnUploadWhenStoreTypeIsBlock() {
-        given(mockIpfsClient.addBlock(SAMPLE_DATA)).willReturn(Observable.just(SAMPLE_DATAHASH));
-        given(mockIpfsClient.pin(SAMPLE_DATAHASH)).willReturn(Observable.just(asList(SAMPLE_DATAHASH)));
-
-        final IpfsUploadResponse ipfsUploadResponse =
-                unitUnderTest.upload(SAMPLE_DATA, StoreType.BLOCK).blockingFirst();
-
-        assertThat(ipfsUploadResponse, is(notNullValue()));
-        assertThat(ipfsUploadResponse.getDataHash(), is(SAMPLE_DATAHASH));
-        assertThat(ipfsUploadResponse.getTimestamp(), is(notNullValue()));
-    }
-
 }

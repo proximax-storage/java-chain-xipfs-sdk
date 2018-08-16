@@ -3,7 +3,6 @@ package io.proximax.service;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.model.ProximaxRootDataModel;
-import io.proximax.model.StoreType;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.upload.UploadParameter;
 import io.proximax.upload.UploadParameterData;
@@ -50,8 +49,8 @@ public class CreateProximaxRootDataService {
         final Observable<List<String>> digestListOb = encryptedDataListOb.flatMap(encryptedDataList ->
                 computeDigestsOfDataList(uploadParam.getComputeDigest(), dataList, encryptedDataList));
         final Observable<List<String>> contentTypeListOb = detectContentTypesForDataList(dataList, contentTypeListFromParams);
-        final Observable<List<IpfsUploadResponse>> dataUploadResponseListOb = encryptedDataListOb.flatMap(encryptedDataList ->
-                ipfsUploadDataList(uploadParam.getStoreType(), encryptedDataList));
+        final Observable<List<IpfsUploadResponse>> dataUploadResponseListOb =
+                encryptedDataListOb.flatMap(ipfsUploadService::uploadList);
 
         return Observable.zip(dataUploadResponseListOb, digestListOb, contentTypeListOb,
                 (dataUploadResponseList, digestList, contentTypeList) ->
@@ -81,15 +80,10 @@ public class CreateProximaxRootDataService {
         return contentTypeUtils.detectContentTypeForList(dataList, contentTypeList );
     }
 
-    private Observable<List<IpfsUploadResponse>> ipfsUploadDataList(StoreType storeType, List<byte[]> encryptedDataList) {
-        return ipfsUploadService.uploadList(encryptedDataList, storeType);
-    }
-
     private ProximaxRootDataModel createRootData(UploadParameter uploadParam, List<ProximaxDataModel> dataModeList) {
         return new ProximaxRootDataModel(uploadParam.getPrivacyStrategy().getPrivacyType(),
                 uploadParam.getPrivacyStrategy().getPrivacySearchTag(),
                 uploadParam.getDescription(),
-                uploadParam.getStoreType(),
                 uploadParam.getVersion(), dataModeList);
     }
 }

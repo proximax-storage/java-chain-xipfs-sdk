@@ -3,7 +3,6 @@ package io.proximax.service;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.model.ProximaxMessagePayloadModel;
 import io.proximax.model.ProximaxRootDataModel;
-import io.proximax.model.StoreType;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.upload.UploadParameter;
 import io.proximax.utils.DigestUtils;
@@ -56,7 +55,7 @@ public class CreateProximaxMessagePayloadService {
     }
 
     private Observable<String> ipfsUploadRootData(byte[] encryptedRootData) {
-        return ipfsUploadService.upload(encryptedRootData, StoreType.RESOURCE).map(IpfsUploadResponse::getDataHash);
+        return ipfsUploadService.upload(encryptedRootData).map(IpfsUploadResponse::getDataHash);
     }
 
     private ProximaxMessagePayloadModel createMessagePayload(UploadParameter uploadParameter, String rootDataHash, Optional<String> rootDigest) {

@@ -6,7 +6,6 @@ import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.exceptions.DownloadFailureException;
 import io.proximax.model.PrivacyType;
-import io.proximax.model.StoreType;
 import io.proximax.testsupport.TestHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -97,7 +96,6 @@ public class Download_downloadIntegrationTest {
 		assertThat(result.getVersion(), is("1.0"));
 		assertThat(result.getPrivacySearchTag(), is("nemkeys"));
 		assertThat(result.getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
-		assertThat(result.getStoreType(), is(StoreType.BLOCK));
 		assertThat(result.getDataList(), hasSize(1));
 		assertThat(result.getDataList().get(0).getData(), is(notNullValue()));
 		assertThat(result.getDataList().get(0).getContentType(), is("text/plain"));

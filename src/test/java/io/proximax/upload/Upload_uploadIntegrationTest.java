@@ -6,7 +6,6 @@ import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.model.PrivacyType;
-import io.proximax.model.StoreType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +21,6 @@ import static io.proximax.testsupport.Constants.STRING_TEST;
 import static io.proximax.testsupport.TestHelper.logAndSaveResult;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -181,7 +179,6 @@ public class Upload_uploadIntegrationTest {
 				.description("root description")
 				.securedWithNemKeysPrivacyStrategy("nemkeys")
 				.computeDigest(true)
-				.storeType(StoreType.BLOCK)
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -194,7 +191,6 @@ public class Upload_uploadIntegrationTest {
 		assertThat(result.getRootData().getDescription(), is("root description"));
 		assertThat(result.getRootData().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
 		assertThat(result.getRootData().getPrivacySearchTag(), is("nemkeys"));
-		assertThat(result.getRootData().getStoreType(), is(StoreType.BLOCK));
 		assertThat(result.getRootData().getDataList(), hasSize(1));
 		assertThat(result.getRootData().getDataList().get(0).getContentType(), is("text/plain"));
 		assertThat(result.getRootData().getDataList().get(0).getDataHash(), is(notNullValue()));

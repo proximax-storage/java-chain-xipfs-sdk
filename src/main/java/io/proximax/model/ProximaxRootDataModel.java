@@ -8,16 +8,14 @@ public final class ProximaxRootDataModel {
     private final int privacyType;
     private final String privacySearchTag;
     private final String description;
-    private final StoreType storeType;
     private final String version;
 	private final List<ProximaxDataModel> dataList;
 
-    public ProximaxRootDataModel(int privacyType, String privacySearchTag, String description, StoreType storeType,
+    public ProximaxRootDataModel(int privacyType, String privacySearchTag, String description,
                                  String version, List<ProximaxDataModel> dataList) {
         this.privacyType = privacyType;
         this.privacySearchTag = privacySearchTag;
         this.description = description;
-        this.storeType = storeType;
         this.version = version;
         this.dataList = dataList == null ? Collections.emptyList() : Collections.unmodifiableList(dataList);
     }
@@ -32,10 +30,6 @@ public final class ProximaxRootDataModel {
 
     public String getDescription() {
         return description;
-    }
-
-    public StoreType getStoreType() {
-        return storeType;
     }
 
     public String getVersion() {

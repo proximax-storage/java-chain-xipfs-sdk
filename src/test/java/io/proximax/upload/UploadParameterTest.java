@@ -3,7 +3,6 @@ package io.proximax.upload;
 import com.google.common.io.Files;
 import io.proximax.exceptions.UploadParameterBuildFailureException;
 import io.proximax.model.PrivacyType;
-import io.proximax.model.StoreType;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy;
@@ -67,7 +66,6 @@ public class UploadParameterTest {
         assertThat(param.getComputeDigest(), is(true));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
         assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is(nullValue()));
-        assertThat(param.getStoreType(), is(StoreType.RESOURCE));
         assertThat(param.getDataList(), hasSize(1));
     }
 
@@ -79,7 +77,6 @@ public class UploadParameterTest {
                 .addUrlResource(UrlResourceParameterData.create(IMAGE_FILE.toURI().toURL()).build())
                 .addFilesAsZip(FilesAsZipParameterData.create(asList(SMALL_FILE, HTML_FILE)).build())
                 .addString(StringParameterData.create("dasdasdsa ewqe wq dsa sadsads").build())
-                .storeType(StoreType.BLOCK)
                 .computeDigest(false)
                 .description("root description")
                 .privacyStrategy(new SecuredWithNemKeysPrivacyStrategy(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, "test"))
@@ -93,7 +90,6 @@ public class UploadParameterTest {
         assertThat(param.getComputeDigest(), is(false));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
         assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
-        assertThat(param.getStoreType(), is(StoreType.BLOCK));
         assertThat(param.getDataList(), hasSize(5));
     }
 
@@ -117,7 +113,6 @@ public class UploadParameterTest {
                 .addUrlResource(IMAGE_FILE.toURI().toURL())
                 .addFilesAsZip(asList(SMALL_FILE, HTML_FILE))
                 .addString("dasdasdsa ewqe wq dsa sadsads")
-                .storeType(StoreType.BLOCK)
                 .computeDigest(false)
                 .description("root description")
                 .privacyStrategy(new SecuredWithNemKeysPrivacyStrategy(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, "test"))
@@ -131,7 +126,6 @@ public class UploadParameterTest {
         assertThat(param.getComputeDigest(), is(false));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
         assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
-        assertThat(param.getStoreType(), is(StoreType.BLOCK));
         assertThat(param.getDataList(), hasSize(5));
     }
 

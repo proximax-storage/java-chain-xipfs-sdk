@@ -1,7 +1,6 @@
 package io.proximax.service;
 
 import io.proximax.connection.IpfsConnection;
-import io.proximax.model.StoreType;
 import io.proximax.service.client.IpfsClient;
 import io.reactivex.Observable;
 
@@ -21,27 +20,22 @@ public class IpfsDownloadService {
         this.ipfsClient = ipfsClient;
     }
 
-    public Observable<List<byte[]>> downloadList(final List<String> dataHashList, final StoreType storeType) {
+    public Observable<List<byte[]>> downloadList(final List<String> dataHashList) {
         checkArgument(dataHashList != null, "dataHashList is required");
-        checkArgument(storeType != null, "storeType is required");
 
         return Observable.fromIterable(dataHashList)
-                .concatMapEager(dataHash -> download(dataHash, storeType))
+                .concatMapEager(this::download)
                 .toList()
                 .toObservable();
     }
 
-    public Observable<byte[]> download(final String dataHash, final StoreType storeType) {
+    public Observable<byte[]> download(final String dataHash) {
         checkArgument(dataHash != null, "dataHash is required");
-        checkArgument(storeType != null, "storeType is required");
 
-        return downloadUsingStoreType(dataHash, storeType);
+        return downloadData(dataHash);
     }
 
-    private Observable<byte[]> downloadUsingStoreType(final String dataHash, final StoreType storeType) {
-        if (storeType == StoreType.BLOCK) {
-            return ipfsClient.getBlock(dataHash);
-        }
+    private Observable<byte[]> downloadData(final String dataHash) {
         return ipfsClient.get(dataHash);
     }
 

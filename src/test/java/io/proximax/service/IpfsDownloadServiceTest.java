@@ -1,6 +1,5 @@
 package io.proximax.service;
 
-import io.proximax.model.StoreType;
 import io.proximax.service.client.IpfsClient;
 import io.reactivex.Observable;
 import org.junit.Before;
@@ -35,30 +34,14 @@ public class IpfsDownloadServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failOnDownloadListWhenNullDataHashList() {
-        unitUnderTest.downloadList(null, StoreType.BLOCK);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failOnDownloadListWhenNullStoreType() {
-        unitUnderTest.downloadList(asList(SAMPLE_DATAHASH), null);
+        unitUnderTest.downloadList(null);
     }
 
     @Test
-    public void returnDataListOnDownloadListWhenStoreTypeIsResource() {
+    public void returnDataListOnDownloadLis() {
         given(mockIpfsClient.get(SAMPLE_DATAHASH)).willReturn(Observable.just(SAMPLE_DATA));
 
-        final List<byte[]> dataList = unitUnderTest.downloadList(asList(SAMPLE_DATAHASH), StoreType.RESOURCE).blockingFirst();
-
-        assertThat(dataList, is(notNullValue()));
-        assertThat(dataList, hasSize(1));
-        assertThat(dataList.get(0), is(SAMPLE_DATA));
-    }
-
-    @Test
-    public void returnDataListOnDownloadListWhenStoreTypeIsBlock() {
-        given(mockIpfsClient.getBlock(SAMPLE_DATAHASH)).willReturn(Observable.just(SAMPLE_DATA));
-
-        final List<byte[]> dataList = unitUnderTest.downloadList(asList(SAMPLE_DATAHASH), StoreType.BLOCK).blockingFirst();
+        final List<byte[]> dataList = unitUnderTest.downloadList(asList(SAMPLE_DATAHASH)).blockingFirst();
 
         assertThat(dataList, is(notNullValue()));
         assertThat(dataList, hasSize(1));
@@ -67,28 +50,14 @@ public class IpfsDownloadServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failOnDownloadWhenNullDataHashList() {
-        unitUnderTest.download(null, StoreType.BLOCK);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failOnDownloadWhenNullStoreType() {
-        unitUnderTest.download(SAMPLE_DATAHASH, null);
+        unitUnderTest.download(null);
     }
 
     @Test
-    public void returnDataOnDownloadWhenStoreTypeIsResource() {
+    public void returnDataOnDownload() {
         given(mockIpfsClient.get(SAMPLE_DATAHASH)).willReturn(Observable.just(SAMPLE_DATA));
 
-        final byte[] data = unitUnderTest.download(SAMPLE_DATAHASH, StoreType.RESOURCE).blockingFirst();
-
-        assertThat(data, is(SAMPLE_DATA));
-    }
-
-    @Test
-    public void returnDataOnDownloadWhenStoreTypeIsBlock() {
-        given(mockIpfsClient.getBlock(SAMPLE_DATAHASH)).willReturn(Observable.just(SAMPLE_DATA));
-
-        final byte[] data = unitUnderTest.download(SAMPLE_DATAHASH, StoreType.BLOCK).blockingFirst();
+        final byte[] data = unitUnderTest.download(SAMPLE_DATAHASH).blockingFirst();
 
         assertThat(data, is(SAMPLE_DATA));
     }

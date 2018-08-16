@@ -4,7 +4,6 @@ import io.proximax.download.DownloadParameter;
 import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxMessagePayloadModel;
 import io.proximax.model.ProximaxRootDataModel;
-import io.proximax.model.StoreType;
 import io.proximax.utils.DigestUtils;
 import io.proximax.utils.PrivacyDataEncryptionUtils;
 import io.reactivex.Observable;
@@ -57,7 +56,7 @@ public class RetrieveProximaxRootDataServiceTest {
 
     @Test
     public void shouldReturnRootDataWhenEmptyMessagePayload() {
-        given(mockIpfsDownloadService.download(DUMMY_ROOT_DATAHASH, StoreType.RESOURCE)).willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
+        given(mockIpfsDownloadService.download(DUMMY_ROOT_DATAHASH)).willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
         given(mockDigestUtils.validateDigest(any(), any())).willReturn(Observable.just(true));
         given(mockPrivacyDataEncryptionUtils.decrypt(any(), any())).willReturn(Observable.just(sampleRootDataJson().getBytes()));
 
@@ -65,7 +64,6 @@ public class RetrieveProximaxRootDataServiceTest {
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getVersion(), is("1.0"));
-        assertThat(result.getStoreType(), is(StoreType.RESOURCE));
         assertThat(result.getPrivacyType(), is(1001));
         assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getDescription(), is("ewqeqwewqeqweqw"));
@@ -88,7 +86,7 @@ public class RetrieveProximaxRootDataServiceTest {
 
     @Test
     public void shouldReturnRootDataWhenMessagePayloadProvided() {
-        given(mockIpfsDownloadService.download(DUMMY_ROOT_DATAHASH, StoreType.RESOURCE)).willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
+        given(mockIpfsDownloadService.download(DUMMY_ROOT_DATAHASH)).willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
         given(mockDigestUtils.validateDigest(any(), any())).willReturn(Observable.just(true));
         given(mockPrivacyDataEncryptionUtils.decrypt(any(), any())).willReturn(Observable.just(sampleRootDataJson().getBytes()));
 
@@ -96,7 +94,6 @@ public class RetrieveProximaxRootDataServiceTest {
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getVersion(), is("1.0"));
-        assertThat(result.getStoreType(), is(StoreType.RESOURCE));
         assertThat(result.getPrivacyType(), is(1001));
         assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getDescription(), is("ewqeqwewqeqweqw"));
@@ -130,7 +127,6 @@ public class RetrieveProximaxRootDataServiceTest {
         return "{\"privacyType\":1001," +
                         "\"privacySearchTag\":\"test\"," +
                         "\"description\":\"ewqeqwewqeqweqw\"," +
-                        "\"storeType\":\"RESOURCE\"," +
                         "\"version\":\"1.0\"," +
                         "\"dataList\":[" +
                             "{" +
