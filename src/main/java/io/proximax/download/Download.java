@@ -46,7 +46,7 @@ public class Download {
     public DownloadResult download(final DownloadParameter downloadParam) {
         checkParameter(downloadParam != null, "downloadParam is required");
 
-        return getBlockchainTransaction(downloadParam.transactionHash)
+        return getBlockchainTransaction(downloadParam.getTransactionHash())
                 .map(transferTransactionOpt ->
                         transferTransactionOpt.map(transferTransaction ->
                                 retrieveProximaxMessagePayloadService.getMessagePayload(downloadParam.getPrivacyStrategy(), transferTransaction)))

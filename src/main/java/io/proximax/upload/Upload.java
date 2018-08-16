@@ -1,7 +1,6 @@
 package io.proximax.upload;
 
 import io.proximax.connection.ConnectionConfig;
-import io.proximax.exceptions.DownloadFailureException;
 import io.proximax.exceptions.UploadFailureException;
 import io.proximax.exceptions.UploadInitFailureException;
 import io.proximax.model.ProximaxMessagePayloadModel;
@@ -45,7 +44,8 @@ public class Upload {
         return createProximaxRootDataService.createRootData(uploadParam).flatMap(rootData ->
                 createProximaxMessagePayloadService.createMessagePayload(uploadParam, rootData).flatMap(messagePayload ->
                         blockchainTransactionService.createAndAnnounceTransaction(
-                                uploadParam.getPrivacyStrategy(), uploadParam.getSignerPrivateKey(), uploadParam.recipientPublicKey, messagePayload
+                                uploadParam.getPrivacyStrategy(), uploadParam.getSignerPrivateKey(),
+                                uploadParam.getRecipientPublicKey(), messagePayload
                         ).map(transactionHash -> createUploadResult(messagePayload, transactionHash, rootData))))
                 .onErrorResumeNext((Throwable ex) ->
                         Observable.error(new UploadFailureException("Upload failed.", ex)))

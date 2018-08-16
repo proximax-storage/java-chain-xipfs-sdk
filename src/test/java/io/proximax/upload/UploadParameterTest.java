@@ -60,15 +60,15 @@ public class UploadParameterTest {
                 .build();
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.description, is(nullValue()));
-        assertThat(param.recipientPublicKey, is(SAMPLE_RECIPIENT_PUBLIC_KEY));
-        assertThat(param.signerPrivateKey, is(SAMPLE_SIGNER_PRIVATE_KEY));
-        assertThat(param.version, is(VERSION));
-        assertThat(param.computeDigest, is(true));
-        assertThat(param.privacyStrategy.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
-        assertThat(param.privacyStrategy.getPrivacySearchTag(), is(nullValue()));
-        assertThat(param.storeType, is(StoreType.RESOURCE));
-        assertThat(param.dataList, hasSize(1));
+        assertThat(param.getDescription(), is(nullValue()));
+        assertThat(param.getRecipientPublicKey(), is(SAMPLE_RECIPIENT_PUBLIC_KEY));
+        assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
+        assertThat(param.getVersion(), is(VERSION));
+        assertThat(param.getComputeDigest(), is(true));
+        assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
+        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is(nullValue()));
+        assertThat(param.getStoreType(), is(StoreType.RESOURCE));
+        assertThat(param.getDataList(), hasSize(1));
     }
 
     @Test
@@ -86,15 +86,15 @@ public class UploadParameterTest {
                 .build();
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.description, is("root description"));
-        assertThat(param.recipientPublicKey, is(SAMPLE_RECIPIENT_PUBLIC_KEY));
-        assertThat(param.signerPrivateKey, is(SAMPLE_SIGNER_PRIVATE_KEY));
-        assertThat(param.version, is(VERSION));
-        assertThat(param.computeDigest, is(false));
-        assertThat(param.privacyStrategy.getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
-        assertThat(param.privacyStrategy.getPrivacySearchTag(), is("test"));
-        assertThat(param.storeType, is(StoreType.BLOCK));
-        assertThat(param.dataList, hasSize(5));
+        assertThat(param.getDescription(), is("root description"));
+        assertThat(param.getRecipientPublicKey(), is(SAMPLE_RECIPIENT_PUBLIC_KEY));
+        assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
+        assertThat(param.getVersion(), is(VERSION));
+        assertThat(param.getComputeDigest(), is(false));
+        assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
+        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
+        assertThat(param.getStoreType(), is(StoreType.BLOCK));
+        assertThat(param.getDataList(), hasSize(5));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -124,15 +124,15 @@ public class UploadParameterTest {
                 .build();
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.description, is("root description"));
-        assertThat(param.recipientPublicKey, is(SAMPLE_RECIPIENT_PUBLIC_KEY));
-        assertThat(param.signerPrivateKey, is(SAMPLE_SIGNER_PRIVATE_KEY));
-        assertThat(param.version, is(VERSION));
-        assertThat(param.computeDigest, is(false));
-        assertThat(param.privacyStrategy.getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
-        assertThat(param.privacyStrategy.getPrivacySearchTag(), is("test"));
-        assertThat(param.storeType, is(StoreType.BLOCK));
-        assertThat(param.dataList, hasSize(5));
+        assertThat(param.getDescription(), is("root description"));
+        assertThat(param.getRecipientPublicKey(), is(SAMPLE_RECIPIENT_PUBLIC_KEY));
+        assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
+        assertThat(param.getVersion(), is(VERSION));
+        assertThat(param.getComputeDigest(), is(false));
+        assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
+        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
+        assertThat(param.getStoreType(), is(StoreType.BLOCK));
+        assertThat(param.getDataList(), hasSize(5));
     }
 
     @Test

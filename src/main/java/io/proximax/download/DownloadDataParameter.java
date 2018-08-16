@@ -5,10 +5,17 @@ import io.proximax.privacy.strategy.PrivacyStrategy;
 
 public class DownloadDataParameter {
 
-    String dataHash;
-    PrivacyStrategy privacyStrategy;
-    String digest;
-    StoreType storeType;
+    private final String dataHash;
+    private final PrivacyStrategy privacyStrategy;
+    private final String digest;
+    private final StoreType storeType;
+
+    DownloadDataParameter(String dataHash, PrivacyStrategy privacyStrategy, String digest, StoreType storeType) {
+        this.dataHash = dataHash;
+        this.privacyStrategy = privacyStrategy;
+        this.digest = digest;
+        this.storeType = storeType;
+    }
 
     public String getDataHash() {
         return dataHash;

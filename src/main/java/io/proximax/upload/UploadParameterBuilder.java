@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,171 +22,180 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 public class UploadParameterBuilder {
 
-    private UploadParameter param;
+    private String signerPrivateKey;
+    private String recipientPublicKey;
+    private String description;
+    private PrivacyStrategy privacyStrategy;
+    private Boolean computeDigest;
+    private StoreType storeType;
+    private String version;
+    private List<UploadParameterData> dataList;
 
     public UploadParameterBuilder(String signerPrivateKey, String recipientPublicKey) {
         checkParameter(signerPrivateKey != null, "signerPrivateKey is required");
         checkParameter(recipientPublicKey != null, "recipientPublicKey is required");
 
-        param = new UploadParameter(signerPrivateKey, recipientPublicKey);
+        this.signerPrivateKey = signerPrivateKey;
+        this.recipientPublicKey = recipientPublicKey;
+        this.dataList = new ArrayList<>();
     }
 
     public UploadParameterBuilder addFile(FileParameterData parameterData) {
         checkParameter(parameterData != null, "parameterData is required");
 
-        param.dataList.add(parameterData);
+        this.dataList.add(parameterData);
         return this;
     }
 
     public UploadParameterBuilder addFile(File file) throws IOException {
         checkParameter(file != null, "file is required");
 
-        param.dataList.add(FileParameterData.create(file).build());
+        this.dataList.add(FileParameterData.create(file).build());
         return this;
     }
 
     public UploadParameterBuilder addFile(File file, String description, String name, String contentType,
                                           Map<String, String> metadata) throws IOException {
-        param.dataList.add(new FileParameterData(file, description, name, contentType, metadata));
+        this.dataList.add(new FileParameterData(file, description, name, contentType, metadata));
         return this;
     }
 
     public UploadParameterBuilder addFilesAsZip(FilesAsZipParameterData parameterData) {
         checkParameter(parameterData != null, "parameterData is required");
 
-        param.dataList.add(parameterData);
+        this.dataList.add(parameterData);
         return this;
     }
 
     public UploadParameterBuilder addFilesAsZip(List<File> files) throws IOException {
         checkParameter(files != null, "files is required");
 
-        param.dataList.add(FilesAsZipParameterData.create(files).build());
+        this.dataList.add(FilesAsZipParameterData.create(files).build());
         return this;
     }
 
     public UploadParameterBuilder addFilesAsZip(List<File> files, String description, String name, Map<String, String> metadata) throws IOException {
-        param.dataList.add(new FilesAsZipParameterData(files, description, name, metadata));
+        this.dataList.add(new FilesAsZipParameterData(files, description, name, metadata));
         return this;
     }
 
     public UploadParameterBuilder addByteArray(ByteArrayParameterData parameterData) {
         checkParameter(parameterData != null, "parameterData is required");
 
-        param.dataList.add(parameterData);
+        this.dataList.add(parameterData);
         return this;
     }
 
     public UploadParameterBuilder addByteArray(byte[] byteArray) {
         checkParameter(byteArray != null, "byteArray is required");
 
-        param.dataList.add(ByteArrayParameterData.create(byteArray).build());
+        this.dataList.add(ByteArrayParameterData.create(byteArray).build());
         return this;
     }
 
     public UploadParameterBuilder addByteArray(byte[] byteArray, String description, String name, String contentType, Map<String, String> metadata) {
-        param.dataList.add(new ByteArrayParameterData(byteArray, description, name, contentType, metadata));
+        this.dataList.add(new ByteArrayParameterData(byteArray, description, name, contentType, metadata));
         return this;
     }
 
     public UploadParameterBuilder addString(StringParameterData parameterData) {
         checkParameter(parameterData != null, "parameterData is required");
 
-        param.dataList.add(parameterData);
+        this.dataList.add(parameterData);
         return this;
     }
 
     public UploadParameterBuilder addString(String string, String encoding, String description, String name, String contentType,
                                             Map<String, String> metadata) throws UnsupportedEncodingException {
-        param.dataList.add(new StringParameterData(string, encoding, description, name, contentType, metadata));
+        this.dataList.add(new StringParameterData(string, encoding, description, name, contentType, metadata));
         return this;
     }
 
     public UploadParameterBuilder addString(String string) throws UnsupportedEncodingException {
         checkParameter(string != null, "string is required");
 
-        param.dataList.add(StringParameterData.create(string).build());
+        this.dataList.add(StringParameterData.create(string).build());
         return this;
     }
 
     public UploadParameterBuilder addUrlResource(UrlResourceParameterData parameterData) {
         checkParameter(parameterData != null, "parameterData is required");
 
-        param.dataList.add(parameterData);
+        this.dataList.add(parameterData);
         return this;
     }
 
     public UploadParameterBuilder addUrlResource(URL url) throws IOException {
         checkParameter(url != null, "url is required");
 
-        param.dataList.add(UrlResourceParameterData.create(url).build());
+        this.dataList.add(UrlResourceParameterData.create(url).build());
         return this;
     }
 
     public UploadParameterBuilder addUrlResource(URL url, String description, String name, String contentType,
                                                  Map<String, String> metadata) throws IOException {
-        param.dataList.add(new UrlResourceParameterData(url, description, name, contentType, metadata));
+        this.dataList.add(new UrlResourceParameterData(url, description, name, contentType, metadata));
         return this;
     }
 
     public UploadParameterBuilder description(String description) {
         checkParameter(description == null || description.length() <= 500, "root description cannot exceed 500 characters");
 
-        param.description = description;
+        this.description = description;
         return this;
     }
 
     public UploadParameterBuilder storeType(StoreType storeType) {
-        param.storeType = storeType;
+        this.storeType = storeType;
         return this;
     }
 
     public UploadParameterBuilder computeDigest(boolean computeDigest) {
-        param.computeDigest = computeDigest;
+        this.computeDigest = computeDigest;
         return this;
     }
 
     public UploadParameterBuilder privacyStrategy(PrivacyStrategy privacyStrategy) {
-        param.privacyStrategy = privacyStrategy;
+        this.privacyStrategy = privacyStrategy;
         return this;
     }
 
     public UploadParameterBuilder plainPrivacy() {
-        param.privacyStrategy = PlainPrivacyStrategy.create(null);
+        this.privacyStrategy = PlainPrivacyStrategy.create(null);
         return this;
     }
 
     public UploadParameterBuilder plainPrivacy(String searchTag) {
-        param.privacyStrategy = PlainPrivacyStrategy.create(searchTag);
+        this.privacyStrategy = PlainPrivacyStrategy.create(searchTag);
         return this;
     }
 
     public UploadParameterBuilder securedWithNemKeysPrivacyStrategy() {
-        param.privacyStrategy = SecuredWithNemKeysPrivacyStrategy.create(
-                param.signerPrivateKey, param.recipientPublicKey, null);
+        this.privacyStrategy = SecuredWithNemKeysPrivacyStrategy.create(
+                this.signerPrivateKey, this.recipientPublicKey, null);
         return this;
     }
 
     public UploadParameterBuilder securedWithNemKeysPrivacyStrategy(String searchTag) {
-        param.privacyStrategy = SecuredWithNemKeysPrivacyStrategy.create(
-                param.signerPrivateKey, param.recipientPublicKey, searchTag);
+        this.privacyStrategy = SecuredWithNemKeysPrivacyStrategy.create(
+                this.signerPrivateKey, this.recipientPublicKey, searchTag);
         return this;
     }
 
     public UploadParameterBuilder securedWithPasswordPrivacyStrategy(String password) {
-        param.privacyStrategy = SecuredWithPasswordPrivacyStrategy.create(password, null);
+        this.privacyStrategy = SecuredWithPasswordPrivacyStrategy.create(password, null);
         return this;
     }
 
     public UploadParameterBuilder securedWithPasswordPrivacyStrategy(String password, String searchTag) {
-        param.privacyStrategy = SecuredWithPasswordPrivacyStrategy.create(password, searchTag);
+        this.privacyStrategy = SecuredWithPasswordPrivacyStrategy.create(password, searchTag);
         return this;
     }
 
     public UploadParameterBuilder securedWithShamirSecretSharingPrivacyStrategy(int secretTotalPartCount,
                                                                                 int secretMinimumPartCountToBuild,
                                                                                 SecretPart... secretParts) {
-        param.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
+        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
                 null, secretParts);
         return this;
     }
@@ -194,7 +204,7 @@ public class UploadParameterBuilder {
                                                                                 int secretMinimumPartCountToBuild,
                                                                                 String searchTag,
                                                                                 SecretPart... secretParts) {
-        param.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
+        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
                 searchTag, secretParts);
         return this;
     }
@@ -202,7 +212,7 @@ public class UploadParameterBuilder {
     public UploadParameterBuilder securedWithShamirSecretSharingPrivacyStrategy(int secretTotalPartCount,
                                                                                 int secretMinimumPartCountToBuild,
                                                                                 List<SecretPart> secretParts) {
-        param.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
+        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
                 secretParts, null);
         return this;
     }
@@ -211,7 +221,7 @@ public class UploadParameterBuilder {
                                                                                 int secretMinimumPartCountToBuild,
                                                                                 String searchTag,
                                                                                 List<SecretPart> secretParts) {
-        param.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
+        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
                 secretParts, searchTag);
         return this;
     }
@@ -219,7 +229,7 @@ public class UploadParameterBuilder {
     public UploadParameterBuilder securedWithShamirSecretSharingPrivacyStrategy(int secretTotalPartCount,
                                                                                 int secretMinimumPartCountToBuild,
                                                                                 Map<Integer, byte[]> secretParts) {
-        param.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
+        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
                 secretParts, null);
         return this;
     }
@@ -228,23 +238,24 @@ public class UploadParameterBuilder {
                                                                                 int secretMinimumPartCountToBuild,
                                                                                 String searchTag,
                                                                                 Map<Integer, byte[]> secretParts) {
-        param.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
+        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
                 secretParts, searchTag);
         return this;
     }
 
     public UploadParameter build() {
-        if (CollectionUtils.isEmpty(param.dataList))
+        if (CollectionUtils.isEmpty(this.dataList))
             throw new UploadParameterBuildFailureException("A parameter data should be provided");
 
-        if (param.computeDigest == null)
-            param.computeDigest = true;
-        if (param.privacyStrategy == null)
-            param.privacyStrategy = PlainPrivacyStrategy.create(null);
-        if (param.storeType == null)
-            param.storeType = StoreType.RESOURCE;
+        if (this.computeDigest == null)
+            this.computeDigest = true;
+        if (this.privacyStrategy == null)
+            this.privacyStrategy = PlainPrivacyStrategy.create(null);
+        if (this.storeType == null)
+            this.storeType = StoreType.RESOURCE;
 
-        return param;
+        return new UploadParameter(signerPrivateKey, recipientPublicKey, description, privacyStrategy, computeDigest,
+                storeType, dataList);
     }
 
 }

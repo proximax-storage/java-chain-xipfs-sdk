@@ -4,10 +4,17 @@ import io.proximax.privacy.strategy.PrivacyStrategy;
 
 public class DownloadParameter {
 
-    String transactionHash;
-    String rootDataHash;
-    PrivacyStrategy privacyStrategy;
-    String digest;
+    private final String transactionHash;
+    private final String rootDataHash;
+    private final PrivacyStrategy privacyStrategy;
+    private final String digest;
+
+    DownloadParameter(String transactionHash, String rootDataHash, PrivacyStrategy privacyStrategy, String digest) {
+        this.transactionHash = transactionHash;
+        this.rootDataHash = rootDataHash;
+        this.privacyStrategy = privacyStrategy;
+        this.digest = digest;
+    }
 
     public String getTransactionHash() {
         return transactionHash;
