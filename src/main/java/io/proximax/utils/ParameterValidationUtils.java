@@ -1,7 +1,7 @@
 package io.proximax.utils;
 
 /**
- * Utility class to verify method parameters
+ * The utility class to verify method parameters
  */
 public class ParameterValidationUtils {
 
@@ -9,7 +9,10 @@ public class ParameterValidationUtils {
     }
 
     /**
-     * When a given parameter is invalid, this throws an IllegalArgumentException with the provided message.
+     * Validates a given parameter by accepting a resolved condition.
+     * <br>
+     * <br>
+     * This throws an IllegalArgumentException with the provided message if not valid.
      * @param isValid a resolved validation result for a given parameter
      * @param invalidMessage the exception message to use when throwing exception
      */

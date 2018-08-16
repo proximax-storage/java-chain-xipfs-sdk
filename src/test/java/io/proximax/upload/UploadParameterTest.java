@@ -79,7 +79,7 @@ public class UploadParameterTest {
                 .addString(StringParameterData.create("dasdasdsa ewqe wq dsa sadsads").build())
                 .computeDigest(false)
                 .description("root description")
-                .privacyStrategy(new SecuredWithNemKeysPrivacyStrategy(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, "test"))
+                .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, "test"))
                 .build();
 
         assertThat(param, is(notNullValue()));
@@ -115,7 +115,7 @@ public class UploadParameterTest {
                 .addString("dasdasdsa ewqe wq dsa sadsads")
                 .computeDigest(false)
                 .description("root description")
-                .privacyStrategy(new SecuredWithNemKeysPrivacyStrategy(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, "test"))
+                .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, "test"))
                 .build();
 
         assertThat(param, is(notNullValue()));

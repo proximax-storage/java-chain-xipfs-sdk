@@ -7,6 +7,9 @@ import io.proximax.model.PrivacyType;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
+/**
+ * The privacy strategy that secures the data using a long password, 50 characters minimum.
+ */
 public final class SecuredWithPasswordPrivacyStrategy extends AbstractPlainMessagePrivacyStrategy {
 
     private static final int MINIMUM_PASSWORD_LENGTH = 50;
@@ -25,12 +28,21 @@ public final class SecuredWithPasswordPrivacyStrategy extends AbstractPlainMessa
         this.password = password.toCharArray();
     }
 
-
+    /**
+     * Get the privacy type which is set as PASSWORD
+     * @return the privacy type's int value
+     * @see PrivacyType
+     */
     @Override
     public int getPrivacyType() {
         return PrivacyType.PASSWORD.getValue();
     }
 
+    /**
+     * Encrypt the data with password
+     * @param data data to encrypt
+     * @return the encrypted data
+     */
     @Override
     public final byte[] encryptData(byte[] data) {
         try {
@@ -40,6 +52,11 @@ public final class SecuredWithPasswordPrivacyStrategy extends AbstractPlainMessa
         }
     }
 
+    /**
+     * Decrypt the data with password
+     * @param data data to encrypt
+     * @return the decrypted data
+     */
     @Override
     public final byte[] decryptData(byte[] data) {
         try {
@@ -49,6 +66,12 @@ public final class SecuredWithPasswordPrivacyStrategy extends AbstractPlainMessa
         }
     }
 
+    /**
+     * Create instance of this strategy
+     * @param password the password
+     * @param searchTag an optional search tag
+     * @return the instance of this strategy
+     */
     public static SecuredWithPasswordPrivacyStrategy create(String password, String searchTag) {
         return new SecuredWithPasswordPrivacyStrategy(new BinaryPBKDF2CipherEncryption(), password, searchTag);
     }

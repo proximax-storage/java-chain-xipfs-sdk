@@ -48,7 +48,7 @@ public class DownloadDataParameterTest {
     public void buildParamWithAllData() {
         final DownloadDataParameter param = DownloadDataParameter.create(SAMPLE_DATA_HASH)
                 .digest(SAMPLE_DIGEST)
-                .privacyStrategy(new SecuredWithNemKeysPrivacyStrategy(
+                .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(
                         "CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C",
                         "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577",
                         "test"

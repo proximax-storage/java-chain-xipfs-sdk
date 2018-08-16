@@ -4,9 +4,12 @@ import io.proximax.model.RawDataModel;
 
 import java.util.Map;
 
+/**
+ * The abstract class that defines the common fields of an upload data
+ */
 public abstract class UploadParameterData extends RawDataModel {
 
-    public UploadParameterData(byte[] data, String description, String name, String contentType, Map<String, String> metadata) {
+    UploadParameterData(byte[] data, String description, String name, String contentType, Map<String, String> metadata) {
         super(data, description, name, contentType, metadata);
     }
 }

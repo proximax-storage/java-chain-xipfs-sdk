@@ -13,6 +13,9 @@ import java.util.zip.ZipOutputStream;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
+/**
+ * This model class is one type of the upload parameter data that defines a zip upload
+ */
 public class FilesAsZipParameterData extends UploadParameterData {
 
     private final List<File> files;
@@ -22,6 +25,10 @@ public class FilesAsZipParameterData extends UploadParameterData {
         this.files = files;
     }
 
+    /**
+     * Get the list of files to upload as zip
+     * @return the list of files to zip
+     */
     public List<File> getFiles() {
         return files;
     }
@@ -44,10 +51,18 @@ public class FilesAsZipParameterData extends UploadParameterData {
         }
     }
 
+    /**
+     * Start creating an instance of FilesAsZipParameterData using the FilesAsZipParameterDataBuilder
+     * @param files the list of files to upload as zip
+     * @return the files as zip parameter data builder
+     */
     public static FilesAsZipParameterDataBuilder create(List<File> files) {
         return new FilesAsZipParameterDataBuilder(files);
     }
 
+    /**
+     * This builder class creates the FilesAsZipParameterData
+     */
     public static class FilesAsZipParameterDataBuilder extends AbstractParameterDataBuilder<FilesAsZipParameterDataBuilder> {
         private List<File> files;
 
@@ -55,6 +70,11 @@ public class FilesAsZipParameterData extends UploadParameterData {
             this.files = files;
         }
 
+        /**
+         * Builds the FilesAsZipParameterData
+         * @return the files as zip parameter data
+         * @throws IOException when reading file fails
+         */
         public FilesAsZipParameterData build() throws IOException {
             return new FilesAsZipParameterData(files, description, name, metadata);
         }

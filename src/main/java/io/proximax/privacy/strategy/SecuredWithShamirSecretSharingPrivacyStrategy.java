@@ -14,15 +14,20 @@ import java.util.stream.Stream;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
-
+/**
+ * The privacy strategy that secures the data using shamir secret sharing.
+ * <br>
+ * <br>
+ * This strategy requires the total count of secret parts, minimum count of parts to build secret, and the secret parts.
+ */
 public final class SecuredWithShamirSecretSharingPrivacyStrategy extends AbstractPlainMessagePrivacyStrategy {
 
     private final char[] secret;
     private final BinaryPBKDF2CipherEncryption encryptor;
 
-    public SecuredWithShamirSecretSharingPrivacyStrategy(BinaryPBKDF2CipherEncryption encryptor,
-                                                         int secretTotalPartCount, int secretMinimumPartCountToBuild,
-                                                         Map<Integer, byte[]> secretParts, String searchTag) {
+    SecuredWithShamirSecretSharingPrivacyStrategy(BinaryPBKDF2CipherEncryption encryptor,
+                                                  int secretTotalPartCount, int secretMinimumPartCountToBuild,
+                                                  Map<Integer, byte[]> secretParts, String searchTag) {
         super(searchTag);
 
         checkParameter(secretTotalPartCount > 0, "secretTotalPartCount should be a positive number");
@@ -36,19 +41,35 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Abstrac
         this.encryptor = encryptor;
     }
 
+    /**
+     * Get the privacy type which is set as SHAMIR
+     * @return the privacy type's int value
+     * @see PrivacyType
+     */
     @Override
     public int getPrivacyType() {
         return PrivacyType.SHAMIR.getValue();
     }
 
+    /**
+     * Encrypt the data using the shamir secret sharing
+     * @param data data to encrypt
+     * @return the encrypted data
+     */
     @Override
     public byte[] encryptData(byte[] data) {
         try {
             return encryptor.encrypt(data, secret);
         } catch (Exception e) {
             throw new EncryptionFailureException("Exception encountered encrypting data", e);
-        }    }
+        }
+    }
 
+    /**
+     * Decrypt the data using the shamir secret sharing
+     * @param data encrypted data to decrypt
+     * @return the decrypted data
+     */
     @Override
     public byte[] decryptData(byte[] data) {
         try {
@@ -58,34 +79,64 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Abstrac
         }
     }
 
+    /**
+     * A model class to represent a secret part which is composed of index and the secret part data
+     */
     public static class SecretPart {
 
-        public final int index;
-        public final byte[] secretPart;
+        private final int index;
+        private final byte[] secretPart;
 
+        /**
+         * Construct instance of this model
+         * @param index the index of the secret part
+         * @param secretPart the data of the secret part
+         */
         public SecretPart(int index, byte[] secretPart) {
             this.index = index;
             this.secretPart = secretPart;
         }
 
+        /**
+         * Construct instance of this model
+         * @param index the index of the secret part
+         * @param secretPart the data of the secret part
+         * @return instance of this model
+         */
         public static SecretPart secretPart(int index, byte[] secretPart) {
             return new SecretPart(index, secretPart);
         }
     }
 
+    /**
+     * Create instance of this strategy using an array of secret parts
+     * @param secretTotalPartCount the total count of secret parts
+     * @param secretMinimumPartCountToBuild the minimum count of parts to build secret
+     * @param searchTag an optional search tag
+     * @param secretParts array of secret parts
+     * @return the instance of this strategy
+     */
     public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
-                                                                int secretMinimumPartCountToBuild,
-                                                                String searchTag,
-                                                                SecretPart... secretParts) {
+                                                                       int secretMinimumPartCountToBuild,
+                                                                       String searchTag,
+                                                                       SecretPart... secretParts) {
         return new SecuredWithShamirSecretSharingPrivacyStrategy(new BinaryPBKDF2CipherEncryption(),
                 secretTotalPartCount, secretMinimumPartCountToBuild,
                 Stream.of(secretParts).collect(Collectors.toMap(parts -> parts.index, parts -> parts.secretPart)), searchTag);
     }
 
+    /**
+     * Create instance of this strategy using a list of secret parts
+     * @param secretTotalPartCount the total count of secret parts
+     * @param secretMinimumPartCountToBuild the minimum count of parts to build secret
+     * @param searchTag an optional search tag
+     * @param secretParts list of secret parts
+     * @return the instance of this strategy
+     */
     public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
-                                                                int secretMinimumPartCountToBuild,
-                                                                List<SecretPart> secretParts,
-                                                                String searchTag) {
+                                                                       int secretMinimumPartCountToBuild,
+                                                                       List<SecretPart> secretParts,
+                                                                       String searchTag) {
         return new SecuredWithShamirSecretSharingPrivacyStrategy(new BinaryPBKDF2CipherEncryption(),
                 secretTotalPartCount, secretMinimumPartCountToBuild,
                 secretParts == null ? Collections.emptyMap() :
@@ -93,10 +144,18 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Abstrac
                 searchTag);
     }
 
+    /**
+     * Create instance of this strategy using a map of secret parts
+     * @param secretTotalPartCount the total count of secret parts
+     * @param secretMinimumPartCountToBuild the minimum count of parts to build secret
+     * @param searchTag an optional search tag
+     * @param secretParts map of secret parts
+     * @return the instance of this strategy
+     */
     public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
-                                                                int secretMinimumPartCountToBuild,
-                                                                Map<Integer, byte[]> secretParts,
-                                                                String searchTag) {
+                                                                       int secretMinimumPartCountToBuild,
+                                                                       Map<Integer, byte[]> secretParts,
+                                                                       String searchTag) {
         return new SecuredWithShamirSecretSharingPrivacyStrategy(new BinaryPBKDF2CipherEncryption(),
                 secretTotalPartCount, secretMinimumPartCountToBuild,
                 secretParts == null ? Collections.emptyMap() : secretParts,

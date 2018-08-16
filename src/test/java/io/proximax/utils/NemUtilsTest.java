@@ -22,9 +22,9 @@ import static org.hamcrest.core.IsNull.notNullValue;
 
 public class NemUtilsTest {
 
-    private static final String SAMPLE_SIGNER_PRIVATE_KEY = "CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C";
-    private static final String SAMPLE_RECIPIENT_PUBLIC_KEY = "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577";
-    private static final Address SAMPLE_RECIPIENT_ADDRESS = Address.createFromRawAddress("SBRHESWCLX3VGQ6CHCZNKDN6DT7GLS6CZKJXCT5F");
+    private static final String SAMPLE_PRIVATE_KEY = "CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C";
+    private static final String SAMPLE_PUBLIC_KEY = "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577";
+    private static final Address SAMPLE_ADDRESS = Address.createFromRawAddress("SBRHESWCLX3VGQ6CHCZNKDN6DT7GLS6CZKJXCT5F");
 
     private NemUtils unitUnderTest;
 
@@ -34,28 +34,28 @@ public class NemUtilsTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void failOnToAddressWhenNullRecipientPublicKey() {
+    public void failOnToAddressWhenNullPublicKey() {
         unitUnderTest.toAddress(null);
     }
 
     @Test
     public void shouldReturnAddressOnToAddress() {
-        final Address address = unitUnderTest.toAddress(SAMPLE_RECIPIENT_PUBLIC_KEY);
+        final Address address = unitUnderTest.toAddress(SAMPLE_PUBLIC_KEY);
 
-        assertThat(address, is(SAMPLE_RECIPIENT_ADDRESS));
+        assertThat(address, is(SAMPLE_ADDRESS));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void failOnToAccountWhenNullSignerPrivateKey() {
+    public void failOnToAccountWhenNullPrivateKey() {
         unitUnderTest.toAccount(null);
     }
 
     @Test
     public void shouldReturnAccountOnToAccount() {
-        final Account account = unitUnderTest.toAccount(SAMPLE_SIGNER_PRIVATE_KEY);
+        final Account account = unitUnderTest.toAccount(SAMPLE_PRIVATE_KEY);
 
         assertThat(account, is(notNullValue()));
-        assertThat(account.getPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
+        assertThat(account.getPrivateKey(), is(SAMPLE_PRIVATE_KEY));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -65,12 +65,12 @@ public class NemUtilsTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failOnSignTransactionWhenNullTransferTransaction() {
-        unitUnderTest.signTransaction(SAMPLE_SIGNER_PRIVATE_KEY, null);
+        unitUnderTest.signTransaction(SAMPLE_PRIVATE_KEY, null);
     }
 
     @Test
     public void shouldReturnSignedTransactionOnSignTransaction() {
-        final SignedTransaction signedTransaction = unitUnderTest.signTransaction(SAMPLE_SIGNER_PRIVATE_KEY, sampleTransferTransaction());
+        final SignedTransaction signedTransaction = unitUnderTest.signTransaction(SAMPLE_PRIVATE_KEY, sampleTransferTransaction());
 
         assertThat(signedTransaction, is(notNullValue()));;
     }
@@ -78,7 +78,7 @@ public class NemUtilsTest {
     private TransferTransaction sampleTransferTransaction() {
         return TransferTransaction.create(
                 Deadline.create(24, ChronoUnit.HOURS),
-                SAMPLE_RECIPIENT_ADDRESS,
+                SAMPLE_ADDRESS,
                 Collections.singletonList(new Mosaic(XEM.createRelative(BigInteger.valueOf(1)).getId(), BigInteger.valueOf(1))),
                 new PlainMessage("test"),
                 NetworkType.MIJIN_TEST);

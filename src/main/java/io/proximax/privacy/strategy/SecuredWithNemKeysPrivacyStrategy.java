@@ -10,13 +10,17 @@ import io.proximax.model.PrivacyType;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
+/**
+ * The privacy strategy that secures data using the NEM keys (a private key and a public key).
+ * This strategy encrypt and decrypt the data using both private and public keys
+ */
 // TODO switch to secure message once available
 public final class SecuredWithNemKeysPrivacyStrategy extends AbstractPlainMessagePrivacyStrategy {
 
-    public final KeyPair keyPairOfPrivateKey;
-    public final KeyPair keyPairOfPublicKey;
+    private final KeyPair keyPairOfPrivateKey;
+    private final KeyPair keyPairOfPublicKey;
 
-    public SecuredWithNemKeysPrivacyStrategy(String privateKey, String publicKey, String searchTag) {
+    SecuredWithNemKeysPrivacyStrategy(String privateKey, String publicKey, String searchTag) {
         super(searchTag);
 
         checkParameter(privateKey != null, "private key is required");
@@ -26,11 +30,21 @@ public final class SecuredWithNemKeysPrivacyStrategy extends AbstractPlainMessag
         this.keyPairOfPublicKey = new KeyPair(PublicKey.fromHexString(publicKey));
     }
 
+    /**
+     * Get the privacy type which is set as NEMKEYS
+     * @return the privacy type's int value
+     * @see PrivacyType
+     */
     @Override
     public int getPrivacyType() {
         return PrivacyType.NEMKEYS.getValue();
     }
 
+    /**
+     * Encrypt the data using the private and public keys provided
+     * @param data data to encrypt
+     * @return the encrypted data
+     */
     @Override
     public final byte[] encryptData(byte[] data) {
         try {
@@ -40,6 +54,11 @@ public final class SecuredWithNemKeysPrivacyStrategy extends AbstractPlainMessag
         }
     }
 
+    /**
+     * Encrypt the data using the private and public keys provided
+     * @param data encrypted data to decrypt
+     * @return the decrypted data
+     */
     @Override
     public final byte[] decryptData(byte[] data) {
         try {
@@ -53,6 +72,13 @@ public final class SecuredWithNemKeysPrivacyStrategy extends AbstractPlainMessag
         }
     }
 
+    /**
+     * Create instance of this strategy
+     * @param privateKey the private key
+     * @param publicKey the public key
+     * @param searchTag an optional search tag
+     * @return the instance of this strategy
+     */
     public static SecuredWithNemKeysPrivacyStrategy create(String privateKey, String publicKey, String searchTag) {
         return new SecuredWithNemKeysPrivacyStrategy(privateKey, publicKey, searchTag);
     }

@@ -8,6 +8,9 @@ import java.util.Map;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
+/**
+ * This model class is one type of the upload parameter data that defines a file upload
+ */
 public class FileParameterData extends UploadParameterData {
 
     private final File file;
@@ -17,6 +20,11 @@ public class FileParameterData extends UploadParameterData {
         this.file = file;
     }
 
+    /**
+     * Get the file to upload
+     * @return the file
+     * @see FileParameterDataBuilder
+     */
     public File getFile() {
         return file;
     }
@@ -27,10 +35,18 @@ public class FileParameterData extends UploadParameterData {
         return FileUtils.readFileToByteArray(file);
     }
 
+    /**
+     * Start creating an instance of FileParameterData using the FileParameterDataBuilder
+     * @param file the file to upload
+     * @return the file parameter data builder
+     */
     public static FileParameterDataBuilder create(File file) {
         return new FileParameterDataBuilder(file);
     }
 
+    /**
+     * This builder class creates the FileParameterData
+     */
     public static class FileParameterDataBuilder extends AbstractParameterDataBuilder<FileParameterDataBuilder> {
         private File file;
 
@@ -38,6 +54,11 @@ public class FileParameterData extends UploadParameterData {
             this.file = file;
         }
 
+        /**
+         * Builds the FileParameterData
+         * @return the file parameter data
+         * @throws IOException when reading file fails
+         */
         public FileParameterData build() throws IOException {
             return new FileParameterData(file, description, name, contentType, metadata);
         }

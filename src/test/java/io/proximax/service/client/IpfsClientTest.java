@@ -38,9 +38,6 @@ public class IpfsClientTest {
     private IPFS mockIpfs;
 
     @Mock
-    private IPFS.Block mockIpfsBlock;
-
-    @Mock
     private IPFS.Pin mockIpfsPin;
 
     @Before
@@ -50,7 +47,6 @@ public class IpfsClientTest {
         unitUnderTest = new IpfsClient(mockIpfsConnection);
         given(mockIpfsConnection.getIpfs()).willReturn(mockIpfs);
 
-        setMockIpfsBlock();
         setMockIpfsPin();
     }
 
@@ -71,27 +67,6 @@ public class IpfsClientTest {
         given(mockIpfs.add(any())).willReturn(asList(SAMPLE_MERKLE_NODE));
 
         final String dataHash = unitUnderTest.add(SAMPLE_DATA).blockingFirst();
-
-        assertThat(dataHash, is(SAMPLE_DATAHASH));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failOnAddBlockWhenNullData() {
-        unitUnderTest.addBlock(null);
-    }
-
-    @Test(expected = IpfsClientFailureException.class)
-    public void shouldBubbleUpExceptionOnAddBlock() throws IOException {
-        given(mockIpfsBlock.put(any(byte[].class), any())).willThrow(new RuntimeException());
-
-        unitUnderTest.addBlock(SAMPLE_DATA).blockingFirst();
-    }
-
-    @Test
-    public void shouldReturnDataHashOnAddBlock() throws IOException {
-        given(mockIpfsBlock.put(any(byte[].class), any())).willReturn(SAMPLE_MERKLE_NODE);
-
-        final String dataHash = unitUnderTest.addBlock(SAMPLE_DATA).blockingFirst();
 
         assertThat(dataHash, is(SAMPLE_DATAHASH));
     }
@@ -138,36 +113,6 @@ public class IpfsClientTest {
         final byte[] data = unitUnderTest.get(SAMPLE_DATAHASH).blockingFirst();
 
         assertThat(data, is(SAMPLE_DATA));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failOnGetBlockWhenNullDataHash() {
-        unitUnderTest.getBlock(null);
-    }
-
-    @Test(expected = IpfsClientFailureException.class)
-    public void shouldBubbleUpExceptionOnGetBlock() throws IOException {
-        given(mockIpfsBlock.get(any())).willThrow(new RuntimeException());
-
-        unitUnderTest.getBlock(SAMPLE_DATAHASH).blockingFirst();
-    }
-
-    @Test
-    public void shouldReturnDataOnGetBlock() throws IOException {
-        given(mockIpfsBlock.get(any())).willReturn(SAMPLE_DATA);
-
-        final byte[] data = unitUnderTest.getBlock(SAMPLE_DATAHASH).blockingFirst();
-
-        assertThat(data, is(SAMPLE_DATA));
-    }
-
-    private void setMockIpfsBlock() throws NoSuchFieldException, IllegalAccessException {
-        final Field field = IPFS.class.getDeclaredField("block");
-        field.setAccessible(true);
-        final Field modifiersField  = Field.class.getDeclaredField("modifiers");
-        modifiersField .setAccessible(true);
-        modifiersField .setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        field.set(mockIpfs, mockIpfsBlock);
     }
 
     private void setMockIpfsPin() throws NoSuchFieldException, IllegalAccessException {
