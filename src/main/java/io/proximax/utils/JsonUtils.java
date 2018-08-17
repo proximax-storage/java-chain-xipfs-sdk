@@ -3,24 +3,15 @@ package io.proximax.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-
-
-
-
-
 /**
- * Utility class for handling JSON serialization and deserialization.
- * 
+ * The utility class for handling JSON serialization and deserialization
  */
 public class JsonUtils {
 
-	/**
-	 * Gson which handles the JSON conversion.
-	 */
 	private static Gson gson;
 
 	/**
-	 * Instantiates a new JsonUtils.
+	 * Construct an instance of this utility class
 	 */
 	private JsonUtils() {
 	}
@@ -44,43 +35,33 @@ public class JsonUtils {
 	}
 
 	/**
-	 * From json.
+	 * Read a JSON into an object of given type
 	 *
 	 * @param <T>
-	 *            the generic type
+	 *     		the generic type
 	 * @param json
 	 *            the string from which the object is to be deserialized.
-	 * @param T
-	 *            the type of the desired object.
+	 * @param targetType
+	 *            the target type
 	 * @return an object of type T from the string. Returns null if json is
 	 *         null.
 	 * @see Gson#fromJson(String, Class)
 	 */
-	public static <T> T fromJson(String json, Class<T> T) {
-		return getGson().fromJson(json, T);
+	public static <T> T fromJson(String json, Class<T> targetType) {
+		return getGson().fromJson(json, targetType);
 	}
 
 	/**
-	 * To json.
+	 * Create a JSON representation of the object
 	 *
-	 * @param src
+	 * @param source
 	 *            the object for which Json representation is to be created
 	 *            setting for Gson .
 	 * @return Json representation of src.
 	 * @see Gson#toJson(Object)
 	 */
-	public static String toJson(Object src) {
-		return getGson().toJson(src);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "JsonUtils []";
+	public static String toJson(Object source) {
+		return getGson().toJson(source);
 	}
 
 }

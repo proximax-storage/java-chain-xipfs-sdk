@@ -1,55 +1,57 @@
 package io.proximax.utils;
 
+import io.reactivex.Observable;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.Tika;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.stream.Collectors.toList;
 
 /**
- * The Class ContentTypeUtils.
+ * The utility class for detecting content types when unknown
  */
 public class ContentTypeUtils {
 
-    /** The Constant TIKA. */
-    private static final Tika TIKA = new Tika();
+    private Tika tika;
 
     /**
-     * Content type lookup.
-     *
-     * @param contentType the content type
-     * @param content the content
-     * @return the string
+     * Construct an instance of this utility class
      */
-    public static String contentTypeLookup(final String contentType, final String content) {
-        return StringUtils.isEmpty(contentType) ? TIKA.detect(content) : contentType;
+    public ContentTypeUtils() {
+        this.tika = new Tika();
     }
 
     /**
-     * Content type lookup.
-     *
-     * @param contentType the content type
-     * @param content the content
-     * @return the string
+     * Detect the content type for the given data if unknown
+     * @param data the data represented as byte array
+     * @param contentType the specified content type for the data
+     * @return the specified content type or the detected content type
      */
-    public static String contentTypeLookup(final String contentType, final byte[] content) {
-        return StringUtils.isEmpty(contentType)  ? TIKA.detect(content) : contentType;
+    public Observable<String> detectContentType(final byte[] data, final String contentType) {
+        checkArgument(data != null, "data is required");
+
+        return Observable.just(detectContentTypeFor(data, contentType));
     }
 
     /**
-     * Detect content type.
-     *
-     * @param content the content
-     * @return the string
+     * Detect the content type for the given list data if unknown
+     * @param dataList the list of data
+     * @param contentTypeList the specified content types for the list of data
+     * @return the list of content types from specified or detected
      */
-    public static String detectContentType(final String content) {
-        return StringUtils.isEmpty(content) ? null : TIKA.detect(content);
+    public Observable<List<String>> detectContentTypeForList(final List<byte[]> dataList, final List<String> contentTypeList) {
+        checkArgument(dataList != null, "dataList is required");
+        checkArgument(contentTypeList != null, "contentTypeList is required");
+
+        return Observable.just(IntStream.range(0, dataList.size())
+                .mapToObj(index -> detectContentTypeFor(dataList.get(index), contentTypeList.get(index)))
+                .collect(toList()));
     }
 
-    /**
-     * Detect content type.
-     *
-     * @param content the content
-     * @return the string
-     */
-    public static String detectContentType(final byte[] content) {
-        return TIKA.detect(content);
+    private String detectContentTypeFor(final byte[] data, final String contentType) {
+        return StringUtils.isEmpty(contentType) ? tika.detect(data) : contentType;
     }
 }

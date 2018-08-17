@@ -1,27 +1,55 @@
 package io.proximax.privacy.strategy;
 
-import io.nem.sdk.model.transaction.TransferTransaction;
-import io.proximax.model.ProximaxChildMessage;
+import io.proximax.model.PrivacyType;
 
 /**
- * The Class PlainPrivacyStrategy.
+ * The plain privacy strategy.
+ * <br>
+ * <br>
+ * This strategy does not encrypt nor decrypt the data.
  */
-public class PlainPrivacyStrategy extends AbstractPlainMessagePrivacyStrategy {
+public final class PlainPrivacyStrategy extends AbstractPlainMessagePrivacyStrategy {
 
-    /* (non-Javadoc)
-     * @see io.nem.xpx.strategy.privacy.PrivacyStrategy#encrypt(byte[])
+    PlainPrivacyStrategy(String searchTag) {
+        super(searchTag);
+    }
+
+    /**
+     * Get the privacy type which is set as PLAIN
+     * @return the privacy type's int value
+     * @see PrivacyType
      */
     @Override
-    public byte[] encrypt(final byte[] data) {
+    public int getPrivacyType() {
+        return PrivacyType.PLAIN.getValue();
+    }
+
+    /**
+     * Return same data on encrypt
+     * @param data data to encrypt
+     * @return same data
+     */
+    @Override
+    public final byte[] encryptData(byte[] data) {
         return data;
     }
 
-    /* (non-Javadoc)
-     * @see io.nem.xpx.strategy.privacy.PrivacyStrategy#decrypt(byte[], org.nem.core.model.TransferTransaction, io.nem.xpx.service.model.buffers.ResourceHashMessage)
+    /**
+     * Return same data on decrypt
+     * @param data data to decrypt
+     * @return same data
      */
     @Override
-    public byte[] decrypt(final byte[] data, final TransferTransaction transaction, final ProximaxChildMessage message) {
+    public final byte[] decryptData(byte[] data) {
         return data;
     }
 
+    /**
+     * Create instance of this strategy
+     * @param searchTag an optional search tag
+     * @return the instance of this strategy
+     */
+    public static PlainPrivacyStrategy create(String searchTag) {
+        return new PlainPrivacyStrategy(searchTag);
+    }
 }

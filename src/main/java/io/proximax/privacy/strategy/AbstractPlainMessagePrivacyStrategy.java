@@ -2,30 +2,33 @@ package io.proximax.privacy.strategy;
 
 import io.nem.sdk.model.transaction.Message;
 import io.nem.sdk.model.transaction.PlainMessage;
-import io.nem.sdk.model.transaction.TransferTransaction;
-import io.proximax.exceptions.DecodeNemMessageFailureException;
 
 /**
- * The Class AbstractPlainMessagePrivacyStrategy.
+ * The abstract class implementation of Privacy Strategy for encoding and decoding of transaction message as plain message
  */
-public abstract class AbstractPlainMessagePrivacyStrategy extends AbstractPrivacyStrategy {
+public abstract class AbstractPlainMessagePrivacyStrategy extends PrivacyStrategy {
 
-
-    /* (non-Javadoc)
-     * @see io.nem.xpx.strategy.privacy.PrivacyStrategy#encodeToMessage(byte[])
-     */
-    @Override
-    public Message encodeToMessage(byte[] data) {
-        return new PlainMessage(new String(data));
+    AbstractPlainMessagePrivacyStrategy(String privacySearchTag) {
+        super(privacySearchTag);
     }
 
-    /* (non-Javadoc)
-     * @see io.nem.xpx.strategy.privacy.PrivacyStrategy#decodeTransaction(org.nem.core.model.TransferTransaction)
+    /**
+     * Create a plain message for transaction
+     * @param payload the payload to be attached as message
+     * @return the plain message
      */
     @Override
-    public byte[] decodeTransaction(TransferTransaction transaction) {
-        if (transaction.getMessage().getType() != 0)
-            throw new DecodeNemMessageFailureException("Unable to decode secure message with plain privacy strategy");
-        return transaction.getMessage().getPayload().getBytes();
+    public final Message encodePayloadAsMessage(String payload) {
+        return PlainMessage.create(payload);
+    }
+
+    /**
+     * Reads the payload from the plain message
+     * @param message the transaction message
+     * @return the payload
+     */
+    @Override
+    public final String decodePayloadFromMessage(Message message) {
+        return message.getPayload();
     }
 }
