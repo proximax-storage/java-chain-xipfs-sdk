@@ -1,6 +1,11 @@
 package io.proximax.cipher;
 
-import javax.crypto.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -10,6 +15,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
+/**
+ * This encryption class handle the encrypting and decrypting of data using PBKDF2WithHmacSHA256 algorithm
+ */
 public class BinaryPBKDF2CipherEncryption {
 
 	private static final String CONST_ALGO_PBKDF2 = "PBKDF2WithHmacSHA256";
@@ -21,7 +29,7 @@ public class BinaryPBKDF2CipherEncryption {
 			(byte) 0x35, (byte) 0xE3, (byte) 0x03 };
 
 	/**
-	 * Encrypt.
+	 * Encrypt data with password
 	 *
 	 * @param binary the binary
 	 * @param password the password
@@ -54,7 +62,7 @@ public class BinaryPBKDF2CipherEncryption {
 	}
 
 	/**
-	 * Decrypt.
+	 * Decrypt data with password
 	 *
 	 * @param binary the binary
 	 * @param password the password

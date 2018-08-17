@@ -13,7 +13,7 @@ import io.proximax.model.ProximaxRootDataModel;
  *     <li><b>rootDataHash</b> - the data hash for the root data that refers to the upload instance</li>
  *     <li><b>rootData</b> - the root data (ProximaxRootDataModel) that describes the upload instance</li>
  * </ul>
- * @see Upload
+ * @see Upload#upload(UploadParameter)
  */
 public class UploadResult {
 
@@ -22,7 +22,7 @@ public class UploadResult {
     private String rootDataHash;
     private ProximaxRootDataModel rootData;
 
-    UploadResult(String transactionHash, String digest, String rootDataHash, ProximaxRootDataModel rootData) {
+    private UploadResult(String transactionHash, String digest, String rootDataHash, ProximaxRootDataModel rootData) {
         this.transactionHash = transactionHash;
         this.digest = digest;
         this.rootDataHash = rootDataHash;

@@ -1,6 +1,6 @@
 package io.proximax.utils;
 
-import io.proximax.exceptions.InvalidDigestException;
+import io.proximax.exceptions.DigestDoesNotMatchException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -68,7 +68,7 @@ public class DigestUtilsTest {
         assertThat(result, is(true));
     }
 
-    @Test(expected = InvalidDigestException.class)
+    @Test(expected = DigestDoesNotMatchException.class)
     public void FailOnValidateDigestWhenExpectedDigestDoesNotMatch() {
         unitUnderTest.validateDigest(SAMPLE_DATA, SAMPLE_DIGEST_HEX + "gibberish").blockingFirst();
     }
@@ -93,7 +93,7 @@ public class DigestUtilsTest {
         assertThat(result, is(true));
     }
 
-    @Test(expected = InvalidDigestException.class)
+    @Test(expected = DigestDoesNotMatchException.class)
     public void FailOnValidateDigesListtWhenOneExpectedDigestDoesNotMatch() {
         unitUnderTest.validateDigestList(asList(SAMPLE_DATA, SAMPLE_DATA_2),
                 asList(SAMPLE_DIGEST_HEX, SAMPLE_DIGEST_HEX_2 + "gibberish")).blockingFirst();    }

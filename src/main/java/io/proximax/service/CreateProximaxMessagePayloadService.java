@@ -14,12 +14,19 @@ import java.util.Optional;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
+/**
+ * The service class responsible for creating a message payload
+ */
 public class CreateProximaxMessagePayloadService {
 
     private final IpfsUploadService ipfsUploadService;
     private final DigestUtils digestUtils;
     private final PrivacyDataEncryptionUtils privacyDataEncryptionUtils;
 
+    /**
+     * Construct service class
+     * @param ipfsConnection the config class to connect to IPFS
+     */
     public CreateProximaxMessagePayloadService(IpfsConnection ipfsConnection) {
         this.ipfsUploadService = new IpfsUploadService(ipfsConnection);
         this.digestUtils = new DigestUtils();
@@ -33,6 +40,12 @@ public class CreateProximaxMessagePayloadService {
         this.privacyDataEncryptionUtils = privacyDataEncryptionUtils;
     }
 
+    /**
+     * Creates a message payload
+     * @param uploadParameter the upload parameter
+     * @param rootData a created root data
+     * @return the created message payload
+     */
     public Observable<ProximaxMessagePayloadModel> createMessagePayload(UploadParameter uploadParameter, ProximaxRootDataModel rootData) {
         checkParameter(uploadParameter != null, "uploadParameter is required");
         checkParameter(rootData != null, "rootData is required");

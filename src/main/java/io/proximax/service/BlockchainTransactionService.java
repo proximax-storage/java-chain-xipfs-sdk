@@ -25,6 +25,9 @@ import java.util.Collections;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+/**
+ * The service class responsible for handling tasks that work with blockchain transactions
+ */
 public class BlockchainTransactionService {
 
     private final BlockchainNetworkConnection blockchainNetworkConnection;
@@ -32,6 +35,11 @@ public class BlockchainTransactionService {
     private final TransactionClient transactionClient;
     private final NemUtils nemUtils;
 
+    /**
+     * Construct service class
+     * @param blockchainNetworkConnection the config class to connect to blockchain network
+     * @throws MalformedURLException when the blockchain endpoint URL fails
+     */
     public BlockchainTransactionService(BlockchainNetworkConnection blockchainNetworkConnection) throws MalformedURLException {
         this.blockchainNetworkConnection = blockchainNetworkConnection;
         this.transactionClient = new TransactionClient(blockchainNetworkConnection);
@@ -47,6 +55,11 @@ public class BlockchainTransactionService {
         this.blockchainMessageFactory = blockchainMessageFactory;
     }
 
+    /**
+     * Retrieves a transfer transaction
+     * @param transactionHash the transfer transaction hash
+     * @return the transfer transaction
+     */
     public Observable<TransferTransaction> getTransferTransaction(final String transactionHash) {
         checkArgument(transactionHash != null, "transactionHash is required");
 
@@ -61,6 +74,14 @@ public class BlockchainTransactionService {
                 });
     }
 
+    /**
+     * Create and announce a blockchain transaction
+     * @param privacyStrategy the privacy strategy that handles the encoding of payload to message
+     * @param signerPrivateKey the signer's private key for the transaction
+     * @param recipientPublicKey the recipient's public key for the transaction recipient
+     * @param messagePayload the message payload
+     * @return the transaction hash
+     */
     public Observable<String> createAndAnnounceTransaction(PrivacyStrategy privacyStrategy, String signerPrivateKey,
                                                            String recipientPublicKey, ProximaxMessagePayloadModel messagePayload) {
         checkArgument(privacyStrategy != null, "privacyStrategy is required");

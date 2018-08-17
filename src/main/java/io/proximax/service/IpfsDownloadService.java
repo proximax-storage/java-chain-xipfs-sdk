@@ -8,10 +8,17 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+/**
+ * The service class responsible for download from IPFS
+ */
 public class IpfsDownloadService {
 
     private final IpfsClient ipfsClient;
 
+    /**
+     * Construct this class
+     * @param ipfsConnection the config class to connect to IPFS
+     */
     public IpfsDownloadService(final IpfsConnection ipfsConnection) {
         this.ipfsClient = new IpfsClient(ipfsConnection);
     }
@@ -20,6 +27,11 @@ public class IpfsDownloadService {
         this.ipfsClient = ipfsClient;
     }
 
+    /**
+     * Download a list of data
+     * @param dataHashList the list of datah hash
+     * @return the list of data
+     */
     public Observable<List<byte[]>> downloadList(final List<String> dataHashList) {
         checkArgument(dataHashList != null, "dataHashList is required");
 
@@ -29,6 +41,11 @@ public class IpfsDownloadService {
                 .toObservable();
     }
 
+    /**
+     * Download the data
+     * @param dataHash the data hash
+     * @return the data
+     */
     public Observable<byte[]> download(final String dataHash) {
         checkArgument(dataHash != null, "dataHash is required");
 

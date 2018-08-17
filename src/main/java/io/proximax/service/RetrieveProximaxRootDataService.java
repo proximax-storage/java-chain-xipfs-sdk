@@ -14,11 +14,18 @@ import java.util.Optional;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
+/**
+ * The service class responsible for retrieving root data
+ */
 public class RetrieveProximaxRootDataService {
     private final IpfsDownloadService ipfsDownloadService;
     private final DigestUtils digestUtils;
     private final PrivacyDataEncryptionUtils privacyDataEncryptionUtils;
 
+    /**
+     * Construct this class
+     * @param ipfsConnection the config class to connect to IPFS
+     */
     public RetrieveProximaxRootDataService(IpfsConnection ipfsConnection) {
         this.ipfsDownloadService = new IpfsDownloadService(ipfsConnection);
         this.digestUtils = new DigestUtils();
@@ -32,6 +39,12 @@ public class RetrieveProximaxRootDataService {
         this.privacyDataEncryptionUtils = privacyDataEncryptionUtils;
     }
 
+    /**
+     * Retrieves the root data
+     * @param downloadParam the download parameter
+     * @param messagePayloadOpt the optional message payload
+     * @return the root data
+     */
     public Observable<ProximaxRootDataModel> getRootData(DownloadParameter downloadParam, Optional<ProximaxMessagePayloadModel> messagePayloadOpt) {
         checkParameter(downloadParam != null, "downloadParam is required");
         checkParameter(messagePayloadOpt != null, "messagePayloadOpt is required");

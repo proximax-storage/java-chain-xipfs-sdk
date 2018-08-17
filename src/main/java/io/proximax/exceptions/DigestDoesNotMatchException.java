@@ -1,15 +1,15 @@
 package io.proximax.exceptions;
 
 /**
- * The exception when a privacy strategy decryption process has failed
+ * The exception when digest validation failed
  */
-public class DecryptionFailureException extends RuntimeException {
+public class DigestDoesNotMatchException extends RuntimeException {
 
 	/**
 	 * Create instance of this exception
 	 * @param message the exception message
 	 */
-	public DecryptionFailureException(String message) {
+	public DigestDoesNotMatchException(String message) {
 		super(message);
 	}
 
@@ -18,7 +18,7 @@ public class DecryptionFailureException extends RuntimeException {
 	 * @param message the exception message
 	 * @param cause the cause of this exception
 	 */
-	public DecryptionFailureException(String message, Throwable cause) {
+	public DigestDoesNotMatchException(String message, Throwable cause) {
 		super(message, cause);
 	}
 

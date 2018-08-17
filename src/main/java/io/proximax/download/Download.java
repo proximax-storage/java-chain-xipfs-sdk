@@ -3,7 +3,7 @@ package io.proximax.download;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.exceptions.DownloadFailureException;
-import io.proximax.exceptions.UploadInitFailureException;
+import io.proximax.exceptions.DownloadInitFailureException;
 import io.proximax.model.ProximaxRootDataModel;
 import io.proximax.service.BlockchainTransactionService;
 import io.proximax.service.RetrieveProximaxDataService;
@@ -17,12 +17,31 @@ import java.util.Optional;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
+/**
+ * The Download class that handles the download functionality
+ * <br>
+ * <br>
+ * The Upload creation requires a ConnectionConfig that defines generally where the download will be done.
+ * The instance of the class can be reused to download multiple times.
+ * <br>
+ * <br>
+ * Downloads can be done by providing the blockchain transaction hash and the root data hash to download the whole upload instance.
+ * <br>
+ * Downloads can also download data directly by providing the data hash.
+ * @see ConnectionConfig
+ * @see DownloadParameter
+ * @see DownloadDataParameter
+ */
 public class Download {
     private final BlockchainTransactionService blockchainTransactionService;
     private final RetrieveProximaxMessagePayloadService retrieveProximaxMessagePayloadService;
     private final RetrieveProximaxRootDataService retrieveProximaxRootDataService;
     private final RetrieveProximaxDataService retrieveProximaxDataService;
 
+    /**
+     * Construct the class with a ConnectionConfig
+     * @param connectionConfig the connection config that defines generally where the download will be sent
+     */
     public Download(ConnectionConfig connectionConfig) {
         this.retrieveProximaxMessagePayloadService = new RetrieveProximaxMessagePayloadService();
         this.retrieveProximaxRootDataService = new RetrieveProximaxRootDataService(connectionConfig.getIpfsConnection());
@@ -31,7 +50,7 @@ public class Download {
         try {
             this.blockchainTransactionService = new BlockchainTransactionService(connectionConfig.getBlockchainNetworkConnection());
         } catch (MalformedURLException e) {
-            throw new UploadInitFailureException("Failed to initialize", e);
+            throw new DownloadInitFailureException("Failed to initialize", e);
         }
     }
 
@@ -43,6 +62,13 @@ public class Download {
         this.retrieveProximaxDataService = retrieveProximaxDataService;
     }
 
+    /**
+     * Download the upload instance by providing the blockchain transaction hash or root data hash
+     * <br>
+     * By downloading the upload instance, it automatically fetches all data included on that upload instance.
+     * @param downloadParam the download parameter
+     * @return the download result containing the list of data
+     */
     public DownloadResult download(final DownloadParameter downloadParam) {
         checkParameter(downloadParam != null, "downloadParam is required");
 
@@ -58,6 +84,11 @@ public class Download {
                 .blockingFirst();
     }
 
+    /**
+     * Download a data by providing the data hash
+     * @param downloadDataParameter the download data parameter
+     * @return the download result containing the data
+     */
     public DownloadDataResult downloadData(final DownloadDataParameter downloadDataParameter) {
         checkParameter(downloadDataParameter != null, "downloadDataParameter is required");
 

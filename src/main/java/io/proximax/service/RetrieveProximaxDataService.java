@@ -16,12 +16,19 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
+/**
+ * The service class responsible for retrieving data
+ */
 public class RetrieveProximaxDataService {
 
     private final IpfsDownloadService ipfsDownloadService;
     private final DigestUtils digestUtils;
     private final PrivacyDataEncryptionUtils privacyDataEncryptionUtils;
 
+    /**
+     * Construct this class
+     * @param ipfsConnection the config class to connect to IPFS
+     */
     public RetrieveProximaxDataService(IpfsConnection ipfsConnection) {
         this.ipfsDownloadService = new IpfsDownloadService(ipfsConnection);
         this.digestUtils = new DigestUtils();
@@ -35,6 +42,11 @@ public class RetrieveProximaxDataService {
         this.privacyDataEncryptionUtils = privacyDataEncryptionUtils;
     }
 
+    /**
+     * Retrieve data
+     * @param downloadDataParameter the download data parameter
+     * @return the data
+     */
     public Observable<byte[]> getData(DownloadDataParameter downloadDataParameter) {
         checkParameter(downloadDataParameter != null, "downloadDataParameter is required");
 
@@ -44,6 +56,12 @@ public class RetrieveProximaxDataService {
                 .map(dataList -> dataList.get(0));
     }
 
+    /**
+     * Retrieve a list of data
+     * @param downloadParam the download parameter
+     * @param rootData the root data
+     * @return the list of data
+     */
     public Observable<List<byte[]>> getDataList(DownloadParameter downloadParam, ProximaxRootDataModel rootData) {
         checkParameter(downloadParam != null, "downloadParam is required");
         checkParameter(rootData != null, "rootData is required");

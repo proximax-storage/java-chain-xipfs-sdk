@@ -1,15 +1,15 @@
 package io.proximax.exceptions;
 
 /**
- * The exception when an upload parameter build failed
+ * The exception when a download initialization failed
  */
-public class UploadParameterBuildFailureException extends RuntimeException {
+public class DownloadInitFailureException extends RuntimeException {
 
     /**
      * Create instance of this exception
      * @param message the exception message
      */
-    public UploadParameterBuildFailureException(String message) {
+    public DownloadInitFailureException(String message) {
         super(message);
     }
 
@@ -18,7 +18,7 @@ public class UploadParameterBuildFailureException extends RuntimeException {
      * @param message the exception message
      * @param cause the cause of this exception
      */
-    public UploadParameterBuildFailureException(String message, Throwable cause) {
+    public DownloadInitFailureException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -44,7 +44,7 @@ public class UploadParameterBuilder {
     private List<UploadParameterData> dataList;
 
     /**
-     * Construct the builder class with a signer private key and recipient public key
+     * Construct the builder class
      * @param signerPrivateKey the private key of a blockchain account that will be used to create transaction for each upload
      * @param recipientPublicKey the public key of a blockchain account that will receive the transactions being created
      */

@@ -18,10 +18,10 @@ import static java.util.Collections.unmodifiableList;
  *     <li><b>description</b> - an optional short description for the upload</li>
  *     <li><b>privacyStrategy</b> - an optional privacy strategy that defines how the data will be encrypted</li>
  *     <li><b>computeDigest</b> - an optional flag that indicates if a digest is required to be calculated (true by default)</li>
- *     <li><b>dataList</b> - a list of UploadParameterData that contains the data and additional info
+ *     <li><b>dataList</b> - a list of UploadParameterData that contains the data and additional info</li>
  *     <li><b>version</b> - the version of upload (always 1.0 - cannot be updated) </li>
  * </ul>
- * @see Upload
+ * @see Upload#upload(UploadParameter)
  * @see UploadParameterBuilder
  */
 public class UploadParameter {
@@ -102,7 +102,7 @@ public class UploadParameter {
     }
 
     /**
-     * Start creating an instance of UploadParameter using the UploadParameterBuilder
+     * Start creating an instance of this class using UploadParameterBuilder
      * @param signerPrivateKey the private key of a blockchain account that will be used to create transaction for each upload
      * @param recipientPublicKey the public key of a blockchain account that will receive the transactions being created
      * @return the upload parameter builder

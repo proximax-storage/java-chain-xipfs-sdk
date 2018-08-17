@@ -17,6 +17,9 @@ import java.util.List;
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 import static java.util.stream.Collectors.toList;
 
+/**
+ * The service class responsible for creating a root data
+ */
 public class CreateProximaxRootDataService {
 
     private final IpfsUploadService ipfsUploadService;
@@ -24,6 +27,10 @@ public class CreateProximaxRootDataService {
     private final ContentTypeUtils contentTypeUtils;
     private final PrivacyDataEncryptionUtils privacyDataEncryptionUtils;
 
+    /**
+     * Construct this class
+     * @param ipfsConnection the config class to connect to IPFS
+     */
     public CreateProximaxRootDataService(IpfsConnection ipfsConnection) {
         this.ipfsUploadService = new IpfsUploadService(ipfsConnection);
         this.digestUtils = new DigestUtils();
@@ -39,6 +46,11 @@ public class CreateProximaxRootDataService {
         this.privacyDataEncryptionUtils = privacyDataEncryptionUtils;
     }
 
+    /**
+     * Creates a root data
+     * @param uploadParam the upload parameter
+     * @return the created root data
+     */
     public Observable<ProximaxRootDataModel> createRootData(UploadParameter uploadParam) {
         checkParameter(uploadParam != null, "uploadParam is required");
 
