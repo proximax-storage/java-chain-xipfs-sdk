@@ -21,7 +21,6 @@ target
 build
 
 .settings
-.swagger-codegen
 .classpath
 .project
 .gitlab-ci.yml
