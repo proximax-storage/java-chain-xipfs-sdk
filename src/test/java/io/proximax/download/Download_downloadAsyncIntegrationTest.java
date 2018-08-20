@@ -6,6 +6,7 @@ import io.proximax.async.AsyncTask;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
+import io.proximax.exceptions.DownloadFailureException;
 import io.proximax.model.PrivacyType;
 import io.proximax.testsupport.TestHelper;
 import org.junit.Before;
@@ -20,9 +21,9 @@ import static io.proximax.testsupport.Constants.PUBLIC_KEY_2;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.IsNull.nullValue;
 
 public class Download_downloadAsyncIntegrationTest {
 
@@ -74,6 +75,20 @@ public class Download_downloadAsyncIntegrationTest {
 		assertThat(result.getDataList().get(0).getDescription(), is("byte array description"));
 		assertThat(result.getDataList().get(0).getName(), is("byte array"));
 		assertThat(result.getDataList().get(0).getMetadata(), is(singletonMap("key1", "val1")));
+	}
+
+	@Test
+	public void shouldDownloadAsynchronouslyWithFailureCallback() throws Exception {
+		final DownloadParameter param =
+				DownloadParameter.createWithTransactionHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+						.plainPrivacy()
+						.build();
+		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
+
+		unitUnderTest.downloadAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));
+		final Throwable throwable = toPopulateOnFailure.get();
+
+		assertThat(throwable, instanceOf(DownloadFailureException.class));
 	}
 
 }

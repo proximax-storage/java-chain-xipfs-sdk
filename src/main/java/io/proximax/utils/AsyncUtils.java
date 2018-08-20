@@ -37,6 +37,7 @@ public class AsyncUtils {
                             if (asyncCallback != null) {
                                 asyncCallback.onFailure(throwable);
                             }
+                            asyncTask.done();
                         });
     }
 }

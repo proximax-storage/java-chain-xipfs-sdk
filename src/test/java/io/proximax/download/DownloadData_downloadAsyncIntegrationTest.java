@@ -6,6 +6,7 @@ import io.proximax.async.AsyncTask;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
+import io.proximax.exceptions.DownloadDataFailureException;
 import io.proximax.testsupport.TestHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
 import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
@@ -55,6 +57,19 @@ public class DownloadData_downloadAsyncIntegrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getData(), is(notNullValue()));
+	}
+
+	@Test
+	public void shouldDownloadDataAsynchronouslyWithFailureCallback() throws Exception {
+		final DownloadDataParameter param =
+				DownloadDataParameter.create("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
+		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
+
+		unitUnderTest.downloadDataAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));
+		final Throwable throwable = toPopulateOnFailure.get();
+
+		assertThat(throwable, instanceOf(DownloadDataFailureException.class));
+
 	}
 
 }

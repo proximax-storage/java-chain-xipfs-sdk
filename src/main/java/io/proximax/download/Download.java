@@ -4,6 +4,7 @@ import io.nem.sdk.model.transaction.TransferTransaction;
 import io.proximax.async.AsyncCallback;
 import io.proximax.async.AsyncTask;
 import io.proximax.connection.ConnectionConfig;
+import io.proximax.exceptions.DownloadDataFailureException;
 import io.proximax.exceptions.DownloadFailureException;
 import io.proximax.exceptions.DownloadInitFailureException;
 import io.proximax.model.ProximaxRootDataModel;
@@ -139,7 +140,7 @@ public class Download {
         return retrieveProximaxDataService.getData(downloadDataParameter)
                 .map(DownloadDataResult::new)
                 .onErrorResumeNext((Throwable ex) ->
-                        Observable.error(new DownloadFailureException("Download failed.", ex)));
+                        Observable.error(new DownloadDataFailureException("Download data failed.", ex)));
     }
 
     private Observable<Optional<TransferTransaction>> getBlockchainTransaction(String transactionHash) {

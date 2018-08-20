@@ -1,14 +1,15 @@
 package io.proximax.upload;
 
-import com.google.common.io.Files;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.proximax.async.AsyncCallback;
 import io.proximax.async.AsyncTask;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
+import io.proximax.exceptions.UploadFailureException;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.concurrent.CompletableFuture;
@@ -25,6 +26,7 @@ import static io.proximax.testsupport.Constants.STRING_TEST;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
@@ -40,7 +42,7 @@ public class Upload_uploadAsyncIntegrationTest {
 	}
 
 	@Test
-	public void shouldUploadAsynchrounslyWithoutCallback() throws Exception {
+	public void shouldUploadAsynchronouslyWithoutCallback() throws Exception {
 		final UploadParameter param = UploadParameter.create(PRIVATE_KEY_1, PUBLIC_KEY_2)
 				.addByteArray(FileUtils.readFileToByteArray(PDF_FILE1))
 				.addFile(SMALL_FILE)
@@ -58,7 +60,7 @@ public class Upload_uploadAsyncIntegrationTest {
 	}
 
 	@Test
-	public void shouldUploadAsynchrounslyWithSuccessCallback() throws Exception {
+	public void shouldUploadAsynchronouslyWithSuccessCallback() throws Exception {
 		final UploadParameter param = UploadParameter.create(PRIVATE_KEY_1, PUBLIC_KEY_2)
 				.addByteArray(FileUtils.readFileToByteArray(PDF_FILE1))
 				.addFile(SMALL_FILE)
@@ -85,4 +87,21 @@ public class Upload_uploadAsyncIntegrationTest {
 		});
 	}
 
+	@Test
+	@Ignore("need to add announce transaction validation first - this one goes to success callback still")
+	public void shouldUploadAsynchronouslyWithFailureCallback() throws Exception {
+		final UploadParameter param = UploadParameter.create("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", PUBLIC_KEY_2)
+				.addByteArray(FileUtils.readFileToByteArray(PDF_FILE1))
+				.addFile(SMALL_FILE)
+				.addUrlResource(IMAGE_FILE.toURI().toURL())
+				.addFilesAsZip(asList(SMALL_FILE, HTML_FILE))
+				.addString(STRING_TEST)
+				.build();
+		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
+
+		unitUnderTest.uploadAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));
+		final Throwable throwable = toPopulateOnFailure.get();
+
+		assertThat(throwable, instanceOf(UploadFailureException.class));
+	}
 }

@@ -33,10 +33,20 @@ public class AsyncUtilsTest {
     }
 
     @Test
-    public void shouldSetAsyncTaskToDone() throws InterruptedException {
+    public void shouldSetAsyncTaskToDoneOnSuccess() throws InterruptedException {
         final AsyncTask asyncTask = new AsyncTask();
 
         AsyncUtils.processFirstItem(Observable.just("abc"), null, asyncTask);
+        Thread.sleep(100);
+
+        assertThat(asyncTask.isDone(), is(true));
+    }
+
+    @Test
+    public void shouldSetAsyncTaskToDoneOnFailure() throws InterruptedException {
+        final AsyncTask asyncTask = new AsyncTask();
+
+        AsyncUtils.processFirstItem(Observable.error(new Exception()), null, asyncTask);
         Thread.sleep(100);
 
         assertThat(asyncTask.isDone(), is(true));

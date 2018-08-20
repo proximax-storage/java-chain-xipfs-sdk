@@ -4,7 +4,7 @@ import io.nem.sdk.model.blockchain.NetworkType;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
-import io.proximax.exceptions.DownloadFailureException;
+import io.proximax.exceptions.DownloadDataFailureException;
 import io.proximax.testsupport.TestHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class DownloadData_downloadIntegrationTest {
 				new IpfsConnection(IPFS_MULTI_ADDRESS)));
 	}
 
-	@Test(expected = DownloadFailureException.class)
+	@Test(expected = DownloadDataFailureException.class)
 	public void failWhenInvalidDataHash() {
 		final DownloadDataParameter param =
 				DownloadDataParameter.create("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
@@ -45,13 +45,4 @@ public class DownloadData_downloadIntegrationTest {
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getData(), is(notNullValue()));
 	}
-
-	@Test(expected = DownloadFailureException.class)
-	public void failWhenInvalidRootDataHash() {
-		final DownloadParameter param =
-				DownloadParameter.createWithRootDataHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", null).build();
-
-		unitUnderTest.download(param);
-	}
-
 }
