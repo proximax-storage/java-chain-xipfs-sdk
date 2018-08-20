@@ -259,6 +259,44 @@ public class UploadParameterBuilder {
         return this;
     }
 
+     /**
+     * Add a path to upload by providing a PathParameterData
+     * @param parameterData the parameter data with attributes of a path upload
+     * @return the same instance of this builder
+     */
+    public UploadParameterBuilder addPath(PathParameterData parameterData) {
+        checkParameter(parameterData != null, "parameterData is required");
+
+        this.dataList.add(parameterData);
+        return this;
+    }
+
+    /**
+     * Add a path to upload by providing only the file path
+     * @param path the path to upload
+     * @return the same instance of this builder
+     */
+    public UploadParameterBuilder addPath(File path) {
+        checkParameter(path != null, "path is required");
+
+        this.dataList.add(PathParameterData.create(path).build());
+        return this;
+    }
+
+    /**
+     * Add a path to upload by providing the file path and additional info
+     * @param path the path to upload
+     * @param description a description for the URL
+     * @param name the name for the URL
+     * @param metadata an additional metadata for URL
+     * @return the same instance of this builder
+     */
+    public UploadParameterBuilder addPath(File path, String description, String name,
+                                          Map<String, String> metadata) {
+        this.dataList.add(new PathParameterData(path, description, name, metadata));
+        return this;
+    }
+
     /**
      * Set a short description for the upload
      * @param description short description for the upload

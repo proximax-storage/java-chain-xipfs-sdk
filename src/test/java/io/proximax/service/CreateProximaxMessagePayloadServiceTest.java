@@ -37,6 +37,7 @@ public class CreateProximaxMessagePayloadServiceTest {
     private static final String DUMMY_ROOT_DATA_HASH = "Qmcjkzxhkjchxzkjhcjkxznbcjkxz";
     private static final String DUMMY_ROOT_DESCRIPTION = "ewqeqwewqeqweqw";
     private static final String DUMMY_VERSION = "1.0";
+    private static final PrivacyStrategy DUMMY_PRIVACY_STRATEGY = PlainPrivacyStrategy.create(null);
 
     private CreateProximaxMessagePayloadService unitUnderTest;
 
@@ -82,7 +83,7 @@ public class CreateProximaxMessagePayloadServiceTest {
         given(mockPrivacyDataEncryptionUtils.encrypt(any(), any()))
                 .willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
         given(mockDigestUtils.digest(any())).willReturn(Observable.just(DUMMY_DIGEST));
-        given(mockIpfsUploadService.upload(any()))
+        given(mockIpfsUploadService.uploadByteArray(any()))
                 .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH, 9999L)));
 
         final ProximaxMessagePayloadModel result =
@@ -101,7 +102,7 @@ public class CreateProximaxMessagePayloadServiceTest {
     public void shouldReturnMessagePayloadWhenComputeDigestFalse() throws UnsupportedEncodingException {
         given(mockPrivacyDataEncryptionUtils.encrypt(any(), any()))
                 .willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
-        given(mockIpfsUploadService.upload(any()))
+        given(mockIpfsUploadService.uploadByteArray(any()))
                 .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH, 9999L)));
 
         final ProximaxMessagePayloadModel result =
@@ -121,7 +122,7 @@ public class CreateProximaxMessagePayloadServiceTest {
         given(mockPrivacyDataEncryptionUtils.encrypt(privacyStrategyArgumentCaptor.capture(), rootDataByteArgumentCaptor.capture()))
                 .willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
         given(mockDigestUtils.digest(digestArgumentCaptor.capture())).willReturn(Observable.just(DUMMY_DIGEST));
-        given(mockIpfsUploadService.upload(uploadArgumentCaptor.capture()))
+        given(mockIpfsUploadService.uploadByteArray(uploadArgumentCaptor.capture()))
                 .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH, 9999L)));
 
         final ProximaxMessagePayloadModel result =

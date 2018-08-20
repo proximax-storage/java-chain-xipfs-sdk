@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -18,7 +19,7 @@ public class StringParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullString() throws IOException {
-        StringParameterData.create(null).build();
+        StringParameterData.create((String) null).build();
     }
 
     @Test
@@ -50,4 +51,10 @@ public class StringParameterDataTest {
         assertThat(param.getMetadata(), is(singletonMap("mykey", "myvalue")));
         assertThat(param.getName(), is("name here"));
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenContentTypeIsReservedExist() throws IOException {
+        StringParameterData.create(SAMPLE_DATA).contentType(PATH_UPLOAD_CONTENT_TYPE).build();
+    }
+
 }

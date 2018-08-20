@@ -29,22 +29,6 @@ public class PrivacyDataEncryptionUtils {
     }
 
     /**
-     * Encrypt a list of data using the given privacy strategy
-     * @param privacyStrategy the privacy strategy
-     * @param dataList the list of data
-     * @return the list of encrypted data
-     */
-    public Observable<List<byte[]>> encryptList(PrivacyStrategy privacyStrategy, List<byte[]> dataList) {
-        checkArgument(privacyStrategy != null, "privacyStrategy is required");
-        checkArgument(dataList != null, "dataInput is required");
-
-        return Observable.fromIterable(dataList)
-                .map(data -> encryptData(privacyStrategy, data))
-                .toList()
-                .toObservable();
-    }
-
-    /**
      * Decrypt an encrypted data using the given privacy strategy
      * @param privacyStrategy the privacy strategy
      * @param data the data

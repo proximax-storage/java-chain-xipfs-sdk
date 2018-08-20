@@ -57,23 +57,6 @@ public class PrivacyDataEncryptionUtilsTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void failOnEncryptListWhenNullPrivacyStrategy() {
-        unitUnderTest.encryptList(null, SAMPLE_DATA_LIST);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failOnEncryptListWhenNullDataList() {
-        unitUnderTest.encryptList(mockPrivacyStrategy, null);
-    }
-
-    @Test
-    public void shouldReturnEncryptedDataListOnEncryptList() {
-        final List<byte[]> result = unitUnderTest.encryptList(mockPrivacyStrategy, SAMPLE_DATA_LIST).blockingFirst();
-
-        assertThat(result, contains(MOCK_ENCRYPTED_DATA, MOCK_ENCRYPTED_DATA_2));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void failOnDecryptWhenNullPrivacyStrategy() {
         unitUnderTest.decrypt(null, MOCK_ENCRYPTED_DATA);
     }

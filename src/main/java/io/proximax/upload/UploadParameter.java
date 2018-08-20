@@ -4,7 +4,7 @@ import io.proximax.privacy.strategy.PrivacyStrategy;
 
 import java.util.List;
 
-import static io.proximax.model.Version.VERSION;
+import static io.proximax.model.Constants.VERSION;
 import static java.util.Collections.unmodifiableList;
 
 /**

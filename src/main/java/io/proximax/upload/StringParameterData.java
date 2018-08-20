@@ -3,12 +3,13 @@ package io.proximax.upload;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+import static io.proximax.model.Constants.RESEVERVE_CONTENT_TYPES;
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
  * This model class is one type of the upload parameter data that defines a string upload
  */
-public class StringParameterData extends UploadParameterData {
+public class StringParameterData extends ByteArrayParameterData {
 
     private final String string;
 
@@ -47,6 +48,7 @@ public class StringParameterData extends UploadParameterData {
     public static class StringParameterDataBuilder extends AbstractParameterDataBuilder<StringParameterDataBuilder> {
         private String string;
         private String encoding;
+        private String contentType;
 
         StringParameterDataBuilder(String string) {
             this.string = string;
@@ -59,6 +61,17 @@ public class StringParameterData extends UploadParameterData {
          */
         public StringParameterDataBuilder encoding(String encoding) {
             this.encoding = encoding;
+            return this;
+        }
+
+        /**
+         * Set the content type for the data
+         * @param contentType the content type
+         * @return same instance of the builder class
+         */
+        public StringParameterDataBuilder contentType(String contentType) {
+            checkParameter(!RESEVERVE_CONTENT_TYPES.contains(contentType), String.format("%s cannot be used as it is reserved", contentType));
+            this.contentType = contentType;
             return this;
         }
 

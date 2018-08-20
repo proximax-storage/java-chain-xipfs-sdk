@@ -15,6 +15,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
+import static io.proximax.testsupport.Constants.PATH_FILE;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -51,22 +52,42 @@ public class IpfsClientTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void failOnAddWhenNullData() {
-        unitUnderTest.add(null);
+    public void failOnAddByteArrayWhenNullData() {
+        unitUnderTest.addByteArray(null);
     }
 
     @Test(expected = IpfsClientFailureException.class)
-    public void shouldBubbleUpExceptionOnAdd() throws IOException {
+    public void shouldBubbleUpExceptionOnAddByteArray() throws IOException {
         given(mockIpfs.add(any())).willThrow(new RuntimeException());
 
-        unitUnderTest.add(SAMPLE_DATA).blockingFirst();
+        unitUnderTest.addByteArray(SAMPLE_DATA).blockingFirst();
     }
 
     @Test
-    public void shouldReturnDataHashOnAdd() throws IOException {
+    public void shouldReturnDataHashOnAddByteArray() throws IOException {
         given(mockIpfs.add(any())).willReturn(asList(SAMPLE_MERKLE_NODE));
 
-        final String dataHash = unitUnderTest.add(SAMPLE_DATA).blockingFirst();
+        final String dataHash = unitUnderTest.addByteArray(SAMPLE_DATA).blockingFirst();
+
+        assertThat(dataHash, is(SAMPLE_DATAHASH));
+    }
+    @Test(expected = IllegalArgumentException.class)
+    public void failOnAddPathWhenNullData() {
+        unitUnderTest.addPath(null);
+    }
+
+    @Test(expected = IpfsClientFailureException.class)
+    public void shouldBubbleUpExceptionOnAddPath() throws IOException {
+        given(mockIpfs.add(any())).willThrow(new RuntimeException());
+
+        unitUnderTest.addPath(PATH_FILE).blockingFirst();
+    }
+
+    @Test
+    public void shouldReturnDataHashOnAddPath() throws IOException {
+        given(mockIpfs.add(any())).willReturn(asList(new MerkleNode("QmXrrVBdauMZPNWfHMrtspaCUrfjWyXC2X17qJBykgC8fh"), SAMPLE_MERKLE_NODE));
+
+        final String dataHash = unitUnderTest.addPath(PATH_FILE).blockingFirst();
 
         assertThat(dataHash, is(SAMPLE_DATAHASH));
     }

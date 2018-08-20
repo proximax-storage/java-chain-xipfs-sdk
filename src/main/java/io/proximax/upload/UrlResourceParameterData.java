@@ -6,12 +6,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
+import static io.proximax.model.Constants.RESEVERVE_CONTENT_TYPES;
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
  * This model class is one type of the upload parameter data that defines a URL resource upload
  */
-public class UrlResourceParameterData extends UploadParameterData {
+public class UrlResourceParameterData extends ByteArrayParameterData {
 
     private final URL url;
 
@@ -48,9 +49,21 @@ public class UrlResourceParameterData extends UploadParameterData {
      */
     public static class UrlResourceParameterDataBuilder extends AbstractParameterDataBuilder<UrlResourceParameterDataBuilder> {
         private URL url;
+        private String contentType;
 
         UrlResourceParameterDataBuilder(URL url) {
             this.url = url;
+        }
+
+        /**
+         * Set the content type for the data
+         * @param contentType the content type
+         * @return same instance of the builder class
+         */
+        public UrlResourceParameterDataBuilder contentType(String contentType) {
+            checkParameter(!RESEVERVE_CONTENT_TYPES.contains(contentType), String.format("%s cannot be used as it is reserved", contentType));
+            this.contentType = contentType;
+            return this;
         }
 
         /**

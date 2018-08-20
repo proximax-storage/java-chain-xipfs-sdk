@@ -16,7 +16,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 /**
  * This model class is one type of the upload parameter data that defines a zip upload
  */
-public class FilesAsZipParameterData extends UploadParameterData {
+public class FilesAsZipParameterData extends ByteArrayParameterData {
 
     private final List<File> files;
 
@@ -35,6 +35,7 @@ public class FilesAsZipParameterData extends UploadParameterData {
 
     private static byte[] zipFiles(List<File> files) throws IOException {
         checkParameter(CollectionUtils.isNotEmpty(files), "files cannot be null or empty");
+        checkParameter(files.stream().allMatch(File::isFile), "not all files are file");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ZipOutputStream zos = new ZipOutputStream(baos)) {

@@ -6,12 +6,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import static io.proximax.model.Constants.RESEVERVE_CONTENT_TYPES;
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
  * This model class is one type of the upload parameter data that defines a file upload
  */
-public class FileParameterData extends UploadParameterData {
+public class FileParameterData extends ByteArrayParameterData {
 
     private final File file;
 
@@ -31,6 +32,7 @@ public class FileParameterData extends UploadParameterData {
 
     private static byte[] readFileToByteArray(File file) throws IOException {
         checkParameter(file != null, "file is required");
+        checkParameter(file.isFile(), "file is not file");
 
         return FileUtils.readFileToByteArray(file);
     }
@@ -49,9 +51,21 @@ public class FileParameterData extends UploadParameterData {
      */
     public static class FileParameterDataBuilder extends AbstractParameterDataBuilder<FileParameterDataBuilder> {
         private File file;
+        private String contentType;
 
         FileParameterDataBuilder(File file) {
             this.file = file;
+        }
+
+        /**
+         * Set the content type for the data
+         * @param contentType the content type
+         * @return same instance of the builder class
+         */
+        public FileParameterDataBuilder contentType(String contentType) {
+            checkParameter(!RESEVERVE_CONTENT_TYPES.contains(contentType), String.format("%s cannot be used as it is reserved", contentType));
+            this.contentType = contentType;
+            return this;
         }
 
         /**

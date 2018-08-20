@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
 import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
@@ -62,7 +63,7 @@ public class Download_downloadAsyncIntegrationTest {
 		final CompletableFuture<DownloadResult> toPopulateOnSuccess = new CompletableFuture<>();
 
 		unitUnderTest.downloadAsync(param, AsyncCallback.create(toPopulateOnSuccess::complete, null));
-		final DownloadResult result = toPopulateOnSuccess.get();
+		final DownloadResult result = toPopulateOnSuccess.get(5, TimeUnit.SECONDS);
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getDescription(), is("root description"));
@@ -86,7 +87,7 @@ public class Download_downloadAsyncIntegrationTest {
 		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
 
 		unitUnderTest.downloadAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));
-		final Throwable throwable = toPopulateOnFailure.get();
+		final Throwable throwable = toPopulateOnFailure.get(5, TimeUnit.SECONDS);
 
 		assertThat(throwable, instanceOf(DownloadFailureException.class));
 	}

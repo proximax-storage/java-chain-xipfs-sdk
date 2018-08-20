@@ -2,10 +2,13 @@ package io.proximax.upload;
 
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static io.proximax.testsupport.Constants.HTML_FILE;
 import static io.proximax.testsupport.Constants.IMAGE_FILE;
+import static io.proximax.testsupport.Constants.PATH_FILE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -19,12 +22,17 @@ public class FilesAsZipParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullFiles() throws IOException {
-        FilesAsZipParameterData.create(null).build();
+        FilesAsZipParameterData.create((List<File>) null).build();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenEmptyFiles() throws IOException {
         FilesAsZipParameterData.create(emptyList()).build();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenSomeFilesIsDirectoryFiles() throws IOException {
+        FilesAsZipParameterData.create(asList(IMAGE_FILE, HTML_FILE, PATH_FILE)).build();
     }
 
     @Test
@@ -45,7 +53,6 @@ public class FilesAsZipParameterDataTest {
                 .description("describe me")
                 .metadata(singletonMap("mykey", "myvalue"))
                 .name("name here")
-                .contentType("text/plain")
                 .build();
 
         assertThat(param, is(notNullValue()));

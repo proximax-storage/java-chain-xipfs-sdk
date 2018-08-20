@@ -1,6 +1,5 @@
 package io.proximax.service.client;
 
-import io.ipfs.api.MerkleNode;
 import io.ipfs.api.NamedStreamable;
 import io.ipfs.multihash.Multihash;
 import io.proximax.connection.IpfsConnection;
@@ -8,7 +7,7 @@ import io.proximax.exceptions.IpfsClientFailureException;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -47,16 +46,37 @@ public class IpfsClient {
      * @param data the byte array being added
      * @return the hash (base58) for the data uploaded
      */
-    public Observable<String> add(byte[] data) {
+    public Observable<String> addByteArray(byte[] data) {
         checkArgument(data != null, "data is required");
 
         return Observable.just(data)
                 .observeOn(Schedulers.io())
-                .map(this::addByteArray)
+                .map(byteArr -> ipfsConnection.getIpfs().add(new NamedStreamable.ByteArrayWrapper(byteArr)))
                 .onErrorResumeNext((Throwable ex) ->
                         Observable.error(new IpfsClientFailureException(String.format("Failed to add resource"), ex)))
                 .observeOn(Schedulers.computation())
                 .map(merkleNodes -> merkleNodes.get(0).hash.toBase58());
+    }
+
+    /**
+     * Add/Upload a path (directory or folder) to IPFS
+     * <br>
+     * <br>
+     * This method is equivalent to `ipfs add` CLI command
+     * @param path the path being added
+     * @return the hash (base58) for the data uploaded
+     */
+    public Observable<String> addPath(File path) {
+        checkArgument(path != null, "path is required");
+        checkArgument(path.isDirectory(), "path should be directory/folder");
+
+        return Observable.just(path)
+                .observeOn(Schedulers.io())
+                .map(pathInput -> ipfsConnection.getIpfs().add(new NamedStreamable.FileWrapper(pathInput)))
+                .onErrorResumeNext((Throwable ex) ->
+                        Observable.error(new IpfsClientFailureException(String.format("Failed to add path"), ex)))
+                .observeOn(Schedulers.computation())
+                .map(merkleNodes -> merkleNodes.get(merkleNodes.size()-1).hash.toBase58());
     }
 
     /**
@@ -74,7 +94,7 @@ public class IpfsClient {
                 .observeOn(Schedulers.computation())
                 .map(hash -> Multihash.fromBase58(dataHash))
                 .observeOn(Schedulers.io())
-                .map(this::pin)
+                .map(hash -> ipfsConnection.getIpfs().pin.add(hash))
                 .onErrorResumeNext((Throwable ex) ->
                         Observable.error(new IpfsClientFailureException(String.format("Failed to pin for %s", dataHash), ex)))
                 .observeOn(Schedulers.computation())
@@ -96,20 +116,8 @@ public class IpfsClient {
                 .observeOn(Schedulers.computation())
                 .map(hash -> Multihash.fromBase58(dataHash))
                 .observeOn(Schedulers.io())
-                .map(this::getByteArray)
+                .map(hash -> ipfsConnection.getIpfs().cat(hash))
                 .onErrorResumeNext((Throwable ex) ->
                         Observable.error(new IpfsClientFailureException(String.format("Failed to get resource for %s", dataHash), ex)));
-    }
-
-    private List<MerkleNode> addByteArray(byte[] data) throws IOException {
-        return ipfsConnection.getIpfs().add(new NamedStreamable.ByteArrayWrapper(data));
-    }
-
-    private List<Multihash> pin(Multihash multihash) throws IOException {
-        return ipfsConnection.getIpfs().pin.add(multihash);
-    }
-
-    private byte[] getByteArray(Multihash multihash) throws IOException {
-        return ipfsConnection.getIpfs().cat(multihash);
     }
 }

@@ -68,7 +68,7 @@ public class CreateProximaxMessagePayloadService {
     }
 
     private Observable<String> ipfsUploadRootData(byte[] encryptedRootData) {
-        return ipfsUploadService.upload(encryptedRootData).map(IpfsUploadResponse::getDataHash);
+        return ipfsUploadService.uploadByteArray(encryptedRootData).map(IpfsUploadResponse::getDataHash);
     }
 
     private ProximaxMessagePayloadModel createMessagePayload(UploadParameter uploadParameter, String rootDataHash, Optional<String> rootDigest) {
