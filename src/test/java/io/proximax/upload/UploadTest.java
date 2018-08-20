@@ -28,8 +28,13 @@ public class UploadTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void failWhenNullUploadParameter() {
+    public void failOnUploadWhenNullUploadParameter() {
         unitUnderTest.upload(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failOnUploadAsyncWhenNullUploadParameter() {
+        unitUnderTest.uploadAsync(null, null);
     }
 
 }

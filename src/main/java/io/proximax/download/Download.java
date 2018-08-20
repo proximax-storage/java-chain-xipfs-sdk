@@ -1,6 +1,8 @@
 package io.proximax.download;
 
 import io.nem.sdk.model.transaction.TransferTransaction;
+import io.proximax.async.AsyncCallback;
+import io.proximax.async.AsyncTask;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.exceptions.DownloadFailureException;
 import io.proximax.exceptions.DownloadInitFailureException;
@@ -9,6 +11,7 @@ import io.proximax.service.BlockchainTransactionService;
 import io.proximax.service.RetrieveProximaxDataService;
 import io.proximax.service.RetrieveProximaxMessagePayloadService;
 import io.proximax.service.RetrieveProximaxRootDataService;
+import io.proximax.utils.AsyncUtils;
 import io.reactivex.Observable;
 
 import java.net.MalformedURLException;
@@ -63,7 +66,7 @@ public class Download {
     }
 
     /**
-     * Download the upload instance by providing the blockchain transaction hash or root data hash
+     * Download the upload instance synchronously by providing the blockchain transaction hash or root data hash
      * <br>
      * By downloading the upload instance, it automatically fetches all data included on that upload instance.
      * @param downloadParam the download parameter
@@ -72,6 +75,55 @@ public class Download {
     public DownloadResult download(final DownloadParameter downloadParam) {
         checkParameter(downloadParam != null, "downloadParam is required");
 
+        return doDownload(downloadParam).blockingFirst();
+    }
+
+    /**
+     * Download the upload instance asynchronously by providing the blockchain transaction hash or root data hash
+     * <br>
+     * By downloading the upload instance, it automatically fetches all data included on that upload instance.
+     * @param downloadParam the download parameter
+     * @param asyncCallback an optional callbacks when succeeded or failed
+     * @return the download result containing the list of data
+     */
+    public AsyncTask downloadAsync(DownloadParameter downloadParam, AsyncCallback<DownloadResult> asyncCallback) {
+        checkParameter(downloadParam != null, "downloadParam is required");
+
+        final AsyncTask asyncTask = new AsyncTask();
+
+        AsyncUtils.processFirstItem(this.doDownload(downloadParam), asyncCallback, asyncTask);
+
+        return asyncTask;
+    }
+
+    /**
+     * Download a data synchronously by providing the data hash
+     * @param downloadDataParameter the download data parameter
+     * @return the download result containing the data
+     */
+    public DownloadDataResult downloadData(final DownloadDataParameter downloadDataParameter) {
+        checkParameter(downloadDataParameter != null, "downloadDataParameter is required");
+
+        return doDownloadData(downloadDataParameter).blockingFirst();
+    }
+
+    /**
+     * Download a data asynchronously by providing the data hash
+     * @param downloadDataParameter the download data parameter
+     * @param asyncCallback an optional callbacks when succeeded or failed
+     * @return the download result containing the data
+     */
+    public AsyncTask downloadDataAsync(DownloadDataParameter downloadDataParameter, AsyncCallback<DownloadDataResult> asyncCallback) {
+        checkParameter(downloadDataParameter != null, "downloadDataParameter is required");
+
+        final AsyncTask asyncTask = new AsyncTask();
+
+        AsyncUtils.processFirstItem(this.doDownloadData(downloadDataParameter), asyncCallback, asyncTask);
+
+        return asyncTask;
+    }
+
+    private Observable<DownloadResult> doDownload(DownloadParameter downloadParam) {
         return getBlockchainTransaction(downloadParam.getTransactionHash())
                 .map(transferTransactionOpt ->
                         transferTransactionOpt.map(transferTransaction ->
@@ -80,23 +132,14 @@ public class Download {
                 .flatMap(rootData -> retrieveProximaxDataService.getDataList(downloadParam, rootData)
                         .map(decryptedDataList -> createDownloadResult(rootData, decryptedDataList)))
                 .onErrorResumeNext((Throwable ex) ->
-                        Observable.error(new DownloadFailureException("Download failed.", ex)))
-                .blockingFirst();
+                        Observable.error(new DownloadFailureException("Download failed.", ex)));
     }
 
-    /**
-     * Download a data by providing the data hash
-     * @param downloadDataParameter the download data parameter
-     * @return the download result containing the data
-     */
-    public DownloadDataResult downloadData(final DownloadDataParameter downloadDataParameter) {
-        checkParameter(downloadDataParameter != null, "downloadDataParameter is required");
-
+    private Observable<DownloadDataResult> doDownloadData(DownloadDataParameter downloadDataParameter) {
         return retrieveProximaxDataService.getData(downloadDataParameter)
                 .map(DownloadDataResult::new)
                 .onErrorResumeNext((Throwable ex) ->
-                        Observable.error(new DownloadFailureException("Download failed.", ex)))
-                .blockingFirst();
+                        Observable.error(new DownloadFailureException("Download failed.", ex)));
     }
 
     private Observable<Optional<TransferTransaction>> getBlockchainTransaction(String transactionHash) {

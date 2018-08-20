@@ -1,5 +1,7 @@
 package io.proximax.upload;
 
+import io.proximax.async.AsyncCallback;
+import io.proximax.async.AsyncTask;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.exceptions.UploadFailureException;
 import io.proximax.exceptions.UploadInitFailureException;
@@ -8,6 +10,7 @@ import io.proximax.model.ProximaxRootDataModel;
 import io.proximax.service.BlockchainTransactionService;
 import io.proximax.service.CreateProximaxMessagePayloadService;
 import io.proximax.service.CreateProximaxRootDataService;
+import io.proximax.utils.AsyncUtils;
 import io.reactivex.Observable;
 
 import java.net.MalformedURLException;
@@ -66,14 +69,38 @@ public class Upload {
     }
 
     /**
-     * Upload data or list of data and attach it on a blockchain transaction.
-     * This synchronous upload returns result once the blockchain transaction is validated and already set with `unconfirmed` status
+     * Upload data or list of data synchronously and attach it on a blockchain transaction.
+     * This upload returns result once the blockchain transaction is validated and already set with `unconfirmed` status
+     * <br>
+     * The upload throws an UploadFailureException runtime exception if does not succeed.
      * @param uploadParam the upload parameter that contains what is being uploaded along with additional details
      * @return the upload result containing the hashes to get the uploaded content
      */
     public UploadResult upload(UploadParameter uploadParam) {
         checkParameter(uploadParam != null, "uploadParam is required");
 
+        return doUpload(uploadParam).blockingFirst();
+    }
+
+    /**
+     * Upload data or list of data asynchronously and attach it on a blockchain transaction.
+     * This upload returns result once the blockchain transaction is validated and already set with `unconfirmed` status
+     * <br>
+     * The upload throws an UploadFailureException runtime exception if does not succeed.
+     * @param uploadParam the upload parameter that contains what is being uploaded along with additional details
+     * @return the upload result containing the hashes to get the uploaded content
+     */
+    public AsyncTask uploadAsync(UploadParameter uploadParam, AsyncCallback<UploadResult> asyncCallback) {
+        checkParameter(uploadParam != null, "uploadParam is required");
+
+        final AsyncTask asyncTask = new AsyncTask();
+
+        AsyncUtils.processFirstItem(this.doUpload(uploadParam), asyncCallback, asyncTask);
+
+        return asyncTask;
+    }
+
+    private Observable<UploadResult> doUpload(UploadParameter uploadParam) {
         return createProximaxRootDataService.createRootData(uploadParam)
                 .flatMap(rootData ->
                         createProximaxMessagePayloadService.createMessagePayload(uploadParam, rootData)
@@ -84,8 +111,7 @@ public class Upload {
                                                 .map(transactionHash ->
                                                         createUploadResult(messagePayload, transactionHash, rootData))))
                 .onErrorResumeNext((Throwable ex) ->
-                        Observable.error(new UploadFailureException("Upload failed.", ex)))
-                .blockingFirst();
+                        Observable.error(new UploadFailureException("Upload failed.", ex)));
     }
 
     private UploadResult createUploadResult(ProximaxMessagePayloadModel transactionMessagePayload, String transactionHash,
