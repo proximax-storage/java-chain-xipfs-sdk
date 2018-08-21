@@ -92,11 +92,11 @@ public class BlockchainTransactionService {
         final Message message = blockchainMessageFactory.createMessage(privacyStrategy, messagePayload);
         final TransferTransaction transaction = createTransaction(recipientPublicKey, message);
         final SignedTransaction signedTransaction = nemUtils.signTransaction(signerPrivateKey, transaction);
+
         return announce(signedTransaction)
                 .map(response -> {
-                    // TODO verify the announce response is successful
-                    // /transaction/<txnhash>/status
-                    // otherwise throw AnnounceBlockchainTransactionFailureException
+                    transactionClient.waitForAnnouncedTransactionToBeUnconfirmed(
+                            nemUtils.toAccount(signerPrivateKey).getAddress(), signedTransaction.getHash());
                     return signedTransaction.getHash();
                 });
     }

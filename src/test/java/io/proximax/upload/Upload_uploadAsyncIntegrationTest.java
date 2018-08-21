@@ -89,7 +89,6 @@ public class Upload_uploadAsyncIntegrationTest {
 	}
 
 	@Test
-	@Ignore("need to add announce transaction validation first - this one goes to success callback still")
 	public void shouldUploadAsynchronouslyWithFailureCallback() throws Exception {
 		final UploadParameter param = UploadParameter.create("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", PUBLIC_KEY_2)
 				.addByteArray(FileUtils.readFileToByteArray(PDF_FILE1))
