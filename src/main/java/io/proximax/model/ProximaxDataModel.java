@@ -1,14 +1,7 @@
 package io.proximax.model;
 
-import io.proximax.service.IpfsUploadResponse;
-import io.proximax.upload.UploadParameterData;
-
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * This model class represents the details of an uploaded data
@@ -119,22 +112,6 @@ public final class ProximaxDataModel {
 	}
 
 	/**
-	 * Creates a list of this model
-	 * @param parameterDataList the list of upload param data containing the description, metadata and name
-	 * @param dataUploadResponseList the list of ipfs upload response containing the datahash and the timestamp uploaded
-	 * @param digestList the list of computed digests
-	 * @param contentTypeList the list of content types
-	 * @return a list of instance of this model
-	 */
-	public static List<ProximaxDataModel> createList(List<UploadParameterData> parameterDataList, List<IpfsUploadResponse> dataUploadResponseList,
-													 List<String> digestList, List<String> contentTypeList) {
-		return IntStream.range(0, parameterDataList.size())
-				.mapToObj(index -> create(parameterDataList.get(index), dataUploadResponseList.get(index).getDataHash(),
-						digestList.get(index), contentTypeList.get(index), dataUploadResponseList.get(index).getTimestamp()))
-				.collect(toList());
-	}
-
-	/**
 	 * Creates an instance of this model
 	 * @param parameterData an upload param data containing the description, metadata and name
 	 * @param dataHash the data hash
@@ -143,7 +120,7 @@ public final class ProximaxDataModel {
 	 * @param timestamp the timestamp uploaded
 	 * @return the instance of this model
 	 */
-	public static ProximaxDataModel create(RawDataModel parameterData, String dataHash, String digest, String contentType, Long timestamp) {
+	public static ProximaxDataModel create(DataInfoModel parameterData, String dataHash, String digest, String contentType, Long timestamp) {
 		return new ProximaxDataModel(digest, dataHash, parameterData.getDescription(), parameterData.getMetadata(),
 				timestamp, parameterData.getName(), contentType);
 	}

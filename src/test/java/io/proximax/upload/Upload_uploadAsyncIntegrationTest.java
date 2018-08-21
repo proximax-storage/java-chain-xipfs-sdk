@@ -13,6 +13,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
 import static io.proximax.testsupport.Constants.HTML_FILE;
@@ -71,7 +72,7 @@ public class Upload_uploadAsyncIntegrationTest {
 		final CompletableFuture<UploadResult> toPopulateOnSuccess = new CompletableFuture<>();
 
 		unitUnderTest.uploadAsync(param, AsyncCallback.create(toPopulateOnSuccess::complete, null));
-		final UploadResult result = toPopulateOnSuccess.get();
+		final UploadResult result = toPopulateOnSuccess.get(5, TimeUnit.SECONDS);
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getTransactionHash(), is(notNullValue()));
@@ -100,7 +101,7 @@ public class Upload_uploadAsyncIntegrationTest {
 		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
 
 		unitUnderTest.uploadAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));
-		final Throwable throwable = toPopulateOnFailure.get();
+		final Throwable throwable = toPopulateOnFailure.get(5, TimeUnit.SECONDS);
 
 		assertThat(throwable, instanceOf(UploadFailureException.class));
 	}

@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
 import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
@@ -33,7 +34,7 @@ public class DownloadData_downloadAsyncIntegrationTest {
 
 	@Test
 	public void shouldDownloadDataAsynchronouslyWithoutCallback() throws Exception {
-		final String dataHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadMultipleData", "dataList[0].dataHash");
+		final String dataHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadAllDataTypes", "dataList[0].dataHash");
 		final DownloadDataParameter param =
 				DownloadDataParameter.create(dataHash).build();
 
@@ -47,13 +48,13 @@ public class DownloadData_downloadAsyncIntegrationTest {
 
 	@Test
 	public void shouldDownloadDataAsynchronouslyWithSuccessCallback() throws Exception {
-		final String dataHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadMultipleData", "dataList[0].dataHash");
+		final String dataHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadAllDataTypes", "dataList[0].dataHash");
 		final DownloadDataParameter param =
 				DownloadDataParameter.create(dataHash).build();
 		final CompletableFuture<DownloadDataResult> toPopulateOnSuccess = new CompletableFuture<>();
 
 		unitUnderTest.downloadDataAsync(param, AsyncCallback.create(toPopulateOnSuccess::complete, null));
-		final DownloadDataResult result = toPopulateOnSuccess.get();
+		final DownloadDataResult result = toPopulateOnSuccess.get(5, TimeUnit.SECONDS);
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getData(), is(notNullValue()));
@@ -66,7 +67,7 @@ public class DownloadData_downloadAsyncIntegrationTest {
 		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
 
 		unitUnderTest.downloadDataAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));
-		final Throwable throwable = toPopulateOnFailure.get();
+		final Throwable throwable = toPopulateOnFailure.get(5, TimeUnit.SECONDS);
 
 		assertThat(throwable, instanceOf(DownloadDataFailureException.class));
 

@@ -46,6 +46,7 @@ public class Constants {
     public static final File SMALL_FILE = new File("src//test//resources//test_small_file.txt");
     public static final File HTML_FILE = new File("src//test//resources//test_html.html");
     public static final File IMAGE_FILE = new File("src//test//resources//test_image.png");
+    public static final File PATH_FILE = new File("src//test//resources//test_path");
 
     public static final String PASSWORD	= "hkcymenwcxpzkoyowuagcuhvrhavtdcrxbfqganecoxuirxekq";
 

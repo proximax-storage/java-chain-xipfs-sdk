@@ -28,20 +28,6 @@ public class DigestUtils {
     }
 
     /**
-     * Compute for the digest of the given list of data
-     * @param dataList the list of data
-     * @return the list of sha-256 hex of the data
-     */
-    public Observable<List<String>> digestForList(List<byte[]> dataList) {
-        checkArgument(dataList != null, "dataList is required");
-
-        return Observable.fromIterable(dataList)
-                .concatMapEager(this::digest)
-                .toList()
-                .toObservable();
-    }
-
-    /**
      * Validate the digest against the given data
      * @param data the data
      * @param expectedDigest the expected digest of the data
@@ -56,28 +42,6 @@ public class DigestUtils {
                 if (!actualDigest.equals(expectedDigest)) {
                     throw new DigestDoesNotMatchException(format("Data digests do not match (actual: %s, expected %s)",
                             actualDigest, expectedDigest));
-                } else {
-                    return true;
-                }
-            });
-        }
-        return Observable.just(true);
-    }
-
-    /**
-     * Validate the list of digests against the given list of data
-     * @param dataList the list of data
-     * @param expectedDigestList the list ofexpected digest of the data
-     * @return true if all digest validation passes, otherwise an DigestDoesNotMatchException
-     * @see DigestDoesNotMatchException
-     */
-    public Observable<Boolean> validateDigestList(List<byte[]> dataList, List<String> expectedDigestList) {
-        checkArgument(dataList != null, "dataList is required");
-
-        if (expectedDigestList != null && nonNullCount(expectedDigestList) == expectedDigestList.size()) {
-            return digestForList(dataList).map(actualDigestList -> {
-                if (!isEqualList(actualDigestList, expectedDigestList)) {
-                    throw new DigestDoesNotMatchException("Some data digests do not match");
                 } else {
                     return true;
                 }

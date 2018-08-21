@@ -3,8 +3,6 @@ package io.proximax.utils;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.reactivex.Observable;
 
-import java.util.List;
-
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
@@ -29,22 +27,6 @@ public class PrivacyDataEncryptionUtils {
     }
 
     /**
-     * Encrypt a list of data using the given privacy strategy
-     * @param privacyStrategy the privacy strategy
-     * @param dataList the list of data
-     * @return the list of encrypted data
-     */
-    public Observable<List<byte[]>> encryptList(PrivacyStrategy privacyStrategy, List<byte[]> dataList) {
-        checkArgument(privacyStrategy != null, "privacyStrategy is required");
-        checkArgument(dataList != null, "dataInput is required");
-
-        return Observable.fromIterable(dataList)
-                .map(data -> encryptData(privacyStrategy, data))
-                .toList()
-                .toObservable();
-    }
-
-    /**
      * Decrypt an encrypted data using the given privacy strategy
      * @param privacyStrategy the privacy strategy
      * @param data the data
@@ -55,22 +37,6 @@ public class PrivacyDataEncryptionUtils {
         checkArgument(data != null, "data is required");
 
         return Observable.just(decryptData(privacyStrategy, data));
-    }
-
-    /**
-     * Decrypt a list of encrypted data using the given privacy strategy
-     * @param privacyStrategy the privacy strategy
-     * @param dataList the list of data
-     * @return the list of decrypted data
-     */
-    public Observable<List<byte[]>> decryptList(PrivacyStrategy privacyStrategy, List<byte[]> dataList) {
-        checkArgument(privacyStrategy != null, "privacyStrategy is required");
-        checkArgument(dataList != null, "dataInput is required");
-
-        return Observable.fromIterable(dataList)
-                .map(data -> decryptData(privacyStrategy, data))
-                .toList()
-                .toObservable();
     }
 
     private byte[] encryptData(PrivacyStrategy privacyStrategy, byte[] data) {

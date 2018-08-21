@@ -10,7 +10,6 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.BDDMockito.given;
 
@@ -57,23 +56,6 @@ public class PrivacyDataEncryptionUtilsTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void failOnEncryptListWhenNullPrivacyStrategy() {
-        unitUnderTest.encryptList(null, SAMPLE_DATA_LIST);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failOnEncryptListWhenNullDataList() {
-        unitUnderTest.encryptList(mockPrivacyStrategy, null);
-    }
-
-    @Test
-    public void shouldReturnEncryptedDataListOnEncryptList() {
-        final List<byte[]> result = unitUnderTest.encryptList(mockPrivacyStrategy, SAMPLE_DATA_LIST).blockingFirst();
-
-        assertThat(result, contains(MOCK_ENCRYPTED_DATA, MOCK_ENCRYPTED_DATA_2));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void failOnDecryptWhenNullPrivacyStrategy() {
         unitUnderTest.decrypt(null, MOCK_ENCRYPTED_DATA);
     }
@@ -88,22 +70,5 @@ public class PrivacyDataEncryptionUtilsTest {
         final byte[] result = unitUnderTest.decrypt(mockPrivacyStrategy, MOCK_ENCRYPTED_DATA).blockingFirst();
 
         assertThat(result, is(SAMPLE_DATA));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failOnDecryptListWhenNullPrivacyStrategy() {
-        unitUnderTest.decryptList(null, MOCK_ENCRYPTED_DATA_LIST);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failOnDecryptListWhenNullData() {
-        unitUnderTest.decryptList(mockPrivacyStrategy, null);
-    }
-
-    @Test
-    public void shouldReturnDecryptedDataListOnDecryptList() {
-        final List<byte[]> result = unitUnderTest.decryptList(mockPrivacyStrategy, MOCK_ENCRYPTED_DATA_LIST).blockingFirst();
-
-        assertThat(result, contains(SAMPLE_DATA, SAMPLE_DATA_2));
     }
 }

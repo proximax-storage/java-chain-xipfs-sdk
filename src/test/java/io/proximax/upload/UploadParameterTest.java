@@ -14,12 +14,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.proximax.model.Version.VERSION;
+import static io.proximax.model.Constants.VERSION;
 import static io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategyTest.SECRET_MINIMUM_PART_COUNT_TO_BUILD;
 import static io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategyTest.SECRET_PARTS;
 import static io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategyTest.SECRET_TOTAL_PART_COUNT;
 import static io.proximax.testsupport.Constants.HTML_FILE;
 import static io.proximax.testsupport.Constants.IMAGE_FILE;
+import static io.proximax.testsupport.Constants.PATH_FILE;
 import static io.proximax.testsupport.Constants.PDF_FILE1;
 import static io.proximax.testsupport.Constants.SMALL_FILE;
 import static java.util.Arrays.asList;
@@ -77,6 +78,7 @@ public class UploadParameterTest {
                 .addUrlResource(UrlResourceParameterData.create(IMAGE_FILE.toURI().toURL()).build())
                 .addFilesAsZip(FilesAsZipParameterData.create(asList(SMALL_FILE, HTML_FILE)).build())
                 .addString(StringParameterData.create("dasdasdsa ewqe wq dsa sadsads").build())
+                .addPath(PathParameterData.create(PATH_FILE).build())
                 .computeDigest(false)
                 .description("root description")
                 .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, "test"))
@@ -90,7 +92,7 @@ public class UploadParameterTest {
         assertThat(param.getComputeDigest(), is(false));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
         assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
-        assertThat(param.getDataList(), hasSize(5));
+        assertThat(param.getDataList(), hasSize(6));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -113,6 +115,7 @@ public class UploadParameterTest {
                 .addUrlResource(IMAGE_FILE.toURI().toURL())
                 .addFilesAsZip(asList(SMALL_FILE, HTML_FILE))
                 .addString("dasdasdsa ewqe wq dsa sadsads")
+                .addPath(PATH_FILE)
                 .computeDigest(false)
                 .description("root description")
                 .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, "test"))
@@ -126,7 +129,32 @@ public class UploadParameterTest {
         assertThat(param.getComputeDigest(), is(false));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
         assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
-        assertThat(param.getDataList(), hasSize(5));
+        assertThat(param.getDataList(), hasSize(6));
+    }
+
+    @Test
+    public void createWithAllDataTypesUsingExplicitMethod() throws IOException {
+        final UploadParameter param = UploadParameter.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
+                .addByteArray(FileUtils.readFileToByteArray(PDF_FILE1), null, null, null, null)
+                .addFile(SMALL_FILE, null, null, null, null)
+                .addUrlResource(IMAGE_FILE.toURI().toURL(), null, null, null, null)
+                .addFilesAsZip(asList(SMALL_FILE, HTML_FILE), null, null, null)
+                .addString("dasdasdsa ewqe wq dsa sadsads", null, null, null, null, null)
+                .addPath(PATH_FILE, null, null, null)
+                .computeDigest(false)
+                .description("root description")
+                .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, "test"))
+                .build();
+
+        assertThat(param, is(notNullValue()));
+        assertThat(param.getDescription(), is("root description"));
+        assertThat(param.getRecipientPublicKey(), is(SAMPLE_RECIPIENT_PUBLIC_KEY));
+        assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
+        assertThat(param.getVersion(), is(VERSION));
+        assertThat(param.getComputeDigest(), is(false));
+        assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
+        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
+        assertThat(param.getDataList(), hasSize(6));
     }
 
     @Test

@@ -1,11 +1,11 @@
 package io.proximax.service;
 
-import java.util.List;
+import java.io.File;
 
 /**
  * The model class that defines the result of uploading to IPFS
- * @see IpfsUploadService#upload(byte[])
- * @see IpfsUploadService#uploadList(List)
+ * @see IpfsUploadService#uploadByteArray(byte[])
+ * @see IpfsUploadService#uploadPath(File)
  */
 public class IpfsUploadResponse {
 

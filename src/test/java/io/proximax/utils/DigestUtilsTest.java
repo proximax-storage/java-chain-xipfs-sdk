@@ -1,14 +1,9 @@
 package io.proximax.utils;
 
-import io.proximax.exceptions.DigestDoesNotMatchException;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
-
-import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
 
 public class DigestUtilsTest {
@@ -38,18 +33,6 @@ public class DigestUtilsTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void failOnDigestForListWhenNullData() {
-        unitUnderTest.digestForList(null);
-    }
-
-    @Test
-    public void shouldReturnDigestOnDigestForList() {
-        final List<String> result = unitUnderTest.digestForList(asList(SAMPLE_DATA, SAMPLE_DATA_2)).blockingFirst();
-
-        assertThat(result, contains(SAMPLE_DIGEST_HEX, SAMPLE_DIGEST_HEX_2));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void failOnValidateDigestWhenNullData() {
         unitUnderTest.validateDigest(null, null);
     }
@@ -67,35 +50,4 @@ public class DigestUtilsTest {
 
         assertThat(result, is(true));
     }
-
-    @Test(expected = DigestDoesNotMatchException.class)
-    public void FailOnValidateDigestWhenExpectedDigestDoesNotMatch() {
-        unitUnderTest.validateDigest(SAMPLE_DATA, SAMPLE_DIGEST_HEX + "gibberish").blockingFirst();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failOnValidateDigestListWhenNullData() {
-        unitUnderTest.validateDigestList(null, null);
-    }
-
-    @Test
-    public void shouldReturnTrueOnValidateDigestListWhenNullExpectedDigestList() {
-        final Boolean result = unitUnderTest.validateDigestList(asList(SAMPLE_DATA, SAMPLE_DATA_2), null).blockingFirst();
-
-        assertThat(result, is(true));
-    }
-
-    @Test
-    public void shouldReturnTrueOnValidateDigestListWhenExpectedDigestListMatches() {
-        final Boolean result = unitUnderTest.validateDigestList(asList(SAMPLE_DATA, SAMPLE_DATA_2),
-                asList(SAMPLE_DIGEST_HEX, SAMPLE_DIGEST_HEX_2)).blockingFirst();
-
-        assertThat(result, is(true));
-    }
-
-    @Test(expected = DigestDoesNotMatchException.class)
-    public void FailOnValidateDigesListtWhenOneExpectedDigestDoesNotMatch() {
-        unitUnderTest.validateDigestList(asList(SAMPLE_DATA, SAMPLE_DATA_2),
-                asList(SAMPLE_DIGEST_HEX, SAMPLE_DIGEST_HEX_2 + "gibberish")).blockingFirst();    }
-
 }

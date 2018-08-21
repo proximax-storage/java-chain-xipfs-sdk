@@ -4,7 +4,7 @@ import io.proximax.connection.IpfsConnection;
 import io.proximax.service.client.IpfsClient;
 import io.reactivex.Observable;
 
-import java.util.List;
+import java.io.File;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -28,32 +28,24 @@ public class IpfsUploadService {
     }
 
     /**
-     * Upload a list of data
-     * @param dataList the list of data
-     * @return the list of IPFS upload response
+     * Upload a byte array
+     * @param data the byte array data
+     * @return the IPFS upload response
      */
-    public Observable<List<IpfsUploadResponse>> uploadList(final List<byte[]> dataList) {
-        checkArgument(dataList != null, "dataList is required");
+    public Observable<IpfsUploadResponse> uploadByteArray(final byte[] data) {
+        checkArgument(data != null, "data is required");
 
-        return Observable.fromIterable(dataList)
-                .concatMapEager(this::upload)
-                .toList()
-                .toObservable();
+        return ipfsClient.addByteArray(data).map(dataHash -> new IpfsUploadResponse(dataHash, System.currentTimeMillis()));
     }
 
     /**
-     * Upload a data
-     * @param data the data
+     * Upload a path
+     * @param path the data
      * @return the IPFS upload response
      */
-    public Observable<IpfsUploadResponse> upload(final byte[] data) {
-        checkArgument(data != null, "data is required");
+    public Observable<IpfsUploadResponse> uploadPath(final File path) {
+        checkArgument(path != null, "path is required");
 
-        return uploadData(data)
-                .map(dataHash -> new IpfsUploadResponse(dataHash, System.currentTimeMillis()));
-    }
-
-    private Observable<String> uploadData(final byte[] data) {
-        return ipfsClient.add(data);
+        return ipfsClient.addPath(path).map(dataHash -> new IpfsUploadResponse(dataHash, System.currentTimeMillis()));
     }
 }

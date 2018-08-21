@@ -6,7 +6,9 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
 import static io.proximax.testsupport.Constants.IMAGE_FILE;
+import static io.proximax.testsupport.Constants.PATH_FILE;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,10 +22,15 @@ public class FileParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullFile() throws IOException {
-        FileParameterData.create(null).build();
+        FileParameterData.create((File) null).build();
     }
 
-    @Test(expected = IOException.class)
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenFileIsADirectory() throws IOException {
+        FileParameterData.create(PATH_FILE).build();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
     public void failWhenFileDoesNotExist() throws IOException {
         FileParameterData.create(NON_EXISTENT_FILE).build();
     }
@@ -56,4 +63,10 @@ public class FileParameterDataTest {
         assertThat(param.getMetadata(), is(singletonMap("mykey", "myvalue")));
         assertThat(param.getName(), is("name here"));
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenContentTypeIsReservedExist() throws IOException {
+        FileParameterData.create(IMAGE_FILE).contentType(PATH_UPLOAD_CONTENT_TYPE).build();
+    }
+
 }

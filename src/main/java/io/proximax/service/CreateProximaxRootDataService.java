@@ -1,21 +1,22 @@
 package io.proximax.service;
 
 import io.proximax.connection.IpfsConnection;
+import io.proximax.exceptions.UploadParameterDataNotSupportedException;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.model.ProximaxRootDataModel;
-import io.proximax.privacy.strategy.PrivacyStrategy;
+import io.proximax.upload.ByteArrayParameterData;
+import io.proximax.upload.PathParameterData;
 import io.proximax.upload.UploadParameter;
-import io.proximax.upload.UploadParameterData;
 import io.proximax.utils.ContentTypeUtils;
 import io.proximax.utils.DigestUtils;
 import io.proximax.utils.PrivacyDataEncryptionUtils;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
-import static java.util.stream.Collectors.toList;
 
 /**
  * The service class responsible for creating a root data
@@ -54,42 +55,44 @@ public class CreateProximaxRootDataService {
     public Observable<ProximaxRootDataModel> createRootData(UploadParameter uploadParam) {
         checkParameter(uploadParam != null, "uploadParam is required");
 
-        final List<byte[]> dataList = getDataList(uploadParam.getDataList());
-        final List<String> contentTypeListFromParams = getContentTypeList(uploadParam.getDataList());
-
-        final Observable<List<byte[]>> encryptedDataListOb = encryptDataList(uploadParam.getPrivacyStrategy(), dataList).cache();
-        final Observable<List<String>> digestListOb = encryptedDataListOb.flatMap(encryptedDataList ->
-                computeDigestsOfDataList(uploadParam.getComputeDigest(), dataList, encryptedDataList));
-        final Observable<List<String>> contentTypeListOb = detectContentTypesForDataList(dataList, contentTypeListFromParams);
-        final Observable<List<IpfsUploadResponse>> dataUploadResponseListOb =
-                encryptedDataListOb.flatMap(ipfsUploadService::uploadList);
-
-        return Observable.zip(dataUploadResponseListOb, digestListOb, contentTypeListOb,
-                (dataUploadResponseList, digestList, contentTypeList) ->
-                        ProximaxDataModel.createList(uploadParam.getDataList(), dataUploadResponseList, digestList, contentTypeList))
+        return Observable.fromIterable(uploadParam.getDataList())
+                .concatMapEager(paramData -> {
+                    if (paramData instanceof ByteArrayParameterData) { // byte array data
+                        return uploadData(uploadParam, (ByteArrayParameterData) paramData);
+                    } if (paramData instanceof PathParameterData) { // path
+                        return uploadPath((PathParameterData) paramData);
+                    } else { // unknown parameter type
+                        throw new UploadParameterDataNotSupportedException(String.format("Uploading of %s is not supported", paramData.getClass().getName()));
+                    }
+                })
+                .toList()
+                .toObservable()
                 .map(dataModeList -> createRootData(uploadParam, dataModeList));
     }
 
-    private List<byte[]> getDataList(List<UploadParameterData> dataList) {
-        return dataList.stream().map(UploadParameterData::getData).collect(toList());
+    private ObservableSource<? extends ProximaxDataModel> uploadData(UploadParameter uploadParam, ByteArrayParameterData byteArrParamData) {
+        final Observable<String> detectedContentTypeOb =
+                contentTypeUtils.detectContentType(byteArrParamData.getData(), byteArrParamData.getContentType());
+        final Observable<byte[]> encryptedDataOb =
+                privacyDataEncryptionUtils.encrypt(uploadParam.getPrivacyStrategy(), byteArrParamData.getData()).cache();
+        final Observable<Optional<String>> digestOb = encryptedDataOb.flatMap(encryptedData ->
+                computeDigest(uploadParam.getComputeDigest(), encryptedData));
+        final Observable<IpfsUploadResponse> ipfsUploadResponseOb = encryptedDataOb.flatMap(ipfsUploadService::uploadByteArray);
+
+        return Observable.zip(ipfsUploadResponseOb, digestOb, detectedContentTypeOb,
+                (ipfsUploadResponse, digest, contentType) ->
+                        ProximaxDataModel.create(byteArrParamData, ipfsUploadResponse.getDataHash(),
+                                digest.orElse(null), contentType, ipfsUploadResponse.getTimestamp()));
     }
 
-    private List<String> getContentTypeList(List<UploadParameterData> dataList) {
-        return dataList.stream().map(UploadParameterData::getContentType).collect(toList());
+    private Observable<Optional<String>> computeDigest(boolean computeDigest, byte[] encryptedData) {
+        return computeDigest ? digestUtils.digest(encryptedData).map(Optional::of) : Observable.just(Optional.empty());
     }
 
-    private Observable<List<byte[]>> encryptDataList(PrivacyStrategy privacyStrategy, List<byte[]> dataList) {
-        return privacyDataEncryptionUtils.encryptList(privacyStrategy, dataList);
-    }
-
-    private Observable<List<String>> computeDigestsOfDataList(boolean computeDigest, List<byte[]> dataList,
-                                                              List<byte[]> encryptedDataList) {
-        return computeDigest ? digestUtils.digestForList(encryptedDataList) :
-                Observable.just(Collections.nCopies(dataList.size(), null));
-    }
-
-    private Observable<List<String>> detectContentTypesForDataList(List<byte[]> dataList, List<String> contentTypeList) {
-        return contentTypeUtils.detectContentTypeForList(dataList, contentTypeList );
+    private Observable<ProximaxDataModel> uploadPath(PathParameterData pathParamData) {
+        return ipfsUploadService.uploadPath(pathParamData.getPath()).map(ipfsUploadResponse ->
+                ProximaxDataModel.create(pathParamData, ipfsUploadResponse.getDataHash(),
+                        null,  pathParamData.getContentType(), ipfsUploadResponse.getTimestamp()));
     }
 
     private ProximaxRootDataModel createRootData(UploadParameter uploadParam, List<ProximaxDataModel> dataModeList) {

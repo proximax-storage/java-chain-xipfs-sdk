@@ -10,7 +10,6 @@ public abstract class AbstractParameterDataBuilder<T> {
 	protected String description;
 	protected Map<String, String> metadata;
 	protected String name;
-	protected String contentType;
 
 	protected AbstractParameterDataBuilder() {
 	}
@@ -42,16 +41,6 @@ public abstract class AbstractParameterDataBuilder<T> {
 	 */
 	public T name(String name) {
 		this.name = name;
-		return (T) this;
-	}
-
-	/**
-	 * Set the content type for the data
-	 * @param contentType the content type
-	 * @return same instance of the builder class
-	 */
-	public T contentType(String contentType) {
-		this.contentType = contentType;
 		return (T) this;
 	}
 }

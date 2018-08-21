@@ -5,6 +5,8 @@ import io.proximax.download.DownloadParameter;
 import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.model.ProximaxRootDataModel;
+import io.proximax.privacy.strategy.PlainPrivacyStrategy;
+import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.utils.DigestUtils;
 import io.proximax.utils.PrivacyDataEncryptionUtils;
 import io.reactivex.Observable;
@@ -26,12 +28,17 @@ import static org.mockito.BDDMockito.given;
 
 public class RetrieveProximaxDataServiceTest {
 
+    private static final String DUMMY_DATA_HASH_1 = "Qmdahdksadjksahjk";
+    private static final String DUMMY_DATA_HASH_2 = "Qmcxzczxczxczxcxz";
     private static final byte[] DUMMY_DOWNLOADED_DATA_1 = "dopsaipdlsnlxnz,cn,zxnclznxlnldsaldslkaj;as.".getBytes();
     private static final byte[] DUMMY_DOWNLOADED_DATA_2 = "oidpsaipdsakl;elwqnem,nq,mnjksahciuxhzkjcdsa".getBytes();
+    private static final String DUMMY_DIGEST_1 = "iowuqoieuqowueoiqw";
+    private static final String DUMMY_DIGEST_2 = "sadasdsadsadasdads";
     private static final byte[] DUMMY_DECRYPTED_DATA_1 = "dsajhjdhaskhdksahkdsaljkjlxnzcm,nxz".getBytes();
     private static final byte[] DUMMY_DECRYPTED_DATA_2 = "icjoiuewoiqueioqwjekwq,.eqwn,mnqwio".getBytes();
     private static final String DUMMY_ROOT_DESCRIPTION = "ewqeqwewqeqweqw";
     private static final String DUMMY_VERSION = "1.0";
+    private static final PrivacyStrategy DUMMY_PRIVACY_STRATEGY = PlainPrivacyStrategy.create(null);
 
     private RetrieveProximaxDataService unitUnderTest;
 
@@ -58,9 +65,14 @@ public class RetrieveProximaxDataServiceTest {
 
     @Test
     public void shouldReturnByteArrayOnGetData() {
-        given(mockIpfsDownloadService.downloadList(any())).willReturn(Observable.just(asList(DUMMY_DOWNLOADED_DATA_1)));
-        given(mockDigestUtils.validateDigestList(any(), any())).willReturn(Observable.just(true));
-        given(mockPrivacyDataEncryptionUtils.decryptList(any(), any())).willReturn(Observable.just(asList(DUMMY_DECRYPTED_DATA_1)));
+        given(mockIpfsDownloadService.download(DUMMY_DATA_HASH_1)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA_1));
+        given(mockIpfsDownloadService.download(DUMMY_DATA_HASH_2)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA_2));
+        given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA_1, DUMMY_DIGEST_1)).willReturn(Observable.just(true));
+        given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA_2, DUMMY_DIGEST_2)).willReturn(Observable.just(true));
+        given(mockPrivacyDataEncryptionUtils.decrypt(DUMMY_PRIVACY_STRATEGY, DUMMY_DOWNLOADED_DATA_1))
+                .willReturn(Observable.just(DUMMY_DECRYPTED_DATA_1));
+        given(mockPrivacyDataEncryptionUtils.decrypt(DUMMY_PRIVACY_STRATEGY, DUMMY_DOWNLOADED_DATA_2))
+                .willReturn(Observable.just(DUMMY_DECRYPTED_DATA_2));
 
         final byte[] result = unitUnderTest.getData(sampleDownloadDataParameter()).blockingFirst();
 
@@ -79,12 +91,15 @@ public class RetrieveProximaxDataServiceTest {
     }
 
     @Test
-    public void shouldReturnByteArrayOnGetDataList() {
-        given(mockIpfsDownloadService.downloadList(any())).willReturn(Observable.just(
-                asList(DUMMY_DOWNLOADED_DATA_1, DUMMY_DOWNLOADED_DATA_2)));
-        given(mockDigestUtils.validateDigestList(any(), any())).willReturn(Observable.just(true));
-        given(mockPrivacyDataEncryptionUtils.decryptList(any(), any())).willReturn(Observable.just(
-                asList(DUMMY_DECRYPTED_DATA_1, DUMMY_DECRYPTED_DATA_2)));
+    public void shouldReturnByteArrayListOnGetDataList() {
+        given(mockIpfsDownloadService.download(DUMMY_DATA_HASH_1)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA_1));
+        given(mockIpfsDownloadService.download(DUMMY_DATA_HASH_2)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA_2));
+        given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA_1, DUMMY_DIGEST_1)).willReturn(Observable.just(true));
+        given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA_2, DUMMY_DIGEST_2)).willReturn(Observable.just(true));
+        given(mockPrivacyDataEncryptionUtils.decrypt(DUMMY_PRIVACY_STRATEGY, DUMMY_DOWNLOADED_DATA_1))
+                .willReturn(Observable.just(DUMMY_DECRYPTED_DATA_1));
+        given(mockPrivacyDataEncryptionUtils.decrypt(DUMMY_PRIVACY_STRATEGY, DUMMY_DOWNLOADED_DATA_2))
+                .willReturn(Observable.just(DUMMY_DECRYPTED_DATA_2));
 
         final List<byte[]> result = unitUnderTest.getDataList(sampleDownloadParameter(), sampleRootData()).blockingFirst();
 
@@ -95,22 +110,24 @@ public class RetrieveProximaxDataServiceTest {
     }
 
     private DownloadDataParameter sampleDownloadDataParameter() {
-        return DownloadDataParameter.create("hdksjahdkhsakjdhkjsahkdsahjkdsa")
-                .digest("dkjhsakjdhskjahdsahkdhsa")
+        return DownloadDataParameter.create(DUMMY_DATA_HASH_1)
+                .digest(DUMMY_DIGEST_1)
+                .privacyStrategy(DUMMY_PRIVACY_STRATEGY)
                 .build();
     }
 
     private DownloadParameter sampleDownloadParameter() {
         return DownloadParameter.createWithTransactionHash("hdksjahdkhsakjdhkjsahkdsahjkdsa")
+                .privacyStrategy(DUMMY_PRIVACY_STRATEGY)
                 .build();
     }
 
     private ProximaxRootDataModel sampleRootData() {
         return new ProximaxRootDataModel(PrivacyType.PLAIN.getValue(), "test", DUMMY_ROOT_DESCRIPTION,
                 DUMMY_VERSION, asList(
-                new ProximaxDataModel("iowuqoieuqowueoiqw", "Qmdahdksadjksahjk", "data 1",
+                new ProximaxDataModel(DUMMY_DIGEST_1, DUMMY_DATA_HASH_1, "data 1",
                         singletonMap("key1", "value1"), 1000L, "data name 1", "text/plain"),
-                new ProximaxDataModel("sadasdsadsadasdads", "Qmcxzczxczxczxcxz", "data 2",
+                new ProximaxDataModel(DUMMY_DIGEST_2, DUMMY_DATA_HASH_2, "data 2",
                         singletonMap("key2", "value2"), 2000L, "data name 2", "text/html")
         ));
     }

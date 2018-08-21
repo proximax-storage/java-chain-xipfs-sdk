@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.URL;
 
+import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
 import static io.proximax.testsupport.Constants.HTML_FILE;
 import static io.proximax.testsupport.Constants.IMAGE_FILE;
 import static java.util.Collections.emptyMap;
@@ -21,7 +22,7 @@ public class UrlResourceParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullUrl() throws IOException {
-        UrlResourceParameterData.create(null).build();
+        UrlResourceParameterData.create((URL) null).build();
     }
 
     @Test
@@ -84,4 +85,10 @@ public class UrlResourceParameterDataTest {
         assertThat(param.getName(), is(nullValue()));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenContentTypeIsReservedExist() throws IOException {
+        final URL URL = HTML_FILE.toURI().toURL();
+
+        UrlResourceParameterData.create(URL).contentType(PATH_UPLOAD_CONTENT_TYPE).build();
+    }
 }
