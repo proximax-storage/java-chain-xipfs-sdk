@@ -1,5 +1,6 @@
 package io.proximax.service;
 
+import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.XEM;
@@ -20,7 +21,6 @@ import io.proximax.service.factory.BlockchainMessageFactory;
 import io.proximax.utils.NemUtils;
 import io.reactivex.Observable;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -28,7 +28,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 
+import static io.proximax.service.client.TransactionClient.STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -41,6 +43,7 @@ public class BlockchainTransactionServiceTest {
     private static final String SAMPLE_SIGNER_PRIVATE_KEY = "CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C";
     private static final String SAMPLE_RECIPIENT_PUBLIC_KEY = "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577";
     private static final Address SAMPLE_RECIPIENT_ADDRESS = Address.createFromRawAddress("SBRHESWCLX3VGQ6CHCZNKDN6DT7GLS6CZKJXCT5F");
+    private static final Account SAMPLE_SIGNER_ACCOUNT = Account.createFromPrivateKey("CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C", NetworkType.MIJIN_TEST);
 
     private BlockchainTransactionService unitUnderTest;
 
@@ -154,26 +157,34 @@ public class BlockchainTransactionServiceTest {
         unitUnderTest.createAndAnnounceTransaction(mockPrivacyStrategy, SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, mockMessagePayload);
     }
 
-    @Ignore
     @Test(expected = AnnounceBlockchainTransactionFailureException.class)
-    public void shouldFailWhenAnnouncementFailed() {
-        final TransactionAnnounceResponse announceFailureResponse = new TransactionAnnounceResponse("BAD");
-        given(mockTransactionClient.announce(mockSignedTransaction)).willReturn(Observable.just(announceFailureResponse));
-
-        unitUnderTest.createAndAnnounceTransaction(mockPrivacyStrategy, SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, mockMessagePayload);
-    }
-
-    @Test
-    public void shouldSignTransactionWithCorrectDataOnCreateAndAnnounceTransaction() {
+    public void shouldFailWhenAnnouncementFailed() throws MalformedURLException {
         given(mockBlockchainMessageFactory.createMessage(mockPrivacyStrategy, mockMessagePayload)).willReturn(mockMessage);
         given(mockNemUtils.toAddress(SAMPLE_RECIPIENT_PUBLIC_KEY)).willReturn(SAMPLE_RECIPIENT_ADDRESS);
+        given(mockNemUtils.toAccount(SAMPLE_SIGNER_PRIVATE_KEY)).willReturn(SAMPLE_SIGNER_ACCOUNT);
         given(mockNemUtils.signTransaction(signerPrivateKeyArgumentCaptor.capture(), transferTransactionArgumentCaptor.capture()))
                 .willReturn(mockSignedTransaction);
         given(mockTransactionClient.announce(mockSignedTransaction)).willReturn(Observable.just(mockTransactionAnnounceResponse));
+        given(mockTransactionClient.waitForAnnouncedTransactionToBeUnconfirmed(SAMPLE_SIGNER_ACCOUNT.getAddress(), SAMPLE_TRANSACTION_HASH))
+                .willThrow(new AnnounceBlockchainTransactionFailureException("failed"));
 
-        final String transactionHash =
-                unitUnderTest.createAndAnnounceTransaction(mockPrivacyStrategy, SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, mockMessagePayload)
-                        .blockingFirst();
+        unitUnderTest.createAndAnnounceTransaction(mockPrivacyStrategy, SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, mockMessagePayload)
+                .blockingFirst();
+    }
+
+    @Test
+    public void shouldSignTransactionWithCorrectDataOnCreateAndAnnounceTransaction() throws MalformedURLException {
+        given(mockBlockchainMessageFactory.createMessage(mockPrivacyStrategy, mockMessagePayload)).willReturn(mockMessage);
+        given(mockNemUtils.toAddress(SAMPLE_RECIPIENT_PUBLIC_KEY)).willReturn(SAMPLE_RECIPIENT_ADDRESS);
+        given(mockNemUtils.toAccount(SAMPLE_SIGNER_PRIVATE_KEY)).willReturn(SAMPLE_SIGNER_ACCOUNT);
+        given(mockNemUtils.signTransaction(signerPrivateKeyArgumentCaptor.capture(), transferTransactionArgumentCaptor.capture()))
+                .willReturn(mockSignedTransaction);
+        given(mockTransactionClient.announce(mockSignedTransaction)).willReturn(Observable.just(mockTransactionAnnounceResponse));
+        given(mockTransactionClient.waitForAnnouncedTransactionToBeUnconfirmed(SAMPLE_SIGNER_ACCOUNT.getAddress(), SAMPLE_TRANSACTION_HASH))
+                .willReturn(STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION);
+
+        unitUnderTest.createAndAnnounceTransaction(mockPrivacyStrategy, SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, mockMessagePayload)
+                .blockingFirst();
 
         assertThat(signerPrivateKeyArgumentCaptor.getValue(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(transferTransactionArgumentCaptor.getValue().getMessage(), is(mockMessage));
@@ -189,6 +200,7 @@ public class BlockchainTransactionServiceTest {
     public void shouldReturnTransactionHashOnCreateAndAnnounceTransaction() {
         given(mockBlockchainMessageFactory.createMessage(mockPrivacyStrategy, mockMessagePayload)).willReturn(mockMessage);
         given(mockNemUtils.toAddress(SAMPLE_RECIPIENT_PUBLIC_KEY)).willReturn(SAMPLE_RECIPIENT_ADDRESS);
+        given(mockNemUtils.toAccount(SAMPLE_SIGNER_PRIVATE_KEY)).willReturn(SAMPLE_SIGNER_ACCOUNT);
         given(mockNemUtils.signTransaction(signerPrivateKeyArgumentCaptor.capture(), transferTransactionArgumentCaptor.capture()))
                 .willReturn(mockSignedTransaction);
         given(mockTransactionClient.announce(mockSignedTransaction)).willReturn(Observable.just(mockTransactionAnnounceResponse));
