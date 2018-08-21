@@ -56,7 +56,7 @@ public class CreateProximaxRootDataService {
         checkParameter(uploadParam != null, "uploadParam is required");
 
         return Observable.fromIterable(uploadParam.getDataList())
-                .flatMap(paramData -> {
+                .concatMapEager(paramData -> {
                     if (paramData instanceof ByteArrayParameterData) { // byte array data
                         return uploadData(uploadParam, (ByteArrayParameterData) paramData);
                     } if (paramData instanceof PathParameterData) { // path

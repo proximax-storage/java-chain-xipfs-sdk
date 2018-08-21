@@ -3,7 +3,6 @@ package io.proximax.service;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.download.DownloadDataParameter;
 import io.proximax.download.DownloadParameter;
-import io.proximax.model.ProximaxDataModel;
 import io.proximax.model.ProximaxRootDataModel;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.utils.DigestUtils;
@@ -11,9 +10,10 @@ import io.proximax.utils.PrivacyDataEncryptionUtils;
 import io.reactivex.Observable;
 
 import java.util.List;
+import java.util.Optional;
 
+import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -50,10 +50,9 @@ public class RetrieveProximaxDataService {
     public Observable<byte[]> getData(DownloadDataParameter downloadDataParameter) {
         checkParameter(downloadDataParameter != null, "downloadDataParameter is required");
 
-        final List<String> dataHashList = singletonList(downloadDataParameter.getDataHash());
-        final List<String> digestList = singletonList(downloadDataParameter.getDigest());
-        return getDataList(dataHashList, digestList, downloadDataParameter.getPrivacyStrategy())
-                .map(dataList -> dataList.get(0));
+        return doGetData(downloadDataParameter.getDataHash(), downloadDataParameter.getPrivacyStrategy(),
+                downloadDataParameter.getDigest())
+                .map(dataOpt -> dataOpt.orElse(null));
     }
 
     /**
@@ -66,39 +65,25 @@ public class RetrieveProximaxDataService {
         checkParameter(downloadParam != null, "downloadParam is required");
         checkParameter(rootData != null, "rootData is required");
 
-        final List<String> dataHashList = getDataHashList(rootData.getDataList());
-        final List<String> digestList = getDigestList(rootData.getDataList());
-        return getDataList(dataHashList, digestList, downloadParam.getPrivacyStrategy());
+        return Observable.fromIterable(rootData.getDataList())
+                .concatMapEager(data -> {
+                    if (data.getContentType().equals(PATH_UPLOAD_CONTENT_TYPE)) { // path
+                        return Observable.just(Optional.<byte[]>empty());
+                    } else { // byte array
+                        return doGetData(data.getDataHash(), downloadParam.getPrivacyStrategy(), data.getDigest());
+                    }
+                })
+                .toList()
+                .toObservable()
+                .map(dataList -> dataList.stream().map(dataOpt -> dataOpt.orElse(null)).collect(toList()));
     }
 
-    private Observable<List<byte[]>> getDataList(List<String> dataHashList, List<String> digestList,
-                                                 PrivacyStrategy privacyStrategy) {
-        final Observable<List<byte[]>> undecryptedDataListOb = downloadDataList(dataHashList);
-        final Observable<List<byte[]>> undecryptedAndVerifiedDataListOb = verifyDataListWithDigest(digestList, undecryptedDataListOb);
-
-        return decryptDataList(privacyStrategy, undecryptedAndVerifiedDataListOb);
-    }
-
-    private List<String> getDigestList(List<ProximaxDataModel> dataList) {
-        return dataList.stream().map(ProximaxDataModel::getDigest).collect(toList());
-    }
-
-    private List<String> getDataHashList(List<ProximaxDataModel> dataList) {
-        return dataList.stream().map(ProximaxDataModel::getDataHash).collect(toList());
-    }
-
-    private Observable<List<byte[]>> downloadDataList(List<String> dataHashList) {
-        return ipfsDownloadService.downloadList(dataHashList);
-    }
-
-    private Observable<List<byte[]>> verifyDataListWithDigest(List<String> digestList, Observable<List<byte[]>> undecryptedDataListOb) {
-        return undecryptedDataListOb.flatMap(undecryptedDataList ->
-                digestUtils.validateDigestList(undecryptedDataList, digestList).map(result -> undecryptedDataList));
-    }
-
-    private Observable<List<byte[]>> decryptDataList(PrivacyStrategy privacyStrategy,
-                                                     Observable<List<byte[]>> undecryptedAndVerifiedDataListOb) {
-        return undecryptedAndVerifiedDataListOb
-                .flatMap(undecryptedDataList -> privacyDataEncryptionUtils.decryptList(privacyStrategy, undecryptedDataList));
+    private Observable<Optional<byte[]>> doGetData(String dataHash, PrivacyStrategy privacyStrategy, String digest) {
+        return ipfsDownloadService.download(dataHash)
+                .flatMap(undecryptedData ->
+                        digestUtils.validateDigest(undecryptedData, digest).map(result -> undecryptedData))
+                .flatMap(undecryptedData ->
+                        privacyDataEncryptionUtils.decrypt(privacyStrategy, undecryptedData))
+                .map(Optional::of);
     }
 }

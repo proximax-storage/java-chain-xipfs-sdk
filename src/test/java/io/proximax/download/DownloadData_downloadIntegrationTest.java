@@ -36,7 +36,7 @@ public class DownloadData_downloadIntegrationTest {
 
 	@Test
 	public void shouldDownloadDataByDataHash() {
-		final String dataHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadMultipleData", "dataList[0].dataHash");
+		final String dataHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadAllDataTypes", "dataList[0].dataHash");
 		final DownloadDataParameter param =
 				DownloadDataParameter.create(dataHash).build();
 

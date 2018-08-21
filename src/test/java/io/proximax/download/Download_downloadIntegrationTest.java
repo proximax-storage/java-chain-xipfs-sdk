@@ -10,6 +10,7 @@ import io.proximax.testsupport.TestHelper;
 import org.junit.Before;
 import org.junit.Test;
 
+import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
 import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
 import static io.proximax.testsupport.Constants.PRIVATE_KEY_1;
@@ -41,19 +42,18 @@ public class Download_downloadIntegrationTest {
 
 	@Test
 	public void shouldDownloadByTransactionHash() {
-		final String transactionHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadMultipleData", "transactionHash");
+		final String transactionHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadAllDataTypes", "transactionHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithTransactionHash(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(result.getDataList(), hasSize(5));
-		assertThat(result.getDataList().get(0).getData(), is(notNullValue()));
-		assertThat(result.getDataList().get(1).getData(), is(notNullValue()));
-		assertThat(result.getDataList().get(2).getData(), is(notNullValue()));
-		assertThat(result.getDataList().get(3).getData(), is(notNullValue()));
-		assertThat(result.getDataList().get(4).getData(), is(notNullValue()));
+		assertThat(result.getDataList(), hasSize(6));
+		result.getDataList().stream().forEach(data -> {
+			if (!data.getContentType().equals(PATH_UPLOAD_CONTENT_TYPE))
+				assertThat(data.getData(), is(notNullValue()));
+		});
 	}
 
 	@Test(expected = DownloadFailureException.class)
@@ -66,19 +66,18 @@ public class Download_downloadIntegrationTest {
 
 	@Test
 	public void shouldDownloadByRootDataHash() {
-		final String rootDataHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadMultipleData", "rootDataHash");
+		final String rootDataHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadAllDataTypes", "rootDataHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithRootDataHash(rootDataHash, null).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(result.getDataList(), hasSize(5));
-		assertThat(result.getDataList().get(0).getData(), is(notNullValue()));
-		assertThat(result.getDataList().get(1).getData(), is(notNullValue()));
-		assertThat(result.getDataList().get(2).getData(), is(notNullValue()));
-		assertThat(result.getDataList().get(3).getData(), is(notNullValue()));
-		assertThat(result.getDataList().get(4).getData(), is(notNullValue()));
+		assertThat(result.getDataList(), hasSize(6));
+		result.getDataList().stream().forEach(data -> {
+			if (!data.getContentType().equals(PATH_UPLOAD_CONTENT_TYPE))
+				assertThat(data.getData(), is(notNullValue()));
+		});
 	}
 
 	@Test

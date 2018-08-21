@@ -34,7 +34,7 @@ public class DownloadData_downloadAsyncIntegrationTest {
 
 	@Test
 	public void shouldDownloadDataAsynchronouslyWithoutCallback() throws Exception {
-		final String dataHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadMultipleData", "dataList[0].dataHash");
+		final String dataHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadAllDataTypes", "dataList[0].dataHash");
 		final DownloadDataParameter param =
 				DownloadDataParameter.create(dataHash).build();
 
@@ -48,7 +48,7 @@ public class DownloadData_downloadAsyncIntegrationTest {
 
 	@Test
 	public void shouldDownloadDataAsynchronouslyWithSuccessCallback() throws Exception {
-		final String dataHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadMultipleData", "dataList[0].dataHash");
+		final String dataHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadAllDataTypes", "dataList[0].dataHash");
 		final DownloadDataParameter param =
 				DownloadDataParameter.create(dataHash).build();
 		final CompletableFuture<DownloadDataResult> toPopulateOnSuccess = new CompletableFuture<>();
