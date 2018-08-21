@@ -1,12 +1,12 @@
 package io.proximax.upload;
 
-import com.google.common.io.Files;
 import io.proximax.exceptions.UploadParameterBuildFailureException;
 import io.proximax.model.PrivacyType;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategy;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -72,7 +72,7 @@ public class UploadParameterTest {
     @Test
     public void createWithAllDataTypes() throws IOException {
         final UploadParameter param = UploadParameter.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
-                .addByteArray(ByteArrayParameterData.create(Files.toByteArray(PDF_FILE1)).build())
+                .addByteArray(ByteArrayParameterData.create(FileUtils.readFileToByteArray(PDF_FILE1)).build())
                 .addFile(FileParameterData.create(SMALL_FILE).build())
                 .addUrlResource(UrlResourceParameterData.create(IMAGE_FILE.toURI().toURL()).build())
                 .addFilesAsZip(FilesAsZipParameterData.create(asList(SMALL_FILE, HTML_FILE)).build())
@@ -108,7 +108,7 @@ public class UploadParameterTest {
     @Test
     public void createWithAllDataTypesUsingShortcutMethod() throws IOException {
         final UploadParameter param = UploadParameter.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
-                .addByteArray(Files.toByteArray(PDF_FILE1))
+                .addByteArray(FileUtils.readFileToByteArray(PDF_FILE1))
                 .addFile(SMALL_FILE)
                 .addUrlResource(IMAGE_FILE.toURI().toURL())
                 .addFilesAsZip(asList(SMALL_FILE, HTML_FILE))

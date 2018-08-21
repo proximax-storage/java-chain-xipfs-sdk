@@ -38,8 +38,18 @@ public class DownloadTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void failOnDownloadDataWhenNullDownloadDataParameter() {
+    public void failOnDownloadAsyncWhenNullDownloadParameter() {
+        unitUnderTest.downloadAsync(null, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failOnDownloadDataAsyncWhenNullDownloadDataParameter() {
         unitUnderTest.downloadData(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failOnDownloadDataWhenNullDownloadDataParameter() {
+        unitUnderTest.downloadDataAsync(null, null);
     }
 
 }

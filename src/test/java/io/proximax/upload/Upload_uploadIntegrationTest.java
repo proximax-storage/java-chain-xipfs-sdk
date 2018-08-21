@@ -1,11 +1,11 @@
 package io.proximax.upload;
 
-import com.google.common.io.Files;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.model.PrivacyType;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +40,7 @@ public class Upload_uploadIntegrationTest {
 	@Test
 	public void shouldUploadByteArray() throws Exception {
 		final UploadParameter param = UploadParameter.create(PRIVATE_KEY_1, PUBLIC_KEY_2)
-				.addByteArray(Files.toByteArray(PDF_FILE1), "byte array description", "byte array", "application/pdf",
+				.addByteArray(FileUtils.readFileToByteArray(PDF_FILE1), "byte array description", "byte array", "application/pdf",
 						singletonMap("bytearraykey", "bytearrayval"))
 				.build();
 
@@ -170,7 +170,7 @@ public class Upload_uploadIntegrationTest {
 	@Test
 	public void shouldUploadWithAllDetails() throws Exception {
 		final UploadParameter param = UploadParameter.create(PRIVATE_KEY_1, PUBLIC_KEY_2)
-				.addByteArray(ByteArrayParameterData.create(Files.toByteArray(PDF_FILE1))
+				.addByteArray(ByteArrayParameterData.create(FileUtils.readFileToByteArray(PDF_FILE1))
 						.name("byte array")
 						.description("byte array description")
 						.contentType("text/plain")
@@ -206,7 +206,7 @@ public class Upload_uploadIntegrationTest {
 	@Test
 	public void shouldUploadMultipleData() throws Exception {
 		final UploadParameter param = UploadParameter.create(PRIVATE_KEY_1, PUBLIC_KEY_2)
-				.addByteArray(Files.toByteArray(PDF_FILE1))
+				.addByteArray(FileUtils.readFileToByteArray(PDF_FILE1))
 				.addFile(SMALL_FILE)
 				.addUrlResource(IMAGE_FILE.toURI().toURL())
 				.addFilesAsZip(asList(SMALL_FILE, HTML_FILE))
