@@ -28,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 
 import static io.proximax.service.client.TransactionClient.STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -157,7 +158,7 @@ public class BlockchainTransactionServiceTest {
     }
 
     @Test(expected = AnnounceBlockchainTransactionFailureException.class)
-    public void shouldFailWhenAnnouncementFailed() {
+    public void shouldFailWhenAnnouncementFailed() throws MalformedURLException {
         given(mockBlockchainMessageFactory.createMessage(mockPrivacyStrategy, mockMessagePayload)).willReturn(mockMessage);
         given(mockNemUtils.toAddress(SAMPLE_RECIPIENT_PUBLIC_KEY)).willReturn(SAMPLE_RECIPIENT_ADDRESS);
         given(mockNemUtils.toAccount(SAMPLE_SIGNER_PRIVATE_KEY)).willReturn(SAMPLE_SIGNER_ACCOUNT);
@@ -172,7 +173,7 @@ public class BlockchainTransactionServiceTest {
     }
 
     @Test
-    public void shouldSignTransactionWithCorrectDataOnCreateAndAnnounceTransaction() {
+    public void shouldSignTransactionWithCorrectDataOnCreateAndAnnounceTransaction() throws MalformedURLException {
         given(mockBlockchainMessageFactory.createMessage(mockPrivacyStrategy, mockMessagePayload)).willReturn(mockMessage);
         given(mockNemUtils.toAddress(SAMPLE_RECIPIENT_PUBLIC_KEY)).willReturn(SAMPLE_RECIPIENT_ADDRESS);
         given(mockNemUtils.toAccount(SAMPLE_SIGNER_PRIVATE_KEY)).willReturn(SAMPLE_SIGNER_ACCOUNT);

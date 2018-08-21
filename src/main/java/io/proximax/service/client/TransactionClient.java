@@ -29,6 +29,7 @@ public class TransactionClient {
 
     public static final String STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION = "SUCCESS";
     private final TransactionHttp transactionHttp;
+    private final String blockchainNetworkEndpointUrl;
     private final Listener listener;
 
     /**
@@ -40,11 +41,13 @@ public class TransactionClient {
         checkArgument(blockchainNetworkConnection != null, "blockchainNetworkConnection is required");
 
         this.transactionHttp = new TransactionHttp(blockchainNetworkConnection.getEndpointUrl());
-        this.listener = new Listener(blockchainNetworkConnection.getEndpointUrl());
+        this.blockchainNetworkEndpointUrl = blockchainNetworkConnection.getEndpointUrl();
+        this.listener = null;
     }
 
     TransactionClient(TransactionHttp transactionHttp, Listener listener) {
         this.transactionHttp = transactionHttp;
+        this.blockchainNetworkEndpointUrl = null;
         this.listener = listener;
     }
 
@@ -83,10 +86,11 @@ public class TransactionClient {
      * @return the status
      * @throws MalformedURLException when blockchain network endpoint URL is not correct
      */
-    public synchronized String waitForAnnouncedTransactionToBeUnconfirmed(Address address, String transactionHash) {
+    public synchronized String waitForAnnouncedTransactionToBeUnconfirmed(Address address, String transactionHash) throws MalformedURLException {
         checkArgument(address != null, "address is required");
         checkArgument(transactionHash != null, "transactionHash is required");
 
+        final Listener listener = getListener();
         try {
             listener.open().get();
             final Observable<String> failedTransactionStatusOb =
@@ -109,6 +113,10 @@ public class TransactionClient {
         } finally {
             listener.close();
         }
+    }
+
+    private Listener getListener() throws MalformedURLException {
+        return listener != null ? listener : new Listener(blockchainNetworkEndpointUrl);
     }
 
     private Observable<String> getAddedUnconfirmedTransactionStatus(Address address, String transactionHash, Listener listener) {
