@@ -21,7 +21,7 @@ public class AsyncCallback<T> {
      * @param successCallback the success callback
      * @param failureCallback the failure callback
      * @param <T> the result type
-     * @return
+     * @return the async callback instance
      */
     public static <T> AsyncCallback<T> create(Consumer<T> successCallback, Consumer<Throwable> failureCallback) {
         return new AsyncCallback<T>(successCallback, failureCallback);

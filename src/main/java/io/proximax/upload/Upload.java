@@ -88,6 +88,7 @@ public class Upload {
      * <br>
      * The upload throws an UploadFailureException runtime exception if does not succeed.
      * @param uploadParam the upload parameter that contains what is being uploaded along with additional details
+     * @param asyncCallback an optional callbacks when succeeded or failed
      * @return the upload result containing the hashes to get the uploaded content
      */
     public AsyncTask uploadAsync(UploadParameter uploadParam, AsyncCallback<UploadResult> asyncCallback) {
