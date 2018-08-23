@@ -4,7 +4,7 @@ import io.proximax.privacy.strategy.PrivacyStrategy;
 
 import java.util.List;
 
-import static io.proximax.model.Constants.VERSION;
+import static io.proximax.model.Constants.SCHEMA_VERSION;
 import static java.util.Collections.unmodifiableList;
 
 /**
@@ -42,7 +42,7 @@ public class UploadParameter {
         this.privacyStrategy = privacyStrategy;
         this.computeDigest = computeDigest;
         this.dataList = dataList;
-        this.version = VERSION;
+        this.version = SCHEMA_VERSION;
     }
 
     /**

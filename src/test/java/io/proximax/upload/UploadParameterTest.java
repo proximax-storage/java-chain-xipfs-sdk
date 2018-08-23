@@ -14,7 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.proximax.model.Constants.VERSION;
+import static io.proximax.model.Constants.SCHEMA_VERSION;
 import static io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategyTest.SECRET_MINIMUM_PART_COUNT_TO_BUILD;
 import static io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategyTest.SECRET_PARTS;
 import static io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategyTest.SECRET_TOTAL_PART_COUNT;
@@ -63,7 +63,7 @@ public class UploadParameterTest {
         assertThat(param.getDescription(), is(nullValue()));
         assertThat(param.getRecipientPublicKey(), is(SAMPLE_RECIPIENT_PUBLIC_KEY));
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
-        assertThat(param.getVersion(), is(VERSION));
+        assertThat(param.getVersion(), is(SCHEMA_VERSION));
         assertThat(param.getComputeDigest(), is(true));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
         assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is(nullValue()));
@@ -88,7 +88,7 @@ public class UploadParameterTest {
         assertThat(param.getDescription(), is("root description"));
         assertThat(param.getRecipientPublicKey(), is(SAMPLE_RECIPIENT_PUBLIC_KEY));
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
-        assertThat(param.getVersion(), is(VERSION));
+        assertThat(param.getVersion(), is(SCHEMA_VERSION));
         assertThat(param.getComputeDigest(), is(false));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
         assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
@@ -125,7 +125,7 @@ public class UploadParameterTest {
         assertThat(param.getDescription(), is("root description"));
         assertThat(param.getRecipientPublicKey(), is(SAMPLE_RECIPIENT_PUBLIC_KEY));
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
-        assertThat(param.getVersion(), is(VERSION));
+        assertThat(param.getVersion(), is(SCHEMA_VERSION));
         assertThat(param.getComputeDigest(), is(false));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
         assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
@@ -150,7 +150,7 @@ public class UploadParameterTest {
         assertThat(param.getDescription(), is("root description"));
         assertThat(param.getRecipientPublicKey(), is(SAMPLE_RECIPIENT_PUBLIC_KEY));
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
-        assertThat(param.getVersion(), is(VERSION));
+        assertThat(param.getVersion(), is(SCHEMA_VERSION));
         assertThat(param.getComputeDigest(), is(false));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
         assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));

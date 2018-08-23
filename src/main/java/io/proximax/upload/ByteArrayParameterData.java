@@ -2,7 +2,7 @@ package io.proximax.upload;
 
 import java.util.Map;
 
-import static io.proximax.model.Constants.RESEVERVE_CONTENT_TYPES;
+import static io.proximax.model.Constants.RESERVED_CONTENT_TYPES;
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
@@ -53,7 +53,7 @@ public class ByteArrayParameterData extends UploadParameterData {
          * @return same instance of the builder class
          */
         public ByteArrayParameterDataBuilder contentType(String contentType) {
-            checkParameter(!RESEVERVE_CONTENT_TYPES.contains(contentType), String.format("%s cannot be used as it is reserved", contentType));
+            checkParameter(!RESERVED_CONTENT_TYPES.contains(contentType), String.format("%s cannot be used as it is reserved", contentType));
             this.contentType = contentType;
             return this;
         }

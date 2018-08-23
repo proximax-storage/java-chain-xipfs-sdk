@@ -10,9 +10,9 @@ import static java.util.Arrays.asList;
 public class Constants {
 
     /**
-     * The upload version
+     * The upload schema version
      */
-    public static final String VERSION = "1.0";
+    public static final String SCHEMA_VERSION = "1.0";
 
     /**
      * The content type to indicate it is a path upload
@@ -22,7 +22,7 @@ public class Constants {
     /**
      * The reserved content types that cannot be specified as content type when uploading
      */
-    public static final List<String> RESEVERVE_CONTENT_TYPES = asList(PATH_UPLOAD_CONTENT_TYPE);
+    public static final List<String> RESERVED_CONTENT_TYPES = asList(PATH_UPLOAD_CONTENT_TYPE);
 
     private Constants() {
     }
