@@ -139,19 +139,19 @@ public class CreateProximaxMessagePayloadServiceTest {
                             "{" +
                                 "\"digest\":\"iowuqoieuqowueoiqw\"," +
                                 "\"dataHash\":\"Qmdahdksadjksahjk\"," +
+                                "\"timestamp\":1000," +
                                 "\"description\":\"data 1\"," +
                                 "\"metadata\":{\"key1\":\"value1\"}," +
-                                "\"timestamp\":1000," +
                                 "\"name\":\"data name 1\"," +
                                 "\"contentType\":\"text/plain\"" +
                             "}," +
                             "{" +
                                 "\"digest\":\"sadasdsadsadasdads\"," +
                                 "\"dataHash\":\"Qmcxzczxczxczxcxz\"," +
+                                "\"timestamp\":2000," +
                                 "\"description\":\"data 2\"," +
                                 "\"metadata\":{\"key2\":\"value2\"}," +
-                                "\"timestamp\":2000" +
-                                ",\"name\":\"data name 2\"," +
+                                "\"name\":\"data name 2\"," +
                                 "\"contentType\":\"text/html\"" +
                             "}" +
                         "]" +

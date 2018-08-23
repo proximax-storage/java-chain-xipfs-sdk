@@ -1,6 +1,5 @@
 package io.proximax.model;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -19,15 +18,11 @@ import java.util.Map;
  * </ul>
  * @see ProximaxRootDataModel
  */
-public final class ProximaxDataModel {
+public final class ProximaxDataModel extends DataInfoModel {
 
 	private final String digest;
 	private final String dataHash;
-	private final String description;
-	private final Map<String, String> metadata;
 	private final long timestamp;
-	private final String name;
-	private final String contentType;
 
 	/**
 	 * Construct an instance
@@ -46,13 +41,10 @@ public final class ProximaxDataModel {
 							 final Long timestamp,
 							 final String name,
 							 final String contentType) {
+		super(description, name, contentType, metadata);
 		this.digest = digest;
 		this.dataHash = dataHash;
-		this.description = description;
-		this.metadata = metadata == null ? Collections.emptyMap() : Collections.unmodifiableMap(metadata);
 		this.timestamp = timestamp;
-		this.name = name;
-		this.contentType = contentType;
 	}
 
 	/**
@@ -72,43 +64,11 @@ public final class ProximaxDataModel {
 	}
 
 	/**
-	 * Get the description of the data
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * Get the additional metadata for the data
-	 * @return the metadata
-	 */
-	public Map<String, String> getMetadata() {
-		return metadata;
-	}
-
-	/**
 	 * Get the upload timestamp
 	 * @return the timestamp
 	 */
 	public Long getTimestamp() {
 		return timestamp;
-	}
-
-	/**
-	 * Get the name for the data
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * Get the content type of the data
-	 * @return the content type
-	 */
-	public String getContentType() {
-		return contentType;
 	}
 
 	/**
