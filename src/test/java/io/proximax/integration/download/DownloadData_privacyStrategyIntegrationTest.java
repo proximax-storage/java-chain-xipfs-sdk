@@ -1,9 +1,12 @@
-package io.proximax.download;
+package io.proximax.integration.download;
 
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
+import io.proximax.download.Download;
+import io.proximax.download.DownloadDataParameter;
+import io.proximax.download.DownloadDataResult;
 import io.proximax.testsupport.TestHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;

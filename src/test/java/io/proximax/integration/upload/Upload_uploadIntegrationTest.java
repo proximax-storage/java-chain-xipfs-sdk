@@ -1,10 +1,14 @@
-package io.proximax.upload;
+package io.proximax.integration.upload;
 
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.model.PrivacyType;
+import io.proximax.upload.ByteArrayParameterData;
+import io.proximax.upload.Upload;
+import io.proximax.upload.UploadParameter;
+import io.proximax.upload.UploadResult;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;

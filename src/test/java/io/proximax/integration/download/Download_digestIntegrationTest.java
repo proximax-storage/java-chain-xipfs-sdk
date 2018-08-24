@@ -1,9 +1,12 @@
-package io.proximax.download;
+package io.proximax.integration.download;
 
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
+import io.proximax.download.Download;
+import io.proximax.download.DownloadParameter;
+import io.proximax.download.DownloadResult;
 import io.proximax.exceptions.DownloadFailureException;
 import io.proximax.testsupport.TestHelper;
 import org.junit.Before;
