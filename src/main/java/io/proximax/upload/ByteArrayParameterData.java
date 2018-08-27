@@ -53,7 +53,9 @@ public class ByteArrayParameterData extends UploadParameterData {
          * @return same instance of the builder class
          */
         public ByteArrayParameterDataBuilder contentType(String contentType) {
-            checkParameter(!RESERVED_CONTENT_TYPES.contains(contentType), String.format("%s cannot be used as it is reserved", contentType));
+            checkParameter(contentType == null || !RESERVED_CONTENT_TYPES.contains(contentType),
+                    String.format("%s cannot be used as it is reserved", contentType));
+
             this.contentType = contentType;
             return this;
         }

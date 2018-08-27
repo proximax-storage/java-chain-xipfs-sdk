@@ -37,7 +37,7 @@ public class AsyncTask {
      * Set task to done
      */
     public void done() {
-        if (cancelled == false)
+        if (!cancelled)
             this.done = true;
     }
 
@@ -45,7 +45,7 @@ public class AsyncTask {
      * Set task to cancel
      */
     public void cancel() {
-        if (done == false)
+        if (!done)
             this.cancelled = true;
     }
 }

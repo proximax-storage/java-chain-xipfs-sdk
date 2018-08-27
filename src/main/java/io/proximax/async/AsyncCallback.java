@@ -11,7 +11,7 @@ public class AsyncCallback<T> {
     private final Consumer<T> successCallback;
     private final Consumer<Throwable> failureCallback;
 
-    AsyncCallback(Consumer<T> successCallback, Consumer<Throwable> failureCallback) {
+    private AsyncCallback(Consumer<T> successCallback, Consumer<Throwable> failureCallback) {
         this.successCallback = successCallback;
         this.failureCallback = failureCallback;
     }

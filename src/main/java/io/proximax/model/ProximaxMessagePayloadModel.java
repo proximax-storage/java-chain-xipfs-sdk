@@ -26,7 +26,7 @@ public final class ProximaxMessagePayloadModel {
     private final String description;
     private final String version;
 
-    ProximaxMessagePayloadModel(String digest, String rootDataHash, int privacyType, String privacySearchTag,
+    private ProximaxMessagePayloadModel(String digest, String rootDataHash, int privacyType, String privacySearchTag,
                                        String description, String version) {
         this.digest = digest;
         this.rootDataHash = rootDataHash;
