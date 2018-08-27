@@ -9,7 +9,6 @@ import io.proximax.upload.PathParameterData;
 import io.proximax.upload.UploadParameter;
 import io.proximax.utils.ContentTypeUtils;
 import io.proximax.utils.DigestUtils;
-import io.proximax.utils.PrivacyDataEncryptionUtils;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 
@@ -26,7 +25,6 @@ public class CreateProximaxRootDataService {
     private final IpfsUploadService ipfsUploadService;
     private final DigestUtils digestUtils;
     private final ContentTypeUtils contentTypeUtils;
-    private final PrivacyDataEncryptionUtils privacyDataEncryptionUtils;
 
     /**
      * Construct this class
@@ -36,15 +34,12 @@ public class CreateProximaxRootDataService {
         this.ipfsUploadService = new IpfsUploadService(ipfsConnection);
         this.digestUtils = new DigestUtils();
         this.contentTypeUtils = new ContentTypeUtils();
-        this.privacyDataEncryptionUtils = new PrivacyDataEncryptionUtils();
     }
 
-    CreateProximaxRootDataService(IpfsUploadService ipfsUploadService, DigestUtils digestUtils,
-                                  ContentTypeUtils contentTypeUtils, PrivacyDataEncryptionUtils privacyDataEncryptionUtils) {
+    CreateProximaxRootDataService(IpfsUploadService ipfsUploadService, DigestUtils digestUtils, ContentTypeUtils contentTypeUtils) {
         this.ipfsUploadService = ipfsUploadService;
         this.digestUtils = digestUtils;
         this.contentTypeUtils = contentTypeUtils;
-        this.privacyDataEncryptionUtils = privacyDataEncryptionUtils;
     }
 
     /**
@@ -73,11 +68,9 @@ public class CreateProximaxRootDataService {
     private ObservableSource<? extends ProximaxDataModel> uploadData(UploadParameter uploadParam, ByteArrayParameterData byteArrParamData) {
         final Observable<String> detectedContentTypeOb =
                 contentTypeUtils.detectContentType(byteArrParamData.getData(), byteArrParamData.getContentType());
-        final Observable<byte[]> encryptedDataOb =
-                privacyDataEncryptionUtils.encrypt(uploadParam.getPrivacyStrategy(), byteArrParamData.getData()).cache();
-        final Observable<Optional<String>> digestOb = encryptedDataOb.flatMap(encryptedData ->
-                computeDigest(uploadParam.getComputeDigest(), encryptedData));
-        final Observable<IpfsUploadResponse> ipfsUploadResponseOb = encryptedDataOb.flatMap(ipfsUploadService::uploadByteArray);
+        final byte[] encryptedData = uploadParam.getPrivacyStrategy().encryptData(byteArrParamData.getData());
+        final Observable<Optional<String>> digestOb = computeDigest(uploadParam.getComputeDigest(), encryptedData);
+        final Observable<IpfsUploadResponse> ipfsUploadResponseOb = ipfsUploadService.uploadByteArray(encryptedData);
 
         return Observable.zip(ipfsUploadResponseOb, digestOb, detectedContentTypeOb,
                 (ipfsUploadResponse, digest, contentType) ->

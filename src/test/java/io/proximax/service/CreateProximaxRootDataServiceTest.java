@@ -2,7 +2,6 @@ package io.proximax.service;
 
 import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxRootDataModel;
-import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.upload.ByteArrayParameterData;
 import io.proximax.upload.PathParameterData;
@@ -10,7 +9,6 @@ import io.proximax.upload.StringParameterData;
 import io.proximax.upload.UploadParameter;
 import io.proximax.utils.ContentTypeUtils;
 import io.proximax.utils.DigestUtils;
-import io.proximax.utils.PrivacyDataEncryptionUtils;
 import io.reactivex.Observable;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +52,6 @@ public class CreateProximaxRootDataServiceTest {
 
     private static final Long DUMMY_TIMESTAMP_1 = 1000L;
     private static final Long DUMMY_TIMESTAMP_2 = 2000L;
-    private static final PrivacyStrategy DUMMY_PRIVACY_STRATEGY = PlainPrivacyStrategy.create(null);
 
     private CreateProximaxRootDataService unitUnderTest;
 
@@ -68,14 +65,16 @@ public class CreateProximaxRootDataServiceTest {
     private ContentTypeUtils mockContentTypeUtils;
 
     @Mock
-    private PrivacyDataEncryptionUtils mockPrivacyDataEncryptionUtils;
+    private PrivacyStrategy mockPrivacyStrategy;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        unitUnderTest = new CreateProximaxRootDataService(mockIpfsUploadService, mockDigestUtils, mockContentTypeUtils,
-                mockPrivacyDataEncryptionUtils);
+        unitUnderTest = new CreateProximaxRootDataService(mockIpfsUploadService, mockDigestUtils, mockContentTypeUtils);
+
+        given(mockPrivacyStrategy.getPrivacyType()).willReturn(1001);
+        given(mockPrivacyStrategy.getPrivacySearchTag()).willReturn("test");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -85,10 +84,8 @@ public class CreateProximaxRootDataServiceTest {
 
     @Test
     public void shouldCreateRootDataForByteArrayUploadAndWhenDigestTrue() {
-        given(mockPrivacyDataEncryptionUtils.encrypt(DUMMY_PRIVACY_STRATEGY, DUMMY_DATA_1))
-                .willReturn(Observable.just(DUMMY_ENCRYPTED_DATA_1));
-        given(mockPrivacyDataEncryptionUtils.encrypt(DUMMY_PRIVACY_STRATEGY, DUMMY_DATA_2))
-                .willReturn(Observable.just(DUMMY_ENCRYPTED_DATA_2));
+        given(mockPrivacyStrategy.encryptData(DUMMY_DATA_1)).willReturn(DUMMY_ENCRYPTED_DATA_1);
+        given(mockPrivacyStrategy.encryptData(DUMMY_DATA_2)).willReturn(DUMMY_ENCRYPTED_DATA_2);
         given(mockDigestUtils.digest(DUMMY_ENCRYPTED_DATA_1)).willReturn(Observable.just(DUMMY_DIGEST_1));
         given(mockDigestUtils.digest(DUMMY_ENCRYPTED_DATA_2)).willReturn(Observable.just(DUMMY_DIGEST_2));
         given(mockContentTypeUtils.detectContentType(DUMMY_DATA_1, null))
@@ -120,17 +117,15 @@ public class CreateProximaxRootDataServiceTest {
         assertThat(result.getDataList().get(1).getName(), is(DUMMY_NAME_2));
         assertThat(result.getDataList().get(1).getTimestamp(), is(DUMMY_TIMESTAMP_2));
         assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
-        assertThat(result.getPrivacySearchTag(), is(nullValue()));
+        assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
         assertThat(result.getVersion(), is(DUMMY_VERSION));
     }
 
     @Test
     public void shouldCreateRootDataForByteArrayUploadAndWhenDigestFalse() {
-        given(mockPrivacyDataEncryptionUtils.encrypt(DUMMY_PRIVACY_STRATEGY, DUMMY_DATA_1))
-                .willReturn(Observable.just(DUMMY_ENCRYPTED_DATA_1));
-        given(mockPrivacyDataEncryptionUtils.encrypt(DUMMY_PRIVACY_STRATEGY, DUMMY_DATA_2))
-                .willReturn(Observable.just(DUMMY_ENCRYPTED_DATA_2));
+        given(mockPrivacyStrategy.encryptData(DUMMY_DATA_1)).willReturn(DUMMY_ENCRYPTED_DATA_1);
+        given(mockPrivacyStrategy.encryptData(DUMMY_DATA_2)).willReturn(DUMMY_ENCRYPTED_DATA_2);
         given(mockContentTypeUtils.detectContentType(DUMMY_DATA_1, null))
                 .willReturn(Observable.just(DUMMY_CONTENT_TYPE_1));
         given(mockContentTypeUtils.detectContentType(DUMMY_DATA_2, null))
@@ -160,7 +155,7 @@ public class CreateProximaxRootDataServiceTest {
         assertThat(result.getDataList().get(1).getName(), is(DUMMY_NAME_2));
         assertThat(result.getDataList().get(1).getTimestamp(), is(DUMMY_TIMESTAMP_2));
         assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
-        assertThat(result.getPrivacySearchTag(), is(nullValue()));
+        assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
         assertThat(result.getVersion(), is(DUMMY_VERSION));
     }
@@ -192,15 +187,14 @@ public class CreateProximaxRootDataServiceTest {
         assertThat(result.getDataList().get(1).getName(), is(DUMMY_NAME_2));
         assertThat(result.getDataList().get(1).getTimestamp(), is(DUMMY_TIMESTAMP_2));
         assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
-        assertThat(result.getPrivacySearchTag(), is(nullValue()));
+        assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
         assertThat(result.getVersion(), is(DUMMY_VERSION));
     }
 
     @Test
     public void shouldCreateRootDataForPathAndByteArrayUpload() {
-        given(mockPrivacyDataEncryptionUtils.encrypt(DUMMY_PRIVACY_STRATEGY, DUMMY_DATA_1))
-                .willReturn(Observable.just(DUMMY_ENCRYPTED_DATA_1));
+        given(mockPrivacyStrategy.encryptData(DUMMY_DATA_1)).willReturn(DUMMY_ENCRYPTED_DATA_1);
         given(mockContentTypeUtils.detectContentType(DUMMY_DATA_1, null))
                 .willReturn(Observable.just(DUMMY_CONTENT_TYPE_1));
         given(mockDigestUtils.digest(DUMMY_ENCRYPTED_DATA_1)).willReturn(Observable.just(DUMMY_DIGEST_1));
@@ -229,7 +223,7 @@ public class CreateProximaxRootDataServiceTest {
         assertThat(result.getDataList().get(1).getName(), is(DUMMY_NAME_2));
         assertThat(result.getDataList().get(1).getTimestamp(), is(DUMMY_TIMESTAMP_2));
         assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
-        assertThat(result.getPrivacySearchTag(), is(nullValue()));
+        assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
         assertThat(result.getVersion(), is(DUMMY_VERSION));
     }
@@ -248,7 +242,7 @@ public class CreateProximaxRootDataServiceTest {
                         .build())
                 .description(DUMMY_ROOT_DESCRIPTION)
                 .computeDigest(true)
-                .privacyStrategy(DUMMY_PRIVACY_STRATEGY)
+                .privacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 
@@ -266,7 +260,7 @@ public class CreateProximaxRootDataServiceTest {
                         .build())
                 .description(DUMMY_ROOT_DESCRIPTION)
                 .computeDigest(false)
-                .privacyStrategy(DUMMY_PRIVACY_STRATEGY)
+                .privacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 
@@ -284,7 +278,7 @@ public class CreateProximaxRootDataServiceTest {
                         .build())
                 .description(DUMMY_ROOT_DESCRIPTION)
                 .computeDigest(true)
-                .privacyStrategy(DUMMY_PRIVACY_STRATEGY)
+                .privacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 
@@ -302,7 +296,7 @@ public class CreateProximaxRootDataServiceTest {
                         .build())
                 .description(DUMMY_ROOT_DESCRIPTION)
                 .computeDigest(true)
-                .privacyStrategy(DUMMY_PRIVACY_STRATEGY)
+                .privacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 

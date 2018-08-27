@@ -5,10 +5,8 @@ import io.proximax.download.DownloadParameter;
 import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.model.ProximaxRootDataModel;
-import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.utils.DigestUtils;
-import io.proximax.utils.PrivacyDataEncryptionUtils;
 import io.reactivex.Observable;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +21,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 public class RetrieveProximaxDataServiceTest {
@@ -38,7 +35,6 @@ public class RetrieveProximaxDataServiceTest {
     private static final byte[] DUMMY_DECRYPTED_DATA_2 = "icjoiuewoiqueioqwjekwq,.eqwn,mnqwio".getBytes();
     private static final String DUMMY_ROOT_DESCRIPTION = "ewqeqwewqeqweqw";
     private static final String DUMMY_VERSION = "1.0";
-    private static final PrivacyStrategy DUMMY_PRIVACY_STRATEGY = PlainPrivacyStrategy.create(null);
 
     private RetrieveProximaxDataService unitUnderTest;
 
@@ -49,13 +45,13 @@ public class RetrieveProximaxDataServiceTest {
     private DigestUtils mockDigestUtils;
 
     @Mock
-    private PrivacyDataEncryptionUtils mockPrivacyDataEncryptionUtils;
+    private PrivacyStrategy mockPrivacyStrategy;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        unitUnderTest = new RetrieveProximaxDataService(mockIpfsDownloadService, mockDigestUtils, mockPrivacyDataEncryptionUtils);
+        unitUnderTest = new RetrieveProximaxDataService(mockIpfsDownloadService, mockDigestUtils);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -69,10 +65,8 @@ public class RetrieveProximaxDataServiceTest {
         given(mockIpfsDownloadService.download(DUMMY_DATA_HASH_2)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA_2));
         given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA_1, DUMMY_DIGEST_1)).willReturn(Observable.just(true));
         given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA_2, DUMMY_DIGEST_2)).willReturn(Observable.just(true));
-        given(mockPrivacyDataEncryptionUtils.decrypt(DUMMY_PRIVACY_STRATEGY, DUMMY_DOWNLOADED_DATA_1))
-                .willReturn(Observable.just(DUMMY_DECRYPTED_DATA_1));
-        given(mockPrivacyDataEncryptionUtils.decrypt(DUMMY_PRIVACY_STRATEGY, DUMMY_DOWNLOADED_DATA_2))
-                .willReturn(Observable.just(DUMMY_DECRYPTED_DATA_2));
+        given(mockPrivacyStrategy.decryptData(DUMMY_DOWNLOADED_DATA_1)).willReturn(DUMMY_DECRYPTED_DATA_1);
+        given(mockPrivacyStrategy.decryptData(DUMMY_DOWNLOADED_DATA_2)).willReturn(DUMMY_DECRYPTED_DATA_2);
 
         final byte[] result = unitUnderTest.getData(sampleDownloadDataParameter()).blockingFirst();
 
@@ -96,10 +90,8 @@ public class RetrieveProximaxDataServiceTest {
         given(mockIpfsDownloadService.download(DUMMY_DATA_HASH_2)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA_2));
         given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA_1, DUMMY_DIGEST_1)).willReturn(Observable.just(true));
         given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA_2, DUMMY_DIGEST_2)).willReturn(Observable.just(true));
-        given(mockPrivacyDataEncryptionUtils.decrypt(DUMMY_PRIVACY_STRATEGY, DUMMY_DOWNLOADED_DATA_1))
-                .willReturn(Observable.just(DUMMY_DECRYPTED_DATA_1));
-        given(mockPrivacyDataEncryptionUtils.decrypt(DUMMY_PRIVACY_STRATEGY, DUMMY_DOWNLOADED_DATA_2))
-                .willReturn(Observable.just(DUMMY_DECRYPTED_DATA_2));
+        given(mockPrivacyStrategy.decryptData(DUMMY_DOWNLOADED_DATA_1)).willReturn(DUMMY_DECRYPTED_DATA_1);
+        given(mockPrivacyStrategy.decryptData(DUMMY_DOWNLOADED_DATA_2)).willReturn(DUMMY_DECRYPTED_DATA_2);
 
         final List<byte[]> result = unitUnderTest.getDataList(sampleDownloadParameter(), sampleRootData()).blockingFirst();
 
@@ -112,13 +104,13 @@ public class RetrieveProximaxDataServiceTest {
     private DownloadDataParameter sampleDownloadDataParameter() {
         return DownloadDataParameter.create(DUMMY_DATA_HASH_1)
                 .digest(DUMMY_DIGEST_1)
-                .privacyStrategy(DUMMY_PRIVACY_STRATEGY)
+                .privacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 
     private DownloadParameter sampleDownloadParameter() {
         return DownloadParameter.createWithTransactionHash("hdksjahdkhsakjdhkjsahkdsahjkdsa")
-                .privacyStrategy(DUMMY_PRIVACY_STRATEGY)
+                .privacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 

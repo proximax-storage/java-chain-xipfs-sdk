@@ -6,7 +6,6 @@ import io.proximax.download.DownloadParameter;
 import io.proximax.model.ProximaxRootDataModel;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.utils.DigestUtils;
-import io.proximax.utils.PrivacyDataEncryptionUtils;
 import io.reactivex.Observable;
 
 import java.util.List;
@@ -23,7 +22,6 @@ public class RetrieveProximaxDataService {
 
     private final IpfsDownloadService ipfsDownloadService;
     private final DigestUtils digestUtils;
-    private final PrivacyDataEncryptionUtils privacyDataEncryptionUtils;
 
     /**
      * Construct this class
@@ -32,14 +30,11 @@ public class RetrieveProximaxDataService {
     public RetrieveProximaxDataService(IpfsConnection ipfsConnection) {
         this.ipfsDownloadService = new IpfsDownloadService(ipfsConnection);
         this.digestUtils = new DigestUtils();
-        this.privacyDataEncryptionUtils = new PrivacyDataEncryptionUtils();
     }
 
-    RetrieveProximaxDataService(IpfsDownloadService ipfsDownloadService, DigestUtils digestUtils,
-                                PrivacyDataEncryptionUtils privacyDataEncryptionUtils) {
+    RetrieveProximaxDataService(IpfsDownloadService ipfsDownloadService, DigestUtils digestUtils) {
         this.ipfsDownloadService = ipfsDownloadService;
         this.digestUtils = digestUtils;
-        this.privacyDataEncryptionUtils = privacyDataEncryptionUtils;
     }
 
     /**
@@ -82,8 +77,7 @@ public class RetrieveProximaxDataService {
         return ipfsDownloadService.download(dataHash)
                 .flatMap(undecryptedData ->
                         digestUtils.validateDigest(undecryptedData, digest).map(result -> undecryptedData))
-                .flatMap(undecryptedData ->
-                        privacyDataEncryptionUtils.decrypt(privacyStrategy, undecryptedData))
+                .map(privacyStrategy::decryptData)
                 .map(Optional::of);
     }
 }

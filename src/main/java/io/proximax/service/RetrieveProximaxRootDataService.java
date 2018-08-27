@@ -7,7 +7,6 @@ import io.proximax.model.ProximaxRootDataModel;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.utils.DigestUtils;
 import io.proximax.utils.JsonUtils;
-import io.proximax.utils.PrivacyDataEncryptionUtils;
 import io.reactivex.Observable;
 
 import java.util.Optional;
@@ -20,7 +19,6 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 public class RetrieveProximaxRootDataService {
     private final IpfsDownloadService ipfsDownloadService;
     private final DigestUtils digestUtils;
-    private final PrivacyDataEncryptionUtils privacyDataEncryptionUtils;
 
     /**
      * Construct this class
@@ -29,14 +27,11 @@ public class RetrieveProximaxRootDataService {
     public RetrieveProximaxRootDataService(IpfsConnection ipfsConnection) {
         this.ipfsDownloadService = new IpfsDownloadService(ipfsConnection);
         this.digestUtils = new DigestUtils();
-        this.privacyDataEncryptionUtils = new PrivacyDataEncryptionUtils();
     }
 
-    RetrieveProximaxRootDataService(IpfsDownloadService ipfsDownloadService, DigestUtils digestUtils,
-                                    PrivacyDataEncryptionUtils privacyDataEncryptionUtils) {
+    RetrieveProximaxRootDataService(IpfsDownloadService ipfsDownloadService, DigestUtils digestUtils) {
         this.ipfsDownloadService = ipfsDownloadService;
         this.digestUtils = digestUtils;
-        this.privacyDataEncryptionUtils = privacyDataEncryptionUtils;
     }
 
     /**
@@ -77,8 +72,7 @@ public class RetrieveProximaxRootDataService {
 
     private Observable<ProximaxRootDataModel> decryptRootData(PrivacyStrategy privacyStrategy,
                                                               Observable<byte[]> undecryptedAndVerifiedRootDataOb) {
-        return undecryptedAndVerifiedRootDataOb.flatMap(undecryptedRootData ->
-                privacyDataEncryptionUtils.decrypt(privacyStrategy, undecryptedRootData))
+        return undecryptedAndVerifiedRootDataOb.map(privacyStrategy::decryptData)
                 .map(String::new)
                 .map(json -> JsonUtils.fromJson(json, ProximaxRootDataModel.class));
     }

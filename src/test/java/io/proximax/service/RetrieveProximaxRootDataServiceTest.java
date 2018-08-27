@@ -4,8 +4,8 @@ import io.proximax.download.DownloadParameter;
 import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxMessagePayloadModel;
 import io.proximax.model.ProximaxRootDataModel;
+import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.utils.DigestUtils;
-import io.proximax.utils.PrivacyDataEncryptionUtils;
 import io.reactivex.Observable;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,12 +36,15 @@ public class RetrieveProximaxRootDataServiceTest {
     private DigestUtils mockDigestUtils;
 
     @Mock
-    private PrivacyDataEncryptionUtils mockPrivacyDataEncryptionUtils;
+    private PrivacyStrategy mockPrivacyStrategy;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        unitUnderTest = new RetrieveProximaxRootDataService(mockIpfsDownloadService, mockDigestUtils, mockPrivacyDataEncryptionUtils);
+        unitUnderTest = new RetrieveProximaxRootDataService(mockIpfsDownloadService, mockDigestUtils);
+
+        given(mockPrivacyStrategy.getPrivacyType()).willReturn(1001);
+        given(mockPrivacyStrategy.getPrivacySearchTag()).willReturn("test");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -58,7 +61,7 @@ public class RetrieveProximaxRootDataServiceTest {
     public void shouldReturnRootDataWhenEmptyMessagePayload() {
         given(mockIpfsDownloadService.download(DUMMY_ROOT_DATAHASH)).willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
         given(mockDigestUtils.validateDigest(any(), any())).willReturn(Observable.just(true));
-        given(mockPrivacyDataEncryptionUtils.decrypt(any(), any())).willReturn(Observable.just(sampleRootDataJson().getBytes()));
+        given(mockPrivacyStrategy.decryptData(any())).willReturn(sampleRootDataJson().getBytes());
 
         final ProximaxRootDataModel result = unitUnderTest.getRootData(sampleDownloadParam(), Optional.empty()).blockingFirst();
 
@@ -88,7 +91,7 @@ public class RetrieveProximaxRootDataServiceTest {
     public void shouldReturnRootDataWhenMessagePayloadProvided() {
         given(mockIpfsDownloadService.download(DUMMY_ROOT_DATAHASH)).willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
         given(mockDigestUtils.validateDigest(any(), any())).willReturn(Observable.just(true));
-        given(mockPrivacyDataEncryptionUtils.decrypt(any(), any())).willReturn(Observable.just(sampleRootDataJson().getBytes()));
+        given(mockPrivacyStrategy.decryptData(any())).willReturn(sampleRootDataJson().getBytes());
 
         final ProximaxRootDataModel result = unitUnderTest.getRootData(sampleDownloadParam(), Optional.of(sampleMessagePayload())).blockingFirst();
 
@@ -115,6 +118,7 @@ public class RetrieveProximaxRootDataServiceTest {
 
     private DownloadParameter sampleDownloadParam() {
         return DownloadParameter.createWithRootDataHash(DUMMY_ROOT_DATAHASH, DUMMY_ROOT_DIGEST)
+                .privacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 

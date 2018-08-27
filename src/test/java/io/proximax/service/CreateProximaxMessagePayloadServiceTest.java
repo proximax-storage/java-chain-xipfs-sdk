@@ -4,12 +4,10 @@ import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.model.ProximaxMessagePayloadModel;
 import io.proximax.model.ProximaxRootDataModel;
-import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.upload.StringParameterData;
 import io.proximax.upload.UploadParameter;
 import io.proximax.utils.DigestUtils;
-import io.proximax.utils.PrivacyDataEncryptionUtils;
 import io.reactivex.Observable;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +20,6 @@ import java.io.UnsupportedEncodingException;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -37,7 +34,6 @@ public class CreateProximaxMessagePayloadServiceTest {
     private static final String DUMMY_ROOT_DATA_HASH = "Qmcjkzxhkjchxzkjhcjkxznbcjkxz";
     private static final String DUMMY_ROOT_DESCRIPTION = "ewqeqwewqeqweqw";
     private static final String DUMMY_VERSION = "1.0";
-    private static final PrivacyStrategy DUMMY_PRIVACY_STRATEGY = PlainPrivacyStrategy.create(null);
 
     private CreateProximaxMessagePayloadService unitUnderTest;
 
@@ -48,13 +44,10 @@ public class CreateProximaxMessagePayloadServiceTest {
     private DigestUtils mockDigestUtils;
 
     @Mock
-    private PrivacyDataEncryptionUtils mockPrivacyDataEncryptionUtils;
+    private PrivacyStrategy mockPrivacyStrategy;
 
     @Captor
     private ArgumentCaptor<byte[]> rootDataByteArgumentCaptor;
-
-    @Captor
-    private ArgumentCaptor<PrivacyStrategy> privacyStrategyArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<byte[]> digestArgumentCaptor;
@@ -65,7 +58,10 @@ public class CreateProximaxMessagePayloadServiceTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        unitUnderTest = new CreateProximaxMessagePayloadService(mockIpfsUploadService, mockDigestUtils, mockPrivacyDataEncryptionUtils);
+        unitUnderTest = new CreateProximaxMessagePayloadService(mockIpfsUploadService, mockDigestUtils);
+
+        given(mockPrivacyStrategy.getPrivacyType()).willReturn(1001);
+        given(mockPrivacyStrategy.getPrivacySearchTag()).willReturn("test");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -80,8 +76,7 @@ public class CreateProximaxMessagePayloadServiceTest {
 
     @Test
     public void shouldReturnMessagePayloadWhenComputeDigestTrue() throws UnsupportedEncodingException {
-        given(mockPrivacyDataEncryptionUtils.encrypt(any(), any()))
-                .willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
+        given(mockPrivacyStrategy.encryptData(any())).willReturn(DUMMY_ENCRYPTED_DATA);
         given(mockDigestUtils.digest(any())).willReturn(Observable.just(DUMMY_DIGEST));
         given(mockIpfsUploadService.uploadByteArray(any()))
                 .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH, 9999L)));
@@ -94,14 +89,13 @@ public class CreateProximaxMessagePayloadServiceTest {
         assertThat(result.getRootDataHash(), is(DUMMY_ROOT_DATA_HASH));
         assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
-        assertThat(result.getPrivacySearchTag(), is(nullValue()));
+        assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getVersion(), is(DUMMY_VERSION));
     }
 
     @Test
     public void shouldReturnMessagePayloadWhenComputeDigestFalse() throws UnsupportedEncodingException {
-        given(mockPrivacyDataEncryptionUtils.encrypt(any(), any()))
-                .willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
+        given(mockPrivacyStrategy.encryptData(any())).willReturn(DUMMY_ENCRYPTED_DATA);
         given(mockIpfsUploadService.uploadByteArray(any()))
                 .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH, 9999L)));
 
@@ -113,14 +107,13 @@ public class CreateProximaxMessagePayloadServiceTest {
         assertThat(result.getRootDataHash(), is(DUMMY_ROOT_DATA_HASH));
         assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
-        assertThat(result.getPrivacySearchTag(), is(nullValue()));
+        assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getVersion(), is(DUMMY_VERSION));
     }
 
     @Test
     public void shouldDelegateCorrectly() throws UnsupportedEncodingException {
-        given(mockPrivacyDataEncryptionUtils.encrypt(privacyStrategyArgumentCaptor.capture(), rootDataByteArgumentCaptor.capture()))
-                .willReturn(Observable.just(DUMMY_ENCRYPTED_DATA));
+        given(mockPrivacyStrategy.encryptData(rootDataByteArgumentCaptor.capture())).willReturn(DUMMY_ENCRYPTED_DATA);
         given(mockDigestUtils.digest(digestArgumentCaptor.capture())).willReturn(Observable.just(DUMMY_DIGEST));
         given(mockIpfsUploadService.uploadByteArray(uploadArgumentCaptor.capture()))
                 .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH, 9999L)));
@@ -129,7 +122,6 @@ public class CreateProximaxMessagePayloadServiceTest {
                 unitUnderTest.createMessagePayload(sampleUploadParameterWithComputeDigestTrue(), sampleRootData()).blockingFirst();
 
         assertThat(result, is(notNullValue()));
-        assertThat(privacyStrategyArgumentCaptor.getValue(), instanceOf(PlainPrivacyStrategy.class));
         assertThat(new String(rootDataByteArgumentCaptor.getValue()), is(
                 "{\"privacyType\":1001," +
                         "\"privacySearchTag\":\"test\"," +
@@ -175,6 +167,7 @@ public class CreateProximaxMessagePayloadServiceTest {
                 .addString(StringParameterData.create("dashkdhsakjdhask").build())
                 .description(DUMMY_ROOT_DESCRIPTION)
                 .computeDigest(true)
+                .privacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 
@@ -183,6 +176,7 @@ public class CreateProximaxMessagePayloadServiceTest {
                 .addString(StringParameterData.create("dashkdhsakjdhask").build())
                 .description(DUMMY_ROOT_DESCRIPTION)
                 .computeDigest(false)
+                .privacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 }

@@ -7,7 +7,6 @@ import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.upload.UploadParameter;
 import io.proximax.utils.DigestUtils;
 import io.proximax.utils.JsonUtils;
-import io.proximax.utils.PrivacyDataEncryptionUtils;
 import io.reactivex.Observable;
 
 import java.util.Optional;
@@ -21,7 +20,6 @@ public class CreateProximaxMessagePayloadService {
 
     private final IpfsUploadService ipfsUploadService;
     private final DigestUtils digestUtils;
-    private final PrivacyDataEncryptionUtils privacyDataEncryptionUtils;
 
     /**
      * Construct service class
@@ -30,14 +28,11 @@ public class CreateProximaxMessagePayloadService {
     public CreateProximaxMessagePayloadService(IpfsConnection ipfsConnection) {
         this.ipfsUploadService = new IpfsUploadService(ipfsConnection);
         this.digestUtils = new DigestUtils();
-        this.privacyDataEncryptionUtils = new PrivacyDataEncryptionUtils();
     }
 
-    CreateProximaxMessagePayloadService(IpfsUploadService ipfsUploadService, DigestUtils digestUtils,
-                                        PrivacyDataEncryptionUtils privacyDataEncryptionUtils) {
+    CreateProximaxMessagePayloadService(IpfsUploadService ipfsUploadService, DigestUtils digestUtils) {
         this.ipfsUploadService = ipfsUploadService;
         this.digestUtils = digestUtils;
-        this.privacyDataEncryptionUtils = privacyDataEncryptionUtils;
     }
 
     /**
@@ -50,17 +45,16 @@ public class CreateProximaxMessagePayloadService {
         checkParameter(uploadParameter != null, "uploadParameter is required");
         checkParameter(rootData != null, "rootData is required");
 
-        final Observable<byte[]> encryptedRootDataOb = encryptRootData(uploadParameter.getPrivacyStrategy(), rootData).cache();
-        final Observable<Optional<String>> rootDigestOb = encryptedRootDataOb.flatMap(
-                encryptedRootData -> computeDigestOfRootData(uploadParameter.getComputeDigest(), encryptedRootData));
-        final Observable<String> rootDataHashOb = encryptedRootDataOb.flatMap(this::ipfsUploadRootData);
+        final byte[] encryptedRootData = encryptRootData(uploadParameter.getPrivacyStrategy(), rootData);
+        final Observable<Optional<String>> rootDigestOb = computeDigestOfRootData(uploadParameter.getComputeDigest(), encryptedRootData);
+        final Observable<String> rootDataHashOb = ipfsUploadRootData(encryptedRootData);
 
         return Observable.zip(rootDataHashOb, rootDigestOb,
                 (rootDataHash, rootDigest) -> createMessagePayload(uploadParameter, rootDataHash, rootDigest));
     }
 
-    private Observable<byte[]> encryptRootData(PrivacyStrategy privacyStrategy, ProximaxRootDataModel rootData) {
-        return privacyDataEncryptionUtils.encrypt(privacyStrategy, JsonUtils.toJson(rootData).getBytes());
+    private byte[] encryptRootData(PrivacyStrategy privacyStrategy, ProximaxRootDataModel rootData) {
+        return privacyStrategy.encryptData(JsonUtils.toJson(rootData).getBytes());
     }
 
     private Observable<Optional<String>> computeDigestOfRootData(boolean computeDigest, byte[] encryptedRootData) {
