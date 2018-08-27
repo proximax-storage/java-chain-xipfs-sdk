@@ -4,9 +4,9 @@ import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.TransferTransaction;
+import io.nem.sdk.model.transaction.Transaction;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
  * The utility class for handling blockchain-related actions
@@ -29,7 +29,7 @@ public class NemUtils {
      * @return the address
      */
     public Address toAddress(String publicKey) {
-        checkArgument(publicKey != null, "publicKey is required");
+        checkParameter(publicKey != null, "publicKey is required");
 
         return Address.createFromPublicKey(publicKey, networkType);
     }
@@ -40,21 +40,21 @@ public class NemUtils {
      * @return the account
      */
     public Account toAccount(String privateKey) {
-        checkArgument(privateKey != null, "privateKey is required");
+        checkParameter(privateKey != null, "privateKey is required");
 
         return Account.createFromPrivateKey(privateKey, networkType);
     }
 
     /**
-     * Sign a transfer transaction
+     * Sign a transaction
      * @param signerPrivateKey the signer's private key
-     * @param transferTransaction the transfer transaction to sign
+     * @param transaction the transaction to sign
      * @return the signed transaction
      */
-    public SignedTransaction signTransaction(String signerPrivateKey, TransferTransaction transferTransaction) {
-        checkArgument(signerPrivateKey != null, "signerPrivateKey is required");
-        checkArgument(transferTransaction != null, "transferTransaction is required");
+    public SignedTransaction signTransaction(String signerPrivateKey, Transaction transaction) {
+        checkParameter(signerPrivateKey != null, "signerPrivateKey is required");
+        checkParameter(transaction != null, "transaction is required");
 
-        return toAccount(signerPrivateKey).sign(transferTransaction);
+        return toAccount(signerPrivateKey).sign(transaction);
     }
 }
