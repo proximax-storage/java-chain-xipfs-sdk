@@ -3,11 +3,7 @@ package io.proximax.utils;
 import io.proximax.exceptions.DigestDoesNotMatchException;
 import io.reactivex.Observable;
 
-import java.util.List;
-
 import static com.google.common.base.Preconditions.checkArgument;
-import static io.proximax.utils.CollectionUtils.isEqualList;
-import static io.proximax.utils.CollectionUtils.nonNullCount;
 import static java.lang.String.format;
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 

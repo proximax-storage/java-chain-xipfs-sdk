@@ -2,7 +2,6 @@ package io.proximax.utils;
 
 import org.junit.Test;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -51,40 +50,4 @@ public class CollectionUtilsTest {
 
         assertThat(result, is(true));
     }
-
-    @Test
-    public void shouldReturnCountOfNonNullObjectsOnNonNullCountWhenCollectionHasMixedContents() {
-        final long result = CollectionUtils.nonNullCount(asList("test", null, "test2", "test3", null));
-
-        assertThat(result, is(3L));
-    }
-
-    @Test
-    public void shouldReturnCountOfNonNullObjectsOnNonNullCountWhenEmptyCollection() {
-        final long result = CollectionUtils.nonNullCount(emptyList());
-
-        assertThat(result, is(0L));
-    }
-
-    @Test
-    public void shouldReturnFalseOnIsEqualListWhenSizeNotEqual() {
-        final boolean result = CollectionUtils.isEqualList(emptyList(), singletonList("test"));
-
-        assertThat(result, is(false));
-    }
-
-    @Test
-    public void shouldReturnFalseOnIsEqualListWhenElementsDiffer() {
-        final boolean result = CollectionUtils.isEqualList(asList("test1", "test3"), asList("test1", "test2"));
-
-        assertThat(result, is(false));
-    }
-
-    @Test
-    public void shouldReturnTrueOnIsEqualListWhenNoElementsDiffer() {
-        final boolean result = CollectionUtils.isEqualList(asList("test1", "test2"), asList("test1", "test2"));
-
-        assertThat(result, is(true));
-    }
-
 }
