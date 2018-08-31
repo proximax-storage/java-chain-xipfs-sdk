@@ -10,7 +10,7 @@ import io.reactivex.schedulers.Schedulers;
 import java.io.File;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -33,7 +33,7 @@ public class IpfsClient {
      * @param ipfsConnection the Ipfs connection
      */
     public IpfsClient(IpfsConnection ipfsConnection) {
-        checkArgument(ipfsConnection != null, "ipfsConnection is required");
+        checkParameter(ipfsConnection != null, "ipfsConnection is required");
 
         this.ipfsConnection = ipfsConnection;
     }
@@ -47,7 +47,7 @@ public class IpfsClient {
      * @return the hash (base58) for the data uploaded
      */
     public Observable<String> addByteArray(byte[] data) {
-        checkArgument(data != null, "data is required");
+        checkParameter(data != null, "data is required");
 
         return Observable.just(data)
                 .observeOn(Schedulers.io())
@@ -67,8 +67,8 @@ public class IpfsClient {
      * @return the hash (base58) for the data uploaded
      */
     public Observable<String> addPath(File path) {
-        checkArgument(path != null, "path is required");
-        checkArgument(path.isDirectory(), "path should be directory/folder");
+        checkParameter(path != null, "path is required");
+        checkParameter(path.isDirectory(), "path should be directory/folder");
 
         return Observable.just(path)
                 .observeOn(Schedulers.io())
@@ -88,7 +88,7 @@ public class IpfsClient {
      * @return list of hashes pinned (includes children if hash used is a directory)
      */
     public Observable<List<String>> pin(String dataHash) {
-        checkArgument(dataHash != null, "dataHash is required");
+        checkParameter(dataHash != null, "dataHash is required");
 
         return Observable.just(dataHash)
                 .observeOn(Schedulers.computation())
@@ -110,7 +110,7 @@ public class IpfsClient {
      * @return the file (represented as byte arrays)
      */
     public Observable<byte[]> get(String dataHash) {
-        checkArgument(dataHash != null, "dataHash is required");
+        checkParameter(dataHash != null, "dataHash is required");
 
         return Observable.just(dataHash)
                 .observeOn(Schedulers.computation())

@@ -23,7 +23,7 @@ import java.net.MalformedURLException;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
  * The service class responsible for handling tasks that work with blockchain transactions
@@ -61,7 +61,7 @@ public class BlockchainTransactionService {
      * @return the transfer transaction
      */
     public Observable<TransferTransaction> getTransferTransaction(final String transactionHash) {
-        checkArgument(transactionHash != null, "transactionHash is required");
+        checkParameter(transactionHash != null, "transactionHash is required");
 
         return transactionClient.getTransaction(transactionHash)
                 .onErrorResumeNext((Throwable ex) ->
@@ -84,10 +84,10 @@ public class BlockchainTransactionService {
      */
     public Observable<String> createAndAnnounceTransaction(PrivacyStrategy privacyStrategy, String signerPrivateKey,
                                                            String recipientPublicKey, ProximaxMessagePayloadModel messagePayload) {
-        checkArgument(privacyStrategy != null, "privacyStrategy is required");
-        checkArgument(signerPrivateKey != null, "signerPrivateKey is required");
-        checkArgument(recipientPublicKey != null, "recipientPublicKey is required");
-        checkArgument(messagePayload != null, "messagePayload is required");
+        checkParameter(privacyStrategy != null, "privacyStrategy is required");
+        checkParameter(signerPrivateKey != null, "signerPrivateKey is required");
+        checkParameter(recipientPublicKey != null, "recipientPublicKey is required");
+        checkParameter(messagePayload != null, "messagePayload is required");
 
         final Message message = blockchainMessageFactory.createMessage(privacyStrategy, messagePayload);
         final TransferTransaction transaction = createTransaction(recipientPublicKey, message);

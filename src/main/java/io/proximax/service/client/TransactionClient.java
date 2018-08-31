@@ -14,6 +14,7 @@ import io.reactivex.Observable;
 import java.net.MalformedURLException;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
  * The client class that directly interface with the blockchain's transaction APIs
@@ -60,7 +61,7 @@ public class TransactionClient {
      * @return the transaction announce response
      */
     public Observable<TransactionAnnounceResponse> announce(SignedTransaction signedTransaction) {
-        checkArgument(signedTransaction != null, "signedTransaction is required");
+        checkParameter(signedTransaction != null, "signedTransaction is required");
 
         return transactionHttp.announce(signedTransaction);
     }
@@ -74,7 +75,7 @@ public class TransactionClient {
      * @return the transaction announce response
      */
     public Observable<Transaction> getTransaction(String transactionHash) {
-        checkArgument(transactionHash != null, "transactionHash is required");
+        checkParameter(transactionHash != null, "transactionHash is required");
 
         return transactionHttp.getTransaction(transactionHash);
     }
@@ -87,8 +88,8 @@ public class TransactionClient {
      * @throws MalformedURLException when blockchain network endpoint URL is not correct
      */
     public synchronized String waitForAnnouncedTransactionToBeUnconfirmed(Address address, String transactionHash) throws MalformedURLException {
-        checkArgument(address != null, "address is required");
-        checkArgument(transactionHash != null, "transactionHash is required");
+        checkParameter(address != null, "address is required");
+        checkParameter(transactionHash != null, "transactionHash is required");
 
         final Listener listener = getListener();
         try {
