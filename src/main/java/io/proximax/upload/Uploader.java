@@ -18,10 +18,10 @@ import java.net.MalformedURLException;
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
- * The Upload class that handles the upload functionality
+ * The Uploader class that handles the upload functionality
  * <br>
  * <br>
- * The Upload creation requires a ConnectionConfig that defines generally where and how the upload will be done.
+ * The Uploader creation requires a ConnectionConfig that defines generally where and how the upload will be done.
  * The instance of the class can be reused to upload multiple times.
  * <br>
  * <br>
@@ -40,7 +40,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * @see ConnectionConfig
  * @see UploadParameter
  */
-public class Upload {
+public class Uploader {
 
     private final BlockchainTransactionService blockchainTransactionService;
     private final CreateProximaxRootDataService createProximaxRootDataService;
@@ -50,7 +50,7 @@ public class Upload {
      * Construct the class with a ConnectionConfig
      * @param connectionConfig the connection config that defines generally where the upload will be sent
      */
-    public Upload(ConnectionConfig connectionConfig) {
+    public Uploader(ConnectionConfig connectionConfig) {
         this.createProximaxRootDataService = new CreateProximaxRootDataService(connectionConfig.getIpfsConnection());
         this.createProximaxMessagePayloadService = new CreateProximaxMessagePayloadService(connectionConfig.getIpfsConnection());
 
@@ -61,8 +61,8 @@ public class Upload {
         }
     }
 
-    Upload(BlockchainTransactionService blockchainTransactionService, CreateProximaxRootDataService createProximaxRootDataService,
-           CreateProximaxMessagePayloadService createProximaxMessagePayloadService) {
+    Uploader(BlockchainTransactionService blockchainTransactionService, CreateProximaxRootDataService createProximaxRootDataService,
+             CreateProximaxMessagePayloadService createProximaxMessagePayloadService) {
         this.blockchainTransactionService = blockchainTransactionService;
         this.createProximaxRootDataService = createProximaxRootDataService;
         this.createProximaxMessagePayloadService = createProximaxMessagePayloadService;

@@ -5,7 +5,7 @@ import io.proximax.async.AsyncTask;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
-import io.proximax.download.Download;
+import io.proximax.download.Downloader;
 import io.proximax.download.DownloadDataParameter;
 import io.proximax.download.DownloadDataResult;
 import io.proximax.exceptions.DownloadDataFailureException;
@@ -24,20 +24,20 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class DownloadData_downloadAsyncIntegrationTest {
+public class Downloader_downloadData_asyncIntegrationTest {
 
-	private Download unitUnderTest;
+	private Downloader unitUnderTest;
 
 	@Before
 	public void setUp() {
-		unitUnderTest = new Download(ConnectionConfig.create(
+		unitUnderTest = new Downloader(ConnectionConfig.create(
 				new BlockchainNetworkConnection(BlockchainNetwork.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
 				new IpfsConnection(IPFS_MULTI_ADDRESS)));
 	}
 
 	@Test
 	public void shouldDownloadDataAsynchronouslyWithoutCallback() throws Exception {
-		final String dataHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadAllDataTypes", "dataList[0].dataHash");
+		final String dataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadAllDataTypes", "dataList[0].dataHash");
 		final DownloadDataParameter param =
 				DownloadDataParameter.create(dataHash).build();
 
@@ -51,7 +51,7 @@ public class DownloadData_downloadAsyncIntegrationTest {
 
 	@Test
 	public void shouldDownloadDataAsynchronouslyWithSuccessCallback() throws Exception {
-		final String dataHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadAllDataTypes", "dataList[0].dataHash");
+		final String dataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadAllDataTypes", "dataList[0].dataHash");
 		final DownloadDataParameter param =
 				DownloadDataParameter.create(dataHash).build();
 		final CompletableFuture<DownloadDataResult> toPopulateOnSuccess = new CompletableFuture<>();

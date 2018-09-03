@@ -13,7 +13,7 @@ import io.proximax.privacy.strategy.PrivacyStrategy;
  *     <li><b>digest</b> - the digest to verify the downloaded root data</li>
  *     <li><b>privacyStrategy</b> - the privacy strategy to decrypt the data</li>
  * </ul>
- * @see Download#download(DownloadParameter)
+ * @see Downloader#download(DownloadParameter)
  * @see DownloadParameterBuilder
  */
 public class DownloadParameter {

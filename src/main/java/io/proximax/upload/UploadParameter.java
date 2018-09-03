@@ -21,7 +21,7 @@ import static java.util.Collections.unmodifiableList;
  *     <li><b>dataList</b> - a list of UploadParameterData that contains the data and additional info</li>
  *     <li><b>version</b> - the version of upload (always 1.0 - cannot be updated) </li>
  * </ul>
- * @see Upload#upload(UploadParameter)
+ * @see Uploader#upload(UploadParameter)
  * @see UploadParameterBuilder
  */
 public class UploadParameter {

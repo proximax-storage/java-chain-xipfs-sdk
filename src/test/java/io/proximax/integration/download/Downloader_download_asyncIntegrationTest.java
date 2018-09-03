@@ -5,7 +5,7 @@ import io.proximax.async.AsyncTask;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
-import io.proximax.download.Download;
+import io.proximax.download.Downloader;
 import io.proximax.download.DownloadParameter;
 import io.proximax.download.DownloadResult;
 import io.proximax.exceptions.DownloadFailureException;
@@ -29,20 +29,20 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class Download_downloadAsyncIntegrationTest {
+public class Downloader_download_asyncIntegrationTest {
 
-	private Download unitUnderTest;
+	private Downloader unitUnderTest;
 
 	@Before
 	public void setUp() {
-		unitUnderTest = new Download(ConnectionConfig.create(
+		unitUnderTest = new Downloader(ConnectionConfig.create(
 				new BlockchainNetworkConnection(BlockchainNetwork.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
 				new IpfsConnection(IPFS_MULTI_ADDRESS)));
 	}
 
 	@Test
 	public void shouldDownloadAsynchronouslyWithoutCallback() throws Exception {
-		final String transactionHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadWithAllDetails", "transactionHash");
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadWithAllDetails", "transactionHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithTransactionHash(transactionHash)
 						.securedWithNemKeysPrivacyStrategy(PRIVATE_KEY_1, PUBLIC_KEY_2)
@@ -58,7 +58,7 @@ public class Download_downloadAsyncIntegrationTest {
 
 	@Test
 	public void shouldDownloadAsynchronouslyWithSuccessCallback() throws Exception {
-		final String transactionHash = TestHelper.getData("Upload_uploadIntegrationTest.shouldUploadWithAllDetails", "transactionHash");
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadWithAllDetails", "transactionHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithTransactionHash(transactionHash)
 						.securedWithNemKeysPrivacyStrategy(PRIVATE_KEY_1, PUBLIC_KEY_2)

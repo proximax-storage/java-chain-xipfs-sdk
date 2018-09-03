@@ -3,7 +3,7 @@ package io.proximax.integration.download;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
-import io.proximax.download.Download;
+import io.proximax.download.Downloader;
 import io.proximax.download.DownloadParameter;
 import io.proximax.download.DownloadResult;
 import io.proximax.exceptions.DownloadFailureException;
@@ -20,20 +20,20 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class Download_digestIntegrationTest {
+public class Downloader_download_digestIntegrationTest {
 
-	private Download unitUnderTest;
+	private Downloader unitUnderTest;
 
 	@Before
 	public void setUp() {
-		unitUnderTest = new Download(ConnectionConfig.create(
+		unitUnderTest = new Downloader(ConnectionConfig.create(
 				new BlockchainNetworkConnection(BlockchainNetwork.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
 				new IpfsConnection(IPFS_MULTI_ADDRESS)));
 	}
 
 	@Test
 	public void shouldDownloadAnUploadWithDigestUsingTransactionHashOnly() {
-		final String transactionHash = TestHelper.getData("Upload_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "transactionHash");
+		final String transactionHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "transactionHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithTransactionHash(transactionHash).build();
 
@@ -46,7 +46,7 @@ public class Download_digestIntegrationTest {
 
 	@Test
 	public void shouldDownloadAnUploadWithoutDigestUsingTransactionHashOnly() {
-		final String transactionHash = TestHelper.getData("Upload_computeDigestIntegrationTest.shouldUploadWithDisabledComputeDigest", "transactionHash");
+		final String transactionHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithDisabledComputeDigest", "transactionHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithTransactionHash(transactionHash).build();
 
@@ -59,7 +59,7 @@ public class Download_digestIntegrationTest {
 
 	@Test
 	public void shouldDownloadAnUploadWithDigestUsingRootDataHashOnly() {
-		final String rootDataHash = TestHelper.getData("Upload_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "rootDataHash");
+		final String rootDataHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "rootDataHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithRootDataHash(rootDataHash, null).build();
 
@@ -72,8 +72,8 @@ public class Download_digestIntegrationTest {
 
 	@Test
 	public void shouldDownloadAnUploadWithDigestUsingRootDataHashAndDigest() {
-		final String rootDataHash = TestHelper.getData("Upload_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "rootDataHash");
-		final String digest = TestHelper.getData("Upload_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "digest");
+		final String rootDataHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "rootDataHash");
+		final String digest = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "digest");
 		final DownloadParameter param =
 				DownloadParameter.createWithRootDataHash(rootDataHash, digest).build();
 
@@ -86,7 +86,7 @@ public class Download_digestIntegrationTest {
 
 	@Test(expected = DownloadFailureException.class)
 	public void failDownloadOfAnUploadWithDigestUsingRootDataHashButDigestsDoesNotMatch() {
-		final String rootDataHash = TestHelper.getData("Upload_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "rootDataHash");
+		final String rootDataHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "rootDataHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithRootDataHash(rootDataHash, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
 
@@ -95,7 +95,7 @@ public class Download_digestIntegrationTest {
 
 	@Test
 	public void shouldDownloadAnUploadWithoutDigestUsingRootDataHashOnly() {
-		final String rootDataHash = TestHelper.getData("Upload_computeDigestIntegrationTest.shouldUploadWithDisabledComputeDigest", "rootDataHash");
+		final String rootDataHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithDisabledComputeDigest", "rootDataHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithRootDataHash(rootDataHash, null).build();
 
@@ -108,7 +108,7 @@ public class Download_digestIntegrationTest {
 
 	@Test(expected = DownloadFailureException.class)
 	public void shouldDownloadAnUploadWithoutDigestUsingRootDataHashButDigestDoesNotMatch() {
-		final String rootDataHash = TestHelper.getData("Upload_computeDigestIntegrationTest.shouldUploadWithDisabledComputeDigest", "rootDataHash");
+		final String rootDataHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithDisabledComputeDigest", "rootDataHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithRootDataHash(rootDataHash, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
 

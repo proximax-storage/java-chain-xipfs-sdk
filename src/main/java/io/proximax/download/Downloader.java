@@ -22,10 +22,10 @@ import java.util.Optional;
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
- * The Download class that handles the download functionality
+ * The Downloader class that handles the download functionality
  * <br>
  * <br>
- * The Upload creation requires a ConnectionConfig that defines generally where the download will be done.
+ * The Downloader creation requires a ConnectionConfig that defines generally where the download will be done.
  * The instance of the class can be reused to download multiple times.
  * <br>
  * <br>
@@ -36,7 +36,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * @see DownloadParameter
  * @see DownloadDataParameter
  */
-public class Download {
+public class Downloader {
     private final BlockchainTransactionService blockchainTransactionService;
     private final RetrieveProximaxMessagePayloadService retrieveProximaxMessagePayloadService;
     private final RetrieveProximaxRootDataService retrieveProximaxRootDataService;
@@ -46,7 +46,7 @@ public class Download {
      * Construct the class with a ConnectionConfig
      * @param connectionConfig the connection config that defines generally where the download will be sent
      */
-    public Download(ConnectionConfig connectionConfig) {
+    public Downloader(ConnectionConfig connectionConfig) {
         this.retrieveProximaxMessagePayloadService = new RetrieveProximaxMessagePayloadService();
         this.retrieveProximaxRootDataService = new RetrieveProximaxRootDataService(connectionConfig.getIpfsConnection());
         this.retrieveProximaxDataService = new RetrieveProximaxDataService(connectionConfig.getIpfsConnection());
@@ -58,8 +58,8 @@ public class Download {
         }
     }
 
-    Download(BlockchainTransactionService blockchainTransactionService, RetrieveProximaxMessagePayloadService retrieveProximaxMessagePayloadService,
-             RetrieveProximaxRootDataService retrieveProximaxRootDataService, RetrieveProximaxDataService retrieveProximaxDataService) {
+    Downloader(BlockchainTransactionService blockchainTransactionService, RetrieveProximaxMessagePayloadService retrieveProximaxMessagePayloadService,
+               RetrieveProximaxRootDataService retrieveProximaxRootDataService, RetrieveProximaxDataService retrieveProximaxDataService) {
         this.blockchainTransactionService = blockchainTransactionService;
         this.retrieveProximaxMessagePayloadService = retrieveProximaxMessagePayloadService;
         this.retrieveProximaxRootDataService = retrieveProximaxRootDataService;

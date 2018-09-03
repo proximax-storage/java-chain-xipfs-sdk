@@ -2,7 +2,7 @@ package io.proximax.download;
 
 /**
  * The model class that defines the result of a download data. This class wraps the data represented as byte array.
- * @see Download#downloadData(DownloadDataParameter)
+ * @see Downloader#downloadData(DownloadDataParameter)
  */
 public class DownloadDataResult {
 

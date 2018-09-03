@@ -8,9 +8,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class UploadTest {
+public class UploaderTest {
 
-    private Upload unitUnderTest;
+    private Uploader unitUnderTest;
 
     @Mock
     private BlockchainTransactionService mockBlockchainTransactionService;
@@ -24,7 +24,7 @@ public class UploadTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        unitUnderTest = new Upload(mockBlockchainTransactionService, mockCreateProximaxRootDataService, mockCreateProximaxMessagePayloadService);
+        unitUnderTest = new Uploader(mockBlockchainTransactionService, mockCreateProximaxRootDataService, mockCreateProximaxMessagePayloadService);
     }
 
     @Test(expected = IllegalArgumentException.class)

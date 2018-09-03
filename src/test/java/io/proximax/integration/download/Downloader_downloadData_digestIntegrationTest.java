@@ -3,7 +3,7 @@ package io.proximax.integration.download;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
-import io.proximax.download.Download;
+import io.proximax.download.Downloader;
 import io.proximax.download.DownloadDataParameter;
 import io.proximax.download.DownloadDataResult;
 import io.proximax.model.BlockchainNetwork;
@@ -18,20 +18,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class DownloadData_digestIntegrationTest {
+public class Downloader_downloadData_digestIntegrationTest {
 
-	private Download unitUnderTest;
+	private Downloader unitUnderTest;
 
 	@Before
 	public void setUp() {
-		unitUnderTest = new Download(ConnectionConfig.create(
+		unitUnderTest = new Downloader(ConnectionConfig.create(
 				new BlockchainNetworkConnection(BlockchainNetwork.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
 				new IpfsConnection(IPFS_MULTI_ADDRESS)));
 	}
 
 	@Test
 	public void shouldDownloadDataUsingDataHashOnly() {
-		final String dataHash = TestHelper.getData("Upload_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "dataList[0].dataHash");
+		final String dataHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "dataList[0].dataHash");
 		final DownloadDataParameter param =
 				DownloadDataParameter.create(dataHash)
 						.build();
@@ -44,8 +44,8 @@ public class DownloadData_digestIntegrationTest {
 
 	@Test
 	public void shouldDownloadDataUsingDataHashAndDigest() {
-		final String dataHash = TestHelper.getData("Upload_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "dataList[0].dataHash");
-		final String digest = TestHelper.getData("Upload_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "dataList[0].digest");
+		final String dataHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "dataList[0].dataHash");
+		final String digest = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "dataList[0].digest");
 		final DownloadDataParameter param =
 				DownloadDataParameter.create(dataHash)
 						.digest(digest)

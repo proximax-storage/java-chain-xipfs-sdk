@@ -9,9 +9,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class DownloadTest {
+public class DownloaderTest {
 
-    private Download unitUnderTest;
+    private Downloader unitUnderTest;
 
     @Mock
     private BlockchainTransactionService mockBlockchainTransactionService;
@@ -28,7 +28,7 @@ public class DownloadTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        unitUnderTest = new Download(mockBlockchainTransactionService, mockRetrieveProximaxMessagePayloadService,
+        unitUnderTest = new Downloader(mockBlockchainTransactionService, mockRetrieveProximaxMessagePayloadService,
                 mockRetrieveProximaxRootDataService, mockRetrieveProximaxDataService);
     }
 

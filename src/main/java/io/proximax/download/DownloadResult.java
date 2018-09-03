@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.toList;
  *     <li><b>version</b> - the version of upload</li>
  *     <li><b>dataList</b> - the list of downloaded data</li>
  * </ul>
- * @see Download#download(DownloadParameter)
+ * @see Downloader#download(DownloadParameter)
  */
 public class DownloadResult {
 

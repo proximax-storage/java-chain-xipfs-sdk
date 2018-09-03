@@ -3,7 +3,7 @@ package io.proximax.integration.download;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
-import io.proximax.download.Download;
+import io.proximax.download.Downloader;
 import io.proximax.download.DownloadParameter;
 import io.proximax.download.DownloadResult;
 import io.proximax.model.BlockchainNetwork;
@@ -31,20 +31,20 @@ import static org.hamcrest.collection.IsArrayContainingInOrder.arrayContaining;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class Download_privacyStrategyIntegrationTest {
+public class Downloader_download_privacyStrategyIntegrationTest {
 
-	private Download unitUnderTest;
+	private Downloader unitUnderTest;
 
 	@Before
 	public void setUp() {
-		unitUnderTest = new Download(ConnectionConfig.create(
+		unitUnderTest = new Downloader(ConnectionConfig.create(
 				new BlockchainNetworkConnection(BlockchainNetwork.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
 				new IpfsConnection(IPFS_MULTI_ADDRESS)));
 	}
 
 	@Test
 	public void shouldDownloadWithPlainPrivacyStrategy() throws IOException {
-		final String transactionHash = TestHelper.getData("Upload_privacyStrategyIntegrationTest.shouldUploadFileWithPlainPrivacyStrategy", "transactionHash");
+		final String transactionHash = TestHelper.getData("Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithPlainPrivacyStrategy", "transactionHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithTransactionHash(transactionHash)
 						.plainPrivacy()
@@ -62,7 +62,7 @@ public class Download_privacyStrategyIntegrationTest {
 
 	@Test
 	public void shouldDownloadWithSecuredWithNemKeysPrivacyStrategy() throws IOException {
-		final String transactionHash = TestHelper.getData("Upload_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy", "transactionHash");
+		final String transactionHash = TestHelper.getData("Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy", "transactionHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithTransactionHash(transactionHash)
 						.securedWithNemKeysPrivacyStrategy(PRIVATE_KEY_1, PUBLIC_KEY_2)
@@ -80,7 +80,7 @@ public class Download_privacyStrategyIntegrationTest {
 
 	@Test
 	public void shouldDownloadWithSecuredWithPasswordPrivacyStrategy() throws IOException {
-		final String transactionHash = TestHelper.getData("Upload_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithPasswordPrivacyStrategy", "transactionHash");
+		final String transactionHash = TestHelper.getData("Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithPasswordPrivacyStrategy", "transactionHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithTransactionHash(transactionHash)
 						.securedWithPasswordPrivacyStrategy(PASSWORD)
@@ -98,7 +98,7 @@ public class Download_privacyStrategyIntegrationTest {
 
 	@Test
 	public void shouldDownloadWithSecuredWithShamirSecretSharingPrivacyStrategy() throws IOException {
-		final String transactionHash = TestHelper.getData("Upload_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy", "transactionHash");
+		final String transactionHash = TestHelper.getData("Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy", "transactionHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithTransactionHash(transactionHash)
 						.securedWithShamirSecretSharingPrivacyStrategy(
