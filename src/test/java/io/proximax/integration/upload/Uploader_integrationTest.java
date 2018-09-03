@@ -3,7 +3,7 @@ package io.proximax.integration.upload;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
-import io.proximax.model.BlockchainNetwork;
+import io.proximax.model.BlockchainNetworkType;
 import io.proximax.model.PrivacyType;
 import io.proximax.upload.ByteArrayParameterData;
 import io.proximax.upload.UploadParameter;
@@ -40,7 +40,7 @@ public class Uploader_integrationTest {
 	@Before
 	public void setUp() {
 		unitUnderTest = new Uploader(ConnectionConfig.create(
-				new BlockchainNetworkConnection(BlockchainNetwork.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
+				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
 				new IpfsConnection(IPFS_MULTI_ADDRESS)));
 	}
 

@@ -9,7 +9,7 @@ import io.proximax.download.DownloadParameter;
 import io.proximax.download.DownloadResult;
 import io.proximax.download.Downloader;
 import io.proximax.exceptions.DownloadFailureException;
-import io.proximax.model.BlockchainNetwork;
+import io.proximax.model.BlockchainNetworkType;
 import io.proximax.model.PrivacyType;
 import io.proximax.testsupport.TestHelper;
 import org.junit.Before;
@@ -36,7 +36,7 @@ public class Downloader_download_asyncIntegrationTest {
 	@Before
 	public void setUp() {
 		unitUnderTest = new Downloader(ConnectionConfig.create(
-				new BlockchainNetworkConnection(BlockchainNetwork.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
+				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
 				new IpfsConnection(IPFS_MULTI_ADDRESS)));
 	}
 
