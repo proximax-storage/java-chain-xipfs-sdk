@@ -1,9 +1,9 @@
 package io.proximax.integration.upload;
 
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
+import io.proximax.model.BlockchainNetwork;
 import io.proximax.model.PrivacyType;
 import io.proximax.upload.FileParameterData;
 import io.proximax.upload.Upload;
@@ -34,7 +34,7 @@ public class Upload_privacyStrategyIntegrationTest {
     @Before
     public void setUp() {
         unitUnderTest = new Upload(ConnectionConfig.create(
-                new BlockchainNetworkConnection(NetworkType.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
+                new BlockchainNetworkConnection(BlockchainNetwork.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
                 new IpfsConnection(IPFS_MULTI_ADDRESS)));
     }
 

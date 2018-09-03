@@ -1,12 +1,12 @@
 package io.proximax.integration.download;
 
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.download.Download;
 import io.proximax.download.DownloadParameter;
 import io.proximax.download.DownloadResult;
+import io.proximax.model.BlockchainNetwork;
 import io.proximax.model.PrivacyType;
 import io.proximax.testsupport.TestHelper;
 import org.apache.commons.io.FileUtils;
@@ -38,7 +38,7 @@ public class Download_privacyStrategyIntegrationTest {
 	@Before
 	public void setUp() {
 		unitUnderTest = new Download(ConnectionConfig.create(
-				new BlockchainNetworkConnection(NetworkType.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
+				new BlockchainNetworkConnection(BlockchainNetwork.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
 				new IpfsConnection(IPFS_MULTI_ADDRESS)));
 	}
 

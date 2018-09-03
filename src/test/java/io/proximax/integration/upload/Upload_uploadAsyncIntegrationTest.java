@@ -1,18 +1,17 @@
 package io.proximax.integration.upload;
 
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.proximax.async.AsyncCallback;
 import io.proximax.async.AsyncTask;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.exceptions.UploadFailureException;
+import io.proximax.model.BlockchainNetwork;
 import io.proximax.upload.Upload;
 import io.proximax.upload.UploadParameter;
 import io.proximax.upload.UploadResult;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.concurrent.CompletableFuture;
@@ -41,7 +40,7 @@ public class Upload_uploadAsyncIntegrationTest {
 	@Before
 	public void setUp() {
 		unitUnderTest = new Upload(ConnectionConfig.create(
-				new BlockchainNetworkConnection(NetworkType.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
+				new BlockchainNetworkConnection(BlockchainNetwork.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
 				new IpfsConnection(IPFS_MULTI_ADDRESS)));
 	}
 

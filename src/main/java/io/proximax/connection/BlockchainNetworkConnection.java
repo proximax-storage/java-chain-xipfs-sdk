@@ -1,6 +1,7 @@
 package io.proximax.connection;
 
 import io.nem.sdk.model.blockchain.NetworkType;
+import io.proximax.model.BlockchainNetwork;
 
 /**
  * The config class to connect to blockchain network
@@ -12,12 +13,12 @@ public class BlockchainNetworkConnection {
 
 	/**
 	 * Construct instance of this config
-	 * @param networkType the network type of the blockchain
+	 * @param network the network type of the blockchain
 	 * @param endpointUrl the REST API endpoint URL of the blockchain
 	 */
-	public BlockchainNetworkConnection(NetworkType networkType, String endpointUrl) {
+	public BlockchainNetworkConnection(BlockchainNetwork network, String endpointUrl) {
 		this.endpointUrl = endpointUrl;
-		this.networkType = networkType;
+		this.networkType = network.networkType;
 	}
 
 	/**
