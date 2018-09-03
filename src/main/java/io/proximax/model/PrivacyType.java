@@ -8,9 +8,6 @@ import io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrateg
 
 /**
  * Enumerates the different privacy types
- * <br>
- * <br>
- * This type is attached on the upload to optimize searching and decrypting transactions.
  * @see io.proximax.privacy.strategy.PrivacyStrategy
  */
 public enum PrivacyType {

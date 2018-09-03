@@ -336,19 +336,7 @@ public class UploadParameterBuilder {
      * @return the same instance of this builder
      */
     public UploadParameterBuilder plainPrivacy() {
-        this.privacyStrategy = PlainPrivacyStrategy.create(null);
-        return this;
-    }
-
-    /**
-     * Set the privacy strategy as plain (overloaded method with argument to specify search tag)
-     * <br>
-     * Privacy strategy defines how the data will be encrypted
-     * @param searchTag search tag to optimize searching for the upload
-     * @return the same instance of this builder
-     */
-    public UploadParameterBuilder plainPrivacy(String searchTag) {
-        this.privacyStrategy = PlainPrivacyStrategy.create(searchTag);
+        this.privacyStrategy = PlainPrivacyStrategy.create();
         return this;
     }
 
@@ -361,25 +349,9 @@ public class UploadParameterBuilder {
      * Privacy strategy defines how the data will be encrypted
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder securedWithNemKeysPrivacyStrategy() {
+    public UploadParameterBuilder securedWithNemKeysPrivacy() {
         this.privacyStrategy = SecuredWithNemKeysPrivacyStrategy.create(
-                this.signerPrivateKey, this.recipientPublicKey, null);
-        return this;
-    }
-
-    /**
-     * Set the privacy strategy as secured with nem keys (overloaded method with argument to specify search tag)
-     * <br>
-     * <br>
-     * This strategy will use the required signer private key and recipient public key
-     * <br>
-     * Privacy strategy defines how the data will be encrypted
-     * @param searchTag search tag to optimize searching for the upload
-     * @return the same instance of this builder
-     */
-    public UploadParameterBuilder securedWithNemKeysPrivacyStrategy(String searchTag) {
-        this.privacyStrategy = SecuredWithNemKeysPrivacyStrategy.create(
-                this.signerPrivateKey, this.recipientPublicKey, searchTag);
+                this.signerPrivateKey, this.recipientPublicKey);
         return this;
     }
 
@@ -390,21 +362,8 @@ public class UploadParameterBuilder {
      * @param password a 50-character minimum password
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder securedWithPasswordPrivacyStrategy(String password) {
-        this.privacyStrategy = SecuredWithPasswordPrivacyStrategy.create(password, null);
-        return this;
-    }
-
-    /**
-     * Set the privacy strategy as secured with password (overloaded method with argument to specify search tag)
-     * <br>
-     * Privacy strategy defines how the data will be encrypted
-     * @param password the password
-     * @param searchTag search tag to optimize searching for the upload
-     * @return the same instance of this builder
-     */
-    public UploadParameterBuilder securedWithPasswordPrivacyStrategy(String password, String searchTag) {
-        this.privacyStrategy = SecuredWithPasswordPrivacyStrategy.create(password, searchTag);
+    public UploadParameterBuilder securedWithPasswordPrivacy(String password) {
+        this.privacyStrategy = SecuredWithPasswordPrivacyStrategy.create(password);
         return this;
     }
 
@@ -417,30 +376,11 @@ public class UploadParameterBuilder {
      * @param secretParts the array of secret parts composed of the part index and the secret part
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder securedWithShamirSecretSharingPrivacyStrategy(int secretTotalPartCount,
-                                                                                int secretMinimumPartCountToBuild,
-                                                                                SecretPart... secretParts) {
-        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
-                null, secretParts);
-        return this;
-    }
-
-    /**
-     * Set the privacy strategy as secured with shamir secret sharing (overloaded method with argument to specify search tag)
-     * <br>
-     * Privacy strategy defines how the data will be encrypted
-     * @param secretTotalPartCount the total count of parts of the secret
-     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
-     * @param searchTag search tag to optimize searching for the upload
-     * @param secretParts the array of secret parts composed of the part index and the secret part
-     * @return the same instance of this builder
-     */
-    public UploadParameterBuilder securedWithShamirSecretSharingPrivacyStrategy(int secretTotalPartCount,
-                                                                                int secretMinimumPartCountToBuild,
-                                                                                String searchTag,
-                                                                                SecretPart... secretParts) {
-        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
-                searchTag, secretParts);
+    public UploadParameterBuilder securedWithShamirSecretSharing(int secretTotalPartCount,
+                                                                 int secretMinimumPartCountToBuild,
+                                                                 SecretPart... secretParts) {
+        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;
     }
 
@@ -453,30 +393,11 @@ public class UploadParameterBuilder {
      * @param secretParts the list of secret parts composed of the part index and the secret part
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder securedWithShamirSecretSharingPrivacyStrategy(int secretTotalPartCount,
-                                                                                int secretMinimumPartCountToBuild,
-                                                                                List<SecretPart> secretParts) {
-        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
-                secretParts, null);
-        return this;
-    }
-
-    /**
-     * Set the privacy strategy as secured with shamir secret sharing (overloaded method with argument to specify search tag)
-     * <br>
-     * Privacy strategy defines how the data will be encrypted
-     * @param secretTotalPartCount the total count of parts of the secret
-     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
-     * @param searchTag search tag to optimize searching for the upload
-     * @param secretParts the list of secret parts composed of the part index and the secret part
-     * @return the same instance of this builder
-     */
-    public UploadParameterBuilder securedWithShamirSecretSharingPrivacyStrategy(int secretTotalPartCount,
-                                                                                int secretMinimumPartCountToBuild,
-                                                                                String searchTag,
-                                                                                List<SecretPart> secretParts) {
-        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
-                secretParts, searchTag);
+    public UploadParameterBuilder securedWithShamirSecretSharing(int secretTotalPartCount,
+                                                                 int secretMinimumPartCountToBuild,
+                                                                 List<SecretPart> secretParts) {
+        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;
     }
 
@@ -489,30 +410,11 @@ public class UploadParameterBuilder {
      * @param secretParts the map containing part index and secret part pairs
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder securedWithShamirSecretSharingPrivacyStrategy(int secretTotalPartCount,
-                                                                                int secretMinimumPartCountToBuild,
-                                                                                Map<Integer, byte[]> secretParts) {
-        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
-                secretParts, null);
-        return this;
-    }
-
-    /**
-     * Set the privacy strategy as secured with shamir secret sharing (overloaded method with argument to specify search tag)
-     * <br>
-     * Privacy strategy defines how the data will be encrypted
-     * @param secretTotalPartCount the total count of parts of the secret
-     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
-     * @param searchTag search tag to optimize searching for the upload
-     * @param secretParts the map containing part index and secret part pairs
-     * @return the same instance of this builder
-     */
-    public UploadParameterBuilder securedWithShamirSecretSharingPrivacyStrategy(int secretTotalPartCount,
-                                                                                int secretMinimumPartCountToBuild,
-                                                                                String searchTag,
-                                                                                Map<Integer, byte[]> secretParts) {
-        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(secretTotalPartCount, secretMinimumPartCountToBuild,
-                secretParts, searchTag);
+    public UploadParameterBuilder securedWithShamirSecretSharing(int secretTotalPartCount,
+                                                                 int secretMinimumPartCountToBuild,
+                                                                 Map<Integer, byte[]> secretParts) {
+        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;
     }
 
@@ -535,7 +437,7 @@ public class UploadParameterBuilder {
         if (this.computeDigest == null)
             this.computeDigest = true;
         if (this.privacyStrategy == null)
-            this.privacyStrategy = PlainPrivacyStrategy.create(null);
+            this.privacyStrategy = PlainPrivacyStrategy.create();
 
         return new UploadParameter(signerPrivateKey, recipientPublicKey, description, privacyStrategy, computeDigest, dataList);
     }

@@ -80,8 +80,7 @@ public class DownloadParameterTest {
         final DownloadParameter param = DownloadParameter.createWithRootDataHash(SAMPLE_ROOT_DATA_HASH, SAMPLE_DIGEST)
                 .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(
                         "CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C",
-                        "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577",
-                        "test"
+                        "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577"
                 ))
                 .build();
 
@@ -91,7 +90,7 @@ public class DownloadParameterTest {
     }
 
     @Test
-    public void shouldCreateWithPlainPrivacy() throws UnsupportedEncodingException {
+    public void shouldCreateWithPlainPrivacy() {
         final DownloadParameter param = DownloadParameter.createWithTransactionHash(SAMPLE_TRANSACTION_HASH)
                 .plainPrivacy()
                 .build();
@@ -100,31 +99,31 @@ public class DownloadParameterTest {
     }
 
     @Test
-    public void shouldCreateWithSecuredWithNemKeysPrivacy() throws UnsupportedEncodingException {
+    public void shouldCreateWithSecuredWithNemKeysPrivacy() {
         final DownloadParameter param = DownloadParameter.createWithTransactionHash(SAMPLE_TRANSACTION_HASH)
-                .securedWithNemKeysPrivacyStrategy(PRIVATE_KEY_1, PUBLIC_KEY_2)
+                .securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithNemKeysPrivacyStrategy.class));
     }
 
     @Test
-    public void shouldCreateWithSecuredWithPasswordPrivacy() throws UnsupportedEncodingException {
+    public void shouldCreateWithSecuredWithPasswordPrivacy() {
         final DownloadParameter param = DownloadParameter.createWithTransactionHash(SAMPLE_TRANSACTION_HASH)
-                .securedWithPasswordPrivacyStrategy("hdksahjkdhsakjhdsajhdkjhsajkdsbajjdhsajkhdjksahjkdahjkhdkjsahjdsadasdsadas")
+                .securedWithPasswordPrivacy("hdksahjkdhsakjhdsajhdkjhsajkdsbajjdhsajkhdjksahjkdahjkhdkjsahjdsadasdsadas")
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithPasswordPrivacyStrategy.class));
     }
 
     @Test
-    public void shouldCreateWithSecuredWithShamirSecretSharingMapStrategy() throws UnsupportedEncodingException {
+    public void shouldCreateWithSecuredWithShamirSecretSharingMapStrategy() {
         final Map<Integer, byte[]> minimumSecretParts = new HashMap<>();
         minimumSecretParts.put(1, SECRET_PARTS.get(1));
         minimumSecretParts.put(3, SECRET_PARTS.get(3));
         minimumSecretParts.put(5, SECRET_PARTS.get(5));
         final DownloadParameter param = DownloadParameter.createWithTransactionHash(SAMPLE_TRANSACTION_HASH)
-                .securedWithShamirSecretSharingPrivacyStrategy(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .securedWithShamirSecretSharingPrivacy(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         minimumSecretParts)
                 .build();
 
@@ -132,9 +131,9 @@ public class DownloadParameterTest {
     }
 
     @Test
-    public void shouldCreateWithSecuredWithShamirSecretSharingArrayStrategy() throws UnsupportedEncodingException {
+    public void shouldCreateWithSecuredWithShamirSecretSharingArrayStrategy() {
         final DownloadParameter param = DownloadParameter.createWithTransactionHash(SAMPLE_TRANSACTION_HASH)
-                .securedWithShamirSecretSharingPrivacyStrategy(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .securedWithShamirSecretSharingPrivacy(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SECRET_PARTS.get(1)),
                         new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SECRET_PARTS.get(3)),
                         new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, SECRET_PARTS.get(5)))
@@ -144,9 +143,9 @@ public class DownloadParameterTest {
     }
 
     @Test
-    public void shouldCreateWithSecuredWithShamirSecretSharingListStrategy() throws UnsupportedEncodingException {
+    public void shouldCreateWithSecuredWithShamirSecretSharingListStrategy() {
         final DownloadParameter param = DownloadParameter.createWithTransactionHash(SAMPLE_TRANSACTION_HASH)
-                .securedWithShamirSecretSharingPrivacyStrategy(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .securedWithShamirSecretSharingPrivacy(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         asList(
                                 new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SECRET_PARTS.get(1)),
                                 new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SECRET_PARTS.get(3)),

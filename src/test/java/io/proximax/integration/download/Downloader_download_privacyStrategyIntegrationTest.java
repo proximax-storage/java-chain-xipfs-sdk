@@ -3,9 +3,9 @@ package io.proximax.integration.download;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
-import io.proximax.download.Downloader;
 import io.proximax.download.DownloadParameter;
 import io.proximax.download.DownloadResult;
+import io.proximax.download.Downloader;
 import io.proximax.model.BlockchainNetwork;
 import io.proximax.model.PrivacyType;
 import io.proximax.testsupport.TestHelper;
@@ -54,7 +54,6 @@ public class Downloader_download_privacyStrategyIntegrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
-		assertThat(result.getPrivacySearchTag(), is("plain"));
 		assertThat(result.getDataList(), hasSize(1));
 		assertThat(ArrayUtils.toObject(result.getDataList().get(0).getData()),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
@@ -65,14 +64,13 @@ public class Downloader_download_privacyStrategyIntegrationTest {
 		final String transactionHash = TestHelper.getData("Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy", "transactionHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithTransactionHash(transactionHash)
-						.securedWithNemKeysPrivacyStrategy(PRIVATE_KEY_1, PUBLIC_KEY_2)
+						.securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
 						.build();
 
 		final DownloadResult result = unitUnderTest.download(param);
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
-		assertThat(result.getPrivacySearchTag(), is("nem"));
 		assertThat(result.getDataList(), hasSize(1));
 		assertThat(ArrayUtils.toObject(result.getDataList().get(0).getData()),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
@@ -83,14 +81,13 @@ public class Downloader_download_privacyStrategyIntegrationTest {
 		final String transactionHash = TestHelper.getData("Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithPasswordPrivacyStrategy", "transactionHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithTransactionHash(transactionHash)
-						.securedWithPasswordPrivacyStrategy(PASSWORD)
+						.securedWithPasswordPrivacy(PASSWORD)
 						.build();
 
 		final DownloadResult result = unitUnderTest.download(param);
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getPrivacyType(), is(PrivacyType.PASSWORD.getValue()));
-		assertThat(result.getPrivacySearchTag(), is("pass"));
 		assertThat(result.getDataList(), hasSize(1));
 		assertThat(ArrayUtils.toObject(result.getDataList().get(0).getData()),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
@@ -101,7 +98,7 @@ public class Downloader_download_privacyStrategyIntegrationTest {
 		final String transactionHash = TestHelper.getData("Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy", "transactionHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithTransactionHash(transactionHash)
-						.securedWithShamirSecretSharingPrivacyStrategy(
+						.securedWithShamirSecretSharingPrivacy(
 								SHAMIR_SECRET_TOTAL_PART_COUNT,
 								SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
 								SHAMIR_SECRET_PARTS)
@@ -111,7 +108,6 @@ public class Downloader_download_privacyStrategyIntegrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getPrivacyType(), is(PrivacyType.SHAMIR.getValue()));
-		assertThat(result.getPrivacySearchTag(), is("shamir"));
 		assertThat(result.getDataList(), hasSize(1));
 		assertThat(ArrayUtils.toObject(result.getDataList().get(0).getData()),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));

@@ -74,7 +74,6 @@ public class CreateProximaxRootDataServiceTest {
         unitUnderTest = new CreateProximaxRootDataService(mockIpfsUploadService, mockDigestUtils, mockContentTypeUtils);
 
         given(mockPrivacyStrategy.getPrivacyType()).willReturn(1001);
-        given(mockPrivacyStrategy.getPrivacySearchTag()).willReturn("test");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -117,7 +116,6 @@ public class CreateProximaxRootDataServiceTest {
         assertThat(result.getDataList().get(1).getName(), is(DUMMY_NAME_2));
         assertThat(result.getDataList().get(1).getTimestamp(), is(DUMMY_TIMESTAMP_2));
         assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
-        assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
         assertThat(result.getVersion(), is(DUMMY_VERSION));
     }
@@ -155,7 +153,6 @@ public class CreateProximaxRootDataServiceTest {
         assertThat(result.getDataList().get(1).getName(), is(DUMMY_NAME_2));
         assertThat(result.getDataList().get(1).getTimestamp(), is(DUMMY_TIMESTAMP_2));
         assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
-        assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
         assertThat(result.getVersion(), is(DUMMY_VERSION));
     }
@@ -187,7 +184,6 @@ public class CreateProximaxRootDataServiceTest {
         assertThat(result.getDataList().get(1).getName(), is(DUMMY_NAME_2));
         assertThat(result.getDataList().get(1).getTimestamp(), is(DUMMY_TIMESTAMP_2));
         assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
-        assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
         assertThat(result.getVersion(), is(DUMMY_VERSION));
     }
@@ -223,7 +219,6 @@ public class CreateProximaxRootDataServiceTest {
         assertThat(result.getDataList().get(1).getName(), is(DUMMY_NAME_2));
         assertThat(result.getDataList().get(1).getTimestamp(), is(DUMMY_TIMESTAMP_2));
         assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
-        assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
         assertThat(result.getVersion(), is(DUMMY_VERSION));
     }

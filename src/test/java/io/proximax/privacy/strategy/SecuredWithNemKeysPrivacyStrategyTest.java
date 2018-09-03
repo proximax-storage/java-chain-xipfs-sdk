@@ -25,27 +25,27 @@ public class SecuredWithNemKeysPrivacyStrategyTest {
 
     @Test
     public void shouldReturnCorrectPrivacyType() {
-        final int privacyType = new SecuredWithNemKeysPrivacyStrategy(SENDER_KEYPAIR.getPrivateKey().toString(),
-                RECEIVER_KEYPAIR.getPublicKey().toString(), "test").getPrivacyType();
+        final int privacyType = SecuredWithNemKeysPrivacyStrategy.create(SENDER_KEYPAIR.getPrivateKey().toString(),
+                RECEIVER_KEYPAIR.getPublicKey().toString()).getPrivacyType();
 
         assertThat(privacyType, is(PrivacyType.NEMKEYS.getValue()));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failInitWithoutPrivateKey() {
-        new SecuredWithNemKeysPrivacyStrategy(null, RECEIVER_KEYPAIR.getPublicKey().toString(), "test");
+        SecuredWithNemKeysPrivacyStrategy.create(null, RECEIVER_KEYPAIR.getPublicKey().toString());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failInitWithoutPublicKey() {
-        new SecuredWithNemKeysPrivacyStrategy(SENDER_KEYPAIR.getPrivateKey().toString(), null, "tag");
+        SecuredWithNemKeysPrivacyStrategy.create(SENDER_KEYPAIR.getPrivateKey().toString(), null);
     }
 
     @Test
     public void shouldReturnEncryptedWithKeys() {
         final SecuredWithNemKeysPrivacyStrategy unitUnderTest =
-                new SecuredWithNemKeysPrivacyStrategy(SENDER_KEYPAIR.getPrivateKey().toString(),
-                        RECEIVER_KEYPAIR.getPublicKey().toString(), "test");
+                SecuredWithNemKeysPrivacyStrategy.create(SENDER_KEYPAIR.getPrivateKey().toString(),
+                        RECEIVER_KEYPAIR.getPublicKey().toString());
 
         final byte[] encrypted = unitUnderTest.encryptData(SAMPLE_DATA);
 
@@ -55,8 +55,8 @@ public class SecuredWithNemKeysPrivacyStrategyTest {
     @Test(expected = DecryptionFailureException.class)
     public void failDecryptWhenPrivateKeyIsNeitherSenderOrReceiver() {
         final SecuredWithNemKeysPrivacyStrategy unitUnderTest =
-                new SecuredWithNemKeysPrivacyStrategy(ANOTHER_KEYPAIR.getPrivateKey().toString(),
-                        RECEIVER_KEYPAIR.getPublicKey().toString(), "test");
+                SecuredWithNemKeysPrivacyStrategy.create(ANOTHER_KEYPAIR.getPrivateKey().toString(),
+                        RECEIVER_KEYPAIR.getPublicKey().toString());
 
         unitUnderTest.decryptData(sampleEncryptedData());
     }
@@ -64,8 +64,8 @@ public class SecuredWithNemKeysPrivacyStrategyTest {
     @Test
     public void shouldReturnDecryptedWithKeysWherePrivateKeyIsSender() {
         final SecuredWithNemKeysPrivacyStrategy unitUnderTest =
-                new SecuredWithNemKeysPrivacyStrategy(SENDER_KEYPAIR.getPrivateKey().toString(),
-                        RECEIVER_KEYPAIR.getPublicKey().toString(), "test");
+                SecuredWithNemKeysPrivacyStrategy.create(SENDER_KEYPAIR.getPrivateKey().toString(),
+                        RECEIVER_KEYPAIR.getPublicKey().toString());
 
         final byte[] decrypted = unitUnderTest.decryptData(sampleEncryptedData());
 
@@ -75,8 +75,8 @@ public class SecuredWithNemKeysPrivacyStrategyTest {
     @Test
     public void shouldReturnDecryptedWithKeysWherePrivateKeyIsReceiver() {
         final SecuredWithNemKeysPrivacyStrategy unitUnderTest =
-                new SecuredWithNemKeysPrivacyStrategy(RECEIVER_KEYPAIR.getPrivateKey().toString(),
-                        SENDER_KEYPAIR.getPublicKey().toString(), "test");
+                SecuredWithNemKeysPrivacyStrategy.create(RECEIVER_KEYPAIR.getPrivateKey().toString(),
+                        SENDER_KEYPAIR.getPublicKey().toString());
 
         final byte[] decrypted = unitUnderTest.decryptData(sampleEncryptedData());
 

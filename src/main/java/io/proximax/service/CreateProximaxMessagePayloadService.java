@@ -67,8 +67,7 @@ public class CreateProximaxMessagePayloadService {
 
     private ProximaxMessagePayloadModel createMessagePayload(UploadParameter uploadParameter, String rootDataHash, Optional<String> rootDigest) {
         return ProximaxMessagePayloadModel.create(rootDataHash, rootDigest.orElse(null), uploadParameter.getDescription(),
-                uploadParameter.getPrivacyStrategy().getPrivacyType(), uploadParameter.getPrivacyStrategy().getPrivacySearchTag(),
-                uploadParameter.getVersion());
+                uploadParameter.getPrivacyStrategy().getPrivacyType(), uploadParameter.getVersion());
     }
 
 }

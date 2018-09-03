@@ -1,7 +1,6 @@
 package io.proximax.privacy.strategy;
 
 import com.codahale.shamir.Scheme;
-import io.proximax.cipher.BinaryPBKDF2CipherEncryption;
 import io.proximax.exceptions.DecryptionFailureException;
 import io.proximax.model.PrivacyType;
 import org.apache.commons.lang.ArrayUtils;
@@ -35,49 +34,43 @@ public class SecuredWithShamirSecretSharingPrivacyStrategyTest {
 
     @Test
     public void shouldReturnCorrectPrivacyType() {
-        final int privacyType = new SecuredWithShamirSecretSharingPrivacyStrategy(
-                new BinaryPBKDF2CipherEncryption(), SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                SECRET_PARTS, "test").getPrivacyType();
+        final int privacyType = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+                SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, SECRET_PARTS).getPrivacyType();
 
         assertThat(privacyType, is(PrivacyType.SHAMIR.getValue()));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWithNegativeSecretTotalPartCount() {
-        new SecuredWithShamirSecretSharingPrivacyStrategy(
-                new BinaryPBKDF2CipherEncryption(), -1, SECRET_MINIMUM_PART_COUNT_TO_BUILD, SECRET_PARTS, "test");
+        SecuredWithShamirSecretSharingPrivacyStrategy.create(-1, SECRET_MINIMUM_PART_COUNT_TO_BUILD, SECRET_PARTS);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWithNegativeSecretMinimumPartCountToBuild() {
-        new SecuredWithShamirSecretSharingPrivacyStrategy(
-                new BinaryPBKDF2CipherEncryption(), SECRET_TOTAL_PART_COUNT, -1, SECRET_PARTS, "test");
+        SecuredWithShamirSecretSharingPrivacyStrategy.create(SECRET_TOTAL_PART_COUNT, -1, SECRET_PARTS);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWithSecretMinimumPartCountToBuildBeingGreaterThanTotalPartCount() {
-        new SecuredWithShamirSecretSharingPrivacyStrategy(
-                new BinaryPBKDF2CipherEncryption(), SECRET_TOTAL_PART_COUNT, SECRET_TOTAL_PART_COUNT + 1, SECRET_PARTS, "test");
+        SecuredWithShamirSecretSharingPrivacyStrategy.create(SECRET_TOTAL_PART_COUNT, SECRET_TOTAL_PART_COUNT + 1, SECRET_PARTS);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWithSecretPartsEmpty() {
-        new SecuredWithShamirSecretSharingPrivacyStrategy(
-                new BinaryPBKDF2CipherEncryption(), SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, Collections.emptyMap(), "test");
+        SecuredWithShamirSecretSharingPrivacyStrategy.create(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                Collections.emptyMap());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWithSecretPartsNotMeetingMinimumPartCountToBuild() {
-        new SecuredWithShamirSecretSharingPrivacyStrategy(
-                new BinaryPBKDF2CipherEncryption(), SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                Collections.singletonMap(1, SECRET_PARTS.get(1)), "test");
+        SecuredWithShamirSecretSharingPrivacyStrategy.create(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                Collections.singletonMap(1, SECRET_PARTS.get(1)));
     }
 
     @Test
     public void returnEncryptedWithAllSecretParts() {
-        final SecuredWithShamirSecretSharingPrivacyStrategy unitUnderTest = new SecuredWithShamirSecretSharingPrivacyStrategy(
-                new BinaryPBKDF2CipherEncryption(), SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                SECRET_PARTS, "test");
+        final SecuredWithShamirSecretSharingPrivacyStrategy unitUnderTest = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+                SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, SECRET_PARTS);
 
         final byte[] encrypted = unitUnderTest.encryptData(SAMPLE_DATA);
 
@@ -89,10 +82,9 @@ public class SecuredWithShamirSecretSharingPrivacyStrategyTest {
         final Map<Integer, byte[]> minimumSecretParts = new HashMap<>();
         minimumSecretParts.put(1, SECRET_PARTS.get(1));
         minimumSecretParts.put(3, SECRET_PARTS.get(3));
-        minimumSecretParts.put(5, SECRET_PARTS.get(5));
-        final SecuredWithShamirSecretSharingPrivacyStrategy unitUnderTest = new SecuredWithShamirSecretSharingPrivacyStrategy(
-                new BinaryPBKDF2CipherEncryption(), SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                minimumSecretParts, "test");
+        minimumSecretParts.put(4, SECRET_PARTS.get(4));
+        final SecuredWithShamirSecretSharingPrivacyStrategy unitUnderTest = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+                SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, minimumSecretParts);
 
         final byte[] encrypted = unitUnderTest.encryptData(SAMPLE_DATA);
 
@@ -101,17 +93,15 @@ public class SecuredWithShamirSecretSharingPrivacyStrategyTest {
 
     @Test
     public void returnDecryptedWithMinimumSecretParts() {
-        final SecuredWithShamirSecretSharingPrivacyStrategy allPartsStrategy = new SecuredWithShamirSecretSharingPrivacyStrategy(
-                new BinaryPBKDF2CipherEncryption(), SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                SECRET_PARTS, "test");
+        final SecuredWithShamirSecretSharingPrivacyStrategy allPartsStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+                SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, SECRET_PARTS);
         final byte[] encrypted = allPartsStrategy.encryptData(SAMPLE_DATA);
         final Map<Integer, byte[]> minimumSecretParts = new HashMap<>();
         minimumSecretParts.put(1, SECRET_PARTS.get(1));
         minimumSecretParts.put(2, SECRET_PARTS.get(2));
         minimumSecretParts.put(4, SECRET_PARTS.get(4));
-        final SecuredWithShamirSecretSharingPrivacyStrategy unitUnderTest = new SecuredWithShamirSecretSharingPrivacyStrategy(
-                new BinaryPBKDF2CipherEncryption(), SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                minimumSecretParts, "test");
+        final SecuredWithShamirSecretSharingPrivacyStrategy unitUnderTest = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+                SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, minimumSecretParts);
 
         final byte[] decrypted = unitUnderTest.decryptData(encrypted);
 
@@ -124,17 +114,15 @@ public class SecuredWithShamirSecretSharingPrivacyStrategyTest {
         firstSecretParts.put(2, SECRET_PARTS.get(2));
         firstSecretParts.put(3, SECRET_PARTS.get(3));
         firstSecretParts.put(5, SECRET_PARTS.get(5));
-        final SecuredWithShamirSecretSharingPrivacyStrategy firstPartsStrategy = new SecuredWithShamirSecretSharingPrivacyStrategy(
-                new BinaryPBKDF2CipherEncryption(), SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                firstSecretParts, "test");
+        final SecuredWithShamirSecretSharingPrivacyStrategy firstPartsStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+                SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, firstSecretParts);
         final byte[] encrypted = firstPartsStrategy.encryptData(SAMPLE_DATA);
         final Map<Integer, byte[]> secondSecretParts = new HashMap<>();
         secondSecretParts.put(1, SECRET_PARTS.get(1));
         secondSecretParts.put(2, SECRET_PARTS.get(2));
         secondSecretParts.put(4, SECRET_PARTS.get(4));
-        final SecuredWithShamirSecretSharingPrivacyStrategy secondPartsStrategy = new SecuredWithShamirSecretSharingPrivacyStrategy(
-                new BinaryPBKDF2CipherEncryption(), SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                secondSecretParts, "test");
+        final SecuredWithShamirSecretSharingPrivacyStrategy secondPartsStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+                SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, secondSecretParts);
 
         final byte[] decrypted = secondPartsStrategy.decryptData(encrypted);
 
@@ -147,18 +135,16 @@ public class SecuredWithShamirSecretSharingPrivacyStrategyTest {
         firstSecretParts.put(2, SECRET_PARTS.get(2));
         firstSecretParts.put(3, SECRET_PARTS.get(3));
         firstSecretParts.put(5, SECRET_PARTS.get(5));
-        final SecuredWithShamirSecretSharingPrivacyStrategy firstPartsStrategy = new SecuredWithShamirSecretSharingPrivacyStrategy(
-                new BinaryPBKDF2CipherEncryption(), SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                firstSecretParts, "test");
+        final SecuredWithShamirSecretSharingPrivacyStrategy firstPartsStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+                SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, firstSecretParts);
         final byte[] encrypted = firstPartsStrategy.encryptData(SAMPLE_DATA);
         final Map<Integer, byte[]> wrongSecretParts = new HashMap<>();
         wrongSecretParts.put(1, SECRET_PARTS.get(1));
         wrongSecretParts.put(3, SECRET_PARTS.get(3));
         wrongSecretParts.put(4, SECRET_PARTS.get(5));
 
-        final SecuredWithShamirSecretSharingPrivacyStrategy unitUnderTest = new SecuredWithShamirSecretSharingPrivacyStrategy(
-                new BinaryPBKDF2CipherEncryption(), SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                wrongSecretParts, "test");
+        final SecuredWithShamirSecretSharingPrivacyStrategy unitUnderTest = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+                SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, wrongSecretParts);
 
         unitUnderTest.decryptData(encrypted);
     }

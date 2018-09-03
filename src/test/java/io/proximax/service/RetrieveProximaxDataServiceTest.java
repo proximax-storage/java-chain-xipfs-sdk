@@ -115,7 +115,7 @@ public class RetrieveProximaxDataServiceTest {
     }
 
     private ProximaxRootDataModel sampleRootData() {
-        return new ProximaxRootDataModel(PrivacyType.PLAIN.getValue(), "test", DUMMY_ROOT_DESCRIPTION,
+        return new ProximaxRootDataModel(PrivacyType.PLAIN.getValue(), DUMMY_ROOT_DESCRIPTION,
                 DUMMY_VERSION, asList(
                 new ProximaxDataModel(DUMMY_DIGEST_1, DUMMY_DATA_HASH_1, "data 1",
                         singletonMap("key1", "value1"), 1000L, "data name 1", "text/plain"),

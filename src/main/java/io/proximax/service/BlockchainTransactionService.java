@@ -89,7 +89,7 @@ public class BlockchainTransactionService {
         checkParameter(recipientPublicKey != null, "recipientPublicKey is required");
         checkParameter(messagePayload != null, "messagePayload is required");
 
-        final Message message = blockchainMessageFactory.createMessage(privacyStrategy, messagePayload);
+        final Message message = blockchainMessageFactory.createMessage(messagePayload);
         final TransferTransaction transaction = createTransaction(recipientPublicKey, message);
         final SignedTransaction signedTransaction = nemUtils.signTransaction(signerPrivateKey, transaction);
 

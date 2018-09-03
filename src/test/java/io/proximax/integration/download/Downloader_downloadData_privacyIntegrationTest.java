@@ -60,7 +60,7 @@ public class Downloader_downloadData_privacyIntegrationTest {
 		final String dataHash = TestHelper.getData("Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy", "dataList[0].dataHash");
 		final DownloadDataParameter param =
 				DownloadDataParameter.create(dataHash)
-						.securedWithNemKeysPrivacyStrategy(PRIVATE_KEY_1, PUBLIC_KEY_2)
+						.securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
 						.build();
 
 		final DownloadDataResult result = unitUnderTest.downloadData(param);
@@ -75,7 +75,7 @@ public class Downloader_downloadData_privacyIntegrationTest {
 		final String dataHash = TestHelper.getData("Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithPasswordPrivacyStrategy", "dataList[0].dataHash");
 		final DownloadDataParameter param =
 				DownloadDataParameter.create(dataHash)
-						.securedWithPasswordPrivacyStrategy(PASSWORD)
+						.securedWithPasswordPrivacy(PASSWORD)
 						.build();
 
 		final DownloadDataResult result = unitUnderTest.downloadData(param);
@@ -90,7 +90,7 @@ public class Downloader_downloadData_privacyIntegrationTest {
 		final String dataHash = TestHelper.getData("Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy", "dataList[0].dataHash");
 		final DownloadDataParameter param =
 				DownloadDataParameter.create(dataHash)
-						.securedWithShamirSecretSharingPrivacyStrategy(
+						.securedWithShamirSecretSharingPrivacy(
 								SHAMIR_SECRET_TOTAL_PART_COUNT,
 								SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
 								SHAMIR_SECRET_PARTS)

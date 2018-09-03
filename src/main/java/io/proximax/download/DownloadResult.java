@@ -15,7 +15,6 @@ import static java.util.stream.Collectors.toList;
  * The following are its fields:
  * <ul>
  *     <li><b>privacyType</b> - the privacy type from privacy strategy used to encrypt data</li>
- *     <li><b>privacySearchTag</b> - the privacy search tag applied during upload</li>
  *     <li><b>description</b> - the short description of the upload</li>
  *     <li><b>version</b> - the version of upload</li>
  *     <li><b>dataList</b> - the list of downloaded data</li>
@@ -25,15 +24,12 @@ import static java.util.stream.Collectors.toList;
 public class DownloadResult {
 
     private final int privacyType;
-    private final String privacySearchTag;
     private final String description;
     private final String version;
     private final List<DownloadResultData> dataList;
 
-    private DownloadResult(int privacyType, String privacySearchTag, String description,
-                          String version, List<DownloadResultData> dataList) {
+    private DownloadResult(int privacyType, String description, String version, List<DownloadResultData> dataList) {
         this.privacyType = privacyType;
-        this.privacySearchTag = privacySearchTag;
         this.description = description;
         this.version = version;
         this.dataList = dataList == null ? Collections.emptyList() : Collections.unmodifiableList(dataList);
@@ -45,14 +41,6 @@ public class DownloadResult {
      */
     public int getPrivacyType() {
         return privacyType;
-    }
-
-    /**
-     * Get the privacy search tag applied during upload
-     * @return the privacy search tag
-     */
-    public String getPrivacySearchTag() {
-        return privacySearchTag;
     }
 
     /**
@@ -87,7 +75,6 @@ public class DownloadResult {
                         rootData.getDataList().get(index).getContentType(),
                         rootData.getDataList().get(index).getMetadata())).collect(toList());
 
-        return new DownloadResult(rootData.getPrivacyType(),
-                rootData.getPrivacySearchTag(), rootData.getDescription(), rootData.getVersion(), downloadDataList);
+        return new DownloadResult(rootData.getPrivacyType(), rootData.getDescription(), rootData.getVersion(), downloadDataList);
     }
 }

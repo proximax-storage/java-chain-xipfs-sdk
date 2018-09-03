@@ -11,7 +11,6 @@ import io.proximax.privacy.strategy.PrivacyStrategy;
  *     <li><b>digest</b> - the digest for the root data that refers to the upload instance</li>
  *     <li><b>rootDataHash</b> - the data hash for the root data that refers to the upload instance</li>
  *     <li><b>privacyType</b> - the privacy type from privacy strategy used to encrypt data</li>
- *     <li><b>privacySearchTag</b> - the privacy search tag applied</li>
  *     <li><b>description</b> - the short description for the upload</li>
  *     <li><b>version</b> - the version of upload</li>
  * </ul>
@@ -22,16 +21,13 @@ public final class ProximaxMessagePayloadModel {
     private final String digest;
     private final String rootDataHash;
     private final int privacyType;
-    private final String privacySearchTag;
     private final String description;
     private final String version;
 
-    private ProximaxMessagePayloadModel(String digest, String rootDataHash, int privacyType, String privacySearchTag,
-                                       String description, String version) {
+    private ProximaxMessagePayloadModel(String digest, String rootDataHash, int privacyType, String description, String version) {
         this.digest = digest;
         this.rootDataHash = rootDataHash;
         this.privacyType = privacyType;
-        this.privacySearchTag = privacySearchTag;
         this.description = description;
         this.version = version;
     }
@@ -61,14 +57,6 @@ public final class ProximaxMessagePayloadModel {
     }
 
     /**
-     * Get the privacy search tag applied
-     * @return the privacy search
-     */
-    public String getPrivacySearchTag() {
-        return privacySearchTag;
-    }
-
-    /**
      * Get the short description for the upload
      * @return the description
      */
@@ -90,13 +78,12 @@ public final class ProximaxMessagePayloadModel {
      * @param digest the digest for the root data
      * @param description the short description for the upload
      * @param privacyType the privacy type
-     * @param privacySearchTag the privacy search tag applied
      * @param version the version of upload
      * @return instance of this model
      */
     public static ProximaxMessagePayloadModel create(String rootDatahash, String digest, String description,
-                                                     Integer privacyType, String privacySearchTag, String version) {
-        return new ProximaxMessagePayloadModel(digest, rootDatahash, privacyType, privacySearchTag, description, version);
+                                                     Integer privacyType, String version) {
+        return new ProximaxMessagePayloadModel(digest, rootDatahash, privacyType, description, version);
     }
 
 }

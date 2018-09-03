@@ -17,7 +17,7 @@ public class PlainPrivacyStrategyTest {
 
     @Before
     public void setUp() {
-        unitUnderTest = new PlainPrivacyStrategy("test");
+        unitUnderTest = PlainPrivacyStrategy.create();
     }
 
     @Test

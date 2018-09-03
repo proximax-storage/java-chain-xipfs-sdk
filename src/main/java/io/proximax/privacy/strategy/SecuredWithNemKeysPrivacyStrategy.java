@@ -15,13 +15,12 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * This strategy encrypt and decrypt the data using both private and public keys
  */
 // TODO switch to secure message once available
-public final class SecuredWithNemKeysPrivacyStrategy extends AbstractPlainMessagePrivacyStrategy {
+public final class SecuredWithNemKeysPrivacyStrategy extends PrivacyStrategy {
 
     private final KeyPair keyPairOfPrivateKey;
     private final KeyPair keyPairOfPublicKey;
 
-    SecuredWithNemKeysPrivacyStrategy(String privateKey, String publicKey, String searchTag) {
-        super(searchTag);
+    private SecuredWithNemKeysPrivacyStrategy(String privateKey, String publicKey) {
 
         checkParameter(privateKey != null, "private key is required");
         checkParameter(publicKey != null, "public key is required");
@@ -76,10 +75,9 @@ public final class SecuredWithNemKeysPrivacyStrategy extends AbstractPlainMessag
      * Create instance of this strategy
      * @param privateKey the private key
      * @param publicKey the public key
-     * @param searchTag an optional search tag
      * @return the instance of this strategy
      */
-    public static SecuredWithNemKeysPrivacyStrategy create(String privateKey, String publicKey, String searchTag) {
-        return new SecuredWithNemKeysPrivacyStrategy(privateKey, publicKey, searchTag);
+    public static SecuredWithNemKeysPrivacyStrategy create(String privateKey, String publicKey) {
+        return new SecuredWithNemKeysPrivacyStrategy(privateKey, publicKey);
     }
 }

@@ -151,7 +151,7 @@ public class BlockchainTransactionServiceTest {
 
     @Test(expected = RuntimeException.class)
     public void shouldBubbleUpExceptionsOnCreateAndAnnounceTransaction() {
-        given(mockBlockchainMessageFactory.createMessage(mockPrivacyStrategy, mockMessagePayload)).willReturn(mockMessage);
+        given(mockBlockchainMessageFactory.createMessage(mockMessagePayload)).willReturn(mockMessage);
         given(mockNemUtils.toAddress(any())).willThrow(new RuntimeException());
 
         unitUnderTest.createAndAnnounceTransaction(mockPrivacyStrategy, SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, mockMessagePayload);
@@ -159,7 +159,7 @@ public class BlockchainTransactionServiceTest {
 
     @Test(expected = AnnounceBlockchainTransactionFailureException.class)
     public void shouldFailWhenAnnouncementFailed() throws MalformedURLException {
-        given(mockBlockchainMessageFactory.createMessage(mockPrivacyStrategy, mockMessagePayload)).willReturn(mockMessage);
+        given(mockBlockchainMessageFactory.createMessage(mockMessagePayload)).willReturn(mockMessage);
         given(mockNemUtils.toAddress(SAMPLE_RECIPIENT_PUBLIC_KEY)).willReturn(SAMPLE_RECIPIENT_ADDRESS);
         given(mockNemUtils.toAccount(SAMPLE_SIGNER_PRIVATE_KEY)).willReturn(SAMPLE_SIGNER_ACCOUNT);
         given(mockNemUtils.signTransaction(signerPrivateKeyArgumentCaptor.capture(), transferTransactionArgumentCaptor.capture()))
@@ -174,7 +174,7 @@ public class BlockchainTransactionServiceTest {
 
     @Test
     public void shouldSignTransactionWithCorrectDataOnCreateAndAnnounceTransaction() throws MalformedURLException {
-        given(mockBlockchainMessageFactory.createMessage(mockPrivacyStrategy, mockMessagePayload)).willReturn(mockMessage);
+        given(mockBlockchainMessageFactory.createMessage(mockMessagePayload)).willReturn(mockMessage);
         given(mockNemUtils.toAddress(SAMPLE_RECIPIENT_PUBLIC_KEY)).willReturn(SAMPLE_RECIPIENT_ADDRESS);
         given(mockNemUtils.toAccount(SAMPLE_SIGNER_PRIVATE_KEY)).willReturn(SAMPLE_SIGNER_ACCOUNT);
         given(mockNemUtils.signTransaction(signerPrivateKeyArgumentCaptor.capture(), transferTransactionArgumentCaptor.capture()))
@@ -198,7 +198,7 @@ public class BlockchainTransactionServiceTest {
 
     @Test
     public void shouldReturnTransactionHashOnCreateAndAnnounceTransaction() {
-        given(mockBlockchainMessageFactory.createMessage(mockPrivacyStrategy, mockMessagePayload)).willReturn(mockMessage);
+        given(mockBlockchainMessageFactory.createMessage(mockMessagePayload)).willReturn(mockMessage);
         given(mockNemUtils.toAddress(SAMPLE_RECIPIENT_PUBLIC_KEY)).willReturn(SAMPLE_RECIPIENT_ADDRESS);
         given(mockNemUtils.toAccount(SAMPLE_SIGNER_PRIVATE_KEY)).willReturn(SAMPLE_SIGNER_ACCOUNT);
         given(mockNemUtils.signTransaction(signerPrivateKeyArgumentCaptor.capture(), transferTransactionArgumentCaptor.capture()))

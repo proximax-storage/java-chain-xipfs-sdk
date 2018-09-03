@@ -35,33 +35,32 @@ public class SecuredWithPasswordPrivacyStrategyTest {
 
     @Test
     public void shouldReturnCorrectPrivacyType() {
-        final int privacyType = new SecuredWithPasswordPrivacyStrategy(new BinaryPBKDF2CipherEncryption(), PASSWORD, "test").getPrivacyType();
+        final int privacyType = SecuredWithPasswordPrivacyStrategy.create(PASSWORD).getPrivacyType();
 
         assertThat(privacyType, is(PrivacyType.PASSWORD.getValue()));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failInitWithoutPassword() {
-        new SecuredWithPasswordPrivacyStrategy(new BinaryPBKDF2CipherEncryption(), null, "test");
+        SecuredWithPasswordPrivacyStrategy.create(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failInitWithPasswordNotMeetingMinimumLength() {
-        new SecuredWithPasswordPrivacyStrategy(new BinaryPBKDF2CipherEncryption(), PASSWORD_TOO_SHORT, "test");
+        SecuredWithPasswordPrivacyStrategy.create(PASSWORD_TOO_SHORT);
     }
 
     @Test(expected = EncryptionFailureException.class)
     public void failOnExceptionWhileEncrypting() throws Exception {
         given(encryptor.encrypt(any(byte[].class), any(char[].class))).willThrow(new RuntimeException("failed encryption"));
 
-        final SecuredWithPasswordPrivacyStrategy unitUnderTest = new SecuredWithPasswordPrivacyStrategy(encryptor, PASSWORD, "test");
+        final SecuredWithPasswordPrivacyStrategy unitUnderTest = new SecuredWithPasswordPrivacyStrategy(encryptor, PASSWORD);
         unitUnderTest.encryptData(SAMPLE_DATA);
     }
 
     @Test
     public void shouldReturnEncryptedWithPassword() {
-        final SecuredWithPasswordPrivacyStrategy unitUnderTest =
-                new SecuredWithPasswordPrivacyStrategy(new BinaryPBKDF2CipherEncryption(), PASSWORD, "test");
+        final SecuredWithPasswordPrivacyStrategy unitUnderTest = SecuredWithPasswordPrivacyStrategy.create(PASSWORD);
 
         final byte[] encrypted = unitUnderTest.encryptData(SAMPLE_DATA);
 
@@ -72,14 +71,13 @@ public class SecuredWithPasswordPrivacyStrategyTest {
     public void failOnExceptionWhileDecrypting() throws Exception {
         given(encryptor.decrypt(any(byte[].class), any(char[].class))).willThrow(new RuntimeException("failed encryption"));
 
-        final SecuredWithPasswordPrivacyStrategy unitUnderTest = new SecuredWithPasswordPrivacyStrategy(encryptor, PASSWORD, "test");
+        final SecuredWithPasswordPrivacyStrategy unitUnderTest = new SecuredWithPasswordPrivacyStrategy(encryptor, PASSWORD);
         unitUnderTest.decryptData(SAMPLE_DATA);
     }
 
     @Test
     public void shouldReturnDecryptedWithPassword() {
-        final SecuredWithPasswordPrivacyStrategy unitUnderTest =
-                new SecuredWithPasswordPrivacyStrategy(new BinaryPBKDF2CipherEncryption(), PASSWORD, "test");
+        final SecuredWithPasswordPrivacyStrategy unitUnderTest = SecuredWithPasswordPrivacyStrategy.create(PASSWORD);
         final byte[] encrypted = unitUnderTest.encryptData(SAMPLE_DATA);
 
         final byte[] decrypted = unitUnderTest.decryptData(encrypted);

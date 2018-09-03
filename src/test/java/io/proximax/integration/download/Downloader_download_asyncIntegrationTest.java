@@ -5,9 +5,9 @@ import io.proximax.async.AsyncTask;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
-import io.proximax.download.Downloader;
 import io.proximax.download.DownloadParameter;
 import io.proximax.download.DownloadResult;
+import io.proximax.download.Downloader;
 import io.proximax.exceptions.DownloadFailureException;
 import io.proximax.model.BlockchainNetwork;
 import io.proximax.model.PrivacyType;
@@ -45,7 +45,7 @@ public class Downloader_download_asyncIntegrationTest {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadWithAllDetails", "transactionHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithTransactionHash(transactionHash)
-						.securedWithNemKeysPrivacyStrategy(PRIVATE_KEY_1, PUBLIC_KEY_2)
+						.securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
 						.build();
 
 		final AsyncTask asyncTask = unitUnderTest.downloadAsync(param, null);
@@ -61,7 +61,7 @@ public class Downloader_download_asyncIntegrationTest {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadWithAllDetails", "transactionHash");
 		final DownloadParameter param =
 				DownloadParameter.createWithTransactionHash(transactionHash)
-						.securedWithNemKeysPrivacyStrategy(PRIVATE_KEY_1, PUBLIC_KEY_2)
+						.securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
 						.build();
 		final CompletableFuture<DownloadResult> toPopulateOnSuccess = new CompletableFuture<>();
 
@@ -71,7 +71,6 @@ public class Downloader_download_asyncIntegrationTest {
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getDescription(), is("root description"));
 		assertThat(result.getVersion(), is("1.0"));
-		assertThat(result.getPrivacySearchTag(), is("nemkeys"));
 		assertThat(result.getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
 		assertThat(result.getDataList(), hasSize(1));
 		assertThat(result.getDataList().get(0).getData(), is(notNullValue()));

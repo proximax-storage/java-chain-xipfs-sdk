@@ -61,7 +61,6 @@ public class CreateProximaxMessagePayloadServiceTest {
         unitUnderTest = new CreateProximaxMessagePayloadService(mockIpfsUploadService, mockDigestUtils);
 
         given(mockPrivacyStrategy.getPrivacyType()).willReturn(1001);
-        given(mockPrivacyStrategy.getPrivacySearchTag()).willReturn("test");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -89,7 +88,6 @@ public class CreateProximaxMessagePayloadServiceTest {
         assertThat(result.getRootDataHash(), is(DUMMY_ROOT_DATA_HASH));
         assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
-        assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getVersion(), is(DUMMY_VERSION));
     }
 
@@ -107,7 +105,6 @@ public class CreateProximaxMessagePayloadServiceTest {
         assertThat(result.getRootDataHash(), is(DUMMY_ROOT_DATA_HASH));
         assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
-        assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getVersion(), is(DUMMY_VERSION));
     }
 
@@ -124,7 +121,6 @@ public class CreateProximaxMessagePayloadServiceTest {
         assertThat(result, is(notNullValue()));
         assertThat(new String(rootDataByteArgumentCaptor.getValue()), is(
                 "{\"privacyType\":1001," +
-                        "\"privacySearchTag\":\"test\"," +
                         "\"description\":\"ewqeqwewqeqweqw\"," +
                         "\"version\":\"1.0\"," +
                         "\"dataList\":[" +
@@ -153,8 +149,8 @@ public class CreateProximaxMessagePayloadServiceTest {
     }
 
     private ProximaxRootDataModel sampleRootData() {
-        return new ProximaxRootDataModel(PrivacyType.PLAIN.getValue(), "test", DUMMY_ROOT_DESCRIPTION,
-                DUMMY_VERSION, asList(
+        return new ProximaxRootDataModel(PrivacyType.PLAIN.getValue(), DUMMY_ROOT_DESCRIPTION, DUMMY_VERSION,
+                asList(
                         new ProximaxDataModel("iowuqoieuqowueoiqw", "Qmdahdksadjksahjk", "data 1",
                                 singletonMap("key1", "value1"), 1000L, "data name 1", "text/plain"),
                         new ProximaxDataModel("sadasdsadsadasdads", "Qmcxzczxczxczxcxz", "data 2",

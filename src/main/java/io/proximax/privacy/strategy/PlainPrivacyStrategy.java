@@ -8,10 +8,10 @@ import io.proximax.model.PrivacyType;
  * <br>
  * This strategy does not encrypt nor decrypt the data.
  */
-public final class PlainPrivacyStrategy extends AbstractPlainMessagePrivacyStrategy {
+public final class PlainPrivacyStrategy extends PrivacyStrategy {
 
-    PlainPrivacyStrategy(String searchTag) {
-        super(searchTag);
+    private PlainPrivacyStrategy() {
+
     }
 
     /**
@@ -46,10 +46,9 @@ public final class PlainPrivacyStrategy extends AbstractPlainMessagePrivacyStrat
 
     /**
      * Create instance of this strategy
-     * @param searchTag an optional search tag
      * @return the instance of this strategy
      */
-    public static PlainPrivacyStrategy create(String searchTag) {
-        return new PlainPrivacyStrategy(searchTag);
+    public static PlainPrivacyStrategy create() {
+        return new PlainPrivacyStrategy();
     }
 }

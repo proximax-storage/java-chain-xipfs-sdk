@@ -20,15 +20,14 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * <br>
  * This strategy requires the total count of secret parts, minimum count of parts to build secret, and the secret parts.
  */
-public final class SecuredWithShamirSecretSharingPrivacyStrategy extends AbstractPlainMessagePrivacyStrategy {
+public final class SecuredWithShamirSecretSharingPrivacyStrategy extends PrivacyStrategy {
 
     private final char[] secret;
     private final BinaryPBKDF2CipherEncryption encryptor;
 
     SecuredWithShamirSecretSharingPrivacyStrategy(BinaryPBKDF2CipherEncryption encryptor,
                                                   int secretTotalPartCount, int secretMinimumPartCountToBuild,
-                                                  Map<Integer, byte[]> secretParts, String searchTag) {
-        super(searchTag);
+                                                  Map<Integer, byte[]> secretParts) {
 
         checkParameter(secretTotalPartCount > 0, "secretTotalPartCount should be a positive number");
     	checkParameter(secretMinimumPartCountToBuild > 0 && secretMinimumPartCountToBuild <= secretTotalPartCount,
@@ -112,54 +111,46 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Abstrac
      * Create instance of this strategy using an array of secret parts
      * @param secretTotalPartCount the total count of secret parts
      * @param secretMinimumPartCountToBuild the minimum count of parts to build secret
-     * @param searchTag an optional search tag
      * @param secretParts array of secret parts
      * @return the instance of this strategy
      */
     public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
                                                                        int secretMinimumPartCountToBuild,
-                                                                       String searchTag,
                                                                        SecretPart... secretParts) {
         return new SecuredWithShamirSecretSharingPrivacyStrategy(new BinaryPBKDF2CipherEncryption(),
                 secretTotalPartCount, secretMinimumPartCountToBuild,
-                Stream.of(secretParts).collect(Collectors.toMap(parts -> parts.index, parts -> parts.secretPart)), searchTag);
+                Stream.of(secretParts).collect(Collectors.toMap(parts -> parts.index, parts -> parts.secretPart)));
     }
 
     /**
      * Create instance of this strategy using a list of secret parts
      * @param secretTotalPartCount the total count of secret parts
      * @param secretMinimumPartCountToBuild the minimum count of parts to build secret
-     * @param searchTag an optional search tag
      * @param secretParts list of secret parts
      * @return the instance of this strategy
      */
     public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
                                                                        int secretMinimumPartCountToBuild,
-                                                                       List<SecretPart> secretParts,
-                                                                       String searchTag) {
+                                                                       List<SecretPart> secretParts) {
         return new SecuredWithShamirSecretSharingPrivacyStrategy(new BinaryPBKDF2CipherEncryption(),
                 secretTotalPartCount, secretMinimumPartCountToBuild,
                 secretParts == null ? Collections.emptyMap() :
-                        secretParts.stream().collect(Collectors.toMap(parts -> parts.index, parts -> parts.secretPart)),
-                searchTag);
+                        secretParts.stream().collect(Collectors.toMap(parts -> parts.index, parts -> parts.secretPart)));
     }
 
     /**
      * Create instance of this strategy using a map of secret parts
      * @param secretTotalPartCount the total count of secret parts
      * @param secretMinimumPartCountToBuild the minimum count of parts to build secret
-     * @param searchTag an optional search tag
      * @param secretParts map of secret parts
      * @return the instance of this strategy
      */
     public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
                                                                        int secretMinimumPartCountToBuild,
-                                                                       Map<Integer, byte[]> secretParts,
-                                                                       String searchTag) {
+                                                                       Map<Integer, byte[]> secretParts) {
         return new SecuredWithShamirSecretSharingPrivacyStrategy(new BinaryPBKDF2CipherEncryption(),
                 secretTotalPartCount, secretMinimumPartCountToBuild,
-                secretParts == null ? Collections.emptyMap() : secretParts,
-                searchTag);
+                secretParts == null ? Collections.emptyMap() : secretParts);
     }
 
 }

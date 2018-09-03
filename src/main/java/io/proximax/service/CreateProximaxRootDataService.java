@@ -90,8 +90,6 @@ public class CreateProximaxRootDataService {
 
     private ProximaxRootDataModel createRootData(UploadParameter uploadParam, List<ProximaxDataModel> dataModeList) {
         return new ProximaxRootDataModel(uploadParam.getPrivacyStrategy().getPrivacyType(),
-                uploadParam.getPrivacyStrategy().getPrivacySearchTag(),
-                uploadParam.getDescription(),
-                uploadParam.getVersion(), dataModeList);
+                uploadParam.getDescription(), uploadParam.getVersion(), dataModeList);
     }
 }

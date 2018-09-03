@@ -10,22 +10,22 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 /**
  * The privacy strategy that secures the data using a long password, 50 characters minimum.
  */
-public final class SecuredWithPasswordPrivacyStrategy extends AbstractPlainMessagePrivacyStrategy {
+public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
 
     private static final int MINIMUM_PASSWORD_LENGTH = 50;
 
     private final BinaryPBKDF2CipherEncryption encryptor;
 
-    private final char[] password;
+    private final char[] passwordCharArray;
+    private final String password;
 
-    SecuredWithPasswordPrivacyStrategy(BinaryPBKDF2CipherEncryption encryptor, String password, String searchTag) {
-        super(searchTag);
-
+    SecuredWithPasswordPrivacyStrategy(BinaryPBKDF2CipherEncryption encryptor, String password) {
         checkParameter(password != null, "password is required");
         checkParameter(password.length() >= MINIMUM_PASSWORD_LENGTH, "minimum length for password is 50");
 
         this.encryptor = encryptor;
-        this.password = password.toCharArray();
+        this.password = password;
+        this.passwordCharArray = password.toCharArray();
     }
 
     /**
@@ -46,7 +46,7 @@ public final class SecuredWithPasswordPrivacyStrategy extends AbstractPlainMessa
     @Override
     public final byte[] encryptData(byte[] data) {
         try {
-            return encryptor.encrypt(data, password);
+            return encryptor.encrypt(data, passwordCharArray);
         } catch (Exception e) {
             throw new EncryptionFailureException("Exception encountered encrypting data", e);
         }
@@ -60,7 +60,7 @@ public final class SecuredWithPasswordPrivacyStrategy extends AbstractPlainMessa
     @Override
     public final byte[] decryptData(byte[] data) {
         try {
-            return encryptor.decrypt(data, password);
+            return encryptor.decrypt(data, passwordCharArray);
         } catch (Exception e) {
             throw new DecryptionFailureException("Exception encountered decrypting data", e);
         }
@@ -69,10 +69,9 @@ public final class SecuredWithPasswordPrivacyStrategy extends AbstractPlainMessa
     /**
      * Create instance of this strategy
      * @param password the password
-     * @param searchTag an optional search tag
      * @return the instance of this strategy
      */
-    public static SecuredWithPasswordPrivacyStrategy create(String password, String searchTag) {
-        return new SecuredWithPasswordPrivacyStrategy(new BinaryPBKDF2CipherEncryption(), password, searchTag);
+    public static SecuredWithPasswordPrivacyStrategy create(String password) {
+        return new SecuredWithPasswordPrivacyStrategy(new BinaryPBKDF2CipherEncryption(), password);
     }
 }

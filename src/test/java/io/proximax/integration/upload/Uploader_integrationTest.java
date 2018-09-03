@@ -6,9 +6,9 @@ import io.proximax.connection.IpfsConnection;
 import io.proximax.model.BlockchainNetwork;
 import io.proximax.model.PrivacyType;
 import io.proximax.upload.ByteArrayParameterData;
-import io.proximax.upload.Uploader;
 import io.proximax.upload.UploadParameter;
 import io.proximax.upload.UploadResult;
+import io.proximax.upload.Uploader;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -209,7 +209,7 @@ public class Uploader_integrationTest {
 						.metadata(singletonMap("key1", "val1"))
 						.build())
 				.description("root description")
-				.securedWithNemKeysPrivacyStrategy("nemkeys")
+				.securedWithNemKeysPrivacy()
 				.computeDigest(true)
 				.build();
 
@@ -222,7 +222,6 @@ public class Uploader_integrationTest {
 		assertThat(result.getRootData(), is(notNullValue()));
 		assertThat(result.getRootData().getDescription(), is("root description"));
 		assertThat(result.getRootData().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
-		assertThat(result.getRootData().getPrivacySearchTag(), is("nemkeys"));
 		assertThat(result.getRootData().getDataList(), hasSize(1));
 		assertThat(result.getRootData().getDataList().get(0).getContentType(), is("text/plain"));
 		assertThat(result.getRootData().getDataList().get(0).getDataHash(), is(notNullValue()));

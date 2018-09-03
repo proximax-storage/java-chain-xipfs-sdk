@@ -66,7 +66,6 @@ public class UploadParameterTest {
         assertThat(param.getVersion(), is(SCHEMA_VERSION));
         assertThat(param.getComputeDigest(), is(true));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is(nullValue()));
         assertThat(param.getDataList(), hasSize(1));
     }
 
@@ -81,7 +80,7 @@ public class UploadParameterTest {
                 .addPath(PathParameterData.create(PATH_FILE).build())
                 .computeDigest(false)
                 .description("root description")
-                .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, "test"))
+                .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY))
                 .build();
 
         assertThat(param, is(notNullValue()));
@@ -91,7 +90,6 @@ public class UploadParameterTest {
         assertThat(param.getVersion(), is(SCHEMA_VERSION));
         assertThat(param.getComputeDigest(), is(false));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
         assertThat(param.getDataList(), hasSize(6));
     }
 
@@ -118,7 +116,7 @@ public class UploadParameterTest {
                 .addPath(PATH_FILE)
                 .computeDigest(false)
                 .description("root description")
-                .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, "test"))
+                .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY))
                 .build();
 
         assertThat(param, is(notNullValue()));
@@ -128,7 +126,6 @@ public class UploadParameterTest {
         assertThat(param.getVersion(), is(SCHEMA_VERSION));
         assertThat(param.getComputeDigest(), is(false));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
         assertThat(param.getDataList(), hasSize(6));
     }
 
@@ -143,7 +140,7 @@ public class UploadParameterTest {
                 .addPath(PATH_FILE, null, null, null)
                 .computeDigest(false)
                 .description("root description")
-                .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY, "test"))
+                .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY))
                 .build();
 
         assertThat(param, is(notNullValue()));
@@ -153,7 +150,6 @@ public class UploadParameterTest {
         assertThat(param.getVersion(), is(SCHEMA_VERSION));
         assertThat(param.getComputeDigest(), is(false));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
         assertThat(param.getDataList(), hasSize(6));
     }
 
@@ -165,62 +161,26 @@ public class UploadParameterTest {
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(PlainPrivacyStrategy.class));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is(nullValue()));
-    }
-
-    @Test
-    public void shouldCreateWithPlainPrivacyWithSearchTag() throws UnsupportedEncodingException {
-        final UploadParameter param = UploadParameter.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
-                .addString("hkdhskahdsakjhdkjas")
-                .plainPrivacy("test")
-                .build();
-
-        assertThat(param.getPrivacyStrategy(), instanceOf(PlainPrivacyStrategy.class));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
     }
 
     @Test
     public void shouldCreateWithSecuredWithNemKeysPrivacy() throws UnsupportedEncodingException {
         final UploadParameter param = UploadParameter.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
                 .addString("hkdhskahdsakjhdkjas")
-                .securedWithNemKeysPrivacyStrategy()
+                .securedWithNemKeysPrivacy()
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithNemKeysPrivacyStrategy.class));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is(nullValue()));
-    }
-
-    @Test
-    public void shouldCreateWithSecuredWithNemKeysPrivacyWithSearchTag() throws UnsupportedEncodingException {
-        final UploadParameter param = UploadParameter.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
-                .addString("hkdhskahdsakjhdkjas")
-                .securedWithNemKeysPrivacyStrategy("test")
-                .build();
-
-        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithNemKeysPrivacyStrategy.class));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
     }
 
     @Test
     public void shouldCreateWithSecuredWithPasswordPrivacy() throws UnsupportedEncodingException {
         final UploadParameter param = UploadParameter.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
                 .addString("hkdhskahdsakjhdkjas")
-                .securedWithPasswordPrivacyStrategy("hdksahjkdhsakjhdsajhdkjhsajkdsbajjdhsajkhdjksahjkdahjkhdkjsahjdsadasdsadas")
+                .securedWithPasswordPrivacy("hdksahjkdhsakjhdsajhdkjhsajkdsbajjdhsajkhdjksahjkdahjkhdkjsahjdsadasdsadas")
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithPasswordPrivacyStrategy.class));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is(nullValue()));
-    }
-
-    @Test
-    public void shouldCreateWithSecuredWithPasswordPrivacyWithSearchTag() throws UnsupportedEncodingException {
-        final UploadParameter param = UploadParameter.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
-                .addString("hkdhskahdsakjhdkjas")
-                .securedWithPasswordPrivacyStrategy("hdksahjkdhsakjhdsajhdkjhsajkdsbajjdhsajkhdjksahjkdahjkhdkjsahjdsadasdsadas", "test")
-                .build();
-
-        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithPasswordPrivacyStrategy.class));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
     }
 
     @Test
@@ -231,64 +191,31 @@ public class UploadParameterTest {
         minimumSecretParts.put(5, SECRET_PARTS.get(5));
         final UploadParameter param = UploadParameter.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
                 .addString("hkdhskahdsakjhdkjas")
-                .securedWithShamirSecretSharingPrivacyStrategy(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .securedWithShamirSecretSharing(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         minimumSecretParts)
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is(nullValue()));
-    }
-
-    @Test
-    public void shouldCreateWithSecuredWithShamirSecretSharingMapStrategyWithSearchTag() throws UnsupportedEncodingException {
-        final Map<Integer, byte[]> minimumSecretParts = new HashMap<>();
-        minimumSecretParts.put(1, SECRET_PARTS.get(1));
-        minimumSecretParts.put(3, SECRET_PARTS.get(3));
-        minimumSecretParts.put(5, SECRET_PARTS.get(5));
-        final UploadParameter param = UploadParameter.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
-                .addString("hkdhskahdsakjhdkjas")
-                .securedWithShamirSecretSharingPrivacyStrategy(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                        "test", minimumSecretParts)
-                .build();
-
-        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
     }
 
     @Test
     public void shouldCreateWithSecuredWithShamirSecretSharingArrayStrategy() throws UnsupportedEncodingException {
         final UploadParameter param = UploadParameter.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
                 .addString("hkdhskahdsakjhdkjas")
-                .securedWithShamirSecretSharingPrivacyStrategy(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .securedWithShamirSecretSharing(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SECRET_PARTS.get(1)),
                         new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SECRET_PARTS.get(3)),
                         new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, SECRET_PARTS.get(5)))
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is(nullValue()));
-    }
-
-    @Test
-    public void shouldCreateWithSecuredWithShamirSecretSharingArrayStrategyWithSearchTag() throws UnsupportedEncodingException {
-        final UploadParameter param = UploadParameter.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
-                .addString("hkdhskahdsakjhdkjas")
-                .securedWithShamirSecretSharingPrivacyStrategy(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                        "test",
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SECRET_PARTS.get(1)),
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SECRET_PARTS.get(3)),
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, SECRET_PARTS.get(5)))
-                .build();
-
-        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
     }
 
     @Test
     public void shouldCreateWithSecuredWithShamirSecretSharingListStrategy() throws UnsupportedEncodingException {
         final UploadParameter param = UploadParameter.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
                 .addString("hkdhskahdsakjhdkjas")
-                .securedWithShamirSecretSharingPrivacyStrategy(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .securedWithShamirSecretSharing(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         asList(
                                 new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SECRET_PARTS.get(1)),
                                 new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SECRET_PARTS.get(3)),
@@ -296,22 +223,5 @@ public class UploadParameterTest {
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is(nullValue()));
-    }
-
-    @Test
-    public void shouldCreateWithSecuredWithShamirSecretSharingListStrategyWithSearchTag() throws UnsupportedEncodingException {
-        final UploadParameter param = UploadParameter.create(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
-                .addString("hkdhskahdsakjhdkjas")
-                .securedWithShamirSecretSharingPrivacyStrategy(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                        "test",
-                        asList(
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SECRET_PARTS.get(1)),
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SECRET_PARTS.get(3)),
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, SECRET_PARTS.get(5))))
-                .build();
-
-        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
-        assertThat(param.getPrivacyStrategy().getPrivacySearchTag(), is("test"));
     }
 }

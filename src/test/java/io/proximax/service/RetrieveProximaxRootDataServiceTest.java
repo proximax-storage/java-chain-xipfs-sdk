@@ -44,7 +44,6 @@ public class RetrieveProximaxRootDataServiceTest {
         unitUnderTest = new RetrieveProximaxRootDataService(mockIpfsDownloadService, mockDigestUtils);
 
         given(mockPrivacyStrategy.getPrivacyType()).willReturn(1001);
-        given(mockPrivacyStrategy.getPrivacySearchTag()).willReturn("test");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -68,7 +67,6 @@ public class RetrieveProximaxRootDataServiceTest {
         assertThat(result, is(notNullValue()));
         assertThat(result.getVersion(), is("1.0"));
         assertThat(result.getPrivacyType(), is(1001));
-        assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getDescription(), is("ewqeqwewqeqweqw"));
         assertThat(result.getDataList(), is(notNullValue()));
         assertThat(result.getDataList(), hasSize(2));
@@ -98,7 +96,6 @@ public class RetrieveProximaxRootDataServiceTest {
         assertThat(result, is(notNullValue()));
         assertThat(result.getVersion(), is("1.0"));
         assertThat(result.getPrivacyType(), is(1001));
-        assertThat(result.getPrivacySearchTag(), is("test"));
         assertThat(result.getDescription(), is("ewqeqwewqeqweqw"));
         assertThat(result.getDataList(), is(notNullValue()));
         assertThat(result.getDataList(), hasSize(2));
@@ -124,12 +121,11 @@ public class RetrieveProximaxRootDataServiceTest {
 
     private ProximaxMessagePayloadModel sampleMessagePayload() {
         return ProximaxMessagePayloadModel.create(DUMMY_ROOT_DATAHASH, DUMMY_ROOT_DIGEST, null,
-                PrivacyType.PLAIN.getValue(), null, "1.0");
+                PrivacyType.PLAIN.getValue(), "1.0");
     }
 
     private String sampleRootDataJson() {
         return "{\"privacyType\":1001," +
-                        "\"privacySearchTag\":\"test\"," +
                         "\"description\":\"ewqeqwewqeqweqw\"," +
                         "\"version\":\"1.0\"," +
                         "\"dataList\":[" +

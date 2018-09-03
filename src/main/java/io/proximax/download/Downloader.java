@@ -128,7 +128,7 @@ public class Downloader {
         return getBlockchainTransaction(downloadParam.getTransactionHash())
                 .map(transferTransactionOpt ->
                         transferTransactionOpt.map(transferTransaction ->
-                                retrieveProximaxMessagePayloadService.getMessagePayload(downloadParam.getPrivacyStrategy(), transferTransaction)))
+                                retrieveProximaxMessagePayloadService.getMessagePayload(transferTransaction)))
                 .flatMap(messagePayloadOpt -> retrieveProximaxRootDataService.getRootData(downloadParam, messagePayloadOpt))
                 .flatMap(rootData -> retrieveProximaxDataService.getDataList(downloadParam, rootData)
                         .map(decryptedDataList -> createDownloadResult(rootData, decryptedDataList)))
