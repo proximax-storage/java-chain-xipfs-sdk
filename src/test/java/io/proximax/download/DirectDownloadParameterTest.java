@@ -22,30 +22,110 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class DownloadParameterTest {
+public class DirectDownloadParameterTest {
 
     private static final String SAMPLE_TRANSACTION_HASH = "F08E3C327DD5DE258EF20532F4D3C7638E9AC44885C34FDDC1A5740FD3C56EBB";
+    private static final String SAMPLE_PRIVATE_KEY = "CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C";
+    private static final String SAMPLE_DATA_HASH = "QmXkGKuB74uVJijEjgmGa9jMiY3MBiziFQPnrzvTZ3DKJf";
+    private static final String SAMPLE_DIGEST = "eqwewqewqewqewqewq";
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenCreatingWithNullDataHash() {
+        DirectDownloadParameter.createFromDataHash(null);
+    }
+
+    @Test
+    public void canBuildParamWithOnlyDataHash() {
+        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH).build();
+
+        assertThat(param, is(notNullValue()));
+        assertThat(param.getTransactionHash(), is(nullValue()));
+        assertThat(param.getAccountPrivateKey(), is(nullValue()));
+        assertThat(param.getDigest(), is(nullValue()));
+        assertThat(param.getValidateDigest(), is(true));
+        assertThat(param.getDataHash(), is(SAMPLE_DATA_HASH));
+        assertThat(param.getPrivacyStrategy(), is(notNullValue()));
+        assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
+    }
+
+    @Test
+    public void canBuildParamWithDataHashAndDigest() {
+        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH, SAMPLE_DIGEST).build();
+
+        assertThat(param, is(notNullValue()));
+        assertThat(param.getTransactionHash(), is(nullValue()));
+        assertThat(param.getAccountPrivateKey(), is(nullValue()));
+        assertThat(param.getDigest(), is(SAMPLE_DIGEST));
+        assertThat(param.getValidateDigest(), is(true));
+        assertThat(param.getDataHash(), is(SAMPLE_DATA_HASH));
+        assertThat(param.getPrivacyStrategy(), is(notNullValue()));
+        assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenCreatingWithNullTransactionHash() {
-        DownloadParameter.create(null);
+        DirectDownloadParameter.createFromTransactionHash(null);
     }
 
     @Test
     public void canBuildParamWithOnlyTransactionHash() {
-        final DownloadParameter param = DownloadParameter.create(SAMPLE_TRANSACTION_HASH).build();
+        final DirectDownloadParameter param = DirectDownloadParameter.createFromTransactionHash(SAMPLE_TRANSACTION_HASH).build();
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getTransactionHash(), is(SAMPLE_TRANSACTION_HASH));
         assertThat(param.getAccountPrivateKey(), is(nullValue()));
+        assertThat(param.getDigest(), is(nullValue()));
         assertThat(param.getValidateDigest(), is(false));
+        assertThat(param.getDataHash(), is(nullValue()));
+        assertThat(param.getPrivacyStrategy(), is(notNullValue()));
+        assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
+    }
+
+    @Test
+    public void canBuildParamWithTransactionHashAndPrivateKey() {
+        final DirectDownloadParameter param = DirectDownloadParameter.createFromTransactionHash(SAMPLE_TRANSACTION_HASH, SAMPLE_PRIVATE_KEY).build();
+
+        assertThat(param, is(notNullValue()));
+        assertThat(param.getTransactionHash(), is(SAMPLE_TRANSACTION_HASH));
+        assertThat(param.getAccountPrivateKey(), is(SAMPLE_PRIVATE_KEY));
+        assertThat(param.getDigest(), is(nullValue()));
+        assertThat(param.getValidateDigest(), is(false));
+        assertThat(param.getDataHash(), is(nullValue()));
+        assertThat(param.getPrivacyStrategy(), is(notNullValue()));
+        assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
+    }
+
+    @Test
+    public void canBuildParamWithTransactionHashAndPrivateKeyAndValidateDigest() {
+        final DirectDownloadParameter param = DirectDownloadParameter.createFromTransactionHash(SAMPLE_TRANSACTION_HASH, SAMPLE_PRIVATE_KEY, true).build();
+
+        assertThat(param, is(notNullValue()));
+        assertThat(param.getTransactionHash(), is(SAMPLE_TRANSACTION_HASH));
+        assertThat(param.getAccountPrivateKey(), is(SAMPLE_PRIVATE_KEY));
+        assertThat(param.getDigest(), is(nullValue()));
+        assertThat(param.getValidateDigest(), is(true));
+        assertThat(param.getDataHash(), is(nullValue()));
+        assertThat(param.getPrivacyStrategy(), is(notNullValue()));
+        assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
+    }
+
+    @Test
+    public void canBuildParamWithTransactionHashAndValidateDigest() {
+        final DirectDownloadParameter param = DirectDownloadParameter.createFromTransactionHash(SAMPLE_TRANSACTION_HASH, true).build();
+
+        assertThat(param, is(notNullValue()));
+        assertThat(param.getTransactionHash(), is(SAMPLE_TRANSACTION_HASH));
+        assertThat(param.getAccountPrivateKey(), is(nullValue()));
+        assertThat(param.getDigest(), is(nullValue()));
+        assertThat(param.getValidateDigest(), is(true));
+        assertThat(param.getDataHash(), is(nullValue()));
         assertThat(param.getPrivacyStrategy(), is(notNullValue()));
         assertThat(param.getPrivacyStrategy().getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
     }
 
     @Test
     public void buildParamWithPrivacyStrategy() {
-        final DownloadParameter param = DownloadParameter.create(SAMPLE_TRANSACTION_HASH)
+        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
                 .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(
                         "CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C",
                         "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577"
@@ -59,7 +139,7 @@ public class DownloadParameterTest {
 
     @Test
     public void shouldCreateWithPlainPrivacy() {
-        final DownloadParameter param = DownloadParameter.create(SAMPLE_TRANSACTION_HASH)
+        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
                 .plainPrivacy()
                 .build();
 
@@ -68,7 +148,7 @@ public class DownloadParameterTest {
 
     @Test
     public void shouldCreateWithSecuredWithNemKeysPrivacy() {
-        final DownloadParameter param = DownloadParameter.create(SAMPLE_TRANSACTION_HASH)
+        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
                 .securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
                 .build();
 
@@ -77,7 +157,7 @@ public class DownloadParameterTest {
 
     @Test
     public void shouldCreateWithSecuredWithPasswordPrivacy() {
-        final DownloadParameter param = DownloadParameter.create(SAMPLE_TRANSACTION_HASH)
+        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
                 .securedWithPasswordPrivacy("hdksahjkdhsakjhdsajhdkjhsajkdsbajjdhsajkhdjksahjkdahjkhdkjsahjdsadasdsadas")
                 .build();
 
@@ -90,7 +170,7 @@ public class DownloadParameterTest {
         minimumSecretParts.put(1, SHAMIR_SECRET_PARTS.get(1));
         minimumSecretParts.put(3, SHAMIR_SECRET_PARTS.get(3));
         minimumSecretParts.put(5, SHAMIR_SECRET_PARTS.get(5));
-        final DownloadParameter param = DownloadParameter.create(SAMPLE_TRANSACTION_HASH)
+        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
                 .securedWithShamirSecretSharingPrivacy(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         minimumSecretParts)
                 .build();
@@ -100,7 +180,7 @@ public class DownloadParameterTest {
 
     @Test
     public void shouldCreateWithSecuredWithShamirSecretSharingArrayStrategy() {
-        final DownloadParameter param = DownloadParameter.create(SAMPLE_TRANSACTION_HASH)
+        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
                 .securedWithShamirSecretSharingPrivacy(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SHAMIR_SECRET_PARTS.get(1)),
                         new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SHAMIR_SECRET_PARTS.get(3)),
@@ -112,7 +192,7 @@ public class DownloadParameterTest {
 
     @Test
     public void shouldCreateWithSecuredWithShamirSecretSharingListStrategy() {
-        final DownloadParameter param = DownloadParameter.create(SAMPLE_TRANSACTION_HASH)
+        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
                 .securedWithShamirSecretSharingPrivacy(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         asList(
                                 new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SHAMIR_SECRET_PARTS.get(1)),
@@ -122,4 +202,5 @@ public class DownloadParameterTest {
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
     }
+
 }

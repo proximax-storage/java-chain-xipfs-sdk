@@ -22,7 +22,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 
 public class NemUtilsTest {
 
-    private static final String SAMPLE_PRIVATE_KEY = "CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C";
+    private static final String SAMPLE_PRIVATE_KEY = "1A5B81AE8830B8A79232CD366552AF6496FE548B4A23D4173FEEBA41B8ABA81F";
     private static final String SAMPLE_PUBLIC_KEY = "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577";
     private static final Address SAMPLE_ADDRESS = Address.createFromRawAddress("SBRHESWCLX3VGQ6CHCZNKDN6DT7GLS6CZKJXCT5F");
 
@@ -34,25 +34,49 @@ public class NemUtilsTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void failOnToAddressWhenNullPublicKey() {
-        unitUnderTest.toAddress(null);
+    public void failOnGetAddressWhenNullAddress() {
+        unitUnderTest.getAddress(null);
     }
 
     @Test
-    public void shouldReturnAddressOnToAddress() {
-        final Address address = unitUnderTest.toAddress(SAMPLE_PUBLIC_KEY);
+    public void shouldReturnAddressOnGetAddress() {
+        final Address address = unitUnderTest.getAddress(SAMPLE_ADDRESS.plain());
 
         assertThat(address, is(SAMPLE_ADDRESS));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void failOnToAccountWhenNullPrivateKey() {
-        unitUnderTest.toAccount(null);
+    public void failOnGetAddressFromPublicKeyWhenNullPublicKey() {
+        unitUnderTest.getAddressFromPublicKey(null);
     }
 
     @Test
-    public void shouldReturnAccountOnToAccount() {
-        final Account account = unitUnderTest.toAccount(SAMPLE_PRIVATE_KEY);
+    public void shouldReturnAddressOnGetAddressFromPublicKey() {
+        final Address address = unitUnderTest.getAddressFromPublicKey(SAMPLE_PUBLIC_KEY);
+
+        assertThat(address, is(SAMPLE_ADDRESS));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failOnGetAddressFromPublicKeyWhenNullPrivateKey() {
+        unitUnderTest.getAddressFromPrivateKey(null);
+    }
+
+    @Test
+    public void shouldReturnAddressOnGetAddressFromPrivateKey() {
+        final Address address = unitUnderTest.getAddressFromPrivateKey(SAMPLE_PRIVATE_KEY);
+
+        assertThat(address, is(SAMPLE_ADDRESS));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failOnGetAccountWhenNullPrivateKey() {
+        unitUnderTest.getAccount(null);
+    }
+
+    @Test
+    public void shouldReturnAccountOnGetAccount() {
+        final Account account = unitUnderTest.getAccount(SAMPLE_PRIVATE_KEY);
 
         assertThat(account, is(notNullValue()));
         assertThat(account.getPrivateKey(), is(SAMPLE_PRIVATE_KEY));

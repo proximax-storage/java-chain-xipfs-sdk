@@ -12,8 +12,13 @@ public class ByteArrayParameterData extends UploadParameterData {
 
     private final byte[] data;
 
-    ByteArrayParameterData(byte[] data, String description, String name, String contentType, Map<String, String> metadata) {
+    protected ByteArrayParameterData(byte[] data, String description, String name, String contentType, Map<String, String> metadata) {
         super(description, name, contentType, metadata);
+
+        checkParameter(data != null, "data is required");
+        checkParameter(contentType == null || !RESERVED_CONTENT_TYPES.contains(contentType),
+                String.format("%s cannot be used as it is reserved", contentType));
+
         this.data = data;
     }
 
@@ -26,46 +31,24 @@ public class ByteArrayParameterData extends UploadParameterData {
     }
 
     /**
-     * Start creating an instance of ByteArrayParameterData using the ByteArrayParameterDataBuilder
+     * Create instance by providing the byte array
      * @param data the byte array to upload
-     * @return the byte array parameter data builder
+     * @return the instance of this class
      */
-    public static ByteArrayParameterDataBuilder create(byte[] data) {
-        checkParameter(data != null, "data is required");
-
-        return new ByteArrayParameterDataBuilder(data);
+    public static ByteArrayParameterData create(byte[] data) {
+        return create(data, null, null, null, null);
     }
 
     /**
-     * This builder class creates the ByteArrayParameterData
+     * Create instance by providing the byte array
+     * @param data the byte array to upload
+     * @param description a searchable description attach on the upload
+     * @param name a searchable name attach on the upload
+     * @param contentType the content type attach on the upload
+     * @param metadata a searchable key-pair metadata attach on the upload
+     * @return the instance of this class
      */
-    public static class ByteArrayParameterDataBuilder extends AbstractParameterDataBuilder<ByteArrayParameterDataBuilder> {
-        private byte[] data;
-        private String contentType;
-
-        ByteArrayParameterDataBuilder(byte[] data) {
-            this.data = data;
-        }
-
-        /**
-         * Set the content type for the data
-         * @param contentType the content type
-         * @return same instance of the builder class
-         */
-        public ByteArrayParameterDataBuilder contentType(String contentType) {
-            checkParameter(contentType == null || !RESERVED_CONTENT_TYPES.contains(contentType),
-                    String.format("%s cannot be used as it is reserved", contentType));
-
-            this.contentType = contentType;
-            return this;
-        }
-
-        /**
-         * Builds the ByteArrayParameterData
-         * @return the byte array parameter data
-         */
-        public ByteArrayParameterData build() {
-            return new ByteArrayParameterData(data, description, name, contentType, metadata);
-        }
+    public static ByteArrayParameterData create(byte[] data, String description, String name, String contentType, Map<String, String> metadata) {
+        return new ByteArrayParameterData(data, description, name, contentType, metadata);
     }
 }

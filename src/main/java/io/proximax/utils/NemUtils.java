@@ -24,14 +24,36 @@ public class NemUtils {
     }
 
     /**
+     * Convert to nem address
+     * @param address the address
+     * @return the address
+     */
+    public Address getAddress(String address) {
+        checkParameter(address != null, "address is required");
+
+        return Address.createFromRawAddress(address);
+    }
+
+    /**
      * Converts a public key to an address
      * @param publicKey the public key
      * @return the address
      */
-    public Address toAddress(String publicKey) {
+    public Address getAddressFromPublicKey(String publicKey) {
         checkParameter(publicKey != null, "publicKey is required");
 
         return Address.createFromPublicKey(publicKey, networkType);
+    }
+
+    /**
+     * Converts a private key to an address
+     * @param privateKey the public key
+     * @return the address
+     */
+    public Address getAddressFromPrivateKey(String privateKey) {
+        checkParameter(privateKey != null, "privateKey is required");
+
+        return getAccount(privateKey).getAddress();
     }
 
     /**
@@ -39,7 +61,7 @@ public class NemUtils {
      * @param privateKey the public key
      * @return the account
      */
-    public Account toAccount(String privateKey) {
+    public Account getAccount(String privateKey) {
         checkParameter(privateKey != null, "privateKey is required");
 
         return Account.createFromPrivateKey(privateKey, networkType);
@@ -55,6 +77,6 @@ public class NemUtils {
         checkParameter(signerPrivateKey != null, "signerPrivateKey is required");
         checkParameter(transaction != null, "transaction is required");
 
-        return toAccount(signerPrivateKey).sign(transaction);
+        return getAccount(signerPrivateKey).sign(transaction);
     }
 }

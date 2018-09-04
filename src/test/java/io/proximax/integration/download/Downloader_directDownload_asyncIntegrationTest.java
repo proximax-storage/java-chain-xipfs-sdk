@@ -5,10 +5,9 @@ import io.proximax.async.AsyncTask;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
+import io.proximax.download.DirectDownloadParameter;
 import io.proximax.download.Downloader;
-import io.proximax.download.DownloadDataParameter;
-import io.proximax.download.DownloadDataResult;
-import io.proximax.exceptions.DownloadDataFailureException;
+import io.proximax.exceptions.DirectDownloadFailureException;
 import io.proximax.model.BlockchainNetworkType;
 import io.proximax.testsupport.TestHelper;
 import org.junit.Before;
@@ -24,7 +23,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class Downloader_downloadData_asyncIntegrationTest {
+public class Downloader_directDownload_asyncIntegrationTest {
 
 	private Downloader unitUnderTest;
 
@@ -37,11 +36,11 @@ public class Downloader_downloadData_asyncIntegrationTest {
 
 	@Test
 	public void shouldDownloadDataAsynchronouslyWithoutCallback() throws Exception {
-		final String dataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadAllDataTypes", "dataList[0].dataHash");
-		final DownloadDataParameter param =
-				DownloadDataParameter.create(dataHash).build();
+		final String dataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "dataHash");
+		final DirectDownloadParameter param =
+				DirectDownloadParameter.createFromDataHash(dataHash).build();
 
-		final AsyncTask asyncTask = unitUnderTest.downloadDataAsync(param, null);
+		final AsyncTask asyncTask = unitUnderTest.directDownloadAsync(param, null);
 		while (!asyncTask.isDone()) {
 			Thread.sleep(50);
 		}
@@ -51,28 +50,27 @@ public class Downloader_downloadData_asyncIntegrationTest {
 
 	@Test
 	public void shouldDownloadDataAsynchronouslyWithSuccessCallback() throws Exception {
-		final String dataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadAllDataTypes", "dataList[0].dataHash");
-		final DownloadDataParameter param =
-				DownloadDataParameter.create(dataHash).build();
-		final CompletableFuture<DownloadDataResult> toPopulateOnSuccess = new CompletableFuture<>();
+		final String dataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "dataHash");
+		final DirectDownloadParameter param =
+				DirectDownloadParameter.createFromDataHash(dataHash).build();
+		final CompletableFuture<byte[]> toPopulateOnSuccess = new CompletableFuture<>();
 
-		unitUnderTest.downloadDataAsync(param, AsyncCallback.create(toPopulateOnSuccess::complete, null));
-		final DownloadDataResult result = toPopulateOnSuccess.get(5, TimeUnit.SECONDS);
+		unitUnderTest.directDownloadAsync(param, AsyncCallback.create(toPopulateOnSuccess::complete, null));
+		final byte[] result = toPopulateOnSuccess.get(5, TimeUnit.SECONDS);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(result.getData(), is(notNullValue()));
 	}
 
 	@Test
 	public void shouldDownloadDataAsynchronouslyWithFailureCallback() throws Exception {
-		final DownloadDataParameter param =
-				DownloadDataParameter.create("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
+		final DirectDownloadParameter param =
+				DirectDownloadParameter.createFromDataHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
 		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
 
-		unitUnderTest.downloadDataAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));
+		unitUnderTest.directDownloadAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));
 		final Throwable throwable = toPopulateOnFailure.get(5, TimeUnit.SECONDS);
 
-		assertThat(throwable, instanceOf(DownloadDataFailureException.class));
+		assertThat(throwable, instanceOf(DirectDownloadFailureException.class));
 
 	}
 

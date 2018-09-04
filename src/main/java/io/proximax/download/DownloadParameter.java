@@ -3,35 +3,26 @@ package io.proximax.download;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 
 /**
- * This model class is the input parameter when doing download.
- * <br>
- * <br>
- * The following are its fields:
- * <ul>
- *     <li><b>transactionHash</b> - the blockchain transaction hash to download</li>
- *     <li><b>rootDataHash</b> - the data hash to root data to download</li>
- *     <li><b>digest</b> - the digest to verify the downloaded root data</li>
- *     <li><b>privacyStrategy</b> - the privacy strategy to decrypt the data</li>
- * </ul>
+ * This model class is the input parameter of download.
  * @see Downloader#download(DownloadParameter)
  * @see DownloadParameterBuilder
  */
 public class DownloadParameter {
 
     private final String transactionHash;
-    private final String rootDataHash;
+    private final String accountPrivateKey;
     private final PrivacyStrategy privacyStrategy;
-    private final String digest;
+    private final boolean validateDigest;
 
-    DownloadParameter(String transactionHash, String rootDataHash, PrivacyStrategy privacyStrategy, String digest) {
+    DownloadParameter(String transactionHash, String accountPrivateKey, PrivacyStrategy privacyStrategy, boolean validateDigest) {
         this.transactionHash = transactionHash;
-        this.rootDataHash = rootDataHash;
+        this.accountPrivateKey = accountPrivateKey;
         this.privacyStrategy = privacyStrategy;
-        this.digest = digest;
+        this.validateDigest = validateDigest;
     }
 
     /**
-     * Get the blockchain transaction hash
+     * Get the blockchain transaction hash to download
      * @return the blockchain transaction hash
      */
     public String getTransactionHash() {
@@ -39,11 +30,11 @@ public class DownloadParameter {
     }
 
     /**
-     * Get the root data hash
-     * @return the root data hash
+     * Get the account the private key of the sender or recipient of the transaction (required for secure messages)
+     * @return the account private key
      */
-    public String getRootDataHash() {
-        return rootDataHash;
+    public String getAccountPrivateKey() {
+        return accountPrivateKey;
     }
 
     /**
@@ -55,11 +46,11 @@ public class DownloadParameter {
     }
 
     /**
-     * Get the digest of the root data
-     * @return the digest
+     * Get the flag that indicates if need to verify digest
+     * @return the validate digest flag
      */
-    public String getDigest() {
-        return digest;
+    public boolean getValidateDigest() {
+        return validateDigest;
     }
 
     /**
@@ -67,17 +58,7 @@ public class DownloadParameter {
      * @param transactionHash the blockchain transaction hash to download
      * @return the download parameter builder
      */
-    public static DownloadParameterBuilder createWithTransactionHash(String transactionHash) {
+    public static DownloadParameterBuilder create(String transactionHash) {
         return new DownloadParameterBuilder(transactionHash);
-    }
-
-    /**
-     * Start creating instance of this class by providing the root data hash and an optional digest
-     * @param rootDataHash the data hash to root data to download
-     * @param digest an optional digest to verify the downloaded root data
-     * @return the download parameter builder
-     */
-    public static DownloadParameterBuilder createWithRootDataHash(String rootDataHash, String digest) {
-        return new DownloadParameterBuilder(rootDataHash, digest);
     }
 }

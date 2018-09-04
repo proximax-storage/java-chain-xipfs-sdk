@@ -11,7 +11,7 @@ import static org.hamcrest.core.Is.is;
 
 public class PlainPrivacyStrategyTest {
 
-    public static final byte[] INPUT_DATA = "the quick brown fox jumps over the lazy dog".getBytes();
+    private static final byte[] INPUT_DATA = "the quick brown fox jumps over the lazy dog".getBytes();
 
     private PlainPrivacyStrategy unitUnderTest;
 

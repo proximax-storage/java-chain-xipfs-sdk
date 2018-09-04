@@ -4,19 +4,19 @@ import io.nem.sdk.model.transaction.TransferTransaction;
 import io.proximax.async.AsyncCallback;
 import io.proximax.async.AsyncTask;
 import io.proximax.connection.ConnectionConfig;
-import io.proximax.exceptions.DownloadDataFailureException;
+import io.proximax.exceptions.DirectDownloadFailureException;
 import io.proximax.exceptions.DownloadFailureException;
 import io.proximax.exceptions.DownloadInitFailureException;
-import io.proximax.model.ProximaxRootDataModel;
+import io.proximax.model.ProximaxDataModel;
+import io.proximax.model.ProximaxMessagePayloadModel;
+import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.service.BlockchainTransactionService;
 import io.proximax.service.RetrieveProximaxDataService;
 import io.proximax.service.RetrieveProximaxMessagePayloadService;
-import io.proximax.service.RetrieveProximaxRootDataService;
 import io.proximax.utils.AsyncUtils;
 import io.reactivex.Observable;
 
 import java.net.MalformedURLException;
-import java.util.List;
 import java.util.Optional;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
@@ -29,17 +29,16 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * The instance of the class can be reused to download multiple times.
  * <br>
  * <br>
- * Downloads can be done by providing the blockchain transaction hash and the root data hash to download the whole upload instance.
- * <br>
- * Downloads can also download data directly by providing the data hash.
+ * Downloads can be done by providing the blockchain transaction hash or the data hash.
+ * A complete download can be done to get the data and its accompanying details,
+ * and a direct download can be done to retrieve the data only.
  * @see ConnectionConfig
  * @see DownloadParameter
- * @see DownloadDataParameter
+ * @see DirectDownloadParameter
  */
 public class Downloader {
     private final BlockchainTransactionService blockchainTransactionService;
     private final RetrieveProximaxMessagePayloadService retrieveProximaxMessagePayloadService;
-    private final RetrieveProximaxRootDataService retrieveProximaxRootDataService;
     private final RetrieveProximaxDataService retrieveProximaxDataService;
 
     /**
@@ -48,7 +47,6 @@ public class Downloader {
      */
     public Downloader(ConnectionConfig connectionConfig) {
         this.retrieveProximaxMessagePayloadService = new RetrieveProximaxMessagePayloadService();
-        this.retrieveProximaxRootDataService = new RetrieveProximaxRootDataService(connectionConfig.getIpfsConnection());
         this.retrieveProximaxDataService = new RetrieveProximaxDataService(connectionConfig.getIpfsConnection());
 
         try {
@@ -58,31 +56,31 @@ public class Downloader {
         }
     }
 
-    Downloader(BlockchainTransactionService blockchainTransactionService, RetrieveProximaxMessagePayloadService retrieveProximaxMessagePayloadService,
-               RetrieveProximaxRootDataService retrieveProximaxRootDataService, RetrieveProximaxDataService retrieveProximaxDataService) {
+    Downloader(BlockchainTransactionService blockchainTransactionService,
+               RetrieveProximaxMessagePayloadService retrieveProximaxMessagePayloadService,
+               RetrieveProximaxDataService retrieveProximaxDataService) {
         this.blockchainTransactionService = blockchainTransactionService;
         this.retrieveProximaxMessagePayloadService = retrieveProximaxMessagePayloadService;
-        this.retrieveProximaxRootDataService = retrieveProximaxRootDataService;
         this.retrieveProximaxDataService = retrieveProximaxDataService;
     }
 
     /**
-     * Download the upload instance synchronously by providing the blockchain transaction hash or root data hash
+     * Retrieve synchronously the data and its accompanying details.
+     * This would use the blockchain transaction hash to get the data and its details.
      * <br>
-     * By downloading the upload instance, it automatically fetches all data included on that upload instance.
      * @param downloadParam the download parameter
-     * @return the download result containing the list of data
+     * @return the download result containing the data and its details
      */
     public DownloadResult download(final DownloadParameter downloadParam) {
         checkParameter(downloadParam != null, "downloadParam is required");
 
-        return doDownload(downloadParam).blockingFirst();
+        return doCompleteDownload(downloadParam).blockingFirst();
     }
 
     /**
-     * Download the upload instance asynchronously by providing the blockchain transaction hash or root data hash
+     * Retrieve asynchronously the data and its accompanying details.
+     * This would use the blockchain transaction hash to get the data and its details.
      * <br>
-     * By downloading the upload instance, it automatically fetches all data included on that upload instance.
      * @param downloadParam the download parameter
      * @param asyncCallback an optional callbacks when succeeded or failed
      * @return the download result containing the list of data
@@ -92,64 +90,76 @@ public class Downloader {
 
         final AsyncTask asyncTask = new AsyncTask();
 
-        AsyncUtils.processFirstItem(this.doDownload(downloadParam), asyncCallback, asyncTask);
+        AsyncUtils.processFirstItem(this.doCompleteDownload(downloadParam), asyncCallback, asyncTask);
 
         return asyncTask;
     }
 
     /**
-     * Download a data synchronously by providing the data hash
-     * @param downloadDataParameter the download data parameter
-     * @return the download result containing the data
+     * Retrieve synchronously the data
+     * @param directDownloadParameter the direct download data parameter
+     * @return the data
      */
-    public DownloadDataResult downloadData(final DownloadDataParameter downloadDataParameter) {
-        checkParameter(downloadDataParameter != null, "downloadDataParameter is required");
+    public byte[] directDownload(final DirectDownloadParameter directDownloadParameter) {
+        checkParameter(directDownloadParameter != null, "directDownloadParameterdownloadDataParameter is required");
 
-        return doDownloadData(downloadDataParameter).blockingFirst();
+        return doDirectDownload(directDownloadParameter).blockingFirst();
     }
 
     /**
-     * Download a data asynchronously by providing the data hash
-     * @param downloadDataParameter the download data parameter
+     * Retrieve asynchronously the data
+     * @param directDownloadParameter the direct download data parameter
      * @param asyncCallback an optional callbacks when succeeded or failed
-     * @return the download result containing the data
+     * @return the data
      */
-    public AsyncTask downloadDataAsync(DownloadDataParameter downloadDataParameter, AsyncCallback<DownloadDataResult> asyncCallback) {
-        checkParameter(downloadDataParameter != null, "downloadDataParameter is required");
+    public AsyncTask directDownloadAsync(DirectDownloadParameter directDownloadParameter, AsyncCallback<byte[]> asyncCallback) {
+        checkParameter(directDownloadParameter != null, "directDownloadParameter is required");
 
         final AsyncTask asyncTask = new AsyncTask();
 
-        AsyncUtils.processFirstItem(this.doDownloadData(downloadDataParameter), asyncCallback, asyncTask);
+        AsyncUtils.processFirstItem(this.doDirectDownload(directDownloadParameter), asyncCallback, asyncTask);
 
         return asyncTask;
     }
 
-    private Observable<DownloadResult> doDownload(DownloadParameter downloadParam) {
-        return getBlockchainTransaction(downloadParam.getTransactionHash())
-                .map(transferTransactionOpt ->
-                        transferTransactionOpt.map(transferTransaction ->
-                                retrieveProximaxMessagePayloadService.getMessagePayload(transferTransaction)))
-                .flatMap(messagePayloadOpt -> retrieveProximaxRootDataService.getRootData(downloadParam, messagePayloadOpt))
-                .flatMap(rootData -> retrieveProximaxDataService.getDataList(downloadParam, rootData)
-                        .map(decryptedDataList -> createDownloadResult(rootData, decryptedDataList)))
-                .onErrorResumeNext((Throwable ex) ->
-                        Observable.error(new DownloadFailureException("Download failed.", ex)));
+    private Observable<DownloadResult> doCompleteDownload(DownloadParameter downloadParam) {
+        return blockchainTransactionService.getTransferTransaction(downloadParam.getTransactionHash())
+                .map(transferTransaction -> retrieveProximaxMessagePayloadService.getMessagePayload(transferTransaction,
+                        downloadParam.getAccountPrivateKey()))
+                .flatMap(messagePayload -> getData(Optional.of(messagePayload), null, downloadParam.getPrivacyStrategy(),
+                        downloadParam.getValidateDigest(), null)
+                        .map(decryptedData -> createCompleteDownloadResult(messagePayload, decryptedData, downloadParam.getTransactionHash())))
+                .onErrorResumeNext((Throwable ex) -> Observable.error(new DownloadFailureException("Download failed.", ex)));
     }
 
-    private Observable<DownloadDataResult> doDownloadData(DownloadDataParameter downloadDataParameter) {
-        return retrieveProximaxDataService.getData(downloadDataParameter)
-                .map(DownloadDataResult::new)
-                .onErrorResumeNext((Throwable ex) ->
-                        Observable.error(new DownloadDataFailureException("Download data failed.", ex)));
+    private DownloadResult createCompleteDownloadResult(ProximaxMessagePayloadModel messagePayload, byte[] decryptedData, String transactionHash) {
+        final ProximaxDataModel data = messagePayload.getData();
+        return DownloadResult.create(transactionHash, messagePayload.getPrivacyType(), messagePayload.getVersion(),
+                new DownloadResultData(decryptedData, data.getDigest(), data.getDataHash(), data.getTimestamp(),
+                        data.getDescription(), data.getName(), data.getContentType(), data.getMetadata()));
     }
 
-    private Observable<Optional<TransferTransaction>> getBlockchainTransaction(String transactionHash) {
+    private Observable<byte[]> doDirectDownload(DirectDownloadParameter downloadParam) {
+        return getOptionalBlockchainTransaction(downloadParam.getTransactionHash())
+                .map(transferTransactionOpt -> transferTransactionOpt.map(transferTransaction ->
+                        retrieveProximaxMessagePayloadService.getMessagePayload(transferTransaction, downloadParam.getAccountPrivateKey())))
+                .flatMap(messagePayload -> getData(messagePayload, downloadParam.getDataHash(), downloadParam.getPrivacyStrategy(),
+                        downloadParam.getValidateDigest(), downloadParam.getDigest()))
+                .onErrorResumeNext((Throwable ex) -> Observable.error(new DirectDownloadFailureException("Direct download failed.", ex)));
+    }
+
+    private Observable<Optional<TransferTransaction>> getOptionalBlockchainTransaction(String transactionHash) {
         return Optional.ofNullable(transactionHash)
                 .map(hash -> blockchainTransactionService.getTransferTransaction(hash).map(Optional::of))
                 .orElse(Observable.just(Optional.empty()));
     }
 
-    private DownloadResult createDownloadResult(ProximaxRootDataModel rootData, List<byte[]> decryptedDataList) {
-        return DownloadResult.create(rootData, decryptedDataList);
+    private Observable<byte[]> getData(Optional<ProximaxMessagePayloadModel> messagePayload, String dataHash, PrivacyStrategy privacyStrategy,
+                                       boolean validateDigest, String digest) {
+        final String resolvedDataHash = messagePayload.map(payload -> payload.getData().getDataHash()).orElse(dataHash);
+        final String resolvedDigest = messagePayload.map(payload -> payload.getData().getDigest()).orElse(digest);
+        final String resolvedContentType = messagePayload.map(payload -> payload.getData().getContentType()).orElse(null);
+
+        return retrieveProximaxDataService.getData(resolvedDataHash, privacyStrategy, validateDigest, resolvedDigest, resolvedContentType);
     }
 }

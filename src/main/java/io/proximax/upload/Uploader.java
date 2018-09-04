@@ -6,10 +6,9 @@ import io.proximax.connection.ConnectionConfig;
 import io.proximax.exceptions.UploadFailureException;
 import io.proximax.exceptions.UploadInitFailureException;
 import io.proximax.model.ProximaxMessagePayloadModel;
-import io.proximax.model.ProximaxRootDataModel;
 import io.proximax.service.BlockchainTransactionService;
+import io.proximax.service.CreateProximaxDataService;
 import io.proximax.service.CreateProximaxMessagePayloadService;
-import io.proximax.service.CreateProximaxRootDataService;
 import io.proximax.utils.AsyncUtils;
 import io.reactivex.Observable;
 
@@ -28,13 +27,14 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * Each upload requires an UploadParameter that contains what is being uploaded along with additional details.
  * <br>
  * <br>
- * Each upload can have multiple data which can be provided as any of the following:
+ * Each upload can be any of the following type:
  * <ul>
  *     <li>byte array</li>
  *     <li>file</li>
  *     <li>url resource</li>
  *     <li>list of files to be compressed as a zip</li>
  *     <li>string</li>
+ *     <li>path or directory</li>
  * </ul>
  * <br>
  * @see ConnectionConfig
@@ -43,7 +43,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 public class Uploader {
 
     private final BlockchainTransactionService blockchainTransactionService;
-    private final CreateProximaxRootDataService createProximaxRootDataService;
+    private final CreateProximaxDataService createProximaxDataService;
     private final CreateProximaxMessagePayloadService createProximaxMessagePayloadService;
 
     /**
@@ -51,8 +51,8 @@ public class Uploader {
      * @param connectionConfig the connection config that defines generally where the upload will be sent
      */
     public Uploader(ConnectionConfig connectionConfig) {
-        this.createProximaxRootDataService = new CreateProximaxRootDataService(connectionConfig.getIpfsConnection());
-        this.createProximaxMessagePayloadService = new CreateProximaxMessagePayloadService(connectionConfig.getIpfsConnection());
+        this.createProximaxDataService = new CreateProximaxDataService(connectionConfig.getIpfsConnection());
+        this.createProximaxMessagePayloadService = new CreateProximaxMessagePayloadService();
 
         try {
             this.blockchainTransactionService = new BlockchainTransactionService(connectionConfig.getBlockchainNetworkConnection());
@@ -61,20 +61,20 @@ public class Uploader {
         }
     }
 
-    Uploader(BlockchainTransactionService blockchainTransactionService, CreateProximaxRootDataService createProximaxRootDataService,
+    Uploader(BlockchainTransactionService blockchainTransactionService, CreateProximaxDataService createProximaxDataService,
              CreateProximaxMessagePayloadService createProximaxMessagePayloadService) {
         this.blockchainTransactionService = blockchainTransactionService;
-        this.createProximaxRootDataService = createProximaxRootDataService;
+        this.createProximaxDataService = createProximaxDataService;
         this.createProximaxMessagePayloadService = createProximaxMessagePayloadService;
     }
 
     /**
-     * Upload data or list of data synchronously and attach it on a blockchain transaction.
+     * Upload a data synchronously and attach it on a blockchain transaction.
      * This upload returns result once the blockchain transaction is validated and already set with `unconfirmed` status
      * <br>
      * The upload throws an UploadFailureException runtime exception if does not succeed.
-     * @param uploadParam the upload parameter that contains what is being uploaded along with additional details
-     * @return the upload result containing the hashes to get the uploaded content
+     * @param uploadParam the upload parameter
+     * @return the upload result containing the hash to get the uploaded content
      */
     public UploadResult upload(UploadParameter uploadParam) {
         checkParameter(uploadParam != null, "uploadParam is required");
@@ -83,11 +83,11 @@ public class Uploader {
     }
 
     /**
-     * Upload data or list of data asynchronously and attach it on a blockchain transaction.
+     * Upload a data asynchronously and attach it on a blockchain transaction.
      * This upload returns result once the blockchain transaction is validated and already set with `unconfirmed` status
      * <br>
      * The upload throws an UploadFailureException runtime exception if does not succeed.
-     * @param uploadParam the upload parameter that contains what is being uploaded along with additional details
+     * @param uploadParam the upload parameter
      * @param asyncCallback an optional callbacks when succeeded or failed
      * @return the upload result containing the hashes to get the uploaded content
      */
@@ -102,23 +102,25 @@ public class Uploader {
     }
 
     private Observable<UploadResult> doUpload(UploadParameter uploadParam) {
-        return createProximaxRootDataService.createRootData(uploadParam)
-                .flatMap(rootData ->
-                        createProximaxMessagePayloadService.createMessagePayload(uploadParam, rootData)
-                                .flatMap(messagePayload ->
-                                        blockchainTransactionService.createAndAnnounceTransaction(
-                                                uploadParam.getPrivacyStrategy(), uploadParam.getSignerPrivateKey(),
-                                                uploadParam.getRecipientPublicKey(), messagePayload)
-                                                .map(transactionHash ->
-                                                        createUploadResult(messagePayload, transactionHash, rootData))))
+        return createProximaxDataService.createData(uploadParam).flatMap(uploadedData ->
+                createProximaxMessagePayloadService.createMessagePayload(uploadParam, uploadedData)
+                        .flatMap(messagePayload ->
+                                createAndAnnounceTransaction(uploadParam, messagePayload)
+                                        .map(transactionHash ->
+                                                createUploadResult(messagePayload, transactionHash))))
                 .onErrorResumeNext((Throwable ex) ->
                         Observable.error(new UploadFailureException("Upload failed.", ex)));
     }
 
-    private UploadResult createUploadResult(ProximaxMessagePayloadModel transactionMessagePayload, String transactionHash,
-                                            ProximaxRootDataModel rootData) {
-        return UploadResult.create(transactionHash, transactionMessagePayload.getDigest(),
-                                transactionMessagePayload.getRootDataHash(), rootData);
+    private Observable<String> createAndAnnounceTransaction(UploadParameter uploadParam, ProximaxMessagePayloadModel messagePayload) {
+        return blockchainTransactionService.createAndAnnounceTransaction(
+                messagePayload, uploadParam.getSignerPrivateKey(), uploadParam.getRecipientPublicKey(), uploadParam.getRecipientAddress(),
+                uploadParam.getTransactionDeadline(), uploadParam.getUseBlockchainSecureMessage());
+    }
+
+    private UploadResult createUploadResult(ProximaxMessagePayloadModel messagePayload, String transactionHash) {
+        return UploadResult.create(transactionHash, messagePayload.getPrivacyType(), messagePayload.getVersion(),
+                messagePayload.getData());
     }
 
 }

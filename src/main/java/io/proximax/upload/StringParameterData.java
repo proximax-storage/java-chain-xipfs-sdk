@@ -13,14 +13,18 @@ public class StringParameterData extends ByteArrayParameterData {
 
     private final String string;
 
-    StringParameterData(String string, String encoding, String description, String name, String contentType,
+    private StringParameterData(String string, String encoding, String description, String name, String contentType,
                                Map<String, String> metadata) throws UnsupportedEncodingException {
         super(toStringByteArray(string, encoding), description, name, contentType, metadata);
+
+        checkParameter(contentType == null || !RESERVED_CONTENT_TYPES.contains(contentType),
+                String.format("%s cannot be used as it is reserved", contentType));
+
         this.string = string;
     }
 
     /**
-     * Get the string to upload
+     * Get the string
      * @return the string
      */
     public String getString() {
@@ -34,54 +38,27 @@ public class StringParameterData extends ByteArrayParameterData {
     }
 
     /**
-     * Start creating an instance of StringParameterData using the StringParameterDataBuilder
+     * Create instance by providing the string
      * @param string the string to upload
-     * @return the string parameter data builder
+     * @return the instance of this class
+     * @throws UnsupportedEncodingException invalid encoding
      */
-    public static StringParameterDataBuilder create(String string) {
-        return new StringParameterDataBuilder(string);
+    public static StringParameterData create(String string) throws UnsupportedEncodingException {
+        return create(string, null,null, null, null, null);
     }
 
     /**
-     * This builder class creates the StringParameterData
+     * Create instance by providing the string
+     * @param string the string to upload
+     * @param encoding the encoding the string to assist on byte array conversion
+     * @param description a searchable description attach on the upload
+     * @param name a searchable name attach on the upload
+     * @param contentType the content type attach on the upload
+     * @param metadata a searchable key-pair metadata attach on the upload
+     * @return the instance of this class
+     * @throws UnsupportedEncodingException invalid encoding
      */
-    public static class StringParameterDataBuilder extends AbstractParameterDataBuilder<StringParameterDataBuilder> {
-        private String string;
-        private String encoding;
-        private String contentType;
-
-        StringParameterDataBuilder(String string) {
-            this.string = string;
-        }
-
-        /**
-         * The encoding to use to convert the string into byte array
-         * @param encoding the encoding
-         * @return same instance of this builder
-         */
-        public StringParameterDataBuilder encoding(String encoding) {
-            this.encoding = encoding;
-            return this;
-        }
-
-        /**
-         * Set the content type for the data
-         * @param contentType the content type
-         * @return same instance of the builder class
-         */
-        public StringParameterDataBuilder contentType(String contentType) {
-            checkParameter(!RESERVED_CONTENT_TYPES.contains(contentType), String.format("%s cannot be used as it is reserved", contentType));
-            this.contentType = contentType;
-            return this;
-        }
-
-        /**
-         * Builds the StringParameterData
-         * @return the string parameter data
-         * @throws UnsupportedEncodingException when the conversion of string to byte array fails
-         */
-        public StringParameterData build() throws UnsupportedEncodingException {
-            return new StringParameterData(string, encoding, description, name, contentType, metadata);
-        }
+    public static StringParameterData create(String string, String encoding, String description, String name, String contentType, Map<String, String> metadata) throws UnsupportedEncodingException {
+        return new StringParameterData(string, encoding, description, name, contentType, metadata);
     }
 }

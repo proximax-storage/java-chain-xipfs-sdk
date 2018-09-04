@@ -26,9 +26,9 @@ import static org.mockito.BDDMockito.given;
 
 public class IpfsClientTest {
 
-    public static final byte[] SAMPLE_DATA = "the quick brown fox jumps over the lazy dog".getBytes();
-    public static final String SAMPLE_DATAHASH = "QmTxpkEitAczbM5S4uZG3zoDToSDNQZQUV4vxBsW9Q1Nhh";
-    public static final MerkleNode SAMPLE_MERKLE_NODE = new MerkleNode(SAMPLE_DATAHASH);
+    private static final byte[] SAMPLE_DATA = "the quick brown fox jumps over the lazy dog".getBytes();
+    private static final String SAMPLE_DATAHASH = "QmTxpkEitAczbM5S4uZG3zoDToSDNQZQUV4vxBsW9Q1Nhh";
+    private static final MerkleNode SAMPLE_MERKLE_NODE = new MerkleNode(SAMPLE_DATAHASH);
 
     private IpfsClient unitUnderTest;
 

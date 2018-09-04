@@ -5,7 +5,6 @@ import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.model.BlockchainNetworkType;
 import io.proximax.model.PrivacyType;
-import io.proximax.upload.FileParameterData;
 import io.proximax.upload.UploadParameter;
 import io.proximax.upload.UploadResult;
 import io.proximax.upload.Uploader;
@@ -23,7 +22,6 @@ import static io.proximax.testsupport.Constants.SHAMIR_SECRET_TOTAL_PART_COUNT;
 import static io.proximax.testsupport.Constants.SMALL_FILE;
 import static io.proximax.testsupport.TestHelper.logAndSaveResult;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
@@ -40,51 +38,38 @@ public class Uploader_privacyStrategyIntegrationTest {
 
     @Test
     public void shouldUploadFileWithPlainPrivacyStrategy() throws Exception {
-        final UploadParameter param = UploadParameter.create(PRIVATE_KEY_1, PUBLIC_KEY_2)
-                .addFile(FileParameterData.create(SMALL_FILE).build())
-                .plainPrivacy()
+        final UploadParameter param = UploadParameter.createForFileUpload(SMALL_FILE, PRIVATE_KEY_1)
                 .build();
 
         final UploadResult result = unitUnderTest.upload(param);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getTransactionHash(), is(notNullValue()));
-        assertThat(result.getDigest(), is(notNullValue()));
-        assertThat(result.getRootDataHash(), is(notNullValue()));
-        assertThat(result.getRootData().getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
-        assertThat(result.getRootData().getDataList(), hasSize(1));
-        assertThat(result.getRootData().getDataList().get(0).getDataHash(), is(notNullValue()));
-        assertThat(result.getRootData().getDataList().get(0).getDigest(), is(notNullValue()));
+        assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
+        assertThat(result.getData().getDataHash(), is(notNullValue()));
 
         logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadFileWithPlainPrivacyStrategy");
     }
 
     @Test
     public void shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy() throws Exception {
-        final UploadParameter param = UploadParameter.create(PRIVATE_KEY_1, PUBLIC_KEY_2)
-                .addFile(FileParameterData.create(SMALL_FILE).build())
-                .securedWithNemKeysPrivacy()
+        final UploadParameter param = UploadParameter.createForFileUpload(SMALL_FILE, PRIVATE_KEY_1)
+                .securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
                 .build();
 
         final UploadResult result = unitUnderTest.upload(param);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getTransactionHash(), is(notNullValue()));
-        assertThat(result.getDigest(), is(notNullValue()));
-        assertThat(result.getRootDataHash(), is(notNullValue()));
-        assertThat(result.getRootData(), is(notNullValue()));
-        assertThat(result.getRootData().getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
-        assertThat(result.getRootData().getDataList(), hasSize(1));
-        assertThat(result.getRootData().getDataList().get(0).getDataHash(), is(notNullValue()));
-        assertThat(result.getRootData().getDataList().get(0).getDigest(), is(notNullValue()));
+        assertThat(result.getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
+        assertThat(result.getData().getDataHash(), is(notNullValue()));
 
         logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy");
     }
 
     @Test
     public void shouldUploadFileWithSecuredWithPasswordPrivacyStrategy() throws Exception {
-        final UploadParameter param = UploadParameter.create(PRIVATE_KEY_1, PUBLIC_KEY_2)
-                .addFile(FileParameterData.create(SMALL_FILE).build())
+        final UploadParameter param = UploadParameter.createForFileUpload(SMALL_FILE, PRIVATE_KEY_1)
                 .securedWithPasswordPrivacy(PASSWORD)
                 .build();
 
@@ -92,21 +77,15 @@ public class Uploader_privacyStrategyIntegrationTest {
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getTransactionHash(), is(notNullValue()));
-        assertThat(result.getDigest(), is(notNullValue()));
-        assertThat(result.getRootDataHash(), is(notNullValue()));
-        assertThat(result.getRootData(), is(notNullValue()));
-        assertThat(result.getRootData().getPrivacyType(), is(PrivacyType.PASSWORD.getValue()));
-        assertThat(result.getRootData().getDataList(), hasSize(1));
-        assertThat(result.getRootData().getDataList().get(0).getDataHash(), is(notNullValue()));
-        assertThat(result.getRootData().getDataList().get(0).getDigest(), is(notNullValue()));
+        assertThat(result.getPrivacyType(), is(PrivacyType.PASSWORD.getValue()));
+        assertThat(result.getData().getDataHash(), is(notNullValue()));
 
         logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadFileWithSecuredWithPasswordPrivacyStrategy");
     }
 
     @Test
     public void shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy() throws Exception {
-        final UploadParameter param = UploadParameter.create(PRIVATE_KEY_1, PUBLIC_KEY_2)
-                .addFile(FileParameterData.create(SMALL_FILE).build())
+        final UploadParameter param = UploadParameter.createForFileUpload(SMALL_FILE, PRIVATE_KEY_1)
                 .securedWithShamirSecretSharing(
                         SHAMIR_SECRET_TOTAL_PART_COUNT,
                         SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
@@ -117,13 +96,8 @@ public class Uploader_privacyStrategyIntegrationTest {
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getTransactionHash(), is(notNullValue()));
-        assertThat(result.getDigest(), is(notNullValue()));
-        assertThat(result.getRootDataHash(), is(notNullValue()));
-        assertThat(result.getRootData(), is(notNullValue()));
-        assertThat(result.getRootData().getPrivacyType(), is(PrivacyType.SHAMIR.getValue()));
-        assertThat(result.getRootData().getDataList(), hasSize(1));
-        assertThat(result.getRootData().getDataList().get(0).getDataHash(), is(notNullValue()));
-        assertThat(result.getRootData().getDataList().get(0).getDigest(), is(notNullValue()));
+        assertThat(result.getPrivacyType(), is(PrivacyType.SHAMIR.getValue()));
+        assertThat(result.getData().getDataHash(), is(notNullValue()));
 
         logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy");
     }

@@ -20,17 +20,9 @@ public class ContentTypeUtilsTest {
     }
 
     @Test
-    public void shouldUseProvidedContentType() throws IOException {
-        final byte[] bytes = FileUtils.readFileToByteArray(new File("src//test//resources//test_small_file.txt"));
-        final String result = unitUnderTest.detectContentType(bytes, "text/html").blockingFirst();
-
-        assertThat(result, is("text/html"));
-    }
-
-    @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenText() throws IOException {
         final byte[] bytes = FileUtils.readFileToByteArray(new File("src//test//resources//test_small_file.txt"));
-        final String result = unitUnderTest.detectContentType(bytes, null).blockingFirst();
+        final String result = unitUnderTest.detectContentType(bytes).blockingFirst();
 
         assertThat(result, is("text/plain"));
     }
@@ -38,7 +30,7 @@ public class ContentTypeUtilsTest {
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenHtml() throws IOException {
         final byte[] bytes = FileUtils.readFileToByteArray(new File("src//test//resources//test_html.html"));
-        final String result = unitUnderTest.detectContentType(bytes, null).blockingFirst();
+        final String result = unitUnderTest.detectContentType(bytes).blockingFirst();
 
         assertThat(result, is("text/html"));
     }
@@ -46,7 +38,7 @@ public class ContentTypeUtilsTest {
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenMov() throws IOException {
         final byte[] bytes = FileUtils.readFileToByteArray(new File("src//test//resources//test_file.mov"));
-        final String result = unitUnderTest.detectContentType(bytes, null).blockingFirst();
+        final String result = unitUnderTest.detectContentType(bytes).blockingFirst();
 
         assertThat(result, is("video/quicktime"));
     }
@@ -54,7 +46,7 @@ public class ContentTypeUtilsTest {
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenImage() throws IOException {
         final byte[] bytes = FileUtils.readFileToByteArray(new File("src//test//resources//test_image.png"));
-        final String result = unitUnderTest.detectContentType(bytes, null).blockingFirst();
+        final String result = unitUnderTest.detectContentType(bytes).blockingFirst();
 
         assertThat(result, is("image/png"));
     }
@@ -62,7 +54,7 @@ public class ContentTypeUtilsTest {
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenPdf() throws IOException {
         final byte[] bytes = FileUtils.readFileToByteArray(new File("src//test//resources//test_pdf_file_v2.pdf"));
-        final String result = unitUnderTest.detectContentType(bytes, null).blockingFirst();
+        final String result = unitUnderTest.detectContentType(bytes).blockingFirst();
 
         assertThat(result, is("application/pdf"));
     }
@@ -70,7 +62,7 @@ public class ContentTypeUtilsTest {
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenZip() throws IOException {
         final byte[] bytes = FileUtils.readFileToByteArray(new File("src//test//resources//test_large_file.zip"));
-        final String result = unitUnderTest.detectContentType(bytes, null).blockingFirst();
+        final String result = unitUnderTest.detectContentType(bytes).blockingFirst();
 
         assertThat(result, is("application/zip"));
     }
@@ -78,7 +70,7 @@ public class ContentTypeUtilsTest {
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenMp3() throws IOException {
         final byte[] bytes = FileUtils.readFileToByteArray(new File("src//test//resources//test_large_audio.mp3"));
-        final String result = unitUnderTest.detectContentType(bytes, null).blockingFirst();
+        final String result = unitUnderTest.detectContentType(bytes).blockingFirst();
 
         assertThat(result, is("audio/mpeg"));
     }
@@ -86,7 +78,7 @@ public class ContentTypeUtilsTest {
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenMp4() throws IOException {
         final byte[] bytes = FileUtils.readFileToByteArray(new File("src//test//resources//test_large_video.mp4"));
-        final String result = unitUnderTest.detectContentType(bytes, null).blockingFirst();
+        final String result = unitUnderTest.detectContentType(bytes).blockingFirst();
 
         assertThat(result, is("video/mp4"));
     }

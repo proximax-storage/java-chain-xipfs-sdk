@@ -19,11 +19,11 @@ import static org.mockito.BDDMockito.given;
 
 public class SecuredWithPasswordPrivacyStrategyTest {
 
-    public static final byte[] SAMPLE_DATA = "the quick brown fox jumps over the lazy dog".getBytes();
-    
-    public static final String PASSWORD = "lkNzBmYmYyNTExZjZmNDYyZTdjYWJmNmY1MjJiYjFmZTk3Zjg2NDA5ZDlhOD";
-    
-    public static final String PASSWORD_TOO_SHORT = "too short for a password";
+    private static final byte[] SAMPLE_DATA = "the quick brown fox jumps over the lazy dog".getBytes();
+
+    private static final String PASSWORD = "lkNzBmYmYyNTExZjZmNDYyZTdjYWJmNmY1MjJiYjFmZTk3Zjg2NDA5ZDlhOD";
+
+    private static final String PASSWORD_TOO_SHORT = "too short for a password";
 
     @Mock
     private BinaryPBKDF2CipherEncryption encryptor;

@@ -16,15 +16,19 @@ public class FileParameterData extends ByteArrayParameterData {
 
     private final File file;
 
-    FileParameterData(File file, String description, String name, String contentType, Map<String, String> metadata) throws IOException {
+    private FileParameterData(File file, String description, String name, String contentType, Map<String, String> metadata) throws IOException {
         super(readFileToByteArray(file), description, name == null ? file.getName() : name, contentType, metadata);
+
+        checkParameter(contentType == null || !RESERVED_CONTENT_TYPES.contains(contentType),
+                String.format("%s cannot be used as it is reserved", contentType));
+
         this.file = file;
     }
+
 
     /**
      * Get the file to upload
      * @return the file
-     * @see FileParameterDataBuilder
      */
     public File getFile() {
         return file;
@@ -38,43 +42,27 @@ public class FileParameterData extends ByteArrayParameterData {
     }
 
     /**
-     * Start creating an instance of FileParameterData using the FileParameterDataBuilder
+     * Create instance by providing the file
      * @param file the file to upload
-     * @return the file parameter data builder
+     * @return the instance of this class
+     * @throws IOException file read failures
      */
-    public static FileParameterDataBuilder create(File file) {
-        return new FileParameterDataBuilder(file);
+    public static FileParameterData create(File file) throws IOException {
+        return create(file, null, null, null, null);
     }
 
     /**
-     * This builder class creates the FileParameterData
+     * Create instance by providing the file
+     * @param file the file to upload
+     * @param description a searchable description attach on the upload
+     * @param name a searchable name attach on the upload
+     * @param contentType the content type attach on the upload
+     * @param metadata a searchable key-pair metadata attach on the upload
+     * @throws IOException file read failures
+     * @return the instance of this class
      */
-    public static class FileParameterDataBuilder extends AbstractParameterDataBuilder<FileParameterDataBuilder> {
-        private File file;
-        private String contentType;
-
-        FileParameterDataBuilder(File file) {
-            this.file = file;
-        }
-
-        /**
-         * Set the content type for the data
-         * @param contentType the content type
-         * @return same instance of the builder class
-         */
-        public FileParameterDataBuilder contentType(String contentType) {
-            checkParameter(!RESERVED_CONTENT_TYPES.contains(contentType), String.format("%s cannot be used as it is reserved", contentType));
-            this.contentType = contentType;
-            return this;
-        }
-
-        /**
-         * Builds the FileParameterData
-         * @return the file parameter data
-         * @throws IOException when reading file fails
-         */
-        public FileParameterData build() throws IOException {
-            return new FileParameterData(file, description, name, contentType, metadata);
-        }
+    public static FileParameterData create(File file, String description, String name, String contentType, Map<String, String> metadata) throws IOException {
+        return new FileParameterData(file, description, name, contentType, metadata);
     }
+
 }

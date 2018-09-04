@@ -9,50 +9,65 @@ import io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrateg
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
- * This builder class creates the DownloadDataParameter
- * <ul>
- *     <li><b>dataHash</b> - the data hash to download</li>
- *     <li><b>digest</b> - the digest to verify the downloaded data</li>
- *     <li><b>privacyStrategy</b> - the privacy strategy to decrypt the data</li>
- * </ul>
- * @see DownloadDataParameter
+ * This builder class creates the DirectDownloadParameter
+ * @see DirectDownloadParameter
  */
-public class DownloadDataParameterBuilder {
+public class DirectDownloadParameterBuilder {
 
+    private String transactionHash;
+    private String accountPrivateKey;
     private String dataHash;
+    private Boolean validateDigest;
     private PrivacyStrategy privacyStrategy;
     private String digest;
 
     /**
-     * Construct the builder class
-     * @param dataHash the data hash to download
+     * Construct the builder class with transaction hash, account private key and validate digest flag
+     * @param transactionHash the transaction hash of target download
+     * @param accountPrivateKey the private key of the sender or recipient of the transaction (required when downloading from secure message)
+     * @param validateDigest the validate digest flag as to whether to verify data with digest
+     * @return the direct download parameter builder
      */
-    public DownloadDataParameterBuilder(String dataHash) {
-        checkParameter(dataHash != null, "dataHash is required");
+    public static DirectDownloadParameterBuilder createFromTransactionHash(String transactionHash, String accountPrivateKey, Boolean validateDigest) {
+        checkParameter(transactionHash != null, "transactionHash is required");
 
-        this.dataHash = dataHash;
+        final DirectDownloadParameterBuilder builder = new DirectDownloadParameterBuilder();
+        builder.transactionHash = transactionHash;
+        builder.accountPrivateKey = accountPrivateKey;
+        builder.validateDigest = Optional.ofNullable(validateDigest).orElse(false);
+        return builder;
     }
 
     /**
-     * Set a digest to verify the downloaded data
-     * @param digest the digest
-     * @return the same instance of this builder
+     * Construct the builder class with data hash and digest
+     * @param dataHash the data hash to download
+     * @param digest the digest to verify download
+     * @return the download data parameter builder
      */
-    public DownloadDataParameterBuilder digest(String digest) {
-        this.digest = digest;
-        return this;
+    public static DirectDownloadParameterBuilder createFromDataHash(String dataHash, String digest) {
+        checkParameter(dataHash != null, "dataHash is required");
+
+        final DirectDownloadParameterBuilder builder = new DirectDownloadParameterBuilder();
+        builder.dataHash = dataHash;
+        builder.digest = digest;
+        builder.validateDigest = true;
+        return builder;
     }
 
     /**
      * Set the privacy strategy to decrypt the data
+     * <br>
+     * <br>
+     * Privacy strategy defines how the data will be decrypted
      * @param privacyStrategy the privacy strategy
      * @return the same instance of this builder
      */
-    public DownloadDataParameterBuilder privacyStrategy(PrivacyStrategy privacyStrategy) {
+    public DirectDownloadParameterBuilder privacyStrategy(PrivacyStrategy privacyStrategy) {
         this.privacyStrategy = privacyStrategy;
         return this;
     }
@@ -60,10 +75,11 @@ public class DownloadDataParameterBuilder {
     /**
      * Set the privacy strategy as plain
      * <br>
+     * <br>
      * Privacy strategy defines how the data will be decrypted
      * @return the same instance of this builder
      */
-    public DownloadDataParameterBuilder plainPrivacy() {
+    public DirectDownloadParameterBuilder plainPrivacy() {
         this.privacyStrategy = PlainPrivacyStrategy.create();
         return this;
     }
@@ -73,11 +89,11 @@ public class DownloadDataParameterBuilder {
      * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
-     * @param privateKey the private key of the blockchain account
-     * @param publicKey the public key of the blockchain account
+     * @param privateKey the private key of one blockchain account that encrypted the data
+     * @param publicKey the public key of the other blockchain account that encrypted the data
      * @return the same instance of this builder
      */
-    public DownloadDataParameterBuilder securedWithNemKeysPrivacy(String privateKey, String publicKey) {
+    public DirectDownloadParameterBuilder securedWithNemKeysPrivacy(String privateKey, String publicKey) {
         this.privacyStrategy = SecuredWithNemKeysPrivacyStrategy.create(privateKey, publicKey);
         return this;
     }
@@ -85,11 +101,12 @@ public class DownloadDataParameterBuilder {
     /**
      * Set the privacy strategy as secured with password
      * <br>
+     * <br>
      * Privacy strategy defines how the data will be decrypted
      * @param password a 50-character minimum password
      * @return the same instance of this builder
      */
-    public DownloadDataParameterBuilder securedWithPasswordPrivacy(String password) {
+    public DirectDownloadParameterBuilder securedWithPasswordPrivacy(String password) {
         this.privacyStrategy = SecuredWithPasswordPrivacyStrategy.create(password);
         return this;
     }
@@ -97,15 +114,16 @@ public class DownloadDataParameterBuilder {
     /**
      * Set the privacy strategy as secured with shamir secret sharing
      * <br>
+     * <br>
      * Privacy strategy defines how the data will be decrypted
      * @param secretTotalPartCount the total count of parts of the secret
      * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
      * @param secretParts the array of secret parts composed of the part index and the secret part
      * @return the same instance of this builder
      */
-    public DownloadDataParameterBuilder securedWithShamirSecretSharingPrivacy(int secretTotalPartCount,
-                                                                              int secretMinimumPartCountToBuild,
-                                                                              SecretPart... secretParts) {
+    public DirectDownloadParameterBuilder securedWithShamirSecretSharingPrivacy(int secretTotalPartCount,
+                                                                                int secretMinimumPartCountToBuild,
+                                                                                SecretPart... secretParts) {
         this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;
@@ -113,6 +131,7 @@ public class DownloadDataParameterBuilder {
 
     /**
      * Set the privacy strategy as secured with shamir secret sharing
+     * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
      * @param secretTotalPartCount the total count of parts of the secret
@@ -120,9 +139,9 @@ public class DownloadDataParameterBuilder {
      * @param secretParts the list of secret parts composed of the part index and the secret part
      * @return the same instance of this builder
      */
-    public DownloadDataParameterBuilder securedWithShamirSecretSharingPrivacy(int secretTotalPartCount,
-                                                                              int secretMinimumPartCountToBuild,
-                                                                              List<SecretPart> secretParts) {
+    public DirectDownloadParameterBuilder securedWithShamirSecretSharingPrivacy(int secretTotalPartCount,
+                                                                                int secretMinimumPartCountToBuild,
+                                                                                List<SecretPart> secretParts) {
         this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;
@@ -131,22 +150,23 @@ public class DownloadDataParameterBuilder {
     /**
      * Set the privacy strategy as secured with shamir secret sharing
      * <br>
+     * <br>
      * Privacy strategy defines how the data will be decrypted
      * @param secretTotalPartCount the total count of parts of the secret
      * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
      * @param secretParts the map containing part index and secret part pairs
      * @return the same instance of this builder
      */
-    public DownloadDataParameterBuilder securedWithShamirSecretSharingPrivacy(int secretTotalPartCount,
-                                                                              int secretMinimumPartCountToBuild,
-                                                                              Map<Integer, byte[]> secretParts) {
+    public DirectDownloadParameterBuilder securedWithShamirSecretSharingPrivacy(int secretTotalPartCount,
+                                                                                int secretMinimumPartCountToBuild,
+                                                                                Map<Integer, byte[]> secretParts) {
         this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;
     }
 
     /**
-     * Builds the DownloadDataParameter
+     * Builds the DirectDownloadParameter
      * <br>
      * Defaults the following if not provided
      * <ul>
@@ -154,10 +174,10 @@ public class DownloadDataParameterBuilder {
      * </ul>
      * @return the download data parameter
      */
-    public DownloadDataParameter build() {
+    public DirectDownloadParameter build() {
         if (this.privacyStrategy == null)
             this.privacyStrategy = PlainPrivacyStrategy.create();
-        return new DownloadDataParameter(dataHash, privacyStrategy, digest);
+        return new DirectDownloadParameter(transactionHash, accountPrivateKey, dataHash, validateDigest, privacyStrategy, digest);
     }
 
 }

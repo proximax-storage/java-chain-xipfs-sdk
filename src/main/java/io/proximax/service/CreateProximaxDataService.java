@@ -3,24 +3,21 @@ package io.proximax.service;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.exceptions.UploadParameterDataNotSupportedException;
 import io.proximax.model.ProximaxDataModel;
-import io.proximax.model.ProximaxRootDataModel;
 import io.proximax.upload.ByteArrayParameterData;
 import io.proximax.upload.PathParameterData;
 import io.proximax.upload.UploadParameter;
 import io.proximax.utils.ContentTypeUtils;
 import io.proximax.utils.DigestUtils;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 
-import java.util.List;
 import java.util.Optional;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
- * The service class responsible for creating a root data
+ * The service class responsible for creating the uploaded data object
  */
-public class CreateProximaxRootDataService {
+public class CreateProximaxDataService {
 
     private final IpfsUploadService ipfsUploadService;
     private final DigestUtils digestUtils;
@@ -30,52 +27,52 @@ public class CreateProximaxRootDataService {
      * Construct this class
      * @param ipfsConnection the config class to connect to IPFS
      */
-    public CreateProximaxRootDataService(IpfsConnection ipfsConnection) {
+    public CreateProximaxDataService(IpfsConnection ipfsConnection) {
         this.ipfsUploadService = new IpfsUploadService(ipfsConnection);
         this.digestUtils = new DigestUtils();
         this.contentTypeUtils = new ContentTypeUtils();
     }
 
-    CreateProximaxRootDataService(IpfsUploadService ipfsUploadService, DigestUtils digestUtils, ContentTypeUtils contentTypeUtils) {
+    CreateProximaxDataService(IpfsUploadService ipfsUploadService, DigestUtils digestUtils, ContentTypeUtils contentTypeUtils) {
         this.ipfsUploadService = ipfsUploadService;
         this.digestUtils = digestUtils;
         this.contentTypeUtils = contentTypeUtils;
     }
 
     /**
-     * Creates a root data
+     * Creates the uploaded data object
      * @param uploadParam the upload parameter
-     * @return the created root data
+     * @return the uploaded data object
      */
-    public Observable<ProximaxRootDataModel> createRootData(UploadParameter uploadParam) {
+    public Observable<ProximaxDataModel> createData(UploadParameter uploadParam) {
         checkParameter(uploadParam != null, "uploadParam is required");
 
-        return Observable.fromIterable(uploadParam.getDataList())
-                .concatMapEager(paramData -> {
-                    if (paramData instanceof ByteArrayParameterData) { // byte array data
-                        return uploadData(uploadParam, (ByteArrayParameterData) paramData);
-                    } if (paramData instanceof PathParameterData) { // path
-                        return uploadPath((PathParameterData) paramData);
-                    } else { // unknown parameter type
-                        throw new UploadParameterDataNotSupportedException(String.format("Uploading of %s is not supported", paramData.getClass().getName()));
-                    }
-                })
-                .toList()
-                .toObservable()
-                .map(dataModeList -> createRootData(uploadParam, dataModeList));
+        if (uploadParam.getData() instanceof ByteArrayParameterData) { // when byte array data
+            return uploadData(uploadParam, (ByteArrayParameterData) uploadParam.getData());
+        } if (uploadParam.getData() instanceof PathParameterData) { // when path
+            return uploadPath((PathParameterData) uploadParam.getData());
+        } else { // when unknown data
+            throw new UploadParameterDataNotSupportedException(String.format("Uploading of %s is not supported",
+                    uploadParam.getData().getClass().getName()));
+        }
     }
 
-    private ObservableSource<? extends ProximaxDataModel> uploadData(UploadParameter uploadParam, ByteArrayParameterData byteArrParamData) {
-        final Observable<String> detectedContentTypeOb =
-                contentTypeUtils.detectContentType(byteArrParamData.getData(), byteArrParamData.getContentType());
+    private Observable<ProximaxDataModel> uploadData(UploadParameter uploadParam, ByteArrayParameterData byteArrParamData) {
+        final Observable<Optional<String>> detectedContentTypeOb = detectContentType(uploadParam, byteArrParamData);
         final byte[] encryptedData = uploadParam.getPrivacyStrategy().encryptData(byteArrParamData.getData());
         final Observable<Optional<String>> digestOb = computeDigest(uploadParam.getComputeDigest(), encryptedData);
         final Observable<IpfsUploadResponse> ipfsUploadResponseOb = ipfsUploadService.uploadByteArray(encryptedData);
 
         return Observable.zip(ipfsUploadResponseOb, digestOb, detectedContentTypeOb,
-                (ipfsUploadResponse, digest, contentType) ->
+                (ipfsUploadResponse, digest, contentTypeOpt) ->
                         ProximaxDataModel.create(byteArrParamData, ipfsUploadResponse.getDataHash(),
-                                digest.orElse(null), contentType, ipfsUploadResponse.getTimestamp()));
+                                digest.orElse(null), contentTypeOpt.orElse(null), ipfsUploadResponse.getTimestamp()));
+    }
+
+    private Observable<Optional<String>> detectContentType(UploadParameter uploadParam, ByteArrayParameterData byteArrParamData) {
+        return uploadParam.getDetectContentType() && byteArrParamData.getContentType() == null
+                ? contentTypeUtils.detectContentType(byteArrParamData.getData()).map(Optional::of)
+                : Observable.just(Optional.ofNullable(byteArrParamData.getContentType()));
     }
 
     private Observable<Optional<String>> computeDigest(boolean computeDigest, byte[] encryptedData) {
@@ -86,10 +83,5 @@ public class CreateProximaxRootDataService {
         return ipfsUploadService.uploadPath(pathParamData.getPath()).map(ipfsUploadResponse ->
                 ProximaxDataModel.create(pathParamData, ipfsUploadResponse.getDataHash(),
                         null,  pathParamData.getContentType(), ipfsUploadResponse.getTimestamp()));
-    }
-
-    private ProximaxRootDataModel createRootData(UploadParameter uploadParam, List<ProximaxDataModel> dataModeList) {
-        return new ProximaxRootDataModel(uploadParam.getPrivacyStrategy().getPrivacyType(),
-                uploadParam.getDescription(), uploadParam.getVersion(), dataModeList);
     }
 }
