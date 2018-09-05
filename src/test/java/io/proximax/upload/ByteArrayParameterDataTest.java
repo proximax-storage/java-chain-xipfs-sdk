@@ -18,29 +18,25 @@ public class ByteArrayParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullByteArray() {
-        ByteArrayParameterData.create(null).build();
+        ByteArrayParameterData.create(null);
     }
 
     @Test
     public void createWithByteArrayOnly() {
-        final ByteArrayParameterData param = ByteArrayParameterData.create(SAMPLE_DATA).build();
+        final ByteArrayParameterData param = ByteArrayParameterData.create(SAMPLE_DATA);
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getData(), is(SAMPLE_DATA));
         assertThat(param.getContentType(), is(nullValue()));
         assertThat(param.getDescription(), is(nullValue()));
-        assertThat(param.getMetadata(), is(emptyMap()));
+        assertThat(param.getMetadata(), is(nullValue()));
         assertThat(param.getName(), is(nullValue()));
     }
 
     @Test
     public void createWithCompleteDetails() {
-        final ByteArrayParameterData param = ByteArrayParameterData.create(SAMPLE_DATA)
-                .description("describe me")
-                .metadata(singletonMap("mykey", "myvalue"))
-                .name("name here")
-                .contentType("text/plain")
-                .build();
+        final ByteArrayParameterData param = ByteArrayParameterData.create(SAMPLE_DATA, "describe me",
+                "name here","text/plain", singletonMap("mykey", "myvalue"));
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getData(), is(SAMPLE_DATA));
@@ -52,7 +48,7 @@ public class ByteArrayParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenContentTypeIsReservedExist() throws IOException {
-        ByteArrayParameterData.create(SAMPLE_DATA).contentType(PATH_UPLOAD_CONTENT_TYPE).build();
+        ByteArrayParameterData.create(SAMPLE_DATA, null, null, PATH_UPLOAD_CONTENT_TYPE, null);
     }
 
 }

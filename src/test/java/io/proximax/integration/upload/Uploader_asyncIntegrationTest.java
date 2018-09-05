@@ -7,9 +7,9 @@ import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.exceptions.UploadFailureException;
 import io.proximax.model.BlockchainNetworkType;
-import io.proximax.upload.Uploader;
 import io.proximax.upload.UploadParameter;
 import io.proximax.upload.UploadResult;
+import io.proximax.upload.Uploader;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,17 +18,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
-import static io.proximax.testsupport.Constants.HTML_FILE;
-import static io.proximax.testsupport.Constants.IMAGE_FILE;
 import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
 import static io.proximax.testsupport.Constants.PDF_FILE1;
 import static io.proximax.testsupport.Constants.PRIVATE_KEY_1;
-import static io.proximax.testsupport.Constants.PUBLIC_KEY_2;
 import static io.proximax.testsupport.Constants.SMALL_FILE;
-import static io.proximax.testsupport.Constants.STRING_TEST;
-import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -46,12 +40,8 @@ public class Uploader_asyncIntegrationTest {
 
 	@Test
 	public void shouldUploadAsynchronouslyWithoutCallback() throws Exception {
-		final UploadParameter param = UploadParameter.create(PRIVATE_KEY_1, PUBLIC_KEY_2)
-				.addByteArray(FileUtils.readFileToByteArray(PDF_FILE1))
-				.addFile(SMALL_FILE)
-				.addUrlResource(IMAGE_FILE.toURI().toURL())
-				.addFilesAsZip(asList(SMALL_FILE, HTML_FILE))
-				.addString(STRING_TEST)
+		final UploadParameter param = UploadParameter.createForByteArrayUpload(
+				FileUtils.readFileToByteArray(PDF_FILE1), PRIVATE_KEY_1)
 				.build();
 
 		final AsyncTask asyncTask = unitUnderTest.uploadAsync(param, null);
@@ -64,12 +54,7 @@ public class Uploader_asyncIntegrationTest {
 
 	@Test
 	public void shouldUploadAsynchronouslyWithSuccessCallback() throws Exception {
-		final UploadParameter param = UploadParameter.create(PRIVATE_KEY_1, PUBLIC_KEY_2)
-				.addByteArray(FileUtils.readFileToByteArray(PDF_FILE1))
-				.addFile(SMALL_FILE)
-				.addUrlResource(IMAGE_FILE.toURI().toURL())
-				.addFilesAsZip(asList(SMALL_FILE, HTML_FILE))
-				.addString(STRING_TEST)
+		final UploadParameter param = UploadParameter.createForFileUpload(SMALL_FILE, PRIVATE_KEY_1)
 				.build();
 		final CompletableFuture<UploadResult> toPopulateOnSuccess = new CompletableFuture<>();
 
@@ -78,26 +63,11 @@ public class Uploader_asyncIntegrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getTransactionHash(), is(notNullValue()));
-		assertThat(result.getDigest(), is(notNullValue()));
-		assertThat(result.getRootDataHash(), is(notNullValue()));
-		assertThat(result.getRootData(), is(notNullValue()));
-		assertThat(result.getRootData().getDataList(), hasSize(5));
-		result.getRootData().getDataList().forEach(data -> {
-			assertThat(data.getContentType(), is(notNullValue()));
-			assertThat(data.getDataHash(), is(notNullValue()));
-			assertThat(data.getDigest(), is(notNullValue()));
-			assertThat(data.getTimestamp(), is(notNullValue()));
-		});
 	}
 
 	@Test
 	public void shouldUploadAsynchronouslyWithFailureCallback() throws Exception {
-		final UploadParameter param = UploadParameter.create("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", PUBLIC_KEY_2)
-				.addByteArray(FileUtils.readFileToByteArray(PDF_FILE1))
-				.addFile(SMALL_FILE)
-				.addUrlResource(IMAGE_FILE.toURI().toURL())
-				.addFilesAsZip(asList(SMALL_FILE, HTML_FILE))
-				.addString(STRING_TEST)
+		final UploadParameter param = UploadParameter.createForFileUpload(SMALL_FILE, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 				.build();
 		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
 

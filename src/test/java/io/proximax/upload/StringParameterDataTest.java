@@ -19,30 +19,25 @@ public class StringParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullString() throws IOException {
-        StringParameterData.create((String) null).build();
+        StringParameterData.create((String) null);
     }
 
     @Test
     public void createWithStringOnly() throws UnsupportedEncodingException {
-        final StringParameterData param = StringParameterData.create(SAMPLE_DATA).build();
+        final StringParameterData param = StringParameterData.create(SAMPLE_DATA);
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getData(), is(SAMPLE_DATA.getBytes()));
         assertThat(param.getContentType(), is(nullValue()));
         assertThat(param.getDescription(), is(nullValue()));
-        assertThat(param.getMetadata(), is(emptyMap()));
+        assertThat(param.getMetadata(), is(nullValue()));
         assertThat(param.getName(), is(nullValue()));
     }
 
     @Test
     public void createWithCompleteDetails() throws UnsupportedEncodingException {
-        final StringParameterData param = StringParameterData.create(SAMPLE_DATA)
-                .encoding("UTF-8")
-                .description("describe me")
-                .metadata(singletonMap("mykey", "myvalue"))
-                .name("name here")
-                .contentType("text/plain")
-                .build();
+        final StringParameterData param = StringParameterData.create(SAMPLE_DATA, "UTF-8",
+                "describe me", "name here", "text/plain", singletonMap("mykey", "myvalue"));
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getData(), is(SAMPLE_DATA.getBytes("UTF-8")));
@@ -54,7 +49,6 @@ public class StringParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenContentTypeIsReservedExist() throws IOException {
-        StringParameterData.create(SAMPLE_DATA).contentType(PATH_UPLOAD_CONTENT_TYPE).build();
+        StringParameterData.create(SAMPLE_DATA, null, null, null, PATH_UPLOAD_CONTENT_TYPE, null);
     }
-
 }

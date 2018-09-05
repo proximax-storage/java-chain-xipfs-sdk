@@ -22,20 +22,20 @@ public class UrlResourceParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullUrl() throws IOException {
-        UrlResourceParameterData.create((URL) null).build();
+        UrlResourceParameterData.create((URL) null);
     }
 
     @Test
     public void createWithUrlOnly() throws IOException {
         final URL URL = IMAGE_FILE.toURI().toURL();
 
-        final UrlResourceParameterData param = UrlResourceParameterData.create(URL).build();
+        final UrlResourceParameterData param = UrlResourceParameterData.create(URL);
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getData(), is(notNullValue()));
         assertThat(param.getContentType(), is(nullValue()));
         assertThat(param.getDescription(), is(nullValue()));
-        assertThat(param.getMetadata(), is(emptyMap()));
+        assertThat(param.getMetadata(), is(nullValue()));
         assertThat(param.getName(), is(nullValue()));
     }
 
@@ -43,12 +43,8 @@ public class UrlResourceParameterDataTest {
     public void createWithCompleteDetails() throws IOException {
         final URL URL = IMAGE_FILE.toURI().toURL();
 
-        final UrlResourceParameterData param = UrlResourceParameterData.create(URL)
-                .description("describe me")
-                .metadata(singletonMap("mykey", "myvalue"))
-                .name("name here")
-                .contentType("text/plain")
-                .build();
+        final UrlResourceParameterData param = UrlResourceParameterData.create(URL, "describe me",
+                "name here", "text/plain", singletonMap("mykey", "myvalue"));
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getData(), is(notNullValue()));
@@ -62,26 +58,26 @@ public class UrlResourceParameterDataTest {
     public void createWithHtmlFileUrlOnly() throws IOException {
         final URL URL = HTML_FILE.toURI().toURL();
 
-        final UrlResourceParameterData param = UrlResourceParameterData.create(URL).build();
+        final UrlResourceParameterData param = UrlResourceParameterData.create(URL);
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getData(), is(notNullValue()));
         assertThat(param.getContentType(), is(nullValue()));
         assertThat(param.getDescription(), is(nullValue()));
-        assertThat(param.getMetadata(), is(emptyMap()));
+        assertThat(param.getMetadata(), is(nullValue()));
         assertThat(param.getName(), is(nullValue()));
     }
 
     @Test
     @Ignore("creates dependency to internet, test only when required")
     public void createWithHtmlHttpUrlOnly() throws IOException {
-        final UrlResourceParameterData param = UrlResourceParameterData.create(new URL(URL_PDF)).build();
+        final UrlResourceParameterData param = UrlResourceParameterData.create(new URL(URL_PDF));
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getData(), is(notNullValue()));
         assertThat(param.getContentType(), is(nullValue()));
         assertThat(param.getDescription(), is(nullValue()));
-        assertThat(param.getMetadata(), is(emptyMap()));
+        assertThat(param.getMetadata(), is(nullValue()));
         assertThat(param.getName(), is(nullValue()));
     }
 
@@ -89,6 +85,6 @@ public class UrlResourceParameterDataTest {
     public void failWhenContentTypeIsReservedExist() throws IOException {
         final URL URL = HTML_FILE.toURI().toURL();
 
-        UrlResourceParameterData.create(URL).contentType(PATH_UPLOAD_CONTENT_TYPE).build();
+        UrlResourceParameterData.create(URL, null, null, PATH_UPLOAD_CONTENT_TYPE, null);
     }
 }

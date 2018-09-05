@@ -1,18 +1,17 @@
 package io.proximax.service;
 
+import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.mosaic.XEM;
 import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.Message;
 import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.exceptions.GetTransactionFailureException;
 import io.proximax.exceptions.TransactionNotAllowedException;
 import io.proximax.model.ProximaxMessagePayloadModel;
-import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.service.client.TransactionClient;
 import io.proximax.service.factory.BlockchainMessageFactory;
 import io.proximax.utils.NemUtils;
@@ -76,42 +75,51 @@ public class BlockchainTransactionService {
 
     /**
      * Create and announce a blockchain transaction
-     * @param privacyStrategy the privacy strategy that handles the encoding of payload to message
-     * @param signerPrivateKey the signer's private key for the transaction
-     * @param recipientPublicKey the recipient's public key for the transaction recipient
      * @param messagePayload the message payload
+     * @param signerPrivateKey the signer's private key for the transaction
+     * @param recipientPublicKey the recipient's public key for the transaction (if different from signer)
+     * @param recipientAddress the recipient's address for the transaction (if different from signer)
+     * @param transactionDeadline the transaction deadline in hours
+     * @param useBlockchainSecureMessage the flag to indicate if secure message will be created
      * @return the transaction hash
      */
-    public Observable<String> createAndAnnounceTransaction(PrivacyStrategy privacyStrategy, String signerPrivateKey,
-                                                           String recipientPublicKey, ProximaxMessagePayloadModel messagePayload) {
-        checkParameter(privacyStrategy != null, "privacyStrategy is required");
+    public Observable<String> createAndAnnounceTransaction(ProximaxMessagePayloadModel messagePayload, String signerPrivateKey,
+                                                           String recipientPublicKey, String recipientAddress,
+                                                           int transactionDeadline, boolean useBlockchainSecureMessage) {
         checkParameter(signerPrivateKey != null, "signerPrivateKey is required");
-        checkParameter(recipientPublicKey != null, "recipientPublicKey is required");
         checkParameter(messagePayload != null, "messagePayload is required");
 
-        final Message message = blockchainMessageFactory.createMessage(messagePayload);
-        final TransferTransaction transaction = createTransaction(recipientPublicKey, message);
+        final Message message = blockchainMessageFactory.createMessage(messagePayload, signerPrivateKey,
+                recipientPublicKey, recipientAddress, useBlockchainSecureMessage);
+        final Address recipient =  getRecipient(signerPrivateKey, recipientPublicKey, recipientAddress);
+        final TransferTransaction transaction = createTransaction(recipient, transactionDeadline, message);
         final SignedTransaction signedTransaction = nemUtils.signTransaction(signerPrivateKey, transaction);
 
-        return announce(signedTransaction)
+        return transactionClient.announce(signedTransaction)
                 .map(response -> {
                     transactionClient.waitForAnnouncedTransactionToBeUnconfirmed(
-                            nemUtils.toAccount(signerPrivateKey).getAddress(), signedTransaction.getHash());
+                            nemUtils.getAddressFromPrivateKey(signerPrivateKey), signedTransaction.getHash());
                     return signedTransaction.getHash();
                 });
     }
 
-    private TransferTransaction createTransaction(String recipientPublicKey, Message message) {
+    private Address getRecipient(String signerPrivateKey, String recipientPublicKey, String recipientAddress) {
+        if (recipientPublicKey != null) {
+            return nemUtils.getAddressFromPublicKey(recipientPublicKey);
+        } else if (recipientAddress != null) {
+            return nemUtils.getAddress(recipientAddress);
+        } else {
+            return nemUtils.getAddressFromPrivateKey(signerPrivateKey);
+        }
+    }
+
+    private TransferTransaction createTransaction(Address recipientAddress, int transactionDeadline, Message message) {
+
         return TransferTransaction.create(
-                Deadline.create(12, ChronoUnit.HOURS),
-                nemUtils.toAddress(recipientPublicKey),
+                Deadline.create(transactionDeadline, ChronoUnit.HOURS),
+                recipientAddress,
                 Collections.singletonList(new Mosaic(XEM.createRelative(BigInteger.valueOf(1)).getId(), BigInteger.valueOf(1))),
                 message,
                 blockchainNetworkConnection.getNetworkType());
     }
-
-    private Observable<TransactionAnnounceResponse> announce(SignedTransaction signedTransaction) {
-        return transactionClient.announce(signedTransaction);
-    }
-
 }

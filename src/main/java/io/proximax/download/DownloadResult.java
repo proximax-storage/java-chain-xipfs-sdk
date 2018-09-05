@@ -1,42 +1,33 @@
 package io.proximax.download;
 
-import io.proximax.model.ProximaxRootDataModel;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import static java.util.stream.Collectors.toList;
-
 /**
  * The model class that defines the result of a download
- * <br>
- * <br>
- * The following are its fields:
- * <ul>
- *     <li><b>privacyType</b> - the privacy type from privacy strategy used to encrypt data</li>
- *     <li><b>description</b> - the short description of the upload</li>
- *     <li><b>version</b> - the version of upload</li>
- *     <li><b>dataList</b> - the list of downloaded data</li>
- * </ul>
  * @see Downloader#download(DownloadParameter)
  */
-public class DownloadResult {
+public final class DownloadResult {
 
+    private final String transactionHash;
     private final int privacyType;
-    private final String description;
     private final String version;
-    private final List<DownloadResultData> dataList;
+    private final DownloadResultData data;
 
-    private DownloadResult(int privacyType, String description, String version, List<DownloadResultData> dataList) {
+    private DownloadResult(String transactionHash, int privacyType, String version, DownloadResultData data) {
+        this.transactionHash = transactionHash;
         this.privacyType = privacyType;
-        this.description = description;
         this.version = version;
-        this.dataList = dataList == null ? Collections.emptyList() : Collections.unmodifiableList(dataList);
+        this.data = data;
     }
 
     /**
-     * Get the privacy type from privacy strategy used to encrypt data
+     * Get the blockchain transaction hash of the download
+     * @return the blockchain transaction hash
+     */
+    public String getTransactionHash() {
+        return transactionHash;
+    }
+
+    /**
+     * Get the the privacy type of privacy strategy used to encrypt data
      * @return the privacy type
      */
     public int getPrivacyType() {
@@ -44,37 +35,22 @@ public class DownloadResult {
     }
 
     /**
-     * Get the short description of the upload
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Get the version of upload
-     * @return the version
+     * Get the schema version of the upload
+     * @return the schema version
      */
     public String getVersion() {
         return version;
     }
 
     /**
-     * Get the list of downloaded data
-     * @return get the list of downloaded data
+     * Get the downloaded data
+     * @return the downloaded data
      */
-    public List<DownloadResultData> getDataList() {
-        return dataList;
+    public DownloadResultData getData() {
+        return data;
     }
 
-    static DownloadResult create(ProximaxRootDataModel rootData, List<byte[]> decryptedDataList) {
-        final List<DownloadResultData> downloadDataList = IntStream.range(0, decryptedDataList.size())
-                .mapToObj(index -> new DownloadResultData(decryptedDataList.get(index),
-                        rootData.getDataList().get(index).getDescription(),
-                        rootData.getDataList().get(index).getName(),
-                        rootData.getDataList().get(index).getContentType(),
-                        rootData.getDataList().get(index).getMetadata())).collect(toList());
-
-        return new DownloadResult(rootData.getPrivacyType(), rootData.getDescription(), rootData.getVersion(), downloadDataList);
+    static DownloadResult create(String transactionHash, int privacyType, String version, DownloadResultData data) {
+        return new DownloadResult(transactionHash, privacyType, version, data);
     }
 }

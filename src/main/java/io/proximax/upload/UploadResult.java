@@ -1,36 +1,27 @@
 package io.proximax.upload;
 
-import io.proximax.model.ProximaxRootDataModel;
+import io.proximax.model.ProximaxDataModel;
 
 /**
  * The model class that defines the result of an upload.
- * <br>
- * <br>
- * The following are its fields:
- * <ul>
- *     <li><b>transactionHash</b> - the blockchain transaction hash that refers to the upload instance and its data</li>
- *     <li><b>digest</b> - the digest for the root data that refers to the upload instance</li>
- *     <li><b>rootDataHash</b> - the data hash for the root data that refers to the upload instance</li>
- *     <li><b>rootData</b> - the root data (ProximaxRootDataModel) that describes the upload instance</li>
- * </ul>
  * @see Uploader#upload(UploadParameter)
  */
-public class UploadResult {
+public final class UploadResult {
 
     private String transactionHash;
-    private String digest;
-    private String rootDataHash;
-    private ProximaxRootDataModel rootData;
+    private final int privacyType;
+    private final String version;
+    private ProximaxDataModel data;
 
-    private UploadResult(String transactionHash, String digest, String rootDataHash, ProximaxRootDataModel rootData) {
+    private UploadResult(String transactionHash, int privacyType, String version, ProximaxDataModel data) {
         this.transactionHash = transactionHash;
-        this.digest = digest;
-        this.rootDataHash = rootDataHash;
-        this.rootData = rootData;
+        this.privacyType = privacyType;
+        this.version = version;
+        this.data = data;
     }
 
     /**
-     * Get the blockchain transaction hash that refers to the upload instance and its data
+     * Get the blockchain transaction hash of the upload
      * @return the blockchain transaction hash
      */
     public String getTransactionHash() {
@@ -38,31 +29,31 @@ public class UploadResult {
     }
 
     /**
-     * Get the the digest for the root data that refers to the upload instance
-     * @return the digest
+     * Get the privacy type of privacy strategy used to encrypt data
+     * @return the privacy type
+     * @see io.proximax.model.PrivacyType
      */
-    public String getDigest() {
-        return digest;
+    public int getPrivacyType() {
+        return privacyType;
     }
 
     /**
-     * Get the data hash for the root data that refers to the upload instance
-     * @return the root data hash
+     * Get the schema version of upload
+     * @return the schema version
      */
-    public String getRootDataHash() {
-        return rootDataHash;
+    public String getVersion() {
+        return version;
     }
 
     /**
-     * Get the root data that describes the upload instance
-     * @return the root data
+     * Get the uploaded data object
+     * @return the uploaded data object
      */
-    public ProximaxRootDataModel getRootData() {
-        return rootData;
+    public ProximaxDataModel getData() {
+        return data;
     }
 
-    static UploadResult create(String transactionHash, String digest, String rootDataHash,
-                                      ProximaxRootDataModel rootData) {
-        return new UploadResult(transactionHash, digest, rootDataHash, rootData);
+    static UploadResult create(String transactionHash, int privacyType, String version, ProximaxDataModel data) {
+        return new UploadResult(transactionHash, privacyType, version, data);
     }
 }

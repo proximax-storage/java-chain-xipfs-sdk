@@ -11,26 +11,20 @@ import java.util.List;
 import java.util.Map;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
+
 /**
  * This builder class creates the DownloadParameter
- * <ul>
- *     <li><b>transactionHash</b> - the blockchain transaction hash to download</li>
- *     <li><b>rootDataHash</b> - the data hash to root data to download</li>
- *     <li><b>digest</b> - the digest to verify the downloaded root data</li>
- *     <li><b>privacyStrategy</b> - the privacy strategy to decrypt the data</li>
- * </ul>
  * @see DownloadParameter
  */
-
 public class DownloadParameterBuilder {
 
-    private String transactionHash;
-    private String rootDataHash;
+    private final String transactionHash;
+    private String accountPrivateKey;
     private PrivacyStrategy privacyStrategy;
-    private String digest;
+    private Boolean validateDigest;
 
     /**
-     * Construct the builder class
+     * Construct the builder class with transaction hash
      * @param transactionHash the blockchain transaction hash to download
      */
     public DownloadParameterBuilder(String transactionHash) {
@@ -40,19 +34,30 @@ public class DownloadParameterBuilder {
     }
 
     /**
-     * Construct the builder class
-     * @param rootDataHash the data hash to root data to download
-     * @param digest an optional digest to verify the downloaded root data
+     * Set the account private key of either sender or recipient of the transaction (required for secure messages)
+     * @param accountPrivateKey the account private key
+     * @return the same instance of this builder
      */
-    public DownloadParameterBuilder(String rootDataHash, String digest) {
-        checkParameter(rootDataHash != null, "rootDataHash is required");
+    public DownloadParameterBuilder accountPrivateKey(String accountPrivateKey) {
+        this.accountPrivateKey = accountPrivateKey;
+        return this;
+    }
 
-        this.rootDataHash = rootDataHash;
-        this.digest = digest;
+    /**
+     * Set the flag that indicates if need to verify digest
+     * @param validateDigest the validate digest flag
+     * @return the validate digest flag
+     */
+    public DownloadParameterBuilder validateDigest(Boolean validateDigest) {
+        this.validateDigest = validateDigest;
+        return this;
     }
 
     /**
      * Set the privacy strategy to decrypt the data
+     * <br>
+     * <br>
+     * Privacy strategy defines how the data will be decrypted
      * @param privacyStrategy the privacy strategy
      * @return the same instance of this builder
      */
@@ -63,6 +68,7 @@ public class DownloadParameterBuilder {
 
     /**
      * Set the privacy strategy as plain
+     * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
      * @return the same instance of this builder
@@ -77,8 +83,8 @@ public class DownloadParameterBuilder {
      * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
-     * @param privateKey the private key of the blockchain account
-     * @param publicKey the public key of the blockchain account
+     * @param privateKey the private key of one blockchain account that encrypted the data
+     * @param publicKey the public key of the other blockchain account that encrypted the data
      * @return the same instance of this builder
      */
     public DownloadParameterBuilder securedWithNemKeysPrivacy(String privateKey, String publicKey) {
@@ -88,6 +94,7 @@ public class DownloadParameterBuilder {
 
     /**
      * Set the privacy strategy as secured with password
+     * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
      * @param password a 50-character minimum password
@@ -100,6 +107,7 @@ public class DownloadParameterBuilder {
 
     /**
      * Set the privacy strategy as secured with shamir secret sharing
+     * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
      * @param secretTotalPartCount the total count of parts of the secret
@@ -118,6 +126,7 @@ public class DownloadParameterBuilder {
     /**
      * Set the privacy strategy as secured with shamir secret sharing
      * <br>
+     * <br>
      * Privacy strategy defines how the data will be decrypted
      * @param secretTotalPartCount the total count of parts of the secret
      * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
@@ -134,6 +143,7 @@ public class DownloadParameterBuilder {
 
     /**
      * Set the privacy strategy as secured with shamir secret sharing
+     * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
      * @param secretTotalPartCount the total count of parts of the secret
@@ -155,13 +165,16 @@ public class DownloadParameterBuilder {
      * Defaults the following if not provided
      * <ul>
      *     <li><b>privacyStrategy</b> - to plain privacy strategy</li>
+     *     <li><b>validateDigest</b> - to false</li>
      * </ul>
      * @return the download data parameter
      */
     public DownloadParameter build() {
         if (this.privacyStrategy == null)
             this.privacyStrategy = PlainPrivacyStrategy.create();
-        return new DownloadParameter(transactionHash, rootDataHash, privacyStrategy, digest);
+        if (this.validateDigest == null)
+            this.validateDigest = false;
+        return new DownloadParameter(transactionHash, accountPrivateKey, privacyStrategy, validateDigest);
     }
 
 }

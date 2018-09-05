@@ -15,12 +15,19 @@ public class BlockchainMessageFactory {
     /**
      * Create a transaction message
      * @param messagePayload the message payload
+     * @param signerPrivateKey the private key of signer
+     * @param recipientPublicKey an optional recipient public key (if different from signer)
+     * @param recipientAddress the optional address (if different from signer)
+     * @param useBlockchainSecureMessage the flag to indicate if to create secure message
      * @return the created transaction message
      */
-    public Message createMessage(ProximaxMessagePayloadModel messagePayload) {
+    public Message createMessage(ProximaxMessagePayloadModel messagePayload, String signerPrivateKey, String recipientPublicKey,
+                                 String recipientAddress, boolean useBlockchainSecureMessage) {
         checkParameter(messagePayload != null, "messagePayload is required");
 
+        // TODO handle secure message
         final String jsonPayload = JsonUtils.toJson(messagePayload);
         return new PlainMessage(jsonPayload);
     }
+
 }

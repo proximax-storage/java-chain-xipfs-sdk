@@ -1,8 +1,8 @@
 package io.proximax.upload;
 
 import io.proximax.service.BlockchainTransactionService;
+import io.proximax.service.CreateProximaxDataService;
 import io.proximax.service.CreateProximaxMessagePayloadService;
-import io.proximax.service.CreateProximaxRootDataService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -16,7 +16,7 @@ public class UploaderTest {
     private BlockchainTransactionService mockBlockchainTransactionService;
 
     @Mock
-    private CreateProximaxRootDataService mockCreateProximaxRootDataService;
+    private CreateProximaxDataService mockCreateProximaxDataService;
 
     @Mock
     private CreateProximaxMessagePayloadService mockCreateProximaxMessagePayloadService;
@@ -24,7 +24,7 @@ public class UploaderTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        unitUnderTest = new Uploader(mockBlockchainTransactionService, mockCreateProximaxRootDataService, mockCreateProximaxMessagePayloadService);
+        unitUnderTest = new Uploader(mockBlockchainTransactionService, mockCreateProximaxDataService, mockCreateProximaxMessagePayloadService);
     }
 
     @Test(expected = IllegalArgumentException.class)

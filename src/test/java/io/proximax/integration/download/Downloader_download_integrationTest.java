@@ -8,21 +8,19 @@ import io.proximax.download.DownloadResult;
 import io.proximax.download.Downloader;
 import io.proximax.exceptions.DownloadFailureException;
 import io.proximax.model.BlockchainNetworkType;
-import io.proximax.model.PrivacyType;
 import io.proximax.testsupport.TestHelper;
 import org.junit.Before;
 import org.junit.Test;
 
-import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
+import static io.proximax.model.Constants.SCHEMA_VERSION;
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
 import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
-import static io.proximax.testsupport.Constants.PRIVATE_KEY_1;
-import static io.proximax.testsupport.Constants.PUBLIC_KEY_2;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
 
 public class Downloader_download_integrationTest {
 
@@ -37,72 +35,202 @@ public class Downloader_download_integrationTest {
 
 	@Test(expected = DownloadFailureException.class)
 	public void failWhenInvalidTransactionHash() {
-		final DownloadParameter param =
-				DownloadParameter.createWithTransactionHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
+		final DownloadParameter param = DownloadParameter.create("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
 
 		unitUnderTest.download(param);
 	}
 
 	@Test
-	public void shouldDownloadByTransactionHash() {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadAllDataTypes", "transactionHash");
-		final DownloadParameter param =
-				DownloadParameter.createWithTransactionHash(transactionHash).build();
+	public void shouldDownloadWithVersion() {
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(result.getDataList(), hasSize(6));
-		result.getDataList().stream().forEach(data -> {
-			if (!data.getContentType().equals(PATH_UPLOAD_CONTENT_TYPE))
-				assertThat(data.getData(), is(notNullValue()));
-		});
+		assertThat(result.getVersion(), is(SCHEMA_VERSION));
+	}
+
+	@Test
+	public void shouldDownloadByteArray() {
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
+
+		final DownloadResult result = unitUnderTest.download(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getData(), is(notNullValue()));
+		assertThat(result.getData().getContentType(), is(nullValue()));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
+		assertThat(result.getData().getDescription(), is(nullValue()));
+		assertThat(result.getData().getName(), is(nullValue()));
+		assertThat(result.getData().getMetadata(), is(emptyMap()));
+		assertThat(result.getData().getTimestamp(), is(notNullValue()));
+	}
+
+	@Test
+	public void shouldDownloadByteArrayWithCompleteDetails() {
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArrayWithCompleteDetails", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
+
+		final DownloadResult result = unitUnderTest.download(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getContentType(), is("application/pdf"));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
+		assertThat(result.getData().getDescription(), is("byte array description"));
+		assertThat(result.getData().getName(), is("byte array"));
+		assertThat(result.getData().getMetadata(), is(singletonMap("bytearraykey", "bytearrayval")));
+		assertThat(result.getData().getTimestamp(), is(notNullValue()));
+	}
+
+	@Test
+	public void shouldDownloadFile() {
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFile", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
+
+		final DownloadResult result = unitUnderTest.download(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getData(), is(notNullValue()));
+		assertThat(result.getData().getContentType(), is(nullValue()));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
+		assertThat(result.getData().getDescription(), is(nullValue()));
+		assertThat(result.getData().getName(), is("test_small_file.txt"));
+		assertThat(result.getData().getMetadata(), is(emptyMap()));
+		assertThat(result.getData().getTimestamp(), is(notNullValue()));
+	}
+
+	@Test
+	public void shouldDownloadFileWithCompleteDetails() {
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFileWithCompleteDetails", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
+
+		final DownloadResult result = unitUnderTest.download(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getContentType(), is("text/plain"));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
+		assertThat(result.getData().getDescription(), is("file description"));
+		assertThat(result.getData().getName(), is("file name"));
+		assertThat(result.getData().getMetadata(), is(singletonMap("filekey", "filename")));
+		assertThat(result.getData().getTimestamp(), is(notNullValue()));
+	}
+
+	@Test
+	public void shouldDownloadUrlResource() {
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadUrlResource", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
+
+		final DownloadResult result = unitUnderTest.download(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getData(), is(notNullValue()));
+		assertThat(result.getData().getContentType(), is(nullValue()));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
+		assertThat(result.getData().getDescription(), is(nullValue()));
+		assertThat(result.getData().getName(), is(nullValue()));
+		assertThat(result.getData().getMetadata(), is(emptyMap()));
+		assertThat(result.getData().getTimestamp(), is(notNullValue()));
+	}
+
+	@Test
+	public void shouldDownloadUrlResourceWithCompleteDetails() {
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadUrlResourceWithCompleteDetails", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
+
+		final DownloadResult result = unitUnderTest.download(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getContentType(), is("image/png"));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
+		assertThat(result.getData().getDescription(), is("url description"));
+		assertThat(result.getData().getName(), is("url name"));
+		assertThat(result.getData().getMetadata(), is(singletonMap("urlkey", "urlval")));
+		assertThat(result.getData().getTimestamp(), is(notNullValue()));
+	}
+
+	@Test
+	public void shouldDownloadFilesAsZip() {
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFilesAsZip", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
+
+		final DownloadResult result = unitUnderTest.download(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getData(), is(notNullValue()));
+		assertThat(result.getData().getContentType(), is("application/zip"));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
+		assertThat(result.getData().getDescription(), is(nullValue()));
+		assertThat(result.getData().getName(), is(nullValue()));
+		assertThat(result.getData().getMetadata(), is(emptyMap()));
+		assertThat(result.getData().getTimestamp(), is(notNullValue()));
+	}
+
+	@Test
+	public void shouldDownloadFilesAsZipWithCompleteDetails() {
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFilesAsZipWithCompleteDetails", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
+
+		final DownloadResult result = unitUnderTest.download(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getContentType(), is("application/zip"));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
+		assertThat(result.getData().getDescription(), is("zip description"));
+		assertThat(result.getData().getName(), is("zip name"));
+		assertThat(result.getData().getMetadata(), is(singletonMap("zipkey", "zipvalue")));
+		assertThat(result.getData().getTimestamp(), is(notNullValue()));
+	}
+
+	@Test
+	public void shouldDownloadString() {
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadString", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
+
+		final DownloadResult result = unitUnderTest.download(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getData(), is(notNullValue()));
+		assertThat(result.getData().getContentType(), is(nullValue()));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
+		assertThat(result.getData().getDescription(), is(nullValue()));
+		assertThat(result.getData().getName(), is(nullValue()));
+		assertThat(result.getData().getMetadata(), is(emptyMap()));
+		assertThat(result.getData().getTimestamp(), is(notNullValue()));
+	}
+
+	@Test
+	public void shouldDownloadStringpWithCompleteDetails() {
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadStringWithCompleteDetails", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
+
+		final DownloadResult result = unitUnderTest.download(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getContentType(), is("text/plain"));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
+		assertThat(result.getData().getDescription(), is("string description"));
+		assertThat(result.getData().getName(), is("string name"));
+		assertThat(result.getData().getMetadata(), is(singletonMap("keystring", "valstring")));
+		assertThat(result.getData().getTimestamp(), is(notNullValue()));
 	}
 
 	@Test(expected = DownloadFailureException.class)
-	public void failWhenInvalidRootDataHash() {
-		final DownloadParameter param =
-				DownloadParameter.createWithRootDataHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", null).build();
+	public void failDownloadWhenContentTypeIsDirectory() {
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadPath", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		unitUnderTest.download(param);
 	}
-
-	@Test
-	public void shouldDownloadByRootDataHash() {
-		final String rootDataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadAllDataTypes", "rootDataHash");
-		final DownloadParameter param =
-				DownloadParameter.createWithRootDataHash(rootDataHash, null).build();
-
-		final DownloadResult result = unitUnderTest.download(param);
-
-		assertThat(result, is(notNullValue()));
-		assertThat(result.getDataList(), hasSize(6));
-		result.getDataList().stream().forEach(data -> {
-			if (!data.getContentType().equals(PATH_UPLOAD_CONTENT_TYPE))
-				assertThat(data.getData(), is(notNullValue()));
-		});
-	}
-
-	@Test
-	public void shouldDownloadCompleteDetails() {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadWithAllDetails", "transactionHash");
-		final DownloadParameter param =
-				DownloadParameter.createWithTransactionHash(transactionHash)
-						.securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
-						.build();
-
-		final DownloadResult result = unitUnderTest.download(param);
-
-		assertThat(result, is(notNullValue()));
-		assertThat(result.getDescription(), is("root description"));
-		assertThat(result.getVersion(), is("1.0"));
-		assertThat(result.getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
-		assertThat(result.getDataList(), hasSize(1));
-		assertThat(result.getDataList().get(0).getData(), is(notNullValue()));
-		assertThat(result.getDataList().get(0).getContentType(), is("text/plain"));
-		assertThat(result.getDataList().get(0).getDescription(), is("byte array description"));
-		assertThat(result.getDataList().get(0).getName(), is("byte array"));
-		assertThat(result.getDataList().get(0).getMetadata(), is(singletonMap("key1", "val1")));
-	}
-
 }

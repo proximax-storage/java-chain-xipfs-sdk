@@ -3,176 +3,63 @@ package io.proximax.service;
 import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.model.ProximaxMessagePayloadModel;
-import io.proximax.model.ProximaxRootDataModel;
-import io.proximax.privacy.strategy.PrivacyStrategy;
-import io.proximax.upload.StringParameterData;
 import io.proximax.upload.UploadParameter;
-import io.proximax.utils.DigestUtils;
-import io.reactivex.Observable;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.io.UnsupportedEncodingException;
 
-import static java.util.Arrays.asList;
+import static io.proximax.model.Constants.SCHEMA_VERSION;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 public class CreateProximaxMessagePayloadServiceTest {
 
-    private static final byte[] DUMMY_ENCRYPTED_DATA = "djhsaklhdkshzkjdhsakjdhjksahkjdsakljdsa".getBytes();
-    private static final String DUMMY_DIGEST = "eqeqweqweqweqweqweqw";
-    private static final String DUMMY_ROOT_DATA_HASH = "Qmcjkzxhkjchxzkjhcjkxznbcjkxz";
-    private static final String DUMMY_ROOT_DESCRIPTION = "ewqeqwewqeqweqw";
-    private static final String DUMMY_VERSION = "1.0";
-
     private CreateProximaxMessagePayloadService unitUnderTest;
-
-    @Mock
-    private IpfsUploadService mockIpfsUploadService;
-
-    @Mock
-    private DigestUtils mockDigestUtils;
-
-    @Mock
-    private PrivacyStrategy mockPrivacyStrategy;
-
-    @Captor
-    private ArgumentCaptor<byte[]> rootDataByteArgumentCaptor;
-
-    @Captor
-    private ArgumentCaptor<byte[]> digestArgumentCaptor;
-
-    @Captor
-    private ArgumentCaptor<byte[]> uploadArgumentCaptor;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        unitUnderTest = new CreateProximaxMessagePayloadService(mockIpfsUploadService, mockDigestUtils);
-
-        given(mockPrivacyStrategy.getPrivacyType()).willReturn(1001);
+        unitUnderTest = new CreateProximaxMessagePayloadService();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullUploadParameter() {
-        unitUnderTest.createMessagePayload(null, sampleRootData());
+        unitUnderTest.createMessagePayload(null, sampleUploadedData());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullRootData() throws UnsupportedEncodingException {
-        unitUnderTest.createMessagePayload(sampleUploadParameterWithComputeDigestTrue(), null);
+        unitUnderTest.createMessagePayload(sampleUploadParameter(), null);
     }
 
     @Test
-    public void shouldReturnMessagePayloadWhenComputeDigestTrue() throws UnsupportedEncodingException {
-        given(mockPrivacyStrategy.encryptData(any())).willReturn(DUMMY_ENCRYPTED_DATA);
-        given(mockDigestUtils.digest(any())).willReturn(Observable.just(DUMMY_DIGEST));
-        given(mockIpfsUploadService.uploadByteArray(any()))
-                .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH, 9999L)));
-
+    public void shouldReturnMessagePayload() throws UnsupportedEncodingException {
         final ProximaxMessagePayloadModel result =
-                unitUnderTest.createMessagePayload(sampleUploadParameterWithComputeDigestTrue(), sampleRootData()).blockingFirst();
+                unitUnderTest.createMessagePayload(sampleUploadParameter(), sampleUploadedData()).blockingFirst();
 
         assertThat(result, is(notNullValue()));
-        assertThat(result.getDigest(), is(DUMMY_DIGEST));
-        assertThat(result.getRootDataHash(), is(DUMMY_ROOT_DATA_HASH));
-        assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
         assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
-        assertThat(result.getVersion(), is(DUMMY_VERSION));
+        assertThat(result.getVersion(), is(SCHEMA_VERSION));
+        assertThat(result.getData().getDataHash(), is("sample data hash"));
+        assertThat(result.getData().getDigest(), is("sample digest"));
+        assertThat(result.getData().getTimestamp(), is(1L));
+        assertThat(result.getData().getDescription(), is("sample description"));
+        assertThat(result.getData().getName(), is("sample name"));
+        assertThat(result.getData().getContentType(), is("text/plain"));
+        assertThat(result.getData().getMetadata(), is(singletonMap("samplekey", "samplevalue")));
     }
 
-    @Test
-    public void shouldReturnMessagePayloadWhenComputeDigestFalse() throws UnsupportedEncodingException {
-        given(mockPrivacyStrategy.encryptData(any())).willReturn(DUMMY_ENCRYPTED_DATA);
-        given(mockIpfsUploadService.uploadByteArray(any()))
-                .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH, 9999L)));
-
-        final ProximaxMessagePayloadModel result =
-                unitUnderTest.createMessagePayload(sampleUploadParameterWithComputeDigestFalse(), sampleRootData()).blockingFirst();
-
-        assertThat(result, is(notNullValue()));
-        assertThat(result.getDigest(), is(nullValue()));
-        assertThat(result.getRootDataHash(), is(DUMMY_ROOT_DATA_HASH));
-        assertThat(result.getDescription(), is(DUMMY_ROOT_DESCRIPTION));
-        assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
-        assertThat(result.getVersion(), is(DUMMY_VERSION));
+    private ProximaxDataModel sampleUploadedData() {
+        return new ProximaxDataModel("sample digest", "sample data hash", "sample description",
+                singletonMap("samplekey", "samplevalue"), 1L, "sample name", "text/plain");
     }
 
-    @Test
-    public void shouldDelegateCorrectly() throws UnsupportedEncodingException {
-        given(mockPrivacyStrategy.encryptData(rootDataByteArgumentCaptor.capture())).willReturn(DUMMY_ENCRYPTED_DATA);
-        given(mockDigestUtils.digest(digestArgumentCaptor.capture())).willReturn(Observable.just(DUMMY_DIGEST));
-        given(mockIpfsUploadService.uploadByteArray(uploadArgumentCaptor.capture()))
-                .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_ROOT_DATA_HASH, 9999L)));
-
-        final ProximaxMessagePayloadModel result =
-                unitUnderTest.createMessagePayload(sampleUploadParameterWithComputeDigestTrue(), sampleRootData()).blockingFirst();
-
-        assertThat(result, is(notNullValue()));
-        assertThat(new String(rootDataByteArgumentCaptor.getValue()), is(
-                "{\"privacyType\":1001," +
-                        "\"description\":\"ewqeqwewqeqweqw\"," +
-                        "\"version\":\"1.0\"," +
-                        "\"dataList\":[" +
-                            "{" +
-                                "\"digest\":\"iowuqoieuqowueoiqw\"," +
-                                "\"dataHash\":\"Qmdahdksadjksahjk\"," +
-                                "\"timestamp\":1000," +
-                                "\"description\":\"data 1\"," +
-                                "\"metadata\":{\"key1\":\"value1\"}," +
-                                "\"name\":\"data name 1\"," +
-                                "\"contentType\":\"text/plain\"" +
-                            "}," +
-                            "{" +
-                                "\"digest\":\"sadasdsadsadasdads\"," +
-                                "\"dataHash\":\"Qmcxzczxczxczxcxz\"," +
-                                "\"timestamp\":2000," +
-                                "\"description\":\"data 2\"," +
-                                "\"metadata\":{\"key2\":\"value2\"}," +
-                                "\"name\":\"data name 2\"," +
-                                "\"contentType\":\"text/html\"" +
-                            "}" +
-                        "]" +
-                        "}"));
-        assertThat(digestArgumentCaptor.getValue(), is(DUMMY_ENCRYPTED_DATA));
-        assertThat(uploadArgumentCaptor.getValue(), is(DUMMY_ENCRYPTED_DATA));
-    }
-
-    private ProximaxRootDataModel sampleRootData() {
-        return new ProximaxRootDataModel(PrivacyType.PLAIN.getValue(), DUMMY_ROOT_DESCRIPTION, DUMMY_VERSION,
-                asList(
-                        new ProximaxDataModel("iowuqoieuqowueoiqw", "Qmdahdksadjksahjk", "data 1",
-                                singletonMap("key1", "value1"), 1000L, "data name 1", "text/plain"),
-                        new ProximaxDataModel("sadasdsadsadasdads", "Qmcxzczxczxczxcxz", "data 2",
-                                singletonMap("key2", "value2"), 2000L, "data name 2", "text/html")
-        ));
-    }
-
-    private UploadParameter sampleUploadParameterWithComputeDigestTrue() throws UnsupportedEncodingException {
-        return UploadParameter.create("dhsakhdkashkdsahkdsa", "ndsakjhdkjsahdasjhjkdsa")
-                .addString(StringParameterData.create("dashkdhsakjdhask").build())
-                .description(DUMMY_ROOT_DESCRIPTION)
-                .computeDigest(true)
-                .privacyStrategy(mockPrivacyStrategy)
+    private UploadParameter sampleUploadParameter() throws UnsupportedEncodingException {
+        return UploadParameter.createForStringUpload("sample", "sample private key")
+                .plainPrivacy()
                 .build();
     }
 
-    private UploadParameter sampleUploadParameterWithComputeDigestFalse() throws UnsupportedEncodingException {
-        return UploadParameter.create("dhsakhdkashkdsahkdsa", "ndsakjhdkjsahdasjhjkdsa")
-                .addString(StringParameterData.create("dashkdhsakjdhask").build())
-                .description(DUMMY_ROOT_DESCRIPTION)
-                .computeDigest(false)
-                .privacyStrategy(mockPrivacyStrategy)
-                .build();
-    }
 }

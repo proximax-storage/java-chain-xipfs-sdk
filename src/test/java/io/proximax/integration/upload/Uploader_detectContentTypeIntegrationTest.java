@@ -20,7 +20,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class Uploader_computeDigestIntegrationTest {
+public class Uploader_detectContentTypeIntegrationTest {
 
 	private Uploader unitUnderTest;
 
@@ -32,31 +32,31 @@ public class Uploader_computeDigestIntegrationTest {
 	}
 
 	@Test
-	public void shouldUploadWithEnabledComputeDigest() throws Exception {
+	public void shouldUploadWithEnabledDetectContentType() throws Exception {
 		final UploadParameter param = UploadParameter.createForStringUpload(STRING_TEST, PRIVATE_KEY_1)
-				.computeDigest(true)
+				.detectContentType(true)
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(result.getData().getDigest(), is(notNullValue()));
+		assertThat(result.getData().getContentType(), is(notNullValue()));
 
-		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithEnabledComputeDigest");
+		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithEnabledDetectContentType");
 	}
 
 	@Test
-	public void shouldUploadWithDisabledComputeDigest() throws Exception {
+	public void shouldUploadWithDisabledDetectContentType() throws Exception {
 		final UploadParameter param = UploadParameter.createForStringUpload(STRING_TEST, PRIVATE_KEY_1)
-				.computeDigest(false)
+				.detectContentType(false)
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(result.getData().getDigest(), is(nullValue()));
+		assertThat(result.getData().getContentType(), is(nullValue()));
 
 
-		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithDisabledComputeDigest");
+		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithDisabledDetectContentType");
 	}
 }

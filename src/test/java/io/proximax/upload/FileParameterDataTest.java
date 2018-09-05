@@ -22,39 +22,35 @@ public class FileParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullFile() throws IOException {
-        FileParameterData.create((File) null).build();
+        FileParameterData.create((File) null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenFileIsADirectory() throws IOException {
-        FileParameterData.create(PATH_FILE).build();
+        FileParameterData.create(PATH_FILE);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenFileDoesNotExist() throws IOException {
-        FileParameterData.create(NON_EXISTENT_FILE).build();
+        FileParameterData.create(NON_EXISTENT_FILE);
     }
 
     @Test
     public void createWithFileOnly() throws IOException {
-        final FileParameterData param = FileParameterData.create(IMAGE_FILE).build();
+        final FileParameterData param = FileParameterData.create(IMAGE_FILE);
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getData(), is(FileUtils.readFileToByteArray(IMAGE_FILE)));
         assertThat(param.getContentType(), is(nullValue()));
         assertThat(param.getDescription(), is(nullValue()));
-        assertThat(param.getMetadata(), is(emptyMap()));
+        assertThat(param.getMetadata(), is(nullValue()));
         assertThat(param.getName(), is("test_image.png"));
     }
 
     @Test
     public void createWithCompleteDetails() throws IOException {
-        final FileParameterData param = FileParameterData.create(IMAGE_FILE)
-                .description("describe me")
-                .metadata(singletonMap("mykey", "myvalue"))
-                .name("name here")
-                .contentType("text/plain")
-                .build();
+        final FileParameterData param = FileParameterData.create(IMAGE_FILE, "describe me",
+                "name here", "text/plain", singletonMap("mykey", "myvalue"));
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getData(), is(FileUtils.readFileToByteArray(IMAGE_FILE)));
@@ -66,7 +62,7 @@ public class FileParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenContentTypeIsReservedExist() throws IOException {
-        FileParameterData.create(IMAGE_FILE).contentType(PATH_UPLOAD_CONTENT_TYPE).build();
+        FileParameterData.create(IMAGE_FILE, null, null, PATH_UPLOAD_CONTENT_TYPE, null);
     }
 
 }

@@ -20,7 +20,7 @@ public class FilesAsZipParameterData extends ByteArrayParameterData {
 
     private final List<File> files;
 
-    FilesAsZipParameterData(List<File> files, String description, String name, Map<String, String> metadata) throws IOException {
+    private FilesAsZipParameterData(List<File> files, String description, String name, Map<String, String> metadata) throws IOException {
         super(zipFiles(files), description, name, "application/zip", metadata);
         this.files = files;
     }
@@ -53,31 +53,25 @@ public class FilesAsZipParameterData extends ByteArrayParameterData {
     }
 
     /**
-     * Start creating an instance of FilesAsZipParameterData using the FilesAsZipParameterDataBuilder
+     * Create instance by providing the list of files
      * @param files the list of files to upload as zip
-     * @return the files as zip parameter data builder
+     * @return the instance of this class
+     * @throws IOException file read failures
      */
-    public static FilesAsZipParameterDataBuilder create(List<File> files) {
-        return new FilesAsZipParameterDataBuilder(files);
+    public static FilesAsZipParameterData create(List<File> files) throws IOException {
+        return create(files, null, null, null);
     }
 
     /**
-     * This builder class creates the FilesAsZipParameterData
+     * Create instance by providing the list of files
+     * @param files the list of files to upload as zip
+     * @param description a searchable description attach on the upload
+     * @param name a searchable name attach on the upload
+     * @param metadata a searchable key-pair metadata attach on the upload
+     * @return the instance of this class
+     * @throws IOException file read failures
      */
-    public static class FilesAsZipParameterDataBuilder extends AbstractParameterDataBuilder<FilesAsZipParameterDataBuilder> {
-        private List<File> files;
-
-        FilesAsZipParameterDataBuilder(List<File> files) {
-            this.files = files;
-        }
-
-        /**
-         * Builds the FilesAsZipParameterData
-         * @return the files as zip parameter data
-         * @throws IOException when reading file fails
-         */
-        public FilesAsZipParameterData build() throws IOException {
-            return new FilesAsZipParameterData(files, description, name, metadata);
-        }
+    public static FilesAsZipParameterData create(List<File> files, String description, String name, Map<String, String> metadata) throws IOException {
+        return new FilesAsZipParameterData(files, description, name, metadata);
     }
 }

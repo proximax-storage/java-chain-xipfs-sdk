@@ -17,20 +17,20 @@ import static org.hamcrest.core.Is.is;
 
 public class SecuredWithShamirSecretSharingPrivacyStrategyTest {
 
-    public static final byte[] SAMPLE_DATA = "the quick brown fox jumps over the lazy dog".getBytes();
-    
-    public static final byte[] SECRET = ("dhsakdhsauihcxznmneywquidkjsanjcbnxztyduisyaheqkwjncbxzcgyuiagsdiujasodjk" +
+    private static final byte[] SAMPLE_DATA = "the quick brown fox jumps over the lazy dog".getBytes();
+
+    private static final byte[] SECRET = ("dhsakdhsauihcxznmneywquidkjsanjcbnxztyduisyaheqkwjncbxzcgyuiagsdiujasodjk" +
             "wqehqtsyiudhsandmbsamnbcxzygcahgisudhasnmbdmnasbcysagciugxziuhkjsbdamndnmsabfgaduishadshakdnsakdbsajbeh" +
             "wqyuieyqwiueyqwohdsanlnalsfjkhgkzgmnbcmnxzbhjgdsajgduisayiuyewquehwqkjbeqwnbdmnabsdabjshgdasudhgsuakghk" +
             "cbxzcbajsbdkasjgkjhwgquegqwbzmcbmzxn").getBytes();
 
-    public static final int SECRET_TOTAL_PART_COUNT = 5;
+    private static final int SECRET_TOTAL_PART_COUNT = 5;
 
-    public static final int SECRET_MINIMUM_PART_COUNT_TO_BUILD = 3;
+    private static final int SECRET_MINIMUM_PART_COUNT_TO_BUILD = 3;
 
-    public static final Scheme SCHEME = Scheme.of(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD);
+    private static final Scheme SCHEME = Scheme.of(SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD);
 
-    public static final Map<Integer, byte[]> SECRET_PARTS = SCHEME.split(SECRET);
+    private static final Map<Integer, byte[]> SECRET_PARTS = SCHEME.split(SECRET);
 
     @Test
     public void shouldReturnCorrectPrivacyType() {

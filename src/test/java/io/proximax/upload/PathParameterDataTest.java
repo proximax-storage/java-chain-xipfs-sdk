@@ -1,5 +1,6 @@
 package io.proximax.upload;
 
+import org.hamcrest.core.IsNull;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -18,33 +19,30 @@ public class PathParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullPath() {
-        PathParameterData.create(null).build();
+        PathParameterData.create(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNotDirectory() {
-        PathParameterData.create(HTML_FILE).build();
+        PathParameterData.create(HTML_FILE);
     }
 
     @Test
     public void createWithPathOnly() {
-        final PathParameterData param = PathParameterData.create(PATH_FILE).build();
+        final PathParameterData param = PathParameterData.create(PATH_FILE);
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getPath(), is(PATH_FILE));
         assertThat(param.getContentType(), is(PATH_UPLOAD_CONTENT_TYPE));
         assertThat(param.getDescription(), is(nullValue()));
-        assertThat(param.getMetadata(), is(emptyMap()));
+        assertThat(param.getMetadata(), is(nullValue()));
         assertThat(param.getName(), is(nullValue()));
     }
 
     @Test
     public void createWithCompleteDetails() throws IOException {
-        final PathParameterData param = PathParameterData.create(PATH_FILE)
-                .description("describe me")
-                .metadata(singletonMap("mykey", "myvalue"))
-                .name("name here")
-                .build();
+        final PathParameterData param = PathParameterData.create(PATH_FILE, "describe me",
+                "name here", singletonMap("mykey", "myvalue"));
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getPath(), is(PATH_FILE));

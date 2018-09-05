@@ -7,7 +7,6 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 public class TestHelper {
 
@@ -15,23 +14,12 @@ public class TestHelper {
 
     public static void logAndSaveResult(UploadResult result, String testMethodName) {
         System.out.println("transaction hash: " + result.getTransactionHash());
-        System.out.println("digest: " + result.getDigest());
-        System.out.println("root data hash: " + result.getRootDataHash());
-        result.getRootData().getDataList().stream().forEach(data ->  {
-            System.out.println("data hash: " + data.getDataHash());
-            System.out.println("data digest: " + data.getDigest());
-        });
+        System.out.println("data hash: " + result.getData().getDataHash());
+        System.out.println("data digest: " + result.getData().getDigest());
 
-        final String testDataPrefix = testMethodName;
-        TEST_DATA_MAP.putIfAbsent(testDataPrefix + ".rootDataHash", result.getRootDataHash());
-        TEST_DATA_MAP.putIfAbsent(testDataPrefix + ".transactionHash", result.getTransactionHash());
-        TEST_DATA_MAP.putIfAbsent(testDataPrefix + ".rootDataDigest", result.getDigest());
-        IntStream.range(0, result.getRootData().getDataList().size()).forEach(index -> {
-            TEST_DATA_MAP.putIfAbsent(testDataPrefix + ".dataList[" + index + "].dataHash",
-                    result.getRootData().getDataList().get(index).getDataHash());
-            TEST_DATA_MAP.putIfAbsent(testDataPrefix + ".dataList[" + index + "].digest",
-                    result.getRootData().getDataList().get(index).getDigest());
-        });
+        TEST_DATA_MAP.putIfAbsent(testMethodName + ".transactionHash", result.getTransactionHash());
+        TEST_DATA_MAP.putIfAbsent(testMethodName + ".dataHash", result.getData().getDataHash());
+        TEST_DATA_MAP.putIfAbsent(testMethodName + ".digest", result.getData().getDigest());
 
         saveTestDataMap();
     }
@@ -40,7 +28,7 @@ public class TestHelper {
         return TEST_DATA_MAP.get(testMethodName + "." + dataName);
     }
 
-    public static void saveTestDataMap() {
+    private static void saveTestDataMap() {
         try {
             FileUtils.writeStringToFile(new File("src//test/resources//test_data//test_data.json"), JsonUtils.toJson(TEST_DATA_MAP));
         } catch (IOException e) {

@@ -24,7 +24,6 @@ import static io.proximax.testsupport.Constants.PRIVATE_KEY_1;
 import static io.proximax.testsupport.Constants.PUBLIC_KEY_2;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -42,11 +41,9 @@ public class Downloader_download_asyncIntegrationTest {
 
 	@Test
 	public void shouldDownloadAsynchronouslyWithoutCallback() throws Exception {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadWithAllDetails", "transactionHash");
-		final DownloadParameter param =
-				DownloadParameter.createWithTransactionHash(transactionHash)
-						.securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
-						.build();
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash)
+				.build();
 
 		final AsyncTask asyncTask = unitUnderTest.downloadAsync(param, null);
 		while (!asyncTask.isDone()) {
@@ -58,34 +55,22 @@ public class Downloader_download_asyncIntegrationTest {
 
 	@Test
 	public void shouldDownloadAsynchronouslyWithSuccessCallback() throws Exception {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadWithAllDetails", "transactionHash");
-		final DownloadParameter param =
-				DownloadParameter.createWithTransactionHash(transactionHash)
-						.securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
-						.build();
+		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash)
+				.build();
 		final CompletableFuture<DownloadResult> toPopulateOnSuccess = new CompletableFuture<>();
 
 		unitUnderTest.downloadAsync(param, AsyncCallback.create(toPopulateOnSuccess::complete, null));
 		final DownloadResult result = toPopulateOnSuccess.get(5, TimeUnit.SECONDS);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(result.getDescription(), is("root description"));
-		assertThat(result.getVersion(), is("1.0"));
-		assertThat(result.getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
-		assertThat(result.getDataList(), hasSize(1));
-		assertThat(result.getDataList().get(0).getData(), is(notNullValue()));
-		assertThat(result.getDataList().get(0).getContentType(), is("text/plain"));
-		assertThat(result.getDataList().get(0).getDescription(), is("byte array description"));
-		assertThat(result.getDataList().get(0).getName(), is("byte array"));
-		assertThat(result.getDataList().get(0).getMetadata(), is(singletonMap("key1", "val1")));
+		assertThat(result.getData(), is(notNullValue()));
 	}
 
 	@Test
 	public void shouldDownloadAsynchronouslyWithFailureCallback() throws Exception {
-		final DownloadParameter param =
-				DownloadParameter.createWithTransactionHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-						.plainPrivacy()
-						.build();
+		final DownloadParameter param = DownloadParameter.create("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+				.build();
 		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
 
 		unitUnderTest.downloadAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));

@@ -59,7 +59,7 @@ public class Constants {
 
     public static final int SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD = 3;
 
-    public static final Scheme SCHEME = Scheme.of(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD);
+    public static final Scheme SHAMIR_SCHEME = Scheme.of(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD);
 
-    public static final Map<Integer, byte[]> SHAMIR_SECRET_PARTS = SCHEME.split(SHAMIR_SECRET);
+    public static final Map<Integer, byte[]> SHAMIR_SECRET_PARTS = SHAMIR_SCHEME.split(SHAMIR_SECRET);
 }

@@ -14,11 +14,13 @@ public class RetrieveProximaxMessagePayloadService {
     /**
      * Retrieves message payload from blockchain transaction
      * @param transferTransaction the blockchain transaction
+     * @param accountPrivateKey the private key of either signer or recipient to read secure message
      * @return the message payload
      */
-    public ProximaxMessagePayloadModel getMessagePayload(TransferTransaction transferTransaction) {
+    public ProximaxMessagePayloadModel getMessagePayload(TransferTransaction transferTransaction, String accountPrivateKey) {
         checkParameter(transferTransaction != null, "transferTransaction is required");
 
+        // TODO handle secure message
         final String messagePayload = transferTransaction.getMessage().getPayload();
         return JsonUtils.fromJson(messagePayload, ProximaxMessagePayloadModel.class);
     }

@@ -13,7 +13,7 @@ public class PathParameterData extends UploadParameterData {
 
     private final File path;
 
-    PathParameterData(File path, String description, String name, Map<String, String> metadata) {
+    private PathParameterData(File path, String description, String name, Map<String, String> metadata) {
         super(description, name, PATH_UPLOAD_CONTENT_TYPE, metadata);
 
         checkParameter(path != null, "path is required");
@@ -23,7 +23,7 @@ public class PathParameterData extends UploadParameterData {
     }
 
     /**
-     * Get file the path
+     * Get the file path
      * @return the file path
      */
     public File getPath() {
@@ -31,30 +31,23 @@ public class PathParameterData extends UploadParameterData {
     }
 
     /**
-     * Start creating an instance of PathParameterData using the PathParameterDataBuilder
+     * Create instance by providing the file path
      * @param path the path to upload
-     * @return the path parameter data builder
+     * @return the instance of this class
      */
-    public static PathParameterDataBuilder create(File path) {
-        return new PathParameterDataBuilder(path);
+    public static PathParameterData create(File path) {
+        return create(path, null, null, null);
     }
 
     /**
-     * This builder class creates the PathParameterDataBuilder
+     * Create instance by providing the file path
+     * @param path the path to upload
+     * @param description a searchable description attach on the upload
+     * @param name a searchable name attach on the upload
+     * @param metadata a searchable key-pair metadata attach on the upload
+     * @return the instance of this class
      */
-    public static class PathParameterDataBuilder extends AbstractParameterDataBuilder<PathParameterDataBuilder> {
-        private File path;
-
-        PathParameterDataBuilder(File path) {
-            this.path = path;
-        }
-
-        /**
-         * Builds the PathParameterData
-         * @return the path parameter
-         */
-        public PathParameterData build() {
-            return new PathParameterData(path, description, name, metadata);
-        }
+    public static PathParameterData create(File path, String description, String name, Map<String, String> metadata) {
+        return new PathParameterData(path, description, name, metadata);
     }
 }

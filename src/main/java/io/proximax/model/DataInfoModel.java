@@ -4,16 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * This model class defines the additional fields of a data
- * <br>
- * <br>
- * The following are its fields:
- * <ul>
- *     <li><b>description</b> - a description of the data</li>
- *     <li><b>metadata</b> - an additional metadata for the data</li>
- *     <li><b>name</b> - the name for the data</li>
- *     <li><b>contentType</b> - the content type of the data</li>
- * </ul>
+ * This model class defines the details of a data
  */
 public abstract class DataInfoModel {
 
@@ -27,11 +18,11 @@ public abstract class DataInfoModel {
      * @param description a description of the data
      * @param name the name for the data
      * @param contentType the content type of the data
-     * @param metadata an additional metadata for the data
+     * @param metadata the string-to-string keypair metadata of the data
      */
     public DataInfoModel(String description, String name, String contentType, Map<String, String> metadata) {
         this.description = description;
-        this.metadata = metadata == null ? Collections.emptyMap() : Collections.unmodifiableMap(metadata);
+        this.metadata = metadata == null ? null : Collections.unmodifiableMap(metadata);
         this.name = name;
         this.contentType = contentType;
     }
@@ -45,7 +36,7 @@ public abstract class DataInfoModel {
     }
 
     /**
-     * Get the additional metadata for the data
+     * Get the string-to-string keypair metadata of the data
      * @return the metadata
      */
     public Map<String, String> getMetadata() {

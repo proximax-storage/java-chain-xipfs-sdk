@@ -22,38 +22,35 @@ public class FilesAsZipParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullFiles() throws IOException {
-        FilesAsZipParameterData.create((List<File>) null).build();
+        FilesAsZipParameterData.create((List<File>) null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenEmptyFiles() throws IOException {
-        FilesAsZipParameterData.create(emptyList()).build();
+        FilesAsZipParameterData.create(emptyList());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenSomeFilesIsDirectoryFiles() throws IOException {
-        FilesAsZipParameterData.create(asList(IMAGE_FILE, HTML_FILE, PATH_FILE)).build();
+        FilesAsZipParameterData.create(asList(IMAGE_FILE, HTML_FILE, PATH_FILE));
     }
 
     @Test
     public void createWithFilesOnly() throws IOException {
-        final FilesAsZipParameterData param = FilesAsZipParameterData.create(asList(IMAGE_FILE, HTML_FILE)).build();
+        final FilesAsZipParameterData param = FilesAsZipParameterData.create(asList(IMAGE_FILE, HTML_FILE));
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getData(), is(notNullValue()));
         assertThat(param.getContentType(), is("application/zip"));
         assertThat(param.getDescription(), is(nullValue()));
-        assertThat(param.getMetadata(), is(emptyMap()));
+        assertThat(param.getMetadata(), is(nullValue()));
         assertThat(param.getName(), is(nullValue()));
     }
 
     @Test
     public void createWithCompleteDetails() throws IOException {
-        final FilesAsZipParameterData param = FilesAsZipParameterData.create(asList(IMAGE_FILE, HTML_FILE))
-                .description("describe me")
-                .metadata(singletonMap("mykey", "myvalue"))
-                .name("name here")
-                .build();
+        final FilesAsZipParameterData param = FilesAsZipParameterData.create(asList(IMAGE_FILE, HTML_FILE),
+                "describe me", "name here", singletonMap("mykey", "myvalue"));
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getData(), is(notNullValue()));

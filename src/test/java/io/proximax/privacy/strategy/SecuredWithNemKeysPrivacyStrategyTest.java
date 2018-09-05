@@ -15,13 +15,13 @@ import static org.hamcrest.core.Is.is;
 
 public class SecuredWithNemKeysPrivacyStrategyTest {
 
-    public static final byte[] SAMPLE_DATA = "the quick brown fox jumps over the lazy dog".getBytes();
+    private static final byte[] SAMPLE_DATA = "the quick brown fox jumps over the lazy dog".getBytes();
 
-    public static final KeyPair SENDER_KEYPAIR = new KeyPair(PrivateKey.fromHexString("08871D3EB4CF3D6695A61E8E1B60DC64DCC9EED40F33D4848BF9079168CCD4A4"));
+    private static final KeyPair SENDER_KEYPAIR = new KeyPair(PrivateKey.fromHexString("08871D3EB4CF3D6695A61E8E1B60DC64DCC9EED40F33D4848BF9079168CCD4A4"));
 
-    public static final KeyPair RECEIVER_KEYPAIR = new KeyPair(PrivateKey.fromHexString("1A5B81AE8830B8A79232CD366552AF6496FE548B4A23D4173FEEBA41B8ABA81F"));
+    private static final KeyPair RECEIVER_KEYPAIR = new KeyPair(PrivateKey.fromHexString("1A5B81AE8830B8A79232CD366552AF6496FE548B4A23D4173FEEBA41B8ABA81F"));
 
-    public static final KeyPair ANOTHER_KEYPAIR = new KeyPair(PrivateKey.fromHexString("CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C"));
+    private static final KeyPair ANOTHER_KEYPAIR = new KeyPair(PrivateKey.fromHexString("CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C"));
 
     @Test
     public void shouldReturnCorrectPrivacyType() {
