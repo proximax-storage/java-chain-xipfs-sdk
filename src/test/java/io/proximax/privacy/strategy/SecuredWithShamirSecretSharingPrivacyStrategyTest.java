@@ -1,11 +1,14 @@
 package io.proximax.privacy.strategy;
 
 import com.codahale.shamir.Scheme;
-import io.proximax.exceptions.DecryptionFailureException;
 import io.proximax.model.PrivacyType;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,17 +71,17 @@ public class SecuredWithShamirSecretSharingPrivacyStrategyTest {
     }
 
     @Test
-    public void returnEncryptedWithAllSecretParts() {
+    public void returnEncryptedWithAllSecretParts() throws IOException {
         final SecuredWithShamirSecretSharingPrivacyStrategy unitUnderTest = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, SECRET_PARTS);
 
-        final byte[] encrypted = unitUnderTest.encryptData(SAMPLE_DATA);
+        final InputStream encrypted = unitUnderTest.encryptStream(new ByteArrayInputStream(SAMPLE_DATA));
 
-        assertThat(ArrayUtils.toObject(encrypted), not(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
+        assertThat(ArrayUtils.toObject(IOUtils.toByteArray(encrypted)), not(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
     }
 
     @Test
-    public void returnEncryptedWithMinimumSecretParts() {
+    public void returnEncryptedWithMinimumSecretParts() throws IOException {
         final Map<Integer, byte[]> minimumSecretParts = new HashMap<>();
         minimumSecretParts.put(1, SECRET_PARTS.get(1));
         minimumSecretParts.put(3, SECRET_PARTS.get(3));
@@ -86,16 +89,16 @@ public class SecuredWithShamirSecretSharingPrivacyStrategyTest {
         final SecuredWithShamirSecretSharingPrivacyStrategy unitUnderTest = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, minimumSecretParts);
 
-        final byte[] encrypted = unitUnderTest.encryptData(SAMPLE_DATA);
+        final InputStream encrypted = unitUnderTest.encryptStream(new ByteArrayInputStream(SAMPLE_DATA));
 
-        assertThat(ArrayUtils.toObject(encrypted), not(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
+        assertThat(ArrayUtils.toObject(IOUtils.toByteArray(encrypted)), not(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
     }
 
     @Test
-    public void returnDecryptedWithMinimumSecretParts() {
+    public void returnDecryptedWithMinimumSecretParts() throws IOException {
         final SecuredWithShamirSecretSharingPrivacyStrategy allPartsStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, SECRET_PARTS);
-        final byte[] encrypted = allPartsStrategy.encryptData(SAMPLE_DATA);
+        final InputStream encryptedStream = allPartsStrategy.encryptStream(new ByteArrayInputStream(SAMPLE_DATA));
         final Map<Integer, byte[]> minimumSecretParts = new HashMap<>();
         minimumSecretParts.put(1, SECRET_PARTS.get(1));
         minimumSecretParts.put(2, SECRET_PARTS.get(2));
@@ -103,20 +106,20 @@ public class SecuredWithShamirSecretSharingPrivacyStrategyTest {
         final SecuredWithShamirSecretSharingPrivacyStrategy unitUnderTest = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, minimumSecretParts);
 
-        final byte[] decrypted = unitUnderTest.decryptData(encrypted);
+        final InputStream decrypted = unitUnderTest.decryptStream(encryptedStream);
 
-        assertThat(ArrayUtils.toObject(decrypted), is(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
+        assertThat(ArrayUtils.toObject(IOUtils.toByteArray(decrypted)), is(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
     }
 
     @Test
-    public void returnDecryptedWithDifferentSecretParts() {
+    public void returnDecryptedWithDifferentSecretParts() throws IOException {
         final Map<Integer, byte[]> firstSecretParts = new HashMap<>();
         firstSecretParts.put(2, SECRET_PARTS.get(2));
         firstSecretParts.put(3, SECRET_PARTS.get(3));
         firstSecretParts.put(5, SECRET_PARTS.get(5));
         final SecuredWithShamirSecretSharingPrivacyStrategy firstPartsStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, firstSecretParts);
-        final byte[] encrypted = firstPartsStrategy.encryptData(SAMPLE_DATA);
+        final InputStream encryptedStream = firstPartsStrategy.encryptStream(new ByteArrayInputStream(SAMPLE_DATA));
         final Map<Integer, byte[]> secondSecretParts = new HashMap<>();
         secondSecretParts.put(1, SECRET_PARTS.get(1));
         secondSecretParts.put(2, SECRET_PARTS.get(2));
@@ -124,20 +127,20 @@ public class SecuredWithShamirSecretSharingPrivacyStrategyTest {
         final SecuredWithShamirSecretSharingPrivacyStrategy secondPartsStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, secondSecretParts);
 
-        final byte[] decrypted = secondPartsStrategy.decryptData(encrypted);
+        final InputStream decrypted = secondPartsStrategy.decryptStream(encryptedStream);
 
-        assertThat(ArrayUtils.toObject(decrypted), is(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
+        assertThat(ArrayUtils.toObject(IOUtils.toByteArray(decrypted)), is(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
     }
 
-    @Test(expected = DecryptionFailureException.class)
-    public void returnDecryptedWithWrongSecretParts() {
+    @Test(expected = IOException.class)
+    public void returnDecryptedWithWrongSecretParts() throws IOException {
         final Map<Integer, byte[]> firstSecretParts = new HashMap<>();
         firstSecretParts.put(2, SECRET_PARTS.get(2));
         firstSecretParts.put(3, SECRET_PARTS.get(3));
         firstSecretParts.put(5, SECRET_PARTS.get(5));
         final SecuredWithShamirSecretSharingPrivacyStrategy firstPartsStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, firstSecretParts);
-        final byte[] encrypted = firstPartsStrategy.encryptData(SAMPLE_DATA);
+        final InputStream encryptedStream = firstPartsStrategy.encryptStream(new ByteArrayInputStream(SAMPLE_DATA));
         final Map<Integer, byte[]> wrongSecretParts = new HashMap<>();
         wrongSecretParts.put(1, SECRET_PARTS.get(1));
         wrongSecretParts.put(3, SECRET_PARTS.get(3));
@@ -146,7 +149,7 @@ public class SecuredWithShamirSecretSharingPrivacyStrategyTest {
         final SecuredWithShamirSecretSharingPrivacyStrategy unitUnderTest = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 SECRET_TOTAL_PART_COUNT, SECRET_MINIMUM_PART_COUNT_TO_BUILD, wrongSecretParts);
 
-        unitUnderTest.decryptData(encrypted);
+        IOUtils.toByteArray(unitUnderTest.decryptStream(encryptedStream));
     }
 
 }

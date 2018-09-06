@@ -64,7 +64,7 @@ public class BlockchainTransactionService {
 
         return transactionClient.getTransaction(transactionHash)
                 .onErrorResumeNext((Throwable ex) ->
-                        Observable.error(new GetTransactionFailureException(String.format("Unable to get transaction for %s", transactionHash), ex)))
+                        Observable.error(new GetTransactionFailureException(String.format("Unable to getByteStream transaction for %s", transactionHash), ex)))
                 .map(transaction -> {
                     if (!(transaction.getType().equals(TransactionType.TRANSFER) &&
                             transaction instanceof TransferTransaction))

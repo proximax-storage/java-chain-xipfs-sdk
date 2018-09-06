@@ -1,7 +1,11 @@
 package io.proximax.utils;
 
+import io.proximax.exceptions.DetectContenTypeFailureException;
 import io.reactivex.Observable;
 import org.apache.tika.Tika;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -20,13 +24,17 @@ public class ContentTypeUtils {
     }
 
     /**
-     * Detect the content type for the given data
-     * @param data the data represented as byte array
+     * Detect the content type for the byte stream
+     * @param byteStream the byte stream
      * @return the detected content type
      */
-    public Observable<String> detectContentType(final byte[] data) {
-        checkArgument(data != null, "data is required");
+    public Observable<String> detectContentType(final InputStream byteStream) {
+        checkArgument(byteStream != null, "byteStream is required");
 
-        return Observable.just(tika.detect(data));
+        try {
+            return Observable.just(tika.detect(byteStream));
+        } catch (IOException e) {
+            throw new DetectContenTypeFailureException("Failed to detect content type", e);
+        }
     }
 }

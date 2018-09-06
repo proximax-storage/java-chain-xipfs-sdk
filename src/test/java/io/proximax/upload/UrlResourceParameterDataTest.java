@@ -9,7 +9,6 @@ import java.net.URL;
 import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
 import static io.proximax.testsupport.Constants.HTML_FILE;
 import static io.proximax.testsupport.Constants.IMAGE_FILE;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -27,12 +26,13 @@ public class UrlResourceParameterDataTest {
 
     @Test
     public void createWithUrlOnly() throws IOException {
-        final URL URL = IMAGE_FILE.toURI().toURL();
+        final URL url = IMAGE_FILE.toURI().toURL();
 
-        final UrlResourceParameterData param = UrlResourceParameterData.create(URL);
+        final UrlResourceParameterData param = UrlResourceParameterData.create(url);
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.getData(), is(notNullValue()));
+        assertThat(param.getUrl(), is(url));
+        assertThat(param.getByteStream(), is(notNullValue()));
         assertThat(param.getContentType(), is(nullValue()));
         assertThat(param.getDescription(), is(nullValue()));
         assertThat(param.getMetadata(), is(nullValue()));
@@ -41,13 +41,14 @@ public class UrlResourceParameterDataTest {
 
     @Test
     public void createWithCompleteDetails() throws IOException {
-        final URL URL = IMAGE_FILE.toURI().toURL();
+        final URL url = IMAGE_FILE.toURI().toURL();
 
-        final UrlResourceParameterData param = UrlResourceParameterData.create(URL, "describe me",
+        final UrlResourceParameterData param = UrlResourceParameterData.create(url, "describe me",
                 "name here", "text/plain", singletonMap("mykey", "myvalue"));
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.getData(), is(notNullValue()));
+        assertThat(param.getUrl(), is(url));
+        assertThat(param.getByteStream(), is(notNullValue()));
         assertThat(param.getContentType(), is("text/plain"));
         assertThat(param.getDescription(), is("describe me"));
         assertThat(param.getMetadata(), is(singletonMap("mykey", "myvalue")));
@@ -56,12 +57,13 @@ public class UrlResourceParameterDataTest {
 
     @Test
     public void createWithHtmlFileUrlOnly() throws IOException {
-        final URL URL = HTML_FILE.toURI().toURL();
+        final URL url = HTML_FILE.toURI().toURL();
 
-        final UrlResourceParameterData param = UrlResourceParameterData.create(URL);
+        final UrlResourceParameterData param = UrlResourceParameterData.create(url);
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.getData(), is(notNullValue()));
+        assertThat(param.getUrl(), is(url));
+        assertThat(param.getByteStream(), is(notNullValue()));
         assertThat(param.getContentType(), is(nullValue()));
         assertThat(param.getDescription(), is(nullValue()));
         assertThat(param.getMetadata(), is(nullValue()));
@@ -71,10 +73,12 @@ public class UrlResourceParameterDataTest {
     @Test
     @Ignore("creates dependency to internet, test only when required")
     public void createWithHtmlHttpUrlOnly() throws IOException {
-        final UrlResourceParameterData param = UrlResourceParameterData.create(new URL(URL_PDF));
+        final URL url = new URL(URL_PDF);
+        final UrlResourceParameterData param = UrlResourceParameterData.create(url);
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.getData(), is(notNullValue()));
+        assertThat(param.getUrl(), is(url));
+        assertThat(param.getByteStream(), is(notNullValue()));
         assertThat(param.getContentType(), is(nullValue()));
         assertThat(param.getDescription(), is(nullValue()));
         assertThat(param.getMetadata(), is(nullValue()));

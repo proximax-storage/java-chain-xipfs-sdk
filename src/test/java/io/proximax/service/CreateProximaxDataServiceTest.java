@@ -3,6 +3,7 @@ package io.proximax.service;
 import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.privacy.strategy.PrivacyStrategy;
+import io.proximax.upload.AbstractByteStreamParameterData;
 import io.proximax.upload.ByteArrayParameterData;
 import io.proximax.upload.PathParameterData;
 import io.proximax.upload.UploadParameter;
@@ -14,7 +15,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.util.Map;
 
 import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
@@ -27,11 +30,11 @@ import static org.mockito.BDDMockito.given;
 
 public class CreateProximaxDataServiceTest {
 
-    private static final byte[] DUMMY_DATA = "dopsaipdlsnlxnz,cn,zxnclznxlnldsaldslkaj;as.".getBytes();
+    private static final InputStream DUMMY_DATA_STREAM = new ByteArrayInputStream("dopsaipdlsnlxnz,cn,zxnclznxlnldsaldslkaj;as.".getBytes());
     private static final String DUMMY_NAME = "name 1";
     private static final String DUMMY_DESCRIPTION = "data description 1";
     private static final Map<String, String> DUMMY_METADATA = singletonMap("key1", "val1");
-    private static final byte[] DUMMY_ENCRYPTED_DATA = "dsajhjdhaskhdksahkdsaljkjlxnzcm,nxz".getBytes();
+    private static final InputStream DUMMY_ENCRYPTED_DATA_STREAM = new ByteArrayInputStream("dsajhjdhaskhdksahkdsaljkjlxnzcm,nxz".getBytes());
     private static final String DUMMY_DIGEST = "Qmdsewquywqiyeiuqwyiueyqiuyeuiwyqid";
     private static final String DUMMY_CONTENT_TYPE = "text/plain";
     private static final String DUMMY_DATA_HASH = "Qmdyueoqwoeuowqueowquioeuioqwuoi";
@@ -52,6 +55,9 @@ public class CreateProximaxDataServiceTest {
     @Mock
     private PrivacyStrategy mockPrivacyStrategy;
 
+    @Mock
+    private ByteArrayParameterData mockByteArrayParameterData;
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -68,9 +74,9 @@ public class CreateProximaxDataServiceTest {
 
     @Test
     public void shouldCreateRootDataForByteArrayUpload() {
-        given(mockPrivacyStrategy.encryptData(DUMMY_DATA)).willReturn(DUMMY_ENCRYPTED_DATA);
-        given(mockDigestUtils.digest(DUMMY_ENCRYPTED_DATA)).willReturn(Observable.just(DUMMY_DIGEST));
-        given(mockIpfsUploadService.uploadByteArray(DUMMY_ENCRYPTED_DATA))
+        given(mockPrivacyStrategy.encryptStream(DUMMY_DATA_STREAM)).willReturn(DUMMY_ENCRYPTED_DATA_STREAM);
+        given(mockDigestUtils.digest(DUMMY_ENCRYPTED_DATA_STREAM)).willReturn(Observable.just(DUMMY_DIGEST));
+        given(mockIpfsUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
                 .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
 
         final ProximaxDataModel result = unitUnderTest.createData(sampleByteArrayUploadParamWithComputeDigestTrue()).blockingFirst();
@@ -104,9 +110,9 @@ public class CreateProximaxDataServiceTest {
 
     @Test
     public void shouldCreateRootDataForByteArrayUploadAndWhenComputeDigestTrue() {
-        given(mockPrivacyStrategy.encryptData(DUMMY_DATA)).willReturn(DUMMY_ENCRYPTED_DATA);
-        given(mockDigestUtils.digest(DUMMY_ENCRYPTED_DATA)).willReturn(Observable.just(DUMMY_DIGEST));
-        given(mockIpfsUploadService.uploadByteArray(DUMMY_ENCRYPTED_DATA))
+        given(mockPrivacyStrategy.encryptStream(DUMMY_DATA_STREAM)).willReturn(DUMMY_ENCRYPTED_DATA_STREAM);
+        given(mockDigestUtils.digest(DUMMY_ENCRYPTED_DATA_STREAM)).willReturn(Observable.just(DUMMY_DIGEST));
+        given(mockIpfsUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
                 .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
 
         final ProximaxDataModel result = unitUnderTest.createData(sampleByteArrayUploadParamWithComputeDigestTrue()).blockingFirst();
@@ -117,8 +123,8 @@ public class CreateProximaxDataServiceTest {
 
     @Test
     public void shouldCreateRootDataForByteArrayUploadAndWhenComputeDigestFalse() {
-        given(mockPrivacyStrategy.encryptData(DUMMY_DATA)).willReturn(DUMMY_ENCRYPTED_DATA);
-        given(mockIpfsUploadService.uploadByteArray(DUMMY_ENCRYPTED_DATA))
+        given(mockPrivacyStrategy.encryptStream(DUMMY_DATA_STREAM)).willReturn(DUMMY_ENCRYPTED_DATA_STREAM);
+        given(mockIpfsUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
                 .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
 
         final ProximaxDataModel result = unitUnderTest.createData(sampleByteArrayUploadParamWithComputeDigestFalse()).blockingFirst();
@@ -129,9 +135,9 @@ public class CreateProximaxDataServiceTest {
 
     @Test
     public void shouldCreateRootDataForByteArrayUploadAndWhenDetectContentTypeTrue() {
-        given(mockPrivacyStrategy.encryptData(DUMMY_DATA)).willReturn(DUMMY_ENCRYPTED_DATA);
-        given(mockContentTypeUtils.detectContentType(DUMMY_DATA)).willReturn(Observable.just(DUMMY_CONTENT_TYPE));
-        given(mockIpfsUploadService.uploadByteArray(DUMMY_ENCRYPTED_DATA))
+        given(mockPrivacyStrategy.encryptStream(DUMMY_DATA_STREAM)).willReturn(DUMMY_ENCRYPTED_DATA_STREAM);
+        given(mockContentTypeUtils.detectContentType(DUMMY_DATA_STREAM)).willReturn(Observable.just(DUMMY_CONTENT_TYPE));
+        given(mockIpfsUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
                 .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
 
         final ProximaxDataModel result = unitUnderTest.createData(sampleByteArrayUploadParamWithDetectContentTypeTrue()).blockingFirst();
@@ -142,8 +148,8 @@ public class CreateProximaxDataServiceTest {
 
     @Test
     public void shouldCreateRootDataForByteArrayUploadAndWhenDetectContentTypeFalse() {
-        given(mockPrivacyStrategy.encryptData(DUMMY_DATA)).willReturn(DUMMY_ENCRYPTED_DATA);
-        given(mockIpfsUploadService.uploadByteArray(DUMMY_ENCRYPTED_DATA))
+        given(mockPrivacyStrategy.encryptStream(DUMMY_DATA_STREAM)).willReturn(DUMMY_ENCRYPTED_DATA_STREAM);
+        given(mockIpfsUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
                 .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
 
         final ProximaxDataModel result = unitUnderTest.createData(sampleByteArrayUploadParamWithDetectContentTypeFalse()).blockingFirst();
@@ -153,36 +159,50 @@ public class CreateProximaxDataServiceTest {
     }
 
     private UploadParameter sampleByteArrayUploadParamWithComputeDigestTrue()  {
-        return UploadParameter.createForByteArrayUpload(
-                ByteArrayParameterData.create(DUMMY_DATA, DUMMY_DESCRIPTION, DUMMY_NAME, DUMMY_CONTENT_TYPE, DUMMY_METADATA),
-                "ndsakjhdkjsahdasjhjkdsa")
+        given(mockByteArrayParameterData.getByteStream()).willReturn(DUMMY_DATA_STREAM);
+        given(mockByteArrayParameterData.getDescription()).willReturn(DUMMY_DESCRIPTION);
+        given(mockByteArrayParameterData.getName()).willReturn(DUMMY_NAME);
+        given(mockByteArrayParameterData.getContentType()).willReturn(DUMMY_CONTENT_TYPE);
+        given(mockByteArrayParameterData.getMetadata()).willReturn(DUMMY_METADATA);
+
+        return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, "ndsakjhdkjsahdasjhjkdsa")
                 .computeDigest(true)
                 .privacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 
     private UploadParameter sampleByteArrayUploadParamWithComputeDigestFalse()  {
-        return UploadParameter.createForByteArrayUpload(
-                ByteArrayParameterData.create(DUMMY_DATA, DUMMY_DESCRIPTION, DUMMY_NAME, DUMMY_CONTENT_TYPE, DUMMY_METADATA),
-                "ndsakjhdkjsahdasjhjkdsa")
+        given(mockByteArrayParameterData.getByteStream()).willReturn(DUMMY_DATA_STREAM);
+        given(mockByteArrayParameterData.getDescription()).willReturn(DUMMY_DESCRIPTION);
+        given(mockByteArrayParameterData.getName()).willReturn(DUMMY_NAME);
+        given(mockByteArrayParameterData.getContentType()).willReturn(DUMMY_CONTENT_TYPE);
+        given(mockByteArrayParameterData.getMetadata()).willReturn(DUMMY_METADATA);
+
+        return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, "ndsakjhdkjsahdasjhjkdsa")
                 .computeDigest(false)
                 .privacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 
     private UploadParameter sampleByteArrayUploadParamWithDetectContentTypeTrue()  {
-        return UploadParameter.createForByteArrayUpload(
-                ByteArrayParameterData.create(DUMMY_DATA, DUMMY_DESCRIPTION, DUMMY_NAME, null, DUMMY_METADATA),
-                "ndsakjhdkjsahdasjhjkdsa")
+        given(mockByteArrayParameterData.getByteStream()).willReturn(DUMMY_DATA_STREAM);
+        given(mockByteArrayParameterData.getDescription()).willReturn(DUMMY_DESCRIPTION);
+        given(mockByteArrayParameterData.getName()).willReturn(DUMMY_NAME);
+        given(mockByteArrayParameterData.getMetadata()).willReturn(DUMMY_METADATA);
+
+        return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, "ndsakjhdkjsahdasjhjkdsa")
                 .detectContentType(true)
                 .privacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 
     private UploadParameter sampleByteArrayUploadParamWithDetectContentTypeFalse()  {
-        return UploadParameter.createForByteArrayUpload(
-                ByteArrayParameterData.create(DUMMY_DATA, DUMMY_DESCRIPTION, DUMMY_NAME, null, DUMMY_METADATA),
-                "ndsakjhdkjsahdasjhjkdsa")
+        given(mockByteArrayParameterData.getByteStream()).willReturn(DUMMY_DATA_STREAM);
+        given(mockByteArrayParameterData.getDescription()).willReturn(DUMMY_DESCRIPTION);
+        given(mockByteArrayParameterData.getName()).willReturn(DUMMY_NAME);
+        given(mockByteArrayParameterData.getMetadata()).willReturn(DUMMY_METADATA);
+
+        return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, "ndsakjhdkjsahdasjhjkdsa")
                 .detectContentType(false)
                 .privacyStrategy(mockPrivacyStrategy)
                 .build();

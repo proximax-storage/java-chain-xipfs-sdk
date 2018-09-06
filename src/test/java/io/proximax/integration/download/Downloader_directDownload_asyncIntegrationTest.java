@@ -10,9 +10,11 @@ import io.proximax.download.Downloader;
 import io.proximax.exceptions.DirectDownloadFailureException;
 import io.proximax.model.BlockchainNetworkType;
 import io.proximax.testsupport.TestHelper;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -53,12 +55,13 @@ public class Downloader_directDownload_asyncIntegrationTest {
 		final String dataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "dataHash");
 		final DirectDownloadParameter param =
 				DirectDownloadParameter.createFromDataHash(dataHash).build();
-		final CompletableFuture<byte[]> toPopulateOnSuccess = new CompletableFuture<>();
+		final CompletableFuture<InputStream> toPopulateOnSuccess = new CompletableFuture<>();
 
 		unitUnderTest.directDownloadAsync(param, AsyncCallback.create(toPopulateOnSuccess::complete, null));
-		final byte[] result = toPopulateOnSuccess.get(5, TimeUnit.SECONDS);
+		final InputStream result = toPopulateOnSuccess.get(5, TimeUnit.SECONDS);
 
 		assertThat(result, is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result), is(notNullValue()));
 	}
 
 	@Test

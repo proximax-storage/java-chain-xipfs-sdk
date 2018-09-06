@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,16 +33,18 @@ public class IpfsUploadServiceTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void failOnUploadByteArrayWhenNullDataList() {
-        unitUnderTest.uploadByteArray(null);
+    public void failOnAddByteStreamWhenNullDataList() {
+        unitUnderTest.uploadByteStream(null);
     }
 
     @Test
-    public void shouldReturnDataHashOnUploadByteArray() {
-        given(mockIpfsClient.addByteArray(SAMPLE_DATA)).willReturn(Observable.just(SAMPLE_DATAHASH));
+    public void shouldReturnDataHashOnAddByteStream() {
+        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(SAMPLE_DATA);
+        given(mockIpfsClient.addByteStream(byteArrayInputStream))
+                .willReturn(Observable.just(SAMPLE_DATAHASH));
 
         final IpfsUploadResponse ipfsUploadResponse =
-                unitUnderTest.uploadByteArray(SAMPLE_DATA).blockingFirst();
+                unitUnderTest.uploadByteStream(byteArrayInputStream).blockingFirst();
 
         assertThat(ipfsUploadResponse, is(notNullValue()));
         assertThat(ipfsUploadResponse.getDataHash(), is(SAMPLE_DATAHASH));

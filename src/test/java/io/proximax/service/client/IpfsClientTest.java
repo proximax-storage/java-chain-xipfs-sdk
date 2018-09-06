@@ -5,12 +5,15 @@ import io.ipfs.api.MerkleNode;
 import io.ipfs.multihash.Multihash;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.exceptions.IpfsClientFailureException;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -53,21 +56,21 @@ public class IpfsClientTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failOnAddByteArrayWhenNullData() {
-        unitUnderTest.addByteArray(null);
+        unitUnderTest.addByteStream(null);
     }
 
     @Test(expected = IpfsClientFailureException.class)
     public void shouldBubbleUpExceptionOnAddByteArray() throws IOException {
         given(mockIpfs.add(any())).willThrow(new RuntimeException());
 
-        unitUnderTest.addByteArray(SAMPLE_DATA).blockingFirst();
+        unitUnderTest.addByteStream(new ByteArrayInputStream(SAMPLE_DATA)).blockingFirst();
     }
 
     @Test
     public void shouldReturnDataHashOnAddByteArray() throws IOException {
         given(mockIpfs.add(any())).willReturn(asList(SAMPLE_MERKLE_NODE));
 
-        final String dataHash = unitUnderTest.addByteArray(SAMPLE_DATA).blockingFirst();
+        final String dataHash = unitUnderTest.addByteStream(new ByteArrayInputStream(SAMPLE_DATA)).blockingFirst();
 
         assertThat(dataHash, is(SAMPLE_DATAHASH));
     }
@@ -117,23 +120,23 @@ public class IpfsClientTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failOnGetWhenNullDataHash() {
-        unitUnderTest.get(null);
+        unitUnderTest.getByteStream(null);
     }
 
     @Test(expected = IpfsClientFailureException.class)
     public void shouldBubbleUpExceptionOnGet() throws IOException {
         given(mockIpfs.cat(any())).willThrow(new RuntimeException());
 
-        unitUnderTest.get(SAMPLE_DATAHASH).blockingFirst();
+        unitUnderTest.getByteStream(SAMPLE_DATAHASH).blockingFirst();
     }
 
     @Test
     public void shouldReturnDataOnGet() throws IOException {
-        given(mockIpfs.cat(any())).willReturn(SAMPLE_DATA);
+        given(mockIpfs.catStream(any())).willReturn(new ByteArrayInputStream(SAMPLE_DATA));
 
-        final byte[] data = unitUnderTest.get(SAMPLE_DATAHASH).blockingFirst();
+        final InputStream dataStream = unitUnderTest.getByteStream(SAMPLE_DATAHASH).blockingFirst();
 
-        assertThat(data, is(SAMPLE_DATA));
+        assertThat(IOUtils.toByteArray(dataStream), is(SAMPLE_DATA));
     }
 
     private void setMockIpfsPin() throws NoSuchFieldException, IllegalAccessException {

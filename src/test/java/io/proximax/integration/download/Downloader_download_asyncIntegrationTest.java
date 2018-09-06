@@ -12,6 +12,7 @@ import io.proximax.exceptions.DownloadFailureException;
 import io.proximax.model.BlockchainNetworkType;
 import io.proximax.model.PrivacyType;
 import io.proximax.testsupport.TestHelper;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -65,6 +66,7 @@ public class Downloader_download_asyncIntegrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getData(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result.getData().getByteStream()), is(notNullValue()));
 	}
 
 	@Test

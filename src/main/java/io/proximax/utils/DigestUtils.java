@@ -1,7 +1,11 @@
 package io.proximax.utils;
 
+import io.proximax.exceptions.DigestCalculationFailureException;
 import io.proximax.exceptions.DigestDoesNotMatchException;
 import io.reactivex.Observable;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.String.format;
@@ -14,27 +18,27 @@ public class DigestUtils {
 
     /**
      * Compute for the digest of the given data
-     * @param data the data
+     * @param byteStream the byteStream
      * @return the sha-256 hex of the data
      */
-    public Observable<String> digest(byte[] data) {
-        checkArgument(data != null, "data is required");
+    public Observable<String> digest(InputStream byteStream) {
+        checkArgument(byteStream != null, "byteStream is required");
 
-        return Observable.just(encodeData(data));
+        return Observable.just(encodeData(byteStream));
     }
 
     /**
      * Validate the digest against the given data
-     * @param data the data
+     * @param byteStream the byteStream
      * @param expectedDigest the expected digest of the data
      * @return true if digest validation passes, otherwise an DigestDoesNotMatchException
      * @see DigestDoesNotMatchException
      */
-    public Observable<Boolean> validateDigest(byte[] data, String expectedDigest) {
-        checkArgument(data != null, "data is required");
+    public Observable<Boolean> validateDigest(InputStream byteStream, String expectedDigest) {
+        checkArgument(byteStream != null, "byteStream is required");
 
         if (expectedDigest != null) {
-            return digest(data).map(actualDigest -> {
+            return digest(byteStream).map(actualDigest -> {
                 if (!actualDigest.equals(expectedDigest)) {
                     throw new DigestDoesNotMatchException(format("Data digests do not match (actual: %s, expected %s)",
                             actualDigest, expectedDigest));
@@ -46,7 +50,11 @@ public class DigestUtils {
         return Observable.just(true);
     }
 
-    private String encodeData(byte[] data) {
-        return sha256Hex(data);
+    private String encodeData(InputStream byteStream) {
+        try {
+            return sha256Hex(byteStream);
+        } catch (IOException e) {
+            throw new DigestCalculationFailureException("Digest calculation failed", e);
+        }
     }
 }

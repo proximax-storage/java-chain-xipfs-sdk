@@ -1,11 +1,10 @@
 package io.proximax.privacy.strategy;
 
 import com.codahale.shamir.Scheme;
-import io.proximax.cipher.BinaryPBKDF2CipherEncryption;
-import io.proximax.exceptions.DecryptionFailureException;
-import io.proximax.exceptions.EncryptionFailureException;
+import io.proximax.cipher.PBECipherEncryptor;
 import io.proximax.model.PrivacyType;
 
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -23,9 +22,9 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 public final class SecuredWithShamirSecretSharingPrivacyStrategy extends PrivacyStrategy {
 
     private final char[] secret;
-    private final BinaryPBKDF2CipherEncryption encryptor;
+    private final PBECipherEncryptor pbeCipherEncryptor;
 
-    SecuredWithShamirSecretSharingPrivacyStrategy(BinaryPBKDF2CipherEncryption encryptor,
+    SecuredWithShamirSecretSharingPrivacyStrategy(PBECipherEncryptor pbeCipherEncryptor,
                                                   int secretTotalPartCount, int secretMinimumPartCountToBuild,
                                                   Map<Integer, byte[]> secretParts) {
 
@@ -37,7 +36,7 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
                 "secretParts should meet minimum part count as defined by secretMinimumPartCountToBuild");
 
         this.secret = new String(Scheme.of(secretTotalPartCount, secretMinimumPartCountToBuild).join(secretParts)).toCharArray();
-        this.encryptor = encryptor;
+        this.pbeCipherEncryptor = pbeCipherEncryptor;
     }
 
     /**
@@ -51,31 +50,23 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
     }
 
     /**
-     * Encrypt the data using the shamir secret sharing
-     * @param data data to encrypt
-     * @return the encrypted data
+     * Encrypt byte stream using the shamir secret sharing
+     * @param byteStream the byte stream to encrypt
+     * @return the encrypted byte stream
      */
     @Override
-    public byte[] encryptData(byte[] data) {
-        try {
-            return encryptor.encrypt(data, secret);
-        } catch (Exception e) {
-            throw new EncryptionFailureException("Exception encountered encrypting data", e);
-        }
+    public final InputStream encryptStream(final InputStream byteStream) {
+        return pbeCipherEncryptor.encryptStream(byteStream, secret);
     }
 
     /**
-     * Decrypt the data using the shamir secret sharing
-     * @param data encrypted data to decrypt
-     * @return the decrypted data
+     * Decrypt byte stream using the shamir secret sharing
+     * @param byteStream the byte stream to decrypt
+     * @return the decrypted byte stream
      */
     @Override
-    public byte[] decryptData(byte[] data) {
-        try {
-            return encryptor.decrypt(data, secret);
-        } catch (Exception e) {
-            throw new DecryptionFailureException("Exception encountered decrypting data", e);
-        }
+    public final InputStream decryptStream(final InputStream byteStream) {
+        return pbeCipherEncryptor.decryptStream(byteStream, secret);
     }
 
     /**
@@ -117,7 +108,7 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
     public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
                                                                        int secretMinimumPartCountToBuild,
                                                                        SecretPart... secretParts) {
-        return new SecuredWithShamirSecretSharingPrivacyStrategy(new BinaryPBKDF2CipherEncryption(),
+        return new SecuredWithShamirSecretSharingPrivacyStrategy(new PBECipherEncryptor(),
                 secretTotalPartCount, secretMinimumPartCountToBuild,
                 Stream.of(secretParts).collect(Collectors.toMap(parts -> parts.index, parts -> parts.secretPart)));
     }
@@ -132,7 +123,7 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
     public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
                                                                        int secretMinimumPartCountToBuild,
                                                                        List<SecretPart> secretParts) {
-        return new SecuredWithShamirSecretSharingPrivacyStrategy(new BinaryPBKDF2CipherEncryption(),
+        return new SecuredWithShamirSecretSharingPrivacyStrategy(new PBECipherEncryptor(),
                 secretTotalPartCount, secretMinimumPartCountToBuild,
                 secretParts == null ? Collections.emptyMap() :
                         secretParts.stream().collect(Collectors.toMap(parts -> parts.index, parts -> parts.secretPart)));
@@ -148,7 +139,7 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
     public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
                                                                        int secretMinimumPartCountToBuild,
                                                                        Map<Integer, byte[]> secretParts) {
-        return new SecuredWithShamirSecretSharingPrivacyStrategy(new BinaryPBKDF2CipherEncryption(),
+        return new SecuredWithShamirSecretSharingPrivacyStrategy(new PBECipherEncryptor(),
                 secretTotalPartCount, secretMinimumPartCountToBuild,
                 secretParts == null ? Collections.emptyMap() : secretParts);
     }

@@ -8,22 +8,21 @@ import io.proximax.download.Downloader;
 import io.proximax.exceptions.DirectDownloadFailureException;
 import io.proximax.model.BlockchainNetworkType;
 import io.proximax.testsupport.TestHelper;
-import io.proximax.upload.FilesAsZipParameterData;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
-import static io.proximax.testsupport.Constants.HTML_FILE;
 import static io.proximax.testsupport.Constants.IMAGE_FILE;
 import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
 import static io.proximax.testsupport.Constants.PDF_FILE1;
 import static io.proximax.testsupport.Constants.SMALL_FILE;
 import static io.proximax.testsupport.Constants.STRING_TEST;
-import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsArrayContainingInOrder.arrayContaining;
 import static org.hamcrest.core.Is.is;
@@ -53,10 +52,10 @@ public class Downloader_directDownload_integrationTest {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromTransactionHash(transactionHash).build();
 
-		final byte[] bytes = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
-		assertThat(bytes, is(notNullValue()));
-		assertThat(ArrayUtils.toObject(bytes),
+		assertThat(result, is(notNullValue()));
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(PDF_FILE1))))));
 	}
 
@@ -65,10 +64,10 @@ public class Downloader_directDownload_integrationTest {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFile", "transactionHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromTransactionHash(transactionHash).build();
 
-		final byte[] bytes = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
-		assertThat(bytes, is(notNullValue()));
-		assertThat(ArrayUtils.toObject(bytes),
+		assertThat(result, is(notNullValue()));
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
 	}
 
@@ -77,10 +76,10 @@ public class Downloader_directDownload_integrationTest {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadUrlResource", "transactionHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromTransactionHash(transactionHash).build();
 
-		final byte[] bytes = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
-		assertThat(bytes, is(notNullValue()));
-		assertThat(ArrayUtils.toObject(bytes),
+		assertThat(result, is(notNullValue()));
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(IMAGE_FILE))))));
 	}
 
@@ -89,20 +88,21 @@ public class Downloader_directDownload_integrationTest {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFilesAsZip", "transactionHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromTransactionHash(transactionHash).build();
 
-		final byte[] bytes = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
-		assertThat(bytes, is(notNullValue()));
+		assertThat(result, is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result), is(notNullValue()));
 	}
 
 	@Test
-	public void shouldDownloadStringByTransactionHash() {
+	public void shouldDownloadStringByTransactionHash() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadString", "transactionHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromTransactionHash(transactionHash).build();
 
-		final byte[] bytes = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
-		assertThat(bytes, is(notNullValue()));
-		assertThat(new String(bytes), is(STRING_TEST));
+		assertThat(result, is(notNullValue()));
+		assertThat(new String(IOUtils.toByteArray(result)), is(STRING_TEST));
 	}
 
 	@Test(expected = DirectDownloadFailureException.class)
@@ -118,10 +118,10 @@ public class Downloader_directDownload_integrationTest {
 		final String dataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "dataHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(dataHash).build();
 
-		final byte[] bytes = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
-		assertThat(bytes, is(notNullValue()));
-		assertThat(ArrayUtils.toObject(bytes),
+		assertThat(result, is(notNullValue()));
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(PDF_FILE1))))));
 	}
 
@@ -130,10 +130,10 @@ public class Downloader_directDownload_integrationTest {
 		final String dataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFile", "dataHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(dataHash).build();
 
-		final byte[] bytes = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
-		assertThat(bytes, is(notNullValue()));
-		assertThat(ArrayUtils.toObject(bytes),
+		assertThat(result, is(notNullValue()));
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
 	}
 
@@ -142,10 +142,10 @@ public class Downloader_directDownload_integrationTest {
 		final String dataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadUrlResource", "dataHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(dataHash).build();
 
-		final byte[] bytes = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
-		assertThat(bytes, is(notNullValue()));
-		assertThat(ArrayUtils.toObject(bytes),
+		assertThat(result, is(notNullValue()));
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(IMAGE_FILE))))));
 	}
 
@@ -154,20 +154,21 @@ public class Downloader_directDownload_integrationTest {
 		final String dataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFilesAsZip", "dataHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(dataHash).build();
 
-		final byte[] bytes = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
-		assertThat(bytes, is(notNullValue()));
+		assertThat(result, is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result), is(notNullValue()));
 	}
 
 	@Test
-	public void shouldDownloadStringByDataHash() {
+	public void shouldDownloadStringByDataHash() throws IOException {
 		final String dataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadString", "dataHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(dataHash).build();
 
-		final byte[] bytes = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
-		assertThat(bytes, is(notNullValue()));
-		assertThat(new String(bytes), is(STRING_TEST));
+		assertThat(result, is(notNullValue()));
+		assertThat(new String(IOUtils.toByteArray(result)), is(STRING_TEST));
 	}
 
 	@Test(expected = DirectDownloadFailureException.class)

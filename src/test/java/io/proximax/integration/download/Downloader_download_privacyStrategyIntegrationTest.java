@@ -10,6 +10,7 @@ import io.proximax.model.BlockchainNetworkType;
 import io.proximax.model.PrivacyType;
 import io.proximax.testsupport.TestHelper;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +55,7 @@ public class Downloader_download_privacyStrategyIntegrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
-		assertThat(ArrayUtils.toObject(result.getData().getData()),
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result.getData().getByteStream())),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
 	}
 
@@ -71,7 +72,7 @@ public class Downloader_download_privacyStrategyIntegrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
-		assertThat(ArrayUtils.toObject(result.getData().getData()),
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result.getData().getByteStream())),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
 	}
 
@@ -88,7 +89,7 @@ public class Downloader_download_privacyStrategyIntegrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getPrivacyType(), is(PrivacyType.PASSWORD.getValue()));
-		assertThat(ArrayUtils.toObject(result.getData().getData()),
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result.getData().getByteStream())),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
 	}
 
@@ -108,7 +109,7 @@ public class Downloader_download_privacyStrategyIntegrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getPrivacyType(), is(PrivacyType.SHAMIR.getValue()));
-		assertThat(ArrayUtils.toObject(result.getData().getData()),
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result.getData().getByteStream())),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
 	}
 }

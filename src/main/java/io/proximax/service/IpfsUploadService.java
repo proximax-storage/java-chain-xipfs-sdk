@@ -5,6 +5,7 @@ import io.proximax.service.client.IpfsClient;
 import io.reactivex.Observable;
 
 import java.io.File;
+import java.io.InputStream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -28,14 +29,14 @@ public class IpfsUploadService {
     }
 
     /**
-     * Upload a byte array
-     * @param data the byte array data
+     * Upload byte stream
+     * @param byteStream the byte stream
      * @return the IPFS upload response
      */
-    public Observable<IpfsUploadResponse> uploadByteArray(final byte[] data) {
-        checkArgument(data != null, "data is required");
+    public Observable<IpfsUploadResponse> uploadByteStream(final InputStream byteStream) {
+        checkArgument(byteStream != null, "byteStream is required");
 
-        return ipfsClient.addByteArray(data).map(dataHash -> new IpfsUploadResponse(dataHash, System.currentTimeMillis()));
+        return ipfsClient.addByteStream(byteStream).map(dataHash -> new IpfsUploadResponse(dataHash, System.currentTimeMillis()));
     }
 
     /**

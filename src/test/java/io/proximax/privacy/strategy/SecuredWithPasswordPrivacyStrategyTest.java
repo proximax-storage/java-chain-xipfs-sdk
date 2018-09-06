@@ -1,14 +1,19 @@
 package io.proximax.privacy.strategy;
 
-import io.proximax.cipher.BinaryPBKDF2CipherEncryption;
+import io.proximax.cipher.PBECipherEncryptor;
 import io.proximax.exceptions.DecryptionFailureException;
 import io.proximax.exceptions.EncryptionFailureException;
 import io.proximax.model.PrivacyType;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,7 +31,7 @@ public class SecuredWithPasswordPrivacyStrategyTest {
     private static final String PASSWORD_TOO_SHORT = "too short for a password";
 
     @Mock
-    private BinaryPBKDF2CipherEncryption encryptor;
+    private PBECipherEncryptor encryptor;
 
     @Before
     public void setUp() {
@@ -52,37 +57,37 @@ public class SecuredWithPasswordPrivacyStrategyTest {
 
     @Test(expected = EncryptionFailureException.class)
     public void failOnExceptionWhileEncrypting() throws Exception {
-        given(encryptor.encrypt(any(byte[].class), any(char[].class))).willThrow(new RuntimeException("failed encryption"));
+        given(encryptor.encryptStream(any(), any())).willThrow(new EncryptionFailureException("failed encryption"));
 
         final SecuredWithPasswordPrivacyStrategy unitUnderTest = new SecuredWithPasswordPrivacyStrategy(encryptor, PASSWORD);
-        unitUnderTest.encryptData(SAMPLE_DATA);
+        unitUnderTest.encryptStream(new ByteArrayInputStream(SAMPLE_DATA));
     }
 
     @Test
-    public void shouldReturnEncryptedWithPassword() {
+    public void shouldReturnEncryptedWithPassword() throws IOException {
         final SecuredWithPasswordPrivacyStrategy unitUnderTest = SecuredWithPasswordPrivacyStrategy.create(PASSWORD);
 
-        final byte[] encrypted = unitUnderTest.encryptData(SAMPLE_DATA);
+        final InputStream encrypted = unitUnderTest.encryptStream(new ByteArrayInputStream(SAMPLE_DATA));
 
-        assertThat(ArrayUtils.toObject(encrypted), not(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
+        assertThat(ArrayUtils.toObject(IOUtils.toByteArray(encrypted)), not(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
     }
 
     @Test(expected = DecryptionFailureException.class)
     public void failOnExceptionWhileDecrypting() throws Exception {
-        given(encryptor.decrypt(any(byte[].class), any(char[].class))).willThrow(new RuntimeException("failed encryption"));
+        given(encryptor.decryptStream(any(), any())).willThrow(new DecryptionFailureException("failed encryption"));
 
         final SecuredWithPasswordPrivacyStrategy unitUnderTest = new SecuredWithPasswordPrivacyStrategy(encryptor, PASSWORD);
-        unitUnderTest.decryptData(SAMPLE_DATA);
+        unitUnderTest.decryptStream(new ByteArrayInputStream(SAMPLE_DATA));
     }
 
     @Test
-    public void shouldReturnDecryptedWithPassword() {
+    public void shouldReturnDecryptedWithPassword() throws IOException {
         final SecuredWithPasswordPrivacyStrategy unitUnderTest = SecuredWithPasswordPrivacyStrategy.create(PASSWORD);
-        final byte[] encrypted = unitUnderTest.encryptData(SAMPLE_DATA);
+        final InputStream encryptedStream = unitUnderTest.encryptStream(new ByteArrayInputStream(SAMPLE_DATA));
 
-        final byte[] decrypted = unitUnderTest.decryptData(encrypted);
+        final InputStream decrypted = unitUnderTest.decryptStream(encryptedStream);
 
-        assertThat(ArrayUtils.toObject(decrypted), is(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
+        assertThat(ArrayUtils.toObject(IOUtils.toByteArray(decrypted)), is(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
     }
 
 }

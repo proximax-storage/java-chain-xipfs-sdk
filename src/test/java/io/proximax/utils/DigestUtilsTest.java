@@ -3,6 +3,8 @@ package io.proximax.utils;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -27,7 +29,7 @@ public class DigestUtilsTest {
 
     @Test
     public void shouldReturnDigestOnDigest() {
-        final String result = unitUnderTest.digest(SAMPLE_DATA).blockingFirst();
+        final String result = unitUnderTest.digest(new ByteArrayInputStream(SAMPLE_DATA)).blockingFirst();
 
         assertThat(result, is(SAMPLE_DIGEST_HEX));
     }
@@ -39,14 +41,14 @@ public class DigestUtilsTest {
 
     @Test
     public void shouldReturnTrueOnValidateDigestWhenNullExpectedDigest() {
-        final Boolean result = unitUnderTest.validateDigest(SAMPLE_DATA, null).blockingFirst();
+        final Boolean result = unitUnderTest.validateDigest(new ByteArrayInputStream(SAMPLE_DATA), null).blockingFirst();
 
         assertThat(result, is(true));
     }
 
     @Test
     public void shouldReturnTrueOnValidateDigestWhenExpectedDigestMatches() {
-        final Boolean result = unitUnderTest.validateDigest(SAMPLE_DATA, SAMPLE_DIGEST_HEX).blockingFirst();
+        final Boolean result = unitUnderTest.validateDigest(new ByteArrayInputStream(SAMPLE_DATA), SAMPLE_DIGEST_HEX).blockingFirst();
 
         assertThat(result, is(true));
     }
