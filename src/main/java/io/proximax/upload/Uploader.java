@@ -74,7 +74,7 @@ public class Uploader {
      * <br>
      * The upload throws an UploadFailureException runtime exception if does not succeed.
      * @param uploadParam the upload parameter
-     * @return the upload result containing the hash to getByteStream the uploaded content
+     * @return the upload result
      */
     public UploadResult upload(UploadParameter uploadParam) {
         checkParameter(uploadParam != null, "uploadParam is required");
@@ -89,7 +89,7 @@ public class Uploader {
      * The upload throws an UploadFailureException runtime exception if does not succeed.
      * @param uploadParam the upload parameter
      * @param asyncCallback an optional callbacks when succeeded or failed
-     * @return the upload result containing the hashes to getByteStream the uploaded content
+     * @return the upload result
      */
     public AsyncTask uploadAsync(UploadParameter uploadParam, AsyncCallback<UploadResult> asyncCallback) {
         checkParameter(uploadParam != null, "uploadParam is required");

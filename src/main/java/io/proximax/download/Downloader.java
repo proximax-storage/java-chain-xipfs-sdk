@@ -31,7 +31,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * <br>
  * <br>
  * Downloads can be done by providing the blockchain transaction hash or the data hash.
- * A complete download can be done to getByteStream the data and its accompanying details,
+ * A complete download can be done to get the data and its accompanying details,
  * and a direct download can be done to retrieve the data only.
  * @see ConnectionConfig
  * @see DownloadParameter
@@ -67,10 +67,10 @@ public class Downloader {
 
     /**
      * Retrieve synchronously the data and its accompanying details.
-     * This would use the blockchain transaction hash to getByteStream the data and its details.
+     * This would use the blockchain transaction hash to retrieve the data's byte stream and its details.
      * <br>
      * @param downloadParam the download parameter
-     * @return the download result containing the data and its details
+     * @return the download result
      */
     public DownloadResult download(final DownloadParameter downloadParam) {
         checkParameter(downloadParam != null, "downloadParam is required");
@@ -80,7 +80,7 @@ public class Downloader {
 
     /**
      * Retrieve asynchronously the data and its accompanying details.
-     * This would use the blockchain transaction hash to getByteStream the data and its details.
+     * This would use the blockchain transaction hash to retrieve the data's byte stream and its details.
      * <br>
      * @param downloadParam the download parameter
      * @param asyncCallback an optional callbacks when succeeded or failed
