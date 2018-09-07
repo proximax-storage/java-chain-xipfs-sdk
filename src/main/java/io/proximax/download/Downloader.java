@@ -19,6 +19,7 @@ import io.reactivex.Observable;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
@@ -127,16 +128,18 @@ public class Downloader {
         return blockchainTransactionService.getTransferTransaction(downloadParam.getTransactionHash())
                 .map(transferTransaction -> retrieveProximaxMessagePayloadService.getMessagePayload(transferTransaction,
                         downloadParam.getAccountPrivateKey()))
-                .flatMap(messagePayload -> getDataByteStream(Optional.of(messagePayload), null, downloadParam.getPrivacyStrategy(),
-                        downloadParam.getValidateDigest(), null)
-                        .map(decryptedByteStream -> createCompleteDownloadResult(messagePayload, decryptedByteStream, downloadParam.getTransactionHash())))
+                .map(messagePayload -> createCompleteDownloadResult(messagePayload,
+                        () -> getDataByteStream(Optional.of(messagePayload), null, downloadParam.getPrivacyStrategy(),
+                                downloadParam.getValidateDigest(), null).blockingFirst(),
+                        downloadParam.getTransactionHash()))
                 .onErrorResumeNext((Throwable ex) -> Observable.error(new DownloadFailureException("Download failed.", ex)));
     }
 
-    private DownloadResult createCompleteDownloadResult(ProximaxMessagePayloadModel messagePayload, InputStream decryptedByteStream, String transactionHash) {
+    private DownloadResult createCompleteDownloadResult(ProximaxMessagePayloadModel messagePayload,
+                                                        Supplier<InputStream> byteStreamSupplier, String transactionHash) {
         final ProximaxDataModel data = messagePayload.getData();
         return DownloadResult.create(transactionHash, messagePayload.getPrivacyType(), messagePayload.getVersion(),
-                new DownloadResultData(decryptedByteStream, data.getDigest(), data.getDataHash(), data.getTimestamp(),
+                new DownloadResultData(byteStreamSupplier, data.getDigest(), data.getDataHash(), data.getTimestamp(),
                         data.getDescription(), data.getName(), data.getContentType(), data.getMetadata()));
     }
 

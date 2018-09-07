@@ -5,6 +5,7 @@ import io.proximax.model.DataInfoModel;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * The model class that defines the downloaded data
@@ -12,15 +13,15 @@ import java.util.Map;
  */
 public class DownloadResultData extends DataInfoModel {
 
-    private final InputStream byteStream;
+    private final Supplier<InputStream> byteStreamSupplier;
     private final String digest;
     private final String dataHash;
     private final long timestamp;
 
-    DownloadResultData(InputStream byteStream, String digest, String dataHash, long timestamp, String description, String name,
+    DownloadResultData(Supplier<InputStream> byteStreamSupplier, String digest, String dataHash, long timestamp, String description, String name,
                        String contentType, Map<String, String> metadata) {
         super(description, name, contentType, metadata == null ? Collections.emptyMap() : Collections.unmodifiableMap(metadata));
-        this.byteStream = byteStream;
+        this.byteStreamSupplier = byteStreamSupplier;
         this.digest = digest;
         this.dataHash = dataHash;
         this.timestamp = timestamp;
@@ -31,7 +32,7 @@ public class DownloadResultData extends DataInfoModel {
      * @return the byte stream
      */
     public InputStream getByteStream() {
-        return byteStream;
+        return byteStreamSupplier.get();
     }
 
     /**

@@ -7,6 +7,7 @@ import io.proximax.download.DownloadParameter;
 import io.proximax.download.DownloadResult;
 import io.proximax.download.Downloader;
 import io.proximax.exceptions.DownloadFailureException;
+import io.proximax.exceptions.DownloadForTypeNotSupportedException;
 import io.proximax.model.BlockchainNetworkType;
 import io.proximax.testsupport.TestHelper;
 import org.apache.commons.io.IOUtils;
@@ -244,11 +245,12 @@ public class Downloader_download_integrationTest {
 		assertThat(result.getData().getTimestamp(), is(notNullValue()));
 	}
 
-	@Test(expected = DownloadFailureException.class)
-	public void failDownloadWhenContentTypeIsDirectory() {
+	@Test(expected = DownloadForTypeNotSupportedException.class)
+	public void failDownloadOnGetByteStreamWhenContentTypeIsDirectory() {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadPath", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
-		unitUnderTest.download(param);
+		final DownloadResult download = unitUnderTest.download(param);
+		download.getData().getByteStream();
 	}
 }
