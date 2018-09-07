@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import static io.proximax.integration.bigfile.BigFileConfig.BIG_FILE;
+import static io.proximax.integration.bigfile.BigFileConstants.BIG_FILE;
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
 import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,8 +35,8 @@ public class Downloader_download_bigfileIntegrationTest {
 	}
 
 	@Test
-	public void shouldDownloadVeryBigFileByTransactionHash() throws IOException {
-		final String transactionHash = TestHelper.getData("Uploader_bigFileIntegrationTest.shouldUploadVeryLargeFile", "transactionHash");
+	public void shouldDownloadBigFileByTransactionHash() throws IOException {
+		final String transactionHash = TestHelper.getData("Uploader_bigFileIntegrationTest.shouldUploadBigFile", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);

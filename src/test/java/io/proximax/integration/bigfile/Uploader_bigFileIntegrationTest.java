@@ -11,8 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
-import static io.proximax.integration.bigfile.BigFileConfig.BIG_FILE;
+import static io.proximax.integration.bigfile.BigFileConstants.BIG_FILE;
+import static io.proximax.integration.bigfile.BigFileConstants.BIG_FILE_SIZE;
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
 import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
 import static io.proximax.testsupport.Constants.PRIVATE_KEY_1;
@@ -33,7 +36,9 @@ public class Uploader_bigFileIntegrationTest {
 	}
 
 	@Test
-	public void shouldUploadVeryBigFile() throws Exception {
+	public void shouldUploadBigFile() throws Exception {
+		generateBigFile();
+
 		final UploadParameter param = UploadParameter.createForFileUpload(new File(BIG_FILE), PRIVATE_KEY_1)
 				.build();
 
@@ -43,6 +48,11 @@ public class Uploader_bigFileIntegrationTest {
 		assertThat(result.getTransactionHash(), is(notNullValue()));
 		assertThat(result.getData().getDataHash(), is(notNullValue()));
 
-		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadVeryLargeFile");
+		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadBigFile");
+	}
+
+	private void generateBigFile() throws IOException {
+		final RandomAccessFile f = new RandomAccessFile(BIG_FILE, "rw");
+		f.setLength(BIG_FILE_SIZE);
 	}
 }

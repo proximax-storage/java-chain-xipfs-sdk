@@ -16,7 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static io.proximax.integration.bigfile.BigFileConfig.BIG_FILE;
+import static io.proximax.integration.bigfile.BigFileConstants.BIG_FILE;
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
 import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,8 +35,8 @@ public class Downloader_directDownload_bigFileIntegrationTest {
 	}
 
 	@Test
-	public void shouldDownloadVeryBigFileByTransactionHash() throws IOException {
-		final String transactionHash = TestHelper.getData("Uploader_bigFileIntegrationTest.shouldUploadVeryLargeFile", "transactionHash");;
+	public void shouldDownloadBigFileByTransactionHash() throws IOException {
+		final String transactionHash = TestHelper.getData("Uploader_bigFileIntegrationTest.shouldUploadBigFile", "transactionHash");;
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromTransactionHash(transactionHash).build();
 
 		final InputStream result = unitUnderTest.directDownload(param);
@@ -46,8 +46,8 @@ public class Downloader_directDownload_bigFileIntegrationTest {
 	}
 
 	@Test
-	public void shouldDownloadVeryBigFileByDataHash() throws IOException {
-		final String dataHash = TestHelper.getData("Uploader_bigFileIntegrationTest.shouldUploadVeryLargeFile", "dataHash");
+	public void shouldDownloadBigFileByDataHash() throws IOException {
+		final String dataHash = TestHelper.getData("Uploader_bigFileIntegrationTest.shouldUploadBigFile", "dataHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(dataHash).build();
 
 		final InputStream result = unitUnderTest.directDownload(param);

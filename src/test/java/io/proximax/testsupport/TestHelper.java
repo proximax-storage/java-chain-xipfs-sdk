@@ -6,10 +6,12 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class TestHelper {
 
+    public static final File TEST_DATA_JSON_FILE = new File("src//test/resources//test_data//test_data.json");
     private static Map<String, String> TEST_DATA_MAP = loadTestDataMap();
 
     public static void logAndSaveResult(UploadResult result, String testMethodName) {
@@ -17,9 +19,9 @@ public class TestHelper {
         System.out.println("data hash: " + result.getData().getDataHash());
         System.out.println("data digest: " + result.getData().getDigest());
 
-        TEST_DATA_MAP.putIfAbsent(testMethodName + ".transactionHash", result.getTransactionHash());
-        TEST_DATA_MAP.putIfAbsent(testMethodName + ".dataHash", result.getData().getDataHash());
-        TEST_DATA_MAP.putIfAbsent(testMethodName + ".digest", result.getData().getDigest());
+        TEST_DATA_MAP.put(testMethodName + ".transactionHash", result.getTransactionHash());
+        TEST_DATA_MAP.put(testMethodName + ".dataHash", result.getData().getDataHash());
+        TEST_DATA_MAP.put(testMethodName + ".digest", result.getData().getDigest());
 
         saveTestDataMap();
     }
@@ -30,7 +32,7 @@ public class TestHelper {
 
     private static void saveTestDataMap() {
         try {
-            FileUtils.writeStringToFile(new File("src//test/resources//test_data//test_data.json"), JsonUtils.toJson(TEST_DATA_MAP));
+            FileUtils.writeStringToFile(TEST_DATA_JSON_FILE, JsonUtils.toJson(TEST_DATA_MAP));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,8 +40,12 @@ public class TestHelper {
 
     private static Map<String, String> loadTestDataMap() {
         try {
-            final String testDataJson = FileUtils.readFileToString(new File("src//test/resources//test_data//test_data.json"));
-            return JsonUtils.fromJson(testDataJson, Map.class);
+            if (TEST_DATA_JSON_FILE.exists()) {
+                final String testDataJson = FileUtils.readFileToString(new File("src//test/resources//test_data//test_data.json"));
+                return JsonUtils.fromJson(testDataJson, Map.class);
+            } else {
+                return new HashMap<>();
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return null;
