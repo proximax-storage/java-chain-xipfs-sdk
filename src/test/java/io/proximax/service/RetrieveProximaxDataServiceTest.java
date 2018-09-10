@@ -9,6 +9,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -17,9 +20,11 @@ import static org.mockito.BDDMockito.given;
 public class RetrieveProximaxDataServiceTest {
 
     private static final String DUMMY_DATA_HASH = "Qmdahdksadjksahjk";
-    private static final byte[] DUMMY_DOWNLOADED_DATA = "dopsaipdlsnlxnz,cn,zxnclznxlnldsaldslkaj;as.".getBytes();
+    private static final InputStream DUMMY_DOWNLOADED_DATA_STREAM =
+            new ByteArrayInputStream("dopsaipdlsnlxnz,cn,zxnclznxlnldsaldslkaj;as.".getBytes());
     private static final String DUMMY_DIGEST = "iowuqoieuqowueoiqw";
-    private static final byte[] DUMMY_DECRYPTED_DATA = "dsajhjdhaskhdksahkdsaljkjlxnzcm,nxz".getBytes();
+    private static final InputStream DUMMY_DECRYPTED_DATA_STREAM =
+            new ByteArrayInputStream("dsajhjdhaskhdksahkdsaljkjlxnzcm,nxz".getBytes());
 
     private RetrieveProximaxDataService unitUnderTest;
 
@@ -41,42 +46,42 @@ public class RetrieveProximaxDataServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullDataHash() {
-        unitUnderTest.getData(null, mockPrivacyStrategy, true, null, null);
+        unitUnderTest.getDataByteStream(null, mockPrivacyStrategy, true, null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullPrivacyStrategy() {
-        unitUnderTest.getData(DUMMY_DATA_HASH, null, true, null, null);
+        unitUnderTest.getDataByteStream(DUMMY_DATA_HASH, null, true, null, null);
     }
 
     @Test(expected = DownloadForTypeNotSupportedException.class)
     public void failWhenPathContentType() {
-        unitUnderTest.getData(DUMMY_DATA_HASH, mockPrivacyStrategy, true, null, PATH_UPLOAD_CONTENT_TYPE);
+        unitUnderTest.getDataByteStream(DUMMY_DATA_HASH, mockPrivacyStrategy, true, null, PATH_UPLOAD_CONTENT_TYPE);
     }
 
     @Test
     public void shouldReturnDownloadedData() {
-        given(mockIpfsDownloadService.download(DUMMY_DATA_HASH)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA));
-        given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA, DUMMY_DIGEST)).willReturn(Observable.just(true));
-        given(mockPrivacyStrategy.decryptData(DUMMY_DOWNLOADED_DATA)).willReturn(DUMMY_DECRYPTED_DATA);
+        given(mockIpfsDownloadService.download(DUMMY_DATA_HASH)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA_STREAM));
+        given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA_STREAM, DUMMY_DIGEST)).willReturn(Observable.just(true));
+        given(mockPrivacyStrategy.decryptStream(DUMMY_DOWNLOADED_DATA_STREAM)).willReturn(DUMMY_DECRYPTED_DATA_STREAM);
 
-        final byte[] result =
-                unitUnderTest.getData(DUMMY_DATA_HASH, mockPrivacyStrategy, true, DUMMY_DIGEST, "text/plain")
+        final InputStream result =
+                unitUnderTest.getDataByteStream(DUMMY_DATA_HASH, mockPrivacyStrategy, true, DUMMY_DIGEST, "text/plain")
                         .blockingFirst();
 
-        assertThat(result, is(DUMMY_DECRYPTED_DATA));
+        assertThat(result, is(DUMMY_DECRYPTED_DATA_STREAM));
     }
 
     @Test(expected = RuntimeException.class)
     public void failWhenDigestsDoNotMatch() {
-        given(mockIpfsDownloadService.download(DUMMY_DATA_HASH)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA));
-        given(mockPrivacyStrategy.decryptData(DUMMY_DOWNLOADED_DATA)).willReturn(DUMMY_DECRYPTED_DATA);
-        given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA, DUMMY_DIGEST)).willThrow(RuntimeException.class);
+        given(mockIpfsDownloadService.download(DUMMY_DATA_HASH)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA_STREAM));
+        given(mockPrivacyStrategy.decryptStream(DUMMY_DOWNLOADED_DATA_STREAM)).willReturn(DUMMY_DECRYPTED_DATA_STREAM);
+        given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA_STREAM, DUMMY_DIGEST)).willThrow(RuntimeException.class);
 
-        final byte[] result =
-                unitUnderTest.getData(DUMMY_DATA_HASH, mockPrivacyStrategy, true, DUMMY_DIGEST, "text/plain")
+        final InputStream result =
+                unitUnderTest.getDataByteStream(DUMMY_DATA_HASH, mockPrivacyStrategy, true, DUMMY_DIGEST, "text/plain")
                         .blockingFirst();
 
-        assertThat(result, is(DUMMY_DECRYPTED_DATA));
+        assertThat(result, is(DUMMY_DECRYPTED_DATA_STREAM));
     }
 }

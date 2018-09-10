@@ -8,6 +8,7 @@ import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
@@ -39,19 +40,19 @@ public class IpfsClient {
     }
 
     /**
-     * Add/Upload a file (represented as byte arrays) to IPFS
+     * Add/Upload a file (represented as byte stream) to IPFS
      * <br>
      * <br>
      * This method is equivalent to `ipfs add` CLI command
-     * @param data the byte array being added
+     * @param byteStream the byte stream to upload
      * @return the hash (base58) for the data uploaded
      */
-    public Observable<String> addByteArray(byte[] data) {
-        checkParameter(data != null, "data is required");
+    public Observable<String> addByteStream(InputStream byteStream) {
+        checkParameter(byteStream != null, "byteStream is required");
 
-        return Observable.just(data)
+        return Observable.just(byteStream)
                 .observeOn(Schedulers.io())
-                .map(byteArr -> ipfsConnection.getIpfs().add(new NamedStreamable.ByteArrayWrapper(byteArr)))
+                .map(stream -> ipfsConnection.getIpfs().add(new NamedStreamable.InputStreamWrapper(stream)))
                 .onErrorResumeNext((Throwable ex) ->
                         Observable.error(new IpfsClientFailureException(String.format("Failed to add resource"), ex)))
                 .observeOn(Schedulers.computation())
@@ -102,22 +103,22 @@ public class IpfsClient {
     }
 
     /**
-     * Retrieves the file from IPFS given a hash
+     * Retrieves the file stream from IPFS given a hash
      * <br>
      * <br>
      * This method is equivalent to `ipfs cat` CLI command
      * @param dataHash the hash (base58) of an IPFS file
-     * @return the file (represented as byte arrays)
+     * @return the file (represented as byte stream)
      */
-    public Observable<byte[]> get(String dataHash) {
+    public Observable<InputStream> getByteStream(String dataHash) {
         checkParameter(dataHash != null, "dataHash is required");
 
         return Observable.just(dataHash)
                 .observeOn(Schedulers.computation())
                 .map(hash -> Multihash.fromBase58(dataHash))
                 .observeOn(Schedulers.io())
-                .map(hash -> ipfsConnection.getIpfs().cat(hash))
+                .map(hash -> ipfsConnection.getIpfs().catStream(hash))
                 .onErrorResumeNext((Throwable ex) ->
-                        Observable.error(new IpfsClientFailureException(String.format("Failed to get resource for %s", dataHash), ex)));
+                        Observable.error(new IpfsClientFailureException(String.format("Failed to getByteStream resource for %s", dataHash), ex)));
     }
 }

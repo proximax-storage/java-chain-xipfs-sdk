@@ -1,6 +1,8 @@
 package io.proximax.upload;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.junit.Test;
 
 import java.io.File;
@@ -9,9 +11,9 @@ import java.io.IOException;
 import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
 import static io.proximax.testsupport.Constants.IMAGE_FILE;
 import static io.proximax.testsupport.Constants.PATH_FILE;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsArrayContainingInOrder.arrayContaining;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
@@ -40,7 +42,9 @@ public class FileParameterDataTest {
         final FileParameterData param = FileParameterData.create(IMAGE_FILE);
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.getData(), is(FileUtils.readFileToByteArray(IMAGE_FILE)));
+        assertThat(param.getFile(), is(IMAGE_FILE));
+        assertThat(ArrayUtils.toObject(IOUtils.toByteArray(param.getByteStream())),
+                is(arrayContaining(ArrayUtils.toObject(FileUtils.readFileToByteArray(IMAGE_FILE)))));
         assertThat(param.getContentType(), is(nullValue()));
         assertThat(param.getDescription(), is(nullValue()));
         assertThat(param.getMetadata(), is(nullValue()));
@@ -53,7 +57,9 @@ public class FileParameterDataTest {
                 "name here", "text/plain", singletonMap("mykey", "myvalue"));
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.getData(), is(FileUtils.readFileToByteArray(IMAGE_FILE)));
+        assertThat(param.getFile(), is(IMAGE_FILE));
+        assertThat(ArrayUtils.toObject(IOUtils.toByteArray(param.getByteStream())),
+                is(arrayContaining(ArrayUtils.toObject(FileUtils.readFileToByteArray(IMAGE_FILE)))));
         assertThat(param.getContentType(), is("text/plain"));
         assertThat(param.getDescription(), is("describe me"));
         assertThat(param.getMetadata(), is(singletonMap("mykey", "myvalue")));

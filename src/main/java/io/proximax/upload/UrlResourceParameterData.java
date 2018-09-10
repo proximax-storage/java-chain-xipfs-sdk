@@ -1,8 +1,9 @@
 package io.proximax.upload;
 
-import org.apache.commons.io.IOUtils;
+import io.proximax.exceptions.GetByteStreamFailureException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 
@@ -12,17 +13,31 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 /**
  * This model class is one type of the upload parameter data that defines a URL resource upload
  */
-public class UrlResourceParameterData extends ByteArrayParameterData {
+public class UrlResourceParameterData extends AbstractByteStreamParameterData {
 
     private final URL url;
 
     private UrlResourceParameterData(URL url, String description, String name, String contentType, Map<String, String> metadata) throws IOException {
-        super(toUrlResourceByteArray(url), description, name, contentType, metadata);
+        super(description, name, contentType, metadata);
 
+        checkParameter(url != null, "url is required");
         checkParameter(contentType == null || !RESERVED_CONTENT_TYPES.contains(contentType),
                 String.format("%s cannot be used as it is reserved", contentType));
 
         this.url = url;
+    }
+
+    /**
+     * Get the byte stream
+     * @return the byte stream
+     */
+    @Override
+    public InputStream getByteStream() {
+        try {
+            return url.openStream();
+        } catch (IOException e) {
+            throw new GetByteStreamFailureException("Failed to open byte stream", e);
+        }
     }
 
     /**
@@ -31,12 +46,6 @@ public class UrlResourceParameterData extends ByteArrayParameterData {
      */
     public URL getUrl() {
         return url;
-    }
-
-    private static byte[] toUrlResourceByteArray(URL url) throws IOException {
-        checkParameter(url != null, "url is required");
-
-        return IOUtils.toByteArray(url);
     }
 
     /**

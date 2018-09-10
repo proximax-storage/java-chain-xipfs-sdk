@@ -2,18 +2,20 @@ package io.proximax.service;
 
 import io.proximax.service.client.IpfsClient;
 import io.reactivex.Observable;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.collection.IsArrayContainingInOrder.arrayContaining;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.BDDMockito.given;
 
 public class IpfsDownloadServiceTest {
@@ -33,32 +35,17 @@ public class IpfsDownloadServiceTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void failOnDownloadListWhenNullDataHashList() {
-        unitUnderTest.downloadList(null);
-    }
-
-    @Test
-    public void returnDataListOnDownloadLis() {
-        given(mockIpfsClient.get(SAMPLE_DATAHASH)).willReturn(Observable.just(SAMPLE_DATA));
-
-        final List<byte[]> dataList = unitUnderTest.downloadList(asList(SAMPLE_DATAHASH)).blockingFirst();
-
-        assertThat(dataList, is(notNullValue()));
-        assertThat(dataList, hasSize(1));
-        assertThat(dataList.get(0), is(SAMPLE_DATA));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failOnDownloadWhenNullDataHashList() {
+    public void failWhenNullDataHashList() {
         unitUnderTest.download(null);
     }
 
     @Test
-    public void returnDataOnDownload() {
-        given(mockIpfsClient.get(SAMPLE_DATAHASH)).willReturn(Observable.just(SAMPLE_DATA));
+    public void returnData() throws IOException {
+        given(mockIpfsClient.getByteStream(SAMPLE_DATAHASH))
+                .willReturn(Observable.just(new ByteArrayInputStream(SAMPLE_DATA)));
 
-        final byte[] data = unitUnderTest.download(SAMPLE_DATAHASH).blockingFirst();
+        final InputStream dataStream = unitUnderTest.download(SAMPLE_DATAHASH).blockingFirst();
 
-        assertThat(data, is(SAMPLE_DATA));
+        assertThat(ArrayUtils.toObject(IOUtils.toByteArray(dataStream)), is(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
     }
 }

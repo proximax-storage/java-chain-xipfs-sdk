@@ -11,7 +11,7 @@ import static io.proximax.testsupport.Constants.IMAGE_FILE;
 import static io.proximax.testsupport.Constants.PATH_FILE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -37,10 +37,11 @@ public class FilesAsZipParameterDataTest {
 
     @Test
     public void createWithFilesOnly() throws IOException {
-        final FilesAsZipParameterData param = FilesAsZipParameterData.create(asList(IMAGE_FILE, HTML_FILE));
+        final FilesAsZipParameterData param = FilesAsZipParameterData.create(singletonList(IMAGE_FILE));
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.getData(), is(notNullValue()));
+        assertThat(param.getFiles(), is(singletonList(IMAGE_FILE)));
+        assertThat(param.getByteStream(), is(notNullValue()));
         assertThat(param.getContentType(), is("application/zip"));
         assertThat(param.getDescription(), is(nullValue()));
         assertThat(param.getMetadata(), is(nullValue()));
@@ -49,11 +50,12 @@ public class FilesAsZipParameterDataTest {
 
     @Test
     public void createWithCompleteDetails() throws IOException {
-        final FilesAsZipParameterData param = FilesAsZipParameterData.create(asList(IMAGE_FILE, HTML_FILE),
+        final FilesAsZipParameterData param = FilesAsZipParameterData.create(singletonList(IMAGE_FILE),
                 "describe me", "name here", singletonMap("mykey", "myvalue"));
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.getData(), is(notNullValue()));
+        assertThat(param.getFiles(), is(singletonList(IMAGE_FILE)));
+        assertThat(param.getByteStream(), is(notNullValue()));
         assertThat(param.getContentType(), is("application/zip"));
         assertThat(param.getDescription(), is("describe me"));
         assertThat(param.getMetadata(), is(singletonMap("mykey", "myvalue")));

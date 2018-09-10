@@ -2,6 +2,8 @@ package io.proximax.privacy.strategy;
 
 import io.proximax.model.PrivacyType;
 
+import java.io.InputStream;
+
 /**
  * The plain privacy strategy.
  * <br>
@@ -25,23 +27,23 @@ public final class PlainPrivacyStrategy extends PrivacyStrategy {
     }
 
     /**
-     * Return same data on encrypt
-     * @param data data to encrypt
-     * @return same data
+     * Return same byte stream
+     * @param byteStream the byte stream to encrypt
+     * @return same byte stream
      */
     @Override
-    public final byte[] encryptData(byte[] data) {
-        return data;
+    public final InputStream encryptStream(final InputStream byteStream) {
+        return byteStream;
     }
 
     /**
-     * Return same data on decrypt
-     * @param data data to decrypt
-     * @return same data
+     * Return same byte stream
+     * @param byteStream the byte stream to decrypt
+     * @return same byte stream
      */
     @Override
-    public final byte[] decryptData(byte[] data) {
-        return data;
+    public final InputStream decryptStream(final InputStream byteStream) {
+        return byteStream;
     }
 
     /**

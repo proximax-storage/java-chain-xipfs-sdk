@@ -1,5 +1,8 @@
 package io.proximax.upload;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import static io.proximax.model.Constants.RESERVED_CONTENT_TYPES;
@@ -8,7 +11,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 /**
  * This model class is one type of the upload parameter data that defines a byte array upload
  */
-public class ByteArrayParameterData extends UploadParameterData {
+public class ByteArrayParameterData extends AbstractByteStreamParameterData {
 
     private final byte[] data;
 
@@ -20,6 +23,15 @@ public class ByteArrayParameterData extends UploadParameterData {
                 String.format("%s cannot be used as it is reserved", contentType));
 
         this.data = data;
+    }
+
+    /**
+     * Get the byte stream
+     * @return the byte stream
+     */
+    @Override
+    public InputStream getByteStream() {
+        return new ByteArrayInputStream(data);
     }
 
     /**

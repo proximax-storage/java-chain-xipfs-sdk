@@ -7,8 +7,12 @@ import io.proximax.download.DirectDownloadParameter;
 import io.proximax.download.Downloader;
 import io.proximax.model.BlockchainNetworkType;
 import io.proximax.testsupport.TestHelper;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
 import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
@@ -29,49 +33,49 @@ public class Downloader_directDownload_digestIntegrationTest {
 	}
 
 	@Test
-	public void shouldVerifyDirectDownloadUsingTransactionHashWithEnabledValidateDigest() {
+	public void shouldVerifyDirectDownloadUsingTransactionHashWithEnabledValidateDigest() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "transactionHash");
 		final DirectDownloadParameter param =
 				DirectDownloadParameter.createFromTransactionHash(transactionHash, true).build();
 
-		final byte[] result = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(new String(result), is(STRING_TEST));
+		assertThat(new String(IOUtils.toByteArray(result)), is(STRING_TEST));
 	}
 
 	@Test
-	public void shouldNotVerifyDirectDownloadUsingTransactionHashWithDisabledValidateDigest() {
+	public void shouldNotVerifyDirectDownloadUsingTransactionHashWithDisabledValidateDigest() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "transactionHash");
 		final DirectDownloadParameter param =
 				DirectDownloadParameter.createFromTransactionHash(transactionHash, false).build();
 
-		final byte[] result = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(new String(result), is(STRING_TEST));
+		assertThat(new String(IOUtils.toByteArray(result)), is(STRING_TEST));
 	}
 
 	@Test
-	public void shouldVerifyDirectDownloadUsingDataHashAndDigest() {
+	public void shouldVerifyDirectDownloadUsingDataHashAndDigest() throws IOException {
 		final String dataHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "dataHash");
 		final String digest = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "digest");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(dataHash, digest).build();
 
-		final byte[] result = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(new String(result), is(STRING_TEST));
+		assertThat(new String(IOUtils.toByteArray(result)), is(STRING_TEST));
 	}
 
 	@Test
-	public void shouldNotVerifyDirectDownloadUsingDataHashOnly() {
+	public void shouldNotVerifyDirectDownloadUsingDataHashOnly() throws IOException {
 		final String dataHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "dataHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(dataHash).build();
 
-		final byte[] result = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(new String(result), is(STRING_TEST));
+		assertThat(new String(IOUtils.toByteArray(result)), is(STRING_TEST));
 	}
 }

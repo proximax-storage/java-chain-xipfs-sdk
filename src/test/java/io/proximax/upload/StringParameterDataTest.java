@@ -1,12 +1,11 @@
 package io.proximax.upload;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -23,11 +22,12 @@ public class StringParameterDataTest {
     }
 
     @Test
-    public void createWithStringOnly() throws UnsupportedEncodingException {
+    public void createWithStringOnly() throws IOException {
         final StringParameterData param = StringParameterData.create(SAMPLE_DATA);
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.getData(), is(SAMPLE_DATA.getBytes()));
+        assertThat(param.getString(), is(SAMPLE_DATA));
+        assertThat(new String(IOUtils.toByteArray(param.getByteStream())), is(SAMPLE_DATA));
         assertThat(param.getContentType(), is(nullValue()));
         assertThat(param.getDescription(), is(nullValue()));
         assertThat(param.getMetadata(), is(nullValue()));
@@ -35,12 +35,13 @@ public class StringParameterDataTest {
     }
 
     @Test
-    public void createWithCompleteDetails() throws UnsupportedEncodingException {
+    public void createWithCompleteDetails() throws IOException {
         final StringParameterData param = StringParameterData.create(SAMPLE_DATA, "UTF-8",
                 "describe me", "name here", "text/plain", singletonMap("mykey", "myvalue"));
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.getData(), is(SAMPLE_DATA.getBytes("UTF-8")));
+        assertThat(param.getString(), is(SAMPLE_DATA));
+        assertThat(new String(IOUtils.toByteArray(param.getByteStream()), "UTF-8"), is(SAMPLE_DATA));
         assertThat(param.getContentType(), is("text/plain"));
         assertThat(param.getDescription(), is("describe me"));
         assertThat(param.getMetadata(), is(singletonMap("mykey", "myvalue")));

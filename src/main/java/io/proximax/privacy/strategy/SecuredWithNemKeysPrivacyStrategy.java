@@ -1,12 +1,12 @@
 package io.proximax.privacy.strategy;
 
-import io.nem.core.crypto.CryptoEngines;
 import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.PrivateKey;
 import io.nem.core.crypto.PublicKey;
-import io.proximax.exceptions.DecryptionFailureException;
-import io.proximax.exceptions.EncryptionFailureException;
+import io.proximax.cipher.BlockchainKeysCipherEncryptor;
 import io.proximax.model.PrivacyType;
+
+import java.io.InputStream;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
@@ -17,14 +17,17 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 // TODO switch to secure message once available
 public final class SecuredWithNemKeysPrivacyStrategy extends PrivacyStrategy {
 
+    private final BlockchainKeysCipherEncryptor blockchainKeysCipherEncryptor;
     private final KeyPair keyPairOfPrivateKey;
     private final KeyPair keyPairOfPublicKey;
 
-    private SecuredWithNemKeysPrivacyStrategy(String privateKey, String publicKey) {
+    SecuredWithNemKeysPrivacyStrategy(BlockchainKeysCipherEncryptor blockchainKeysCipherEncryptor,
+                                              String privateKey, String publicKey) {
 
         checkParameter(privateKey != null, "private key is required");
         checkParameter(publicKey != null, "public key is required");
 
+        this.blockchainKeysCipherEncryptor = blockchainKeysCipherEncryptor;
         this.keyPairOfPrivateKey = new KeyPair(PrivateKey.fromHexString(privateKey));
         this.keyPairOfPublicKey = new KeyPair(PublicKey.fromHexString(publicKey));
     }
@@ -40,35 +43,23 @@ public final class SecuredWithNemKeysPrivacyStrategy extends PrivacyStrategy {
     }
 
     /**
-     * Encrypt the data using the private and public keys provided
-     * @param data data to encrypt
-     * @return the encrypted data
+     * Encrypt byte stream using the private and public keys provided
+     * @param byteStream the byte stream to encrypt
+     * @return the encrypted byte stream
      */
     @Override
-    public final byte[] encryptData(byte[] data) {
-        try {
-            return CryptoEngines.defaultEngine().createBlockCipher(keyPairOfPrivateKey, keyPairOfPublicKey).encrypt(data);
-        } catch (Exception e) {
-            throw new EncryptionFailureException("Exception encountered encrypting data", e);
-        }
+    public final InputStream encryptStream(final InputStream byteStream) {
+        return blockchainKeysCipherEncryptor.encryptStream(byteStream, keyPairOfPrivateKey, keyPairOfPublicKey);
     }
 
     /**
-     * Encrypt the data using the private and public keys provided
-     * @param data encrypted data to decrypt
-     * @return the decrypted data
+     * Encrypt byte stream using the private and public keys provided
+     * @param byteStream the byte stream to decrypt
+     * @return the decrypted byte stream
      */
     @Override
-    public final byte[] decryptData(byte[] data) {
-        try {
-            final byte[] decrypted = CryptoEngines.defaultEngine().createBlockCipher(keyPairOfPublicKey, keyPairOfPrivateKey).decrypt(data);
-            if (decrypted == null) {
-                throw new DecryptionFailureException("Exception encountered decrypting data");
-            }
-            return decrypted;
-        } catch (Exception e) {
-            throw new DecryptionFailureException("Exception encountered decrypting data", e);
-        }
+    public final InputStream decryptStream(final InputStream byteStream) {
+        return blockchainKeysCipherEncryptor.decryptStream(byteStream, keyPairOfPrivateKey, keyPairOfPublicKey);
     }
 
     /**
@@ -78,6 +69,6 @@ public final class SecuredWithNemKeysPrivacyStrategy extends PrivacyStrategy {
      * @return the instance of this strategy
      */
     public static SecuredWithNemKeysPrivacyStrategy create(String privateKey, String publicKey) {
-        return new SecuredWithNemKeysPrivacyStrategy(privateKey, publicKey);
+        return new SecuredWithNemKeysPrivacyStrategy(new BlockchainKeysCipherEncryptor(), privateKey, publicKey);
     }
 }

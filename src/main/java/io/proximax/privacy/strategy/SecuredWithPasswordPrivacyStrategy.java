@@ -1,9 +1,9 @@
 package io.proximax.privacy.strategy;
 
-import io.proximax.cipher.BinaryPBKDF2CipherEncryption;
-import io.proximax.exceptions.DecryptionFailureException;
-import io.proximax.exceptions.EncryptionFailureException;
+import io.proximax.cipher.PBECipherEncryptor;
 import io.proximax.model.PrivacyType;
+
+import java.io.InputStream;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
@@ -14,16 +14,16 @@ public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
 
     private static final int MINIMUM_PASSWORD_LENGTH = 50;
 
-    private final BinaryPBKDF2CipherEncryption encryptor;
+    private final PBECipherEncryptor pbeCipherEncryptor;
 
     private final char[] passwordCharArray;
     private final String password;
 
-    SecuredWithPasswordPrivacyStrategy(BinaryPBKDF2CipherEncryption encryptor, String password) {
+    SecuredWithPasswordPrivacyStrategy(PBECipherEncryptor pbeCipherEncryptor, String password) {
         checkParameter(password != null, "password is required");
         checkParameter(password.length() >= MINIMUM_PASSWORD_LENGTH, "minimum length for password is 50");
 
-        this.encryptor = encryptor;
+        this.pbeCipherEncryptor = pbeCipherEncryptor;
         this.password = password;
         this.passwordCharArray = password.toCharArray();
     }
@@ -39,31 +39,24 @@ public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
     }
 
     /**
-     * Encrypt the data with password
-     * @param data data to encrypt
-     * @return the encrypted data
+     * Encrypt byte stream with password
+     * @param byteStream the byte stream to encrypt
+     * @return the encrypted byte stream
      */
     @Override
-    public final byte[] encryptData(byte[] data) {
-        try {
-            return encryptor.encrypt(data, passwordCharArray);
-        } catch (Exception e) {
-            throw new EncryptionFailureException("Exception encountered encrypting data", e);
-        }
+    public final InputStream encryptStream(final InputStream byteStream) {
+        return pbeCipherEncryptor.encryptStream(byteStream, passwordCharArray);
     }
 
     /**
-     * Decrypt the data with password
-     * @param data data to encrypt
-     * @return the decrypted data
+     * Decrypt byte stream with password
+     * @param byteStream the byte stream to decrypt
+     * @return the decrypted byte stream
      */
     @Override
-    public final byte[] decryptData(byte[] data) {
-        try {
-            return encryptor.decrypt(data, passwordCharArray);
-        } catch (Exception e) {
-            throw new DecryptionFailureException("Exception encountered decrypting data", e);
-        }
+    public final InputStream decryptStream(final InputStream byteStream) {
+        return pbeCipherEncryptor.decryptStream(byteStream, passwordCharArray);
+
     }
 
     /**
@@ -72,6 +65,6 @@ public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
      * @return the instance of this strategy
      */
     public static SecuredWithPasswordPrivacyStrategy create(String password) {
-        return new SecuredWithPasswordPrivacyStrategy(new BinaryPBKDF2CipherEncryption(), password);
+        return new SecuredWithPasswordPrivacyStrategy(new PBECipherEncryptor(), password);
     }
 }

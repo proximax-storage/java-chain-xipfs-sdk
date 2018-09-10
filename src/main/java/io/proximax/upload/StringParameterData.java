@@ -1,5 +1,7 @@
 package io.proximax.upload;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -9,18 +11,30 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 /**
  * This model class is one type of the upload parameter data that defines a string upload
  */
-public class StringParameterData extends ByteArrayParameterData {
+public class StringParameterData extends AbstractByteStreamParameterData {
 
     private final String string;
+    private final byte[] stringData;
 
     private StringParameterData(String string, String encoding, String description, String name, String contentType,
                                Map<String, String> metadata) throws UnsupportedEncodingException {
-        super(toStringByteArray(string, encoding), description, name, contentType, metadata);
+        super(description, name, contentType, metadata);
 
+        checkParameter(string != null, "string is required");
         checkParameter(contentType == null || !RESERVED_CONTENT_TYPES.contains(contentType),
                 String.format("%s cannot be used as it is reserved", contentType));
 
         this.string = string;
+        this.stringData = toStringByteArray(string, encoding);
+    }
+
+    /**
+     * Get the byte stream
+     * @return the byte stream
+     */
+    @Override
+    public InputStream getByteStream() {
+        return new ByteArrayInputStream(stringData);
     }
 
     /**
@@ -31,9 +45,7 @@ public class StringParameterData extends ByteArrayParameterData {
         return string;
     }
 
-    private static byte[] toStringByteArray(String string, String encoding) throws UnsupportedEncodingException {
-        checkParameter(string != null, "string is required");
-
+    private byte[] toStringByteArray(String string, String encoding) throws UnsupportedEncodingException {
         return encoding == null ? string.getBytes() : string.getBytes(encoding);
     }
 

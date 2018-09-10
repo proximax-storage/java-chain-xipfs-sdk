@@ -1,5 +1,7 @@
 package io.proximax.privacy.strategy;
 
+import java.io.InputStream;
+
 /**
  * The abstract class privacy strategy
  * <br>
@@ -19,16 +21,16 @@ public abstract class PrivacyStrategy {
     public abstract int getPrivacyType();
 
     /**
-     * Encrypt data
-     * @param data data to encrypt
-     * @return encrypted data
+     * Encrypt byte stream
+     * @param byteStream the byte stream to encrypt
+     * @return encrypted byte stream
      */
-    public abstract byte[] encryptData(final byte[] data);
+    public abstract InputStream encryptStream(final InputStream byteStream);
 
     /**
-     * Decrypt data
-     * @param data encrypted data to decrypt
+     * Encrypt byte stream
+     * @param byteStream the byte stream to decrypt
      * @return the decrypted data
      */
-    public abstract byte[] decryptData(final byte[] data);
+    public abstract InputStream decryptStream(final InputStream byteStream);
 }

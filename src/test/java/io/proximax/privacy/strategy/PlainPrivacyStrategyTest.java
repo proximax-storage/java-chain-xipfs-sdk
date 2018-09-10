@@ -1,17 +1,19 @@
 package io.proximax.privacy.strategy;
 
 import io.proximax.model.PrivacyType;
-import org.apache.commons.lang.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsArrayContainingInOrder.arrayContaining;
 import static org.hamcrest.core.Is.is;
 
 public class PlainPrivacyStrategyTest {
 
-    private static final byte[] INPUT_DATA = "the quick brown fox jumps over the lazy dog".getBytes();
+    private static final InputStream INPUT_DATA_STREAM =
+            new ByteArrayInputStream("the quick brown fox jumps over the lazy dog".getBytes());
 
     private PlainPrivacyStrategy unitUnderTest;
 
@@ -29,15 +31,15 @@ public class PlainPrivacyStrategyTest {
 
     @Test
     public void shouldReturnSameDataOnEncrypt() {
-        final byte[] encrypted = unitUnderTest.encryptData(INPUT_DATA);
+        final InputStream encrypted = unitUnderTest.encryptStream(INPUT_DATA_STREAM);
 
-        assertThat(ArrayUtils.toObject(encrypted), is(arrayContaining(ArrayUtils.toObject(INPUT_DATA))));
+        assertThat(encrypted, is(INPUT_DATA_STREAM));
     }
 
     @Test
     public void shouldReturnSameDataOnDecrypt() {
-        final byte[] decrypted = unitUnderTest.decryptData(INPUT_DATA);
+        final InputStream decrypted = unitUnderTest.decryptStream(INPUT_DATA_STREAM);
 
-        assertThat(ArrayUtils.toObject(decrypted), is(arrayContaining(ArrayUtils.toObject(INPUT_DATA))));
+        assertThat(decrypted, is(INPUT_DATA_STREAM));
     }
 }

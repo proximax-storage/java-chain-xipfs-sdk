@@ -8,11 +8,13 @@ import io.proximax.download.Downloader;
 import io.proximax.model.BlockchainNetworkType;
 import io.proximax.testsupport.TestHelper;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
 import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
@@ -49,10 +51,10 @@ public class Downloader_directDownload_privacyIntegrationTest {
 						.plainPrivacy()
 						.build();
 
-		final byte[] result = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(ArrayUtils.toObject(result), is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)), is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
 	}
 
 	@Test
@@ -65,10 +67,10 @@ public class Downloader_directDownload_privacyIntegrationTest {
 						.securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
 						.build();
 
-		final byte[] result = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(ArrayUtils.toObject(result),
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
 	}
 
@@ -82,10 +84,10 @@ public class Downloader_directDownload_privacyIntegrationTest {
 						.securedWithPasswordPrivacy(PASSWORD)
 						.build();
 
-		final byte[] result = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(ArrayUtils.toObject(result), is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)), is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
 	}
 
 	@Test
@@ -101,10 +103,10 @@ public class Downloader_directDownload_privacyIntegrationTest {
 								SHAMIR_SECRET_PARTS)
 						.build();
 
-		final byte[] result = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(ArrayUtils.toObject(result), is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)), is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
 	}
 
 	@Test
@@ -117,10 +119,10 @@ public class Downloader_directDownload_privacyIntegrationTest {
 						.plainPrivacy()
 						.build();
 
-		final byte[] result = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(ArrayUtils.toObject(result), is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)), is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
 	}
 
 	@Test
@@ -133,10 +135,10 @@ public class Downloader_directDownload_privacyIntegrationTest {
 						.securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
 						.build();
 
-		final byte[] result = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(ArrayUtils.toObject(result),
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)),
 				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
 	}
 
@@ -150,10 +152,10 @@ public class Downloader_directDownload_privacyIntegrationTest {
 						.securedWithPasswordPrivacy(PASSWORD)
 						.build();
 
-		final byte[] result = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(ArrayUtils.toObject(result), is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)), is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
 	}
 
 	@Test
@@ -169,10 +171,10 @@ public class Downloader_directDownload_privacyIntegrationTest {
 								SHAMIR_SECRET_PARTS)
 						.build();
 
-		final byte[] result = unitUnderTest.directDownload(param);
+		final InputStream result = unitUnderTest.directDownload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(ArrayUtils.toObject(result), is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)), is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(SMALL_FILE))))));
 	}
 
 }

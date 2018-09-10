@@ -3,13 +3,14 @@ package io.proximax.service;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.exceptions.UploadParameterDataNotSupportedException;
 import io.proximax.model.ProximaxDataModel;
-import io.proximax.upload.ByteArrayParameterData;
+import io.proximax.upload.AbstractByteStreamParameterData;
 import io.proximax.upload.PathParameterData;
 import io.proximax.upload.UploadParameter;
 import io.proximax.utils.ContentTypeUtils;
 import io.proximax.utils.DigestUtils;
 import io.reactivex.Observable;
 
+import java.io.InputStream;
 import java.util.Optional;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
@@ -47,9 +48,9 @@ public class CreateProximaxDataService {
     public Observable<ProximaxDataModel> createData(UploadParameter uploadParam) {
         checkParameter(uploadParam != null, "uploadParam is required");
 
-        if (uploadParam.getData() instanceof ByteArrayParameterData) { // when byte array data
-            return uploadData(uploadParam, (ByteArrayParameterData) uploadParam.getData());
-        } if (uploadParam.getData() instanceof PathParameterData) { // when path
+        if (uploadParam.getData() instanceof AbstractByteStreamParameterData) { // when byte stream upload
+            return uploadByteStream(uploadParam, (AbstractByteStreamParameterData) uploadParam.getData());
+        } if (uploadParam.getData() instanceof PathParameterData) { // when path upload
             return uploadPath((PathParameterData) uploadParam.getData());
         } else { // when unknown data
             throw new UploadParameterDataNotSupportedException(String.format("Uploading of %s is not supported",
@@ -57,26 +58,31 @@ public class CreateProximaxDataService {
         }
     }
 
-    private Observable<ProximaxDataModel> uploadData(UploadParameter uploadParam, ByteArrayParameterData byteArrParamData) {
-        final Observable<Optional<String>> detectedContentTypeOb = detectContentType(uploadParam, byteArrParamData);
-        final byte[] encryptedData = uploadParam.getPrivacyStrategy().encryptData(byteArrParamData.getData());
-        final Observable<Optional<String>> digestOb = computeDigest(uploadParam.getComputeDigest(), encryptedData);
-        final Observable<IpfsUploadResponse> ipfsUploadResponseOb = ipfsUploadService.uploadByteArray(encryptedData);
+    private Observable<ProximaxDataModel> uploadByteStream(UploadParameter uploadParam, AbstractByteStreamParameterData byteStreamParamData) {
+        final Observable<Optional<String>> detectedContentTypeOb = detectContentType(uploadParam, byteStreamParamData);
+        final InputStream encryptedByteStream = encryptByteStream(uploadParam, byteStreamParamData);
+        final Observable<Optional<String>> digestOb = computeDigest(uploadParam.getComputeDigest(),
+                encryptByteStream(uploadParam, byteStreamParamData));
+        final Observable<IpfsUploadResponse> ipfsUploadResponseOb = ipfsUploadService.uploadByteStream(encryptedByteStream);
 
         return Observable.zip(ipfsUploadResponseOb, digestOb, detectedContentTypeOb,
                 (ipfsUploadResponse, digest, contentTypeOpt) ->
-                        ProximaxDataModel.create(byteArrParamData, ipfsUploadResponse.getDataHash(),
+                        ProximaxDataModel.create(byteStreamParamData, ipfsUploadResponse.getDataHash(),
                                 digest.orElse(null), contentTypeOpt.orElse(null), ipfsUploadResponse.getTimestamp()));
     }
 
-    private Observable<Optional<String>> detectContentType(UploadParameter uploadParam, ByteArrayParameterData byteArrParamData) {
-        return uploadParam.getDetectContentType() && byteArrParamData.getContentType() == null
-                ? contentTypeUtils.detectContentType(byteArrParamData.getData()).map(Optional::of)
-                : Observable.just(Optional.ofNullable(byteArrParamData.getContentType()));
+    private Observable<Optional<String>> detectContentType(UploadParameter uploadParam, AbstractByteStreamParameterData byteStreamParamData) {
+        return uploadParam.getDetectContentType() && byteStreamParamData.getContentType() == null
+                ? contentTypeUtils.detectContentType(byteStreamParamData.getByteStream()).map(Optional::of)
+                : Observable.just(Optional.ofNullable(byteStreamParamData.getContentType()));
     }
 
-    private Observable<Optional<String>> computeDigest(boolean computeDigest, byte[] encryptedData) {
-        return computeDigest ? digestUtils.digest(encryptedData).map(Optional::of) : Observable.just(Optional.empty());
+    private InputStream encryptByteStream(UploadParameter uploadParam, AbstractByteStreamParameterData byteStreamParamData) {
+        return uploadParam.getPrivacyStrategy().encryptStream(byteStreamParamData.getByteStream());
+    }
+
+    private Observable<Optional<String>> computeDigest(boolean computeDigest, InputStream encryptedStream) {
+        return computeDigest ? digestUtils.digest(encryptedStream).map(Optional::of) : Observable.just(Optional.empty());
     }
 
     private Observable<ProximaxDataModel> uploadPath(PathParameterData pathParamData) {

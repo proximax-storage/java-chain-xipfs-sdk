@@ -4,7 +4,7 @@ import io.proximax.connection.IpfsConnection;
 import io.proximax.service.client.IpfsClient;
 import io.reactivex.Observable;
 
-import java.util.List;
+import java.io.InputStream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -28,32 +28,18 @@ public class IpfsDownloadService {
     }
 
     /**
-     * Download a list of data
-     * @param dataHashList the list of datah hash
-     * @return the list of data
-     */
-    public Observable<List<byte[]>> downloadList(final List<String> dataHashList) {
-        checkArgument(dataHashList != null, "dataHashList is required");
-
-        return Observable.fromIterable(dataHashList)
-                .concatMapEager(this::download)
-                .toList()
-                .toObservable();
-    }
-
-    /**
-     * Download the data
+     * Download the data byte strean
      * @param dataHash the data hash
-     * @return the data
+     * @return the data byte stream
      */
-    public Observable<byte[]> download(final String dataHash) {
+    public Observable<InputStream> download(final String dataHash) {
         checkArgument(dataHash != null, "dataHash is required");
 
         return downloadData(dataHash);
     }
 
-    private Observable<byte[]> downloadData(final String dataHash) {
-        return ipfsClient.get(dataHash);
+    private Observable<InputStream> downloadData(final String dataHash) {
+        return ipfsClient.getByteStream(dataHash);
     }
 
 

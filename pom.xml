@@ -347,7 +347,8 @@
 		<jacoco-maven-plugin>0.8.1</jacoco-maven-plugin>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<nem2.version>0.9.0</nem2.version>
-		<ipfs.java.api.version>v1.2.0</ipfs.java.api.version>
+		<!--<ipfs.java.api.version>v1.2.0</ipfs.java.api.version>-->
+		<ipfs.java.api.version>v1.2.1-proximax-SNAPSHOT</ipfs.java.api.version>
 		<jnr.fuse.version>0.5.1</jnr.fuse.version>
 		<java-cid.version>v1.1.0</java-cid.version>
 		<java-multibase.version>v1.1.0-ipfs</java-multibase.version>

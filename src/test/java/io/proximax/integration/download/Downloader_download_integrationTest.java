@@ -7,10 +7,14 @@ import io.proximax.download.DownloadParameter;
 import io.proximax.download.DownloadResult;
 import io.proximax.download.Downloader;
 import io.proximax.exceptions.DownloadFailureException;
+import io.proximax.exceptions.DownloadForTypeNotSupportedException;
 import io.proximax.model.BlockchainNetworkType;
 import io.proximax.testsupport.TestHelper;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static io.proximax.model.Constants.SCHEMA_VERSION;
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
@@ -52,7 +56,7 @@ public class Downloader_download_integrationTest {
 	}
 
 	@Test
-	public void shouldDownloadByteArray() {
+	public void shouldDownloadByteArray() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
@@ -60,7 +64,8 @@ public class Downloader_download_integrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getTransactionHash(), is(transactionHash));
-		assertThat(result.getData().getData(), is(notNullValue()));
+		assertThat(result.getData().getByteStream(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result.getData().getByteStream()), is(notNullValue()));
 		assertThat(result.getData().getContentType(), is(nullValue()));
 		assertThat(result.getData().getDataHash(), is(notNullValue()));
 		assertThat(result.getData().getDescription(), is(nullValue()));
@@ -70,7 +75,7 @@ public class Downloader_download_integrationTest {
 	}
 
 	@Test
-	public void shouldDownloadByteArrayWithCompleteDetails() {
+	public void shouldDownloadByteArrayWithCompleteDetails() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArrayWithCompleteDetails", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
@@ -78,6 +83,8 @@ public class Downloader_download_integrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getByteStream(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result.getData().getByteStream()), is(notNullValue()));
 		assertThat(result.getData().getContentType(), is("application/pdf"));
 		assertThat(result.getData().getDataHash(), is(notNullValue()));
 		assertThat(result.getData().getDescription(), is("byte array description"));
@@ -87,7 +94,7 @@ public class Downloader_download_integrationTest {
 	}
 
 	@Test
-	public void shouldDownloadFile() {
+	public void shouldDownloadFile() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFile", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
@@ -95,7 +102,8 @@ public class Downloader_download_integrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getTransactionHash(), is(transactionHash));
-		assertThat(result.getData().getData(), is(notNullValue()));
+		assertThat(result.getData().getByteStream(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result.getData().getByteStream()), is(notNullValue()));
 		assertThat(result.getData().getContentType(), is(nullValue()));
 		assertThat(result.getData().getDataHash(), is(notNullValue()));
 		assertThat(result.getData().getDescription(), is(nullValue()));
@@ -105,7 +113,7 @@ public class Downloader_download_integrationTest {
 	}
 
 	@Test
-	public void shouldDownloadFileWithCompleteDetails() {
+	public void shouldDownloadFileWithCompleteDetails() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFileWithCompleteDetails", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
@@ -113,6 +121,8 @@ public class Downloader_download_integrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getByteStream(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result.getData().getByteStream()), is(notNullValue()));
 		assertThat(result.getData().getContentType(), is("text/plain"));
 		assertThat(result.getData().getDataHash(), is(notNullValue()));
 		assertThat(result.getData().getDescription(), is("file description"));
@@ -122,7 +132,7 @@ public class Downloader_download_integrationTest {
 	}
 
 	@Test
-	public void shouldDownloadUrlResource() {
+	public void shouldDownloadUrlResource() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadUrlResource", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
@@ -130,7 +140,8 @@ public class Downloader_download_integrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getTransactionHash(), is(transactionHash));
-		assertThat(result.getData().getData(), is(notNullValue()));
+		assertThat(result.getData().getByteStream(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result.getData().getByteStream()), is(notNullValue()));
 		assertThat(result.getData().getContentType(), is(nullValue()));
 		assertThat(result.getData().getDataHash(), is(notNullValue()));
 		assertThat(result.getData().getDescription(), is(nullValue()));
@@ -140,7 +151,7 @@ public class Downloader_download_integrationTest {
 	}
 
 	@Test
-	public void shouldDownloadUrlResourceWithCompleteDetails() {
+	public void shouldDownloadUrlResourceWithCompleteDetails() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadUrlResourceWithCompleteDetails", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
@@ -148,6 +159,8 @@ public class Downloader_download_integrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getByteStream(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result.getData().getByteStream()), is(notNullValue()));
 		assertThat(result.getData().getContentType(), is("image/png"));
 		assertThat(result.getData().getDataHash(), is(notNullValue()));
 		assertThat(result.getData().getDescription(), is("url description"));
@@ -157,7 +170,7 @@ public class Downloader_download_integrationTest {
 	}
 
 	@Test
-	public void shouldDownloadFilesAsZip() {
+	public void shouldDownloadFilesAsZip() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFilesAsZip", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
@@ -165,7 +178,8 @@ public class Downloader_download_integrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getTransactionHash(), is(transactionHash));
-		assertThat(result.getData().getData(), is(notNullValue()));
+		assertThat(result.getData().getByteStream(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result.getData().getByteStream()), is(notNullValue()));
 		assertThat(result.getData().getContentType(), is("application/zip"));
 		assertThat(result.getData().getDataHash(), is(notNullValue()));
 		assertThat(result.getData().getDescription(), is(nullValue()));
@@ -175,7 +189,7 @@ public class Downloader_download_integrationTest {
 	}
 
 	@Test
-	public void shouldDownloadFilesAsZipWithCompleteDetails() {
+	public void shouldDownloadFilesAsZipWithCompleteDetails() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFilesAsZipWithCompleteDetails", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
@@ -183,6 +197,8 @@ public class Downloader_download_integrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getByteStream(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result.getData().getByteStream()), is(notNullValue()));
 		assertThat(result.getData().getContentType(), is("application/zip"));
 		assertThat(result.getData().getDataHash(), is(notNullValue()));
 		assertThat(result.getData().getDescription(), is("zip description"));
@@ -192,7 +208,7 @@ public class Downloader_download_integrationTest {
 	}
 
 	@Test
-	public void shouldDownloadString() {
+	public void shouldDownloadString() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadString", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
@@ -200,7 +216,8 @@ public class Downloader_download_integrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getTransactionHash(), is(transactionHash));
-		assertThat(result.getData().getData(), is(notNullValue()));
+		assertThat(result.getData().getByteStream(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result.getData().getByteStream()), is(notNullValue()));
 		assertThat(result.getData().getContentType(), is(nullValue()));
 		assertThat(result.getData().getDataHash(), is(notNullValue()));
 		assertThat(result.getData().getDescription(), is(nullValue()));
@@ -210,7 +227,7 @@ public class Downloader_download_integrationTest {
 	}
 
 	@Test
-	public void shouldDownloadStringpWithCompleteDetails() {
+	public void shouldDownloadStringpWithCompleteDetails() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadStringWithCompleteDetails", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
@@ -218,6 +235,8 @@ public class Downloader_download_integrationTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getByteStream(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result.getData().getByteStream()), is(notNullValue()));
 		assertThat(result.getData().getContentType(), is("text/plain"));
 		assertThat(result.getData().getDataHash(), is(notNullValue()));
 		assertThat(result.getData().getDescription(), is("string description"));
@@ -226,11 +245,12 @@ public class Downloader_download_integrationTest {
 		assertThat(result.getData().getTimestamp(), is(notNullValue()));
 	}
 
-	@Test(expected = DownloadFailureException.class)
-	public void failDownloadWhenContentTypeIsDirectory() {
+	@Test(expected = DownloadForTypeNotSupportedException.class)
+	public void failDownloadOnGetByteStreamWhenContentTypeIsDirectory() {
 		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadPath", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
-		unitUnderTest.download(param);
+		final DownloadResult download = unitUnderTest.download(param);
+		download.getData().getByteStream();
 	}
 }

@@ -8,8 +8,11 @@ import io.proximax.download.DownloadResult;
 import io.proximax.download.Downloader;
 import io.proximax.model.BlockchainNetworkType;
 import io.proximax.testsupport.TestHelper;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
 import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
@@ -30,7 +33,7 @@ public class Downloader_download_digestIntegrationTest {
 	}
 
 	@Test
-	public void shouldVerifyDownloadWithEnabledValidateDigest() {
+	public void shouldVerifyDownloadWithEnabledValidateDigest() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash)
 				.validateDigest(true)
@@ -39,11 +42,11 @@ public class Downloader_download_digestIntegrationTest {
 		final DownloadResult result = unitUnderTest.download(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(new String(result.getData().getData()), is(STRING_TEST));
+		assertThat(new String(IOUtils.toByteArray(result.getData().getByteStream())), is(STRING_TEST));
 	}
 
 	@Test
-	public void shouldNotVerifyDownloadWithDisabledValidateDigest() {
+	public void shouldNotVerifyDownloadWithDisabledValidateDigest() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithDisabledComputeDigest", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash)
 				.validateDigest(false)
@@ -52,6 +55,6 @@ public class Downloader_download_digestIntegrationTest {
 		final DownloadResult result = unitUnderTest.download(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(new String(result.getData().getData()), is(STRING_TEST));
+		assertThat(new String(IOUtils.toByteArray(result.getData().getByteStream())), is(STRING_TEST));
 	}
 }

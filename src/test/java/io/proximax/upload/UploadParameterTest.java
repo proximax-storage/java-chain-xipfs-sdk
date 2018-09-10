@@ -4,6 +4,7 @@ import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategy;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.io.File;
@@ -110,7 +111,7 @@ public class UploadParameterTest {
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(FileParameterData.class)));
         assertThat(((FileParameterData) param.getData()).getFile(), is(IMAGE_FILE));
-        assertThat(((FileParameterData) param.getData()).getData(), is(notNullValue()));
+        assertThat(((FileParameterData) param.getData()).getByteStream(), is(notNullValue()));
         assertThat(param.getData().getDescription(), is(nullValue()));
         assertThat(param.getData().getName(), is("test_image.png"));
         assertThat(param.getData().getContentType(), is(nullValue()));
@@ -130,7 +131,7 @@ public class UploadParameterTest {
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(FileParameterData.class)));
         assertThat(((FileParameterData) param.getData()).getFile(), is(IMAGE_FILE));
-        assertThat(((FileParameterData) param.getData()).getData(), is(notNullValue()));
+        assertThat(((FileParameterData) param.getData()).getByteStream(), is(notNullValue()));
         assertThat(param.getData().getDescription(), is("test description"));
         assertThat(param.getData().getName(), is("test name"));
         assertThat(param.getData().getContentType(), is("text/plain"));
@@ -160,7 +161,7 @@ public class UploadParameterTest {
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(FilesAsZipParameterData.class)));
         assertThat(((FilesAsZipParameterData) param.getData()).getFiles(), is(singletonList(IMAGE_FILE)));
-        assertThat(((FilesAsZipParameterData) param.getData()).getData(), is(notNullValue()));
+        assertThat(((FilesAsZipParameterData) param.getData()).getByteStream(), is(notNullValue()));
         assertThat(param.getData().getDescription(), is(nullValue()));
         assertThat(param.getData().getName(), is(nullValue()));
         assertThat(param.getData().getContentType(), is("application/zip"));
@@ -180,7 +181,7 @@ public class UploadParameterTest {
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(FilesAsZipParameterData.class)));
         assertThat(((FilesAsZipParameterData) param.getData()).getFiles(), is(singletonList(IMAGE_FILE)));
-        assertThat(((FilesAsZipParameterData) param.getData()).getData(), is(notNullValue()));
+        assertThat(((FilesAsZipParameterData) param.getData()).getByteStream(), is(notNullValue()));
         assertThat(param.getData().getDescription(), is("test description"));
         assertThat(param.getData().getName(), is("test name"));
         assertThat(param.getData().getContentType(), is("application/zip"));
@@ -258,7 +259,7 @@ public class UploadParameterTest {
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(StringParameterData.class)));
         assertThat(((StringParameterData) param.getData()).getString(), is(STRING_TEST));
-        assertThat(((StringParameterData) param.getData()).getData(), is(STRING_TEST.getBytes()));
+        assertThat(new String(IOUtils.toByteArray(((StringParameterData) param.getData()).getByteStream())), is(STRING_TEST));
         assertThat(param.getData().getDescription(), is(nullValue()));
         assertThat(param.getData().getName(), is(nullValue()));
         assertThat(param.getData().getContentType(), is(nullValue()));
@@ -278,7 +279,7 @@ public class UploadParameterTest {
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(StringParameterData.class)));
         assertThat(((StringParameterData) param.getData()).getString(), is(STRING_TEST));
-        assertThat(((StringParameterData) param.getData()).getData(), is(STRING_TEST.getBytes()));
+        assertThat(new String(IOUtils.toByteArray(((StringParameterData) param.getData()).getByteStream())), is(STRING_TEST));
         assertThat(param.getData().getDescription(), is("test description"));
         assertThat(param.getData().getName(), is("test name"));
         assertThat(param.getData().getContentType(), is("text/plain"));
@@ -308,7 +309,7 @@ public class UploadParameterTest {
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(UrlResourceParameterData.class)));
         assertThat(((UrlResourceParameterData) param.getData()).getUrl(), is(IMAGE_FILE.toURI().toURL()));
-        assertThat(((UrlResourceParameterData) param.getData()).getData(), is(notNullValue()));
+        assertThat(((UrlResourceParameterData) param.getData()).getByteStream(), is(notNullValue()));
         assertThat(param.getData().getDescription(), is(nullValue()));
         assertThat(param.getData().getName(), is(nullValue()));
         assertThat(param.getData().getContentType(), is(nullValue()));
@@ -328,7 +329,7 @@ public class UploadParameterTest {
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(UrlResourceParameterData.class)));
         assertThat(((UrlResourceParameterData) param.getData()).getUrl(), is(IMAGE_FILE.toURI().toURL()));
-        assertThat(((UrlResourceParameterData) param.getData()).getData(), is(notNullValue()));
+        assertThat(((UrlResourceParameterData) param.getData()).getByteStream(), is(notNullValue()));
         assertThat(param.getData().getDescription(), is("test description"));
         assertThat(param.getData().getName(), is("test name"));
         assertThat(param.getData().getContentType(), is("text/plain"));

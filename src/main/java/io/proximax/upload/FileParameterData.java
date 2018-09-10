@@ -1,9 +1,12 @@
 package io.proximax.upload;
 
-import org.apache.commons.io.FileUtils;
+import io.proximax.exceptions.GetByteStreamFailureException;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import static io.proximax.model.Constants.RESERVED_CONTENT_TYPES;
@@ -12,19 +15,33 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 /**
  * This model class is one type of the upload parameter data that defines a file upload
  */
-public class FileParameterData extends ByteArrayParameterData {
+public class FileParameterData extends AbstractByteStreamParameterData {
 
     private final File file;
 
     private FileParameterData(File file, String description, String name, String contentType, Map<String, String> metadata) throws IOException {
-        super(readFileToByteArray(file), description, name == null ? file.getName() : name, contentType, metadata);
+        super(description, getDefaultName(file, name), contentType, metadata);
 
+        checkParameter(file != null, "file is required");
+        checkParameter(file.isFile(), "file is not file");
         checkParameter(contentType == null || !RESERVED_CONTENT_TYPES.contains(contentType),
                 String.format("%s cannot be used as it is reserved", contentType));
 
         this.file = file;
     }
 
+    /**
+     * Get the byte stream
+     * @return the byte stream
+     */
+    @Override
+    public InputStream getByteStream() {
+        try {
+            return new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            throw new GetByteStreamFailureException("Failed to open byte stream", e);
+        }
+    }
 
     /**
      * Get the file to upload
@@ -32,13 +49,6 @@ public class FileParameterData extends ByteArrayParameterData {
      */
     public File getFile() {
         return file;
-    }
-
-    private static byte[] readFileToByteArray(File file) throws IOException {
-        checkParameter(file != null, "file is required");
-        checkParameter(file.isFile(), "file is not file");
-
-        return FileUtils.readFileToByteArray(file);
     }
 
     /**
@@ -63,6 +73,10 @@ public class FileParameterData extends ByteArrayParameterData {
      */
     public static FileParameterData create(File file, String description, String name, String contentType, Map<String, String> metadata) throws IOException {
         return new FileParameterData(file, description, name, contentType, metadata);
+    }
+
+    private static String getDefaultName(File file, String name) {
+        return name == null && file != null ? file.getName() : name;
     }
 
 }
