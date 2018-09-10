@@ -3,7 +3,6 @@ package io.proximax.service;
 import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.privacy.strategy.PrivacyStrategy;
-import io.proximax.upload.AbstractByteStreamParameterData;
 import io.proximax.upload.ByteArrayParameterData;
 import io.proximax.upload.PathParameterData;
 import io.proximax.upload.UploadParameter;
@@ -40,6 +39,7 @@ public class CreateProximaxDataServiceTest {
     private static final String DUMMY_DATA_HASH = "Qmdyueoqwoeuowqueowquioeuioqwuoi";
     private static final File DUMMY_PATH = new File("src//test//resources//test_path");
     private static final Long DUMMY_TIMESTAMP = 1000L;
+    public static final String SAMPLE_PRIVATE_KEY = "8374B5915AEAB6308C34368B15ABF33C79FD7FEFC0DEAF9CC51BA57F120F1190";
 
     private CreateProximaxDataService unitUnderTest;
 
@@ -165,7 +165,7 @@ public class CreateProximaxDataServiceTest {
         given(mockByteArrayParameterData.getContentType()).willReturn(DUMMY_CONTENT_TYPE);
         given(mockByteArrayParameterData.getMetadata()).willReturn(DUMMY_METADATA);
 
-        return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, "ndsakjhdkjsahdasjhjkdsa")
+        return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, SAMPLE_PRIVATE_KEY)
                 .computeDigest(true)
                 .privacyStrategy(mockPrivacyStrategy)
                 .build();
@@ -178,7 +178,7 @@ public class CreateProximaxDataServiceTest {
         given(mockByteArrayParameterData.getContentType()).willReturn(DUMMY_CONTENT_TYPE);
         given(mockByteArrayParameterData.getMetadata()).willReturn(DUMMY_METADATA);
 
-        return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, "ndsakjhdkjsahdasjhjkdsa")
+        return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, SAMPLE_PRIVATE_KEY)
                 .computeDigest(false)
                 .privacyStrategy(mockPrivacyStrategy)
                 .build();
@@ -190,7 +190,7 @@ public class CreateProximaxDataServiceTest {
         given(mockByteArrayParameterData.getName()).willReturn(DUMMY_NAME);
         given(mockByteArrayParameterData.getMetadata()).willReturn(DUMMY_METADATA);
 
-        return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, "ndsakjhdkjsahdasjhjkdsa")
+        return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, SAMPLE_PRIVATE_KEY)
                 .detectContentType(true)
                 .privacyStrategy(mockPrivacyStrategy)
                 .build();
@@ -202,7 +202,7 @@ public class CreateProximaxDataServiceTest {
         given(mockByteArrayParameterData.getName()).willReturn(DUMMY_NAME);
         given(mockByteArrayParameterData.getMetadata()).willReturn(DUMMY_METADATA);
 
-        return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, "ndsakjhdkjsahdasjhjkdsa")
+        return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, SAMPLE_PRIVATE_KEY)
                 .detectContentType(false)
                 .privacyStrategy(mockPrivacyStrategy)
                 .build();
@@ -210,8 +210,7 @@ public class CreateProximaxDataServiceTest {
 
     private UploadParameter samplePathUploadParam() {
         return UploadParameter.createForPathUpload(
-                PathParameterData.create(DUMMY_PATH, DUMMY_DESCRIPTION, DUMMY_NAME, DUMMY_METADATA),
-                "ndsakjhdkjsahdasjhjkdsa")
+                PathParameterData.create(DUMMY_PATH, DUMMY_DESCRIPTION, DUMMY_NAME, DUMMY_METADATA), SAMPLE_PRIVATE_KEY)
                 .privacyStrategy(mockPrivacyStrategy)
                 .build();
     }

@@ -1,5 +1,6 @@
 package io.proximax.download;
 
+import io.nem.core.crypto.PrivateKey;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
@@ -39,6 +40,9 @@ public class DownloadParameterBuilder {
      * @return the same instance of this builder
      */
     public DownloadParameterBuilder accountPrivateKey(String accountPrivateKey) {
+        checkParameter(() -> accountPrivateKey == null || PrivateKey.fromHexString(accountPrivateKey) != null,
+                "accountPrivateKey should be a valid private key");
+
         this.accountPrivateKey = accountPrivateKey;
         return this;
     }

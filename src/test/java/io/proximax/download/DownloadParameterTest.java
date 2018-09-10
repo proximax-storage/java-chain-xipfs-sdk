@@ -31,6 +31,12 @@ public class DownloadParameterTest {
         DownloadParameter.create(null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenInvalidAccountPrivateKey() {
+        DownloadParameter.create(SAMPLE_TRANSACTION_HASH)
+                .accountPrivateKey("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+    }
+
     @Test
     public void canBuildParamWithOnlyTransactionHash() {
         final DownloadParameter param = DownloadParameter.create(SAMPLE_TRANSACTION_HASH).build();

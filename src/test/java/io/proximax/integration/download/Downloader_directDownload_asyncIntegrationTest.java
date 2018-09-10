@@ -67,7 +67,7 @@ public class Downloader_directDownload_asyncIntegrationTest {
 	@Test
 	public void shouldDownloadDataAsynchronouslyWithFailureCallback() throws Exception {
 		final DirectDownloadParameter param =
-				DirectDownloadParameter.createFromDataHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
+				DirectDownloadParameter.createFromTransactionHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
 		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
 
 		unitUnderTest.directDownloadAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));

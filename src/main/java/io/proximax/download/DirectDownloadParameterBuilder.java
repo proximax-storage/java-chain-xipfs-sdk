@@ -1,5 +1,7 @@
 package io.proximax.download;
 
+import io.ipfs.multihash.Multihash;
+import io.nem.core.crypto.PrivateKey;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
@@ -35,6 +37,8 @@ public class DirectDownloadParameterBuilder {
      */
     public static DirectDownloadParameterBuilder createFromTransactionHash(String transactionHash, String accountPrivateKey, Boolean validateDigest) {
         checkParameter(transactionHash != null, "transactionHash is required");
+        checkParameter(() -> accountPrivateKey == null || PrivateKey.fromHexString(accountPrivateKey) != null,
+                "accountPrivateKey should be a valid private key");
 
         final DirectDownloadParameterBuilder builder = new DirectDownloadParameterBuilder();
         builder.transactionHash = transactionHash;
@@ -51,6 +55,8 @@ public class DirectDownloadParameterBuilder {
      */
     public static DirectDownloadParameterBuilder createFromDataHash(String dataHash, String digest) {
         checkParameter(dataHash != null, "dataHash is required");
+        checkParameter(() -> Multihash.fromBase58(dataHash) != null,
+                "dataHash should be a valid ipfs hash");
 
         final DirectDownloadParameterBuilder builder = new DirectDownloadParameterBuilder();
         builder.dataHash = dataHash;

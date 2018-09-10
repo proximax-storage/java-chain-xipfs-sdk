@@ -5,6 +5,7 @@ import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategy;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
 
 import java.io.File;
@@ -55,6 +56,11 @@ public class UploadParameterTest {
         UploadParameter.createForByteArrayUpload(SAMPLE_DATA, null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenInvalidPrivateKeyOnCreateForByteArrayUpload() {
+        UploadParameter.createForByteArrayUpload(SAMPLE_DATA, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+    }
+
     @Test
     public void shouldCreateParamWithByteArray() {
         final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY).build();
@@ -101,6 +107,11 @@ public class UploadParameterTest {
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullPrivateKeyOnCreateForFileUpload() throws IOException {
         UploadParameter.createForFileUpload(IMAGE_FILE, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenInvalidPrivateKeyOnCreateForFileUpload() throws IOException {
+        UploadParameter.createForFileUpload(IMAGE_FILE, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
     }
 
     @Test
@@ -153,6 +164,11 @@ public class UploadParameterTest {
         UploadParameter.createForFilesAsZipUpload(singletonList(IMAGE_FILE), null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenInvalidPrivateKeyOnCreateForFilesAsZipUpload() throws IOException {
+        UploadParameter.createForFilesAsZipUpload(singletonList(IMAGE_FILE), "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+    }
+
     @Test
     public void shouldCreateParamWithFilesAsZip() throws IOException {
         final UploadParameter param = UploadParameter.createForFilesAsZipUpload(singletonList(IMAGE_FILE), SAMPLE_SIGNER_PRIVATE_KEY).build();
@@ -203,6 +219,11 @@ public class UploadParameterTest {
         UploadParameter.createForPathUpload(PATH_FILE, null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenInvalidPrivateKeyOnCreateForPathUpload() throws IOException {
+        UploadParameter.createForPathUpload(PATH_FILE, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+    }
+
     @Test
     public void shouldCreateParamWithPath() throws IOException {
         final UploadParameter param = UploadParameter.createForPathUpload(PATH_FILE, SAMPLE_SIGNER_PRIVATE_KEY).build();
@@ -249,6 +270,11 @@ public class UploadParameterTest {
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullPrivateKeyOnCreateForStringUpload() throws IOException {
         UploadParameter.createForStringUpload(STRING_TEST, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenInvalidPrivateKeyOnCreateForStringUpload() throws IOException {
+        UploadParameter.createForStringUpload(STRING_TEST, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
     }
 
     @Test
@@ -299,6 +325,11 @@ public class UploadParameterTest {
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullPrivateKeyOnCreateForUrlResourceUpload() throws IOException {
         UploadParameter.createForUrlResourceUpload(IMAGE_FILE.toURI().toURL(), null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenInvalidPrivateKeyOnCreateForUrlResourceUpload() throws IOException {
+        UploadParameter.createForUrlResourceUpload(IMAGE_FILE.toURI().toURL(), "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
     }
 
     @Test
@@ -437,6 +468,42 @@ public class UploadParameterTest {
         assertThat(param.getDetectContentType(), is(true));
         assertThat(param.getTransactionDeadline(), is(5));
         assertThat(param.getUseBlockchainSecureMessage(), is(true));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailWhenInvalidRecipientPublicKey() {
+        UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
+                .recipientPublicKey("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailWhenInvalidRecipientPublicAddress() {
+        UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
+                .recipientAddress("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailWhenInvalidTransactionDeadline() {
+        UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
+                .transactionDeadline(48);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failCreateParameterDataWhenDescriptionExceedsLimit() {
+        ByteArrayParameterData.create(SAMPLE_DATA, RandomStringUtils.random(201), "test name",
+                "text/plain", singletonMap("testkey", "testvalue"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failCreateParameterDataWhenNameExceedsLimit() {
+        ByteArrayParameterData.create(SAMPLE_DATA, "test description", RandomStringUtils.random(201),
+                "text/plain", singletonMap("testkey", "testvalue"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failCreateParameterDataWhenMetadataJsonExceedsLimit() {
+        ByteArrayParameterData.create(SAMPLE_DATA, "test description", "test name",
+                "text/plain", singletonMap(RandomStringUtils.random(250), RandomStringUtils.random(250)));
     }
 
 }

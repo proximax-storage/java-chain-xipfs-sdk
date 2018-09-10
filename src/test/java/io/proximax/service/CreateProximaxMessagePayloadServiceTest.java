@@ -17,6 +17,8 @@ import static org.hamcrest.core.IsNull.notNullValue;
 
 public class CreateProximaxMessagePayloadServiceTest {
 
+    public static final String SAMPLE_PRIVATE_KEY = "8374B5915AEAB6308C34368B15ABF33C79FD7FEFC0DEAF9CC51BA57F120F1190";
+
     private CreateProximaxMessagePayloadService unitUnderTest;
 
     @Before
@@ -57,7 +59,7 @@ public class CreateProximaxMessagePayloadServiceTest {
     }
 
     private UploadParameter sampleUploadParameter() throws UnsupportedEncodingException {
-        return UploadParameter.createForStringUpload("sample", "sample private key")
+        return UploadParameter.createForStringUpload("sample", SAMPLE_PRIVATE_KEY)
                 .plainPrivacy()
                 .build();
     }

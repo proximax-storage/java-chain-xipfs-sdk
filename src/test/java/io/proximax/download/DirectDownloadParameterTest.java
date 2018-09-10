@@ -34,6 +34,11 @@ public class DirectDownloadParameterTest {
         DirectDownloadParameter.createFromDataHash(null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenCreatingWithInvalidDataHash() {
+        DirectDownloadParameter.createFromDataHash("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+    }
+
     @Test
     public void canBuildParamWithOnlyDataHash() {
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH).build();
@@ -65,6 +70,11 @@ public class DirectDownloadParameterTest {
     @Test(expected = IllegalArgumentException.class)
     public void failWhenCreatingWithNullTransactionHash() {
         DirectDownloadParameter.createFromTransactionHash(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenInvalidAccountPrivateKey() {
+        DirectDownloadParameter.createFromTransactionHash(SAMPLE_TRANSACTION_HASH, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
     }
 
     @Test

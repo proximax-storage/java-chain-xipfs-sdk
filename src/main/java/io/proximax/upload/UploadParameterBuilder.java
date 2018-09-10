@@ -1,5 +1,8 @@
 package io.proximax.upload;
 
+import io.nem.core.crypto.PrivateKey;
+import io.nem.core.crypto.PublicKey;
+import io.nem.sdk.model.account.Address;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
@@ -36,6 +39,8 @@ public class UploadParameterBuilder {
     public UploadParameterBuilder(UploadParameterData data, String signerPrivateKey) {
         checkParameter(data != null, "data is required");
         checkParameter(signerPrivateKey != null, "signerPrivateKey is required");
+        checkParameter(() -> PrivateKey.fromHexString(signerPrivateKey) != null,
+                "signerPrivateKey should be a valid private key");
 
         this.data = data;
         this.signerPrivateKey = signerPrivateKey;
@@ -47,6 +52,9 @@ public class UploadParameterBuilder {
      * @return the same instance of this builder
      */
     public UploadParameterBuilder recipientPublicKey(String recipientPublicKey) {
+        checkParameter(() -> recipientPublicKey == null || PublicKey.fromHexString(recipientPublicKey) != null,
+                "recipientPublicKey should be a valid public key");
+
         this.recipientPublicKey = recipientPublicKey;
         return this;
     }
@@ -57,6 +65,9 @@ public class UploadParameterBuilder {
      * @return the same instance of this builder
      */
     public UploadParameterBuilder recipientAddress(String recipientAddress) {
+        checkParameter(() -> recipientAddress == null || Address.createFromRawAddress(recipientAddress) != null,
+                "recipientAddress should be a valid address");
+
         this.recipientAddress = recipientAddress;
         return this;
     }
@@ -97,6 +108,9 @@ public class UploadParameterBuilder {
      * @return the same instance of this builder
      */
     public UploadParameterBuilder transactionDeadline(Integer transactionDeadline) {
+        checkParameter(transactionDeadline == null || (transactionDeadline >= 1 && transactionDeadline <= 23),
+                "transactionDeadline should be between 1 and 23");
+
         this.transactionDeadline = transactionDeadline;
         return this;
     }
