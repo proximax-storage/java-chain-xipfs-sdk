@@ -15,7 +15,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy.MINIMUM_PASSWORD_LENGTH;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsArrayContainingInOrder.arrayContaining;
 import static org.hamcrest.core.Is.is;
@@ -53,6 +55,23 @@ public class SecuredWithPasswordPrivacyStrategyTest {
     @Test(expected = IllegalArgumentException.class)
     public void failInitWithPasswordNotMeetingMinimumLength() {
         SecuredWithPasswordPrivacyStrategy.create(PASSWORD_TOO_SHORT);
+    }
+
+    @Test
+    public void shouldCreateWithProvidedPassword() {
+        final SecuredWithPasswordPrivacyStrategy strategy = SecuredWithPasswordPrivacyStrategy.create(PASSWORD);
+
+        assertThat(strategy, is(notNullValue()));
+        assertThat(strategy.getPassword(), is(PASSWORD));
+    }
+
+    @Test
+    public void shouldCreateWithGeneratedPassword() {
+        final SecuredWithPasswordPrivacyStrategy strategy = SecuredWithPasswordPrivacyStrategy.create();
+
+        assertThat(strategy, is(notNullValue()));
+        assertThat(strategy.getPassword(), is(notNullValue()));
+        assertThat(strategy.getPassword().length(), is(MINIMUM_PASSWORD_LENGTH));
     }
 
     @Test(expected = EncryptionFailureException.class)

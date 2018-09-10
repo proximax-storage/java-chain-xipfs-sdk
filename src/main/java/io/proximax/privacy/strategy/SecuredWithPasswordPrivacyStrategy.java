@@ -2,6 +2,7 @@ package io.proximax.privacy.strategy;
 
 import io.proximax.cipher.PBECipherEncryptor;
 import io.proximax.model.PrivacyType;
+import io.proximax.utils.PasswordUtils;
 
 import java.io.InputStream;
 
@@ -12,7 +13,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  */
 public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
 
-    private static final int MINIMUM_PASSWORD_LENGTH = 50;
+    public static final int MINIMUM_PASSWORD_LENGTH = 50;
 
     private final PBECipherEncryptor pbeCipherEncryptor;
 
@@ -36,6 +37,14 @@ public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
     @Override
     public int getPrivacyType() {
         return PrivacyType.PASSWORD.getValue();
+    }
+
+    /**
+     * Get the password
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
     }
 
     /**
@@ -66,5 +75,14 @@ public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
      */
     public static SecuredWithPasswordPrivacyStrategy create(String password) {
         return new SecuredWithPasswordPrivacyStrategy(new PBECipherEncryptor(), password);
+    }
+
+    /**
+     * Create instance of this strategy and generate password
+     * @return the instance of this strategy
+     */
+    public static SecuredWithPasswordPrivacyStrategy create() {
+        return new SecuredWithPasswordPrivacyStrategy(new PBECipherEncryptor(),
+                PasswordUtils.generatePassword());
     }
 }
