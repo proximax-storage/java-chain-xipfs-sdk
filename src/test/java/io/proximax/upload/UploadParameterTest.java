@@ -18,12 +18,12 @@ import java.util.Map;
 
 import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
 import static io.proximax.model.Constants.SCHEMA_VERSION;
-import static io.proximax.testsupport.Constants.IMAGE_FILE;
-import static io.proximax.testsupport.Constants.PATH_FILE;
-import static io.proximax.testsupport.Constants.SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD;
-import static io.proximax.testsupport.Constants.SHAMIR_SECRET_PARTS;
-import static io.proximax.testsupport.Constants.SHAMIR_SECRET_TOTAL_PART_COUNT;
-import static io.proximax.testsupport.Constants.STRING_TEST;
+import static io.proximax.testsupport.Constants.TEST_IMAGE_PNG_FILE;
+import static io.proximax.testsupport.Constants.TEST_PATH_FILE;
+import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_SHARES;
+import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_THRESHOLD;
+import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_TOTAL_SHARES;
+import static io.proximax.testsupport.Constants.TEST_STRING;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
@@ -106,25 +106,25 @@ public class UploadParameterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullPrivateKeyOnCreateForFileUpload() throws IOException {
-        UploadParameter.createForFileUpload(IMAGE_FILE, null);
+        UploadParameter.createForFileUpload(TEST_IMAGE_PNG_FILE, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenInvalidPrivateKeyOnCreateForFileUpload() throws IOException {
-        UploadParameter.createForFileUpload(IMAGE_FILE, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+        UploadParameter.createForFileUpload(TEST_IMAGE_PNG_FILE, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
     }
 
     @Test
     public void shouldCreateParamWithFile() throws IOException {
-        final UploadParameter param = UploadParameter.createForFileUpload(IMAGE_FILE, SAMPLE_SIGNER_PRIVATE_KEY).build();
+        final UploadParameter param = UploadParameter.createForFileUpload(TEST_IMAGE_PNG_FILE, SAMPLE_SIGNER_PRIVATE_KEY).build();
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(FileParameterData.class)));
-        assertThat(((FileParameterData) param.getData()).getFile(), is(IMAGE_FILE));
+        assertThat(((FileParameterData) param.getData()).getFile(), is(TEST_IMAGE_PNG_FILE));
         assertThat(((FileParameterData) param.getData()).getByteStream(), is(notNullValue()));
         assertThat(param.getData().getDescription(), is(nullValue()));
-        assertThat(param.getData().getName(), is("test_image.png"));
+        assertThat(param.getData().getName(), is("test_image_file.png"));
         assertThat(param.getData().getContentType(), is(nullValue()));
         assertThat(param.getData().getMetadata(), is(nullValue()));
     }
@@ -133,7 +133,7 @@ public class UploadParameterTest {
     public void shouldCreateParamWithFileParameterData() throws IOException {
         final UploadParameter param =
                 UploadParameter.createForFileUpload(
-                        FileParameterData.create(IMAGE_FILE, "test description", "test name",
+                        FileParameterData.create(TEST_IMAGE_PNG_FILE, "test description", "test name",
                                 "text/plain", singletonMap("testkey", "testvalue")),
                         SAMPLE_SIGNER_PRIVATE_KEY)
                         .build();
@@ -141,7 +141,7 @@ public class UploadParameterTest {
         assertThat(param, is(notNullValue()));
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(FileParameterData.class)));
-        assertThat(((FileParameterData) param.getData()).getFile(), is(IMAGE_FILE));
+        assertThat(((FileParameterData) param.getData()).getFile(), is(TEST_IMAGE_PNG_FILE));
         assertThat(((FileParameterData) param.getData()).getByteStream(), is(notNullValue()));
         assertThat(param.getData().getDescription(), is("test description"));
         assertThat(param.getData().getName(), is("test name"));
@@ -161,22 +161,22 @@ public class UploadParameterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullPrivateKeyOnCreateForFilesAsZipUpload() throws IOException {
-        UploadParameter.createForFilesAsZipUpload(singletonList(IMAGE_FILE), null);
+        UploadParameter.createForFilesAsZipUpload(singletonList(TEST_IMAGE_PNG_FILE), null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenInvalidPrivateKeyOnCreateForFilesAsZipUpload() throws IOException {
-        UploadParameter.createForFilesAsZipUpload(singletonList(IMAGE_FILE), "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+        UploadParameter.createForFilesAsZipUpload(singletonList(TEST_IMAGE_PNG_FILE), "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
     }
 
     @Test
     public void shouldCreateParamWithFilesAsZip() throws IOException {
-        final UploadParameter param = UploadParameter.createForFilesAsZipUpload(singletonList(IMAGE_FILE), SAMPLE_SIGNER_PRIVATE_KEY).build();
+        final UploadParameter param = UploadParameter.createForFilesAsZipUpload(singletonList(TEST_IMAGE_PNG_FILE), SAMPLE_SIGNER_PRIVATE_KEY).build();
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(FilesAsZipParameterData.class)));
-        assertThat(((FilesAsZipParameterData) param.getData()).getFiles(), is(singletonList(IMAGE_FILE)));
+        assertThat(((FilesAsZipParameterData) param.getData()).getFiles(), is(singletonList(TEST_IMAGE_PNG_FILE)));
         assertThat(((FilesAsZipParameterData) param.getData()).getByteStream(), is(notNullValue()));
         assertThat(param.getData().getDescription(), is(nullValue()));
         assertThat(param.getData().getName(), is(nullValue()));
@@ -188,7 +188,7 @@ public class UploadParameterTest {
     public void shouldCreateParamWithFileAsZipParameterData() throws IOException {
         final UploadParameter param =
                 UploadParameter.createForFilesAsZipUpload(
-                        FilesAsZipParameterData.create(singletonList(IMAGE_FILE), "test description", "test name",
+                        FilesAsZipParameterData.create(singletonList(TEST_IMAGE_PNG_FILE), "test description", "test name",
                                 singletonMap("testkey", "testvalue")),
                         SAMPLE_SIGNER_PRIVATE_KEY)
                         .build();
@@ -196,7 +196,7 @@ public class UploadParameterTest {
         assertThat(param, is(notNullValue()));
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(FilesAsZipParameterData.class)));
-        assertThat(((FilesAsZipParameterData) param.getData()).getFiles(), is(singletonList(IMAGE_FILE)));
+        assertThat(((FilesAsZipParameterData) param.getData()).getFiles(), is(singletonList(TEST_IMAGE_PNG_FILE)));
         assertThat(((FilesAsZipParameterData) param.getData()).getByteStream(), is(notNullValue()));
         assertThat(param.getData().getDescription(), is("test description"));
         assertThat(param.getData().getName(), is("test name"));
@@ -216,22 +216,22 @@ public class UploadParameterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullPrivateKeyOnCreateForPathUpload() throws IOException {
-        UploadParameter.createForPathUpload(PATH_FILE, null);
+        UploadParameter.createForPathUpload(TEST_PATH_FILE, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenInvalidPrivateKeyOnCreateForPathUpload() throws IOException {
-        UploadParameter.createForPathUpload(PATH_FILE, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+        UploadParameter.createForPathUpload(TEST_PATH_FILE, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
     }
 
     @Test
     public void shouldCreateParamWithPath() throws IOException {
-        final UploadParameter param = UploadParameter.createForPathUpload(PATH_FILE, SAMPLE_SIGNER_PRIVATE_KEY).build();
+        final UploadParameter param = UploadParameter.createForPathUpload(TEST_PATH_FILE, SAMPLE_SIGNER_PRIVATE_KEY).build();
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(PathParameterData.class)));
-        assertThat(((PathParameterData) param.getData()).getPath(), is(PATH_FILE));
+        assertThat(((PathParameterData) param.getData()).getPath(), is(TEST_PATH_FILE));
         assertThat(param.getData().getDescription(), is(nullValue()));
         assertThat(param.getData().getName(), is(nullValue()));
         assertThat(param.getData().getContentType(), is(PATH_UPLOAD_CONTENT_TYPE));
@@ -242,7 +242,7 @@ public class UploadParameterTest {
     public void shouldCreateParamWithPathParameterData() throws IOException {
         final UploadParameter param =
                 UploadParameter.createForPathUpload(
-                        PathParameterData.create(PATH_FILE, "test description", "test name",
+                        PathParameterData.create(TEST_PATH_FILE, "test description", "test name",
                                 singletonMap("testkey", "testvalue")),
                         SAMPLE_SIGNER_PRIVATE_KEY)
                         .build();
@@ -250,7 +250,7 @@ public class UploadParameterTest {
         assertThat(param, is(notNullValue()));
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(PathParameterData.class)));
-        assertThat(((PathParameterData) param.getData()).getPath(), is(PATH_FILE));
+        assertThat(((PathParameterData) param.getData()).getPath(), is(TEST_PATH_FILE));
         assertThat(param.getData().getDescription(), is("test description"));
         assertThat(param.getData().getName(), is("test name"));
         assertThat(param.getData().getContentType(), is(PATH_UPLOAD_CONTENT_TYPE));
@@ -269,23 +269,23 @@ public class UploadParameterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullPrivateKeyOnCreateForStringUpload() throws IOException {
-        UploadParameter.createForStringUpload(STRING_TEST, null);
+        UploadParameter.createForStringUpload(TEST_STRING, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenInvalidPrivateKeyOnCreateForStringUpload() throws IOException {
-        UploadParameter.createForStringUpload(STRING_TEST, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+        UploadParameter.createForStringUpload(TEST_STRING, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
     }
 
     @Test
     public void shouldCreateParamWithString() throws IOException {
-        final UploadParameter param = UploadParameter.createForStringUpload(STRING_TEST, SAMPLE_SIGNER_PRIVATE_KEY).build();
+        final UploadParameter param = UploadParameter.createForStringUpload(TEST_STRING, SAMPLE_SIGNER_PRIVATE_KEY).build();
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(StringParameterData.class)));
-        assertThat(((StringParameterData) param.getData()).getString(), is(STRING_TEST));
-        assertThat(new String(IOUtils.toByteArray(((StringParameterData) param.getData()).getByteStream())), is(STRING_TEST));
+        assertThat(((StringParameterData) param.getData()).getString(), is(TEST_STRING));
+        assertThat(new String(IOUtils.toByteArray(((StringParameterData) param.getData()).getByteStream())), is(TEST_STRING));
         assertThat(param.getData().getDescription(), is(nullValue()));
         assertThat(param.getData().getName(), is(nullValue()));
         assertThat(param.getData().getContentType(), is(nullValue()));
@@ -296,7 +296,7 @@ public class UploadParameterTest {
     public void shouldCreateParamWithStringParameterData() throws IOException {
         final UploadParameter param =
                 UploadParameter.createForStringUpload(
-                        StringParameterData.create(STRING_TEST, "UTF-8", "test description", "test name",
+                        StringParameterData.create(TEST_STRING, "UTF-8", "test description", "test name",
                                 "text/plain", singletonMap("testkey", "testvalue")),
                         SAMPLE_SIGNER_PRIVATE_KEY)
                         .build();
@@ -304,8 +304,8 @@ public class UploadParameterTest {
         assertThat(param, is(notNullValue()));
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(StringParameterData.class)));
-        assertThat(((StringParameterData) param.getData()).getString(), is(STRING_TEST));
-        assertThat(new String(IOUtils.toByteArray(((StringParameterData) param.getData()).getByteStream())), is(STRING_TEST));
+        assertThat(((StringParameterData) param.getData()).getString(), is(TEST_STRING));
+        assertThat(new String(IOUtils.toByteArray(((StringParameterData) param.getData()).getByteStream())), is(TEST_STRING));
         assertThat(param.getData().getDescription(), is("test description"));
         assertThat(param.getData().getName(), is("test name"));
         assertThat(param.getData().getContentType(), is("text/plain"));
@@ -324,22 +324,22 @@ public class UploadParameterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenNullPrivateKeyOnCreateForUrlResourceUpload() throws IOException {
-        UploadParameter.createForUrlResourceUpload(IMAGE_FILE.toURI().toURL(), null);
+        UploadParameter.createForUrlResourceUpload(TEST_IMAGE_PNG_FILE.toURI().toURL(), null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenInvalidPrivateKeyOnCreateForUrlResourceUpload() throws IOException {
-        UploadParameter.createForUrlResourceUpload(IMAGE_FILE.toURI().toURL(), "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+        UploadParameter.createForUrlResourceUpload(TEST_IMAGE_PNG_FILE.toURI().toURL(), "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
     }
 
     @Test
     public void shouldCreateParamWithUrl() throws IOException {
-        final UploadParameter param = UploadParameter.createForUrlResourceUpload(IMAGE_FILE.toURI().toURL(), SAMPLE_SIGNER_PRIVATE_KEY).build();
+        final UploadParameter param = UploadParameter.createForUrlResourceUpload(TEST_IMAGE_PNG_FILE.toURI().toURL(), SAMPLE_SIGNER_PRIVATE_KEY).build();
 
         assertThat(param, is(notNullValue()));
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(UrlResourceParameterData.class)));
-        assertThat(((UrlResourceParameterData) param.getData()).getUrl(), is(IMAGE_FILE.toURI().toURL()));
+        assertThat(((UrlResourceParameterData) param.getData()).getUrl(), is(TEST_IMAGE_PNG_FILE.toURI().toURL()));
         assertThat(((UrlResourceParameterData) param.getData()).getByteStream(), is(notNullValue()));
         assertThat(param.getData().getDescription(), is(nullValue()));
         assertThat(param.getData().getName(), is(nullValue()));
@@ -351,7 +351,7 @@ public class UploadParameterTest {
     public void shouldCreateParamWithUrlResourceParameterData() throws IOException {
         final UploadParameter param =
                 UploadParameter.createForUrlResourceUpload(
-                        UrlResourceParameterData.create(IMAGE_FILE.toURI().toURL(), "test description", "test name",
+                        UrlResourceParameterData.create(TEST_IMAGE_PNG_FILE.toURI().toURL(), "test description", "test name",
                                 "text/plain", singletonMap("testkey", "testvalue")),
                         SAMPLE_SIGNER_PRIVATE_KEY)
                         .build();
@@ -359,7 +359,7 @@ public class UploadParameterTest {
         assertThat(param, is(notNullValue()));
         assertThat(param.getSignerPrivateKey(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(param.getData(), is(instanceOf(UrlResourceParameterData.class)));
-        assertThat(((UrlResourceParameterData) param.getData()).getUrl(), is(IMAGE_FILE.toURI().toURL()));
+        assertThat(((UrlResourceParameterData) param.getData()).getUrl(), is(TEST_IMAGE_PNG_FILE.toURI().toURL()));
         assertThat(((UrlResourceParameterData) param.getData()).getByteStream(), is(notNullValue()));
         assertThat(param.getData().getDescription(), is("test description"));
         assertThat(param.getData().getName(), is("test name"));
@@ -397,11 +397,11 @@ public class UploadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithShamirSecretSharingMapStrategy() {
         final Map<Integer, byte[]> minimumSecretParts = new HashMap<>();
-        minimumSecretParts.put(1, SHAMIR_SECRET_PARTS.get(1));
-        minimumSecretParts.put(3, SHAMIR_SECRET_PARTS.get(3));
-        minimumSecretParts.put(5, SHAMIR_SECRET_PARTS.get(5));
+        minimumSecretParts.put(1, TEST_SHAMIR_SECRET_SHARES.get(1));
+        minimumSecretParts.put(3, TEST_SHAMIR_SECRET_SHARES.get(3));
+        minimumSecretParts.put(5, TEST_SHAMIR_SECRET_SHARES.get(5));
         final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .withShamirSecretSharing(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .withShamirSecretSharing(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
                         minimumSecretParts)
                 .build();
 
@@ -411,10 +411,10 @@ public class UploadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithShamirSecretSharingArrayStrategy() throws UnsupportedEncodingException {
         final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .withShamirSecretSharing(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SHAMIR_SECRET_PARTS.get(1)),
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SHAMIR_SECRET_PARTS.get(3)),
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, SHAMIR_SECRET_PARTS.get(5)))
+                .withShamirSecretSharing(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
+                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
+                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
+                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5)))
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
@@ -423,11 +423,11 @@ public class UploadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithShamirSecretSharingListStrategy() throws UnsupportedEncodingException {
         final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .withShamirSecretSharing(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .withShamirSecretSharing(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
                         asList(
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SHAMIR_SECRET_PARTS.get(1)),
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SHAMIR_SECRET_PARTS.get(3)),
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, SHAMIR_SECRET_PARTS.get(5))))
+                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
+                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
+                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5))))
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));

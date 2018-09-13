@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.net.URL;
 
 import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
-import static io.proximax.testsupport.Constants.HTML_FILE;
-import static io.proximax.testsupport.Constants.IMAGE_FILE;
+import static io.proximax.testsupport.Constants.TEST_HTML_FILE;
+import static io.proximax.testsupport.Constants.TEST_IMAGE_PNG_FILE;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -26,7 +26,7 @@ public class UrlResourceParameterDataTest {
 
     @Test
     public void createWithUrlOnly() throws IOException {
-        final URL url = IMAGE_FILE.toURI().toURL();
+        final URL url = TEST_IMAGE_PNG_FILE.toURI().toURL();
 
         final UrlResourceParameterData param = UrlResourceParameterData.create(url);
 
@@ -41,7 +41,7 @@ public class UrlResourceParameterDataTest {
 
     @Test
     public void createWithCompleteDetails() throws IOException {
-        final URL url = IMAGE_FILE.toURI().toURL();
+        final URL url = TEST_IMAGE_PNG_FILE.toURI().toURL();
 
         final UrlResourceParameterData param = UrlResourceParameterData.create(url, "describe me",
                 "name here", "text/plain", singletonMap("mykey", "myvalue"));
@@ -57,7 +57,7 @@ public class UrlResourceParameterDataTest {
 
     @Test
     public void createWithHtmlFileUrlOnly() throws IOException {
-        final URL url = HTML_FILE.toURI().toURL();
+        final URL url = TEST_HTML_FILE.toURI().toURL();
 
         final UrlResourceParameterData param = UrlResourceParameterData.create(url);
 
@@ -87,7 +87,7 @@ public class UrlResourceParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenContentTypeIsReservedExist() throws IOException {
-        final URL URL = HTML_FILE.toURI().toURL();
+        final URL URL = TEST_HTML_FILE.toURI().toURL();
 
         UrlResourceParameterData.create(URL, null, null, PATH_UPLOAD_CONTENT_TYPE, null);
     }

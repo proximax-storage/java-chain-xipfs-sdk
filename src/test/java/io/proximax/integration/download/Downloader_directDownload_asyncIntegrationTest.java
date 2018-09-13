@@ -9,7 +9,8 @@ import io.proximax.download.DirectDownloadParameter;
 import io.proximax.download.Downloader;
 import io.proximax.exceptions.DirectDownloadFailureException;
 import io.proximax.model.BlockchainNetworkType;
-import io.proximax.testsupport.TestHelper;
+import io.proximax.testsupport.IntegrationTestProperties;
+import io.proximax.testsupport.TestDataRepository;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,8 +19,6 @@ import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
-import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
@@ -32,13 +31,15 @@ public class Downloader_directDownload_asyncIntegrationTest {
 	@Before
 	public void setUp() {
 		unitUnderTest = new Downloader(ConnectionConfig.create(
-				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
-				new IpfsConnection(IPFS_MULTI_ADDRESS)));
+				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
+						IntegrationTestProperties.getBlockchainRestUrl()),
+				new IpfsConnection(IntegrationTestProperties.getIpfsMultiAddress())));
 	}
 
 	@Test
 	public void shouldDownloadDataAsynchronouslyWithoutCallback() throws Exception {
-		final String dataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "dataHash");
+		final String dataHash =
+				TestDataRepository.getData("Uploader_integrationTest.shouldUploadByteArray", "dataHash");
 		final DirectDownloadParameter param =
 				DirectDownloadParameter.createFromDataHash(dataHash).build();
 
@@ -52,7 +53,8 @@ public class Downloader_directDownload_asyncIntegrationTest {
 
 	@Test
 	public void shouldDownloadDataAsynchronouslyWithSuccessCallback() throws Exception {
-		final String dataHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "dataHash");
+		final String dataHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadByteArray", "dataHash");
 		final DirectDownloadParameter param =
 				DirectDownloadParameter.createFromDataHash(dataHash).build();
 		final CompletableFuture<InputStream> toPopulateOnSuccess = new CompletableFuture<>();
@@ -66,8 +68,8 @@ public class Downloader_directDownload_asyncIntegrationTest {
 
 	@Test
 	public void shouldDownloadDataAsynchronouslyWithFailureCallback() throws Exception {
-		final DirectDownloadParameter param =
-				DirectDownloadParameter.createFromTransactionHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
+		final DirectDownloadParameter param = DirectDownloadParameter
+				.createFromTransactionHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
 		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
 
 		unitUnderTest.directDownloadAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));

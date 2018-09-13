@@ -3,10 +3,17 @@ package io.proximax.utils;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import static io.proximax.testsupport.Constants.TEST_AUDIO_MP3_FILE;
+import static io.proximax.testsupport.Constants.TEST_HTML_FILE;
+import static io.proximax.testsupport.Constants.TEST_IMAGE_PNG_FILE;
+import static io.proximax.testsupport.Constants.TEST_PDF_FILE_2;
+import static io.proximax.testsupport.Constants.TEST_TEXT_FILE;
+import static io.proximax.testsupport.Constants.TEST_VIDEO_MOV_FILE;
+import static io.proximax.testsupport.Constants.TEST_VIDEO_MP4_FILE;
+import static io.proximax.testsupport.Constants.TEST_ZIP_FILE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -21,7 +28,7 @@ public class ContentTypeUtilsTest {
 
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenText() throws IOException {
-        final FileInputStream fileInputStream = new FileInputStream(new File("src//test//resources//test_small_file.txt"));
+        final FileInputStream fileInputStream = new FileInputStream(TEST_TEXT_FILE);
         final String result = unitUnderTest.detectContentType(fileInputStream).blockingFirst();
 
         assertThat(result, is("text/plain"));
@@ -29,7 +36,7 @@ public class ContentTypeUtilsTest {
 
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenHtml() throws IOException {
-        final FileInputStream fileInputStream = new FileInputStream(new File("src//test//resources//test_html.html"));
+        final FileInputStream fileInputStream = new FileInputStream(TEST_HTML_FILE);
         final String result = unitUnderTest.detectContentType(fileInputStream).blockingFirst();
 
         assertThat(result, is("text/html"));
@@ -37,7 +44,7 @@ public class ContentTypeUtilsTest {
 
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenMov() throws IOException {
-        final FileInputStream fileInputStream = new FileInputStream(new File("src//test//resources//test_file.mov"));
+        final FileInputStream fileInputStream = new FileInputStream(TEST_VIDEO_MOV_FILE);
         final String result = unitUnderTest.detectContentType(fileInputStream).blockingFirst();
 
         assertThat(result, is("video/quicktime"));
@@ -45,7 +52,7 @@ public class ContentTypeUtilsTest {
 
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenImage() throws IOException {
-        final FileInputStream fileInputStream = new FileInputStream(new File("src//test//resources//test_image.png"));
+        final FileInputStream fileInputStream = new FileInputStream(TEST_IMAGE_PNG_FILE);
         final String result = unitUnderTest.detectContentType(fileInputStream).blockingFirst();
 
         assertThat(result, is("image/png"));
@@ -53,7 +60,7 @@ public class ContentTypeUtilsTest {
 
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenPdf() throws IOException {
-        final FileInputStream fileInputStream = new FileInputStream(new File("src//test//resources//test_pdf_file_v2.pdf"));
+        final FileInputStream fileInputStream = new FileInputStream(TEST_PDF_FILE_2);
         final String result = unitUnderTest.detectContentType(fileInputStream).blockingFirst();
 
         assertThat(result, is("application/pdf"));
@@ -61,7 +68,7 @@ public class ContentTypeUtilsTest {
 
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenZip() throws IOException {
-        final FileInputStream fileInputStream = new FileInputStream(new File("src//test//resources//test_large_file.zip"));
+        final FileInputStream fileInputStream = new FileInputStream(TEST_ZIP_FILE);
         final String result = unitUnderTest.detectContentType(fileInputStream).blockingFirst();
 
         assertThat(result, is("application/zip"));
@@ -69,7 +76,7 @@ public class ContentTypeUtilsTest {
 
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenMp3() throws IOException {
-        final FileInputStream fileInputStream = new FileInputStream(new File("src//test//resources//test_large_audio.mp3"));
+        final FileInputStream fileInputStream = new FileInputStream(TEST_AUDIO_MP3_FILE);
         final String result = unitUnderTest.detectContentType(fileInputStream).blockingFirst();
 
         assertThat(result, is("audio/mpeg"));
@@ -77,7 +84,7 @@ public class ContentTypeUtilsTest {
 
     @Test
     public void shouldIdentifyContentTypeBasedOnDataWhenMp4() throws IOException {
-        final FileInputStream fileInputStream = new FileInputStream(new File("src//test//resources//test_large_video.mp4"));
+        final FileInputStream fileInputStream = new FileInputStream(TEST_VIDEO_MP4_FILE);
         final String result = unitUnderTest.detectContentType(fileInputStream).blockingFirst();
 
         assertThat(result, is("video/mp4"));

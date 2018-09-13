@@ -9,7 +9,8 @@ import io.proximax.download.Downloader;
 import io.proximax.exceptions.DownloadFailureException;
 import io.proximax.exceptions.DownloadForDataTypeNotSupportedException;
 import io.proximax.model.BlockchainNetworkType;
-import io.proximax.testsupport.TestHelper;
+import io.proximax.testsupport.IntegrationTestProperties;
+import io.proximax.testsupport.TestDataRepository;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,8 +18,6 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static io.proximax.model.Constants.SCHEMA_VERSION;
-import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
-import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,20 +32,23 @@ public class Downloader_download_integrationTest {
 	@Before
 	public void setUp() {
 		unitUnderTest = new Downloader(ConnectionConfig.create(
-				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
-				new IpfsConnection(IPFS_MULTI_ADDRESS)));
+				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
+						IntegrationTestProperties.getBlockchainRestUrl()),
+				new IpfsConnection(IntegrationTestProperties.getIpfsMultiAddress())));
 	}
 
 	@Test(expected = DownloadFailureException.class)
 	public void failWhenInvalidTransactionHash() {
-		final DownloadParameter param = DownloadParameter.create("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
+		final DownloadParameter param = DownloadParameter
+				.create("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
 
 		unitUnderTest.download(param);
 	}
 
 	@Test
 	public void shouldDownloadWithVersion() {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -57,7 +59,8 @@ public class Downloader_download_integrationTest {
 
 	@Test
 	public void shouldDownloadByteArray() throws IOException {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -76,7 +79,8 @@ public class Downloader_download_integrationTest {
 
 	@Test
 	public void shouldDownloadByteArrayWithCompleteDetails() throws IOException {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArrayWithCompleteDetails", "transactionHash");
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadByteArrayWithCompleteDetails", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -95,7 +99,8 @@ public class Downloader_download_integrationTest {
 
 	@Test
 	public void shouldDownloadFile() throws IOException {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFile", "transactionHash");
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadFile", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -107,14 +112,15 @@ public class Downloader_download_integrationTest {
 		assertThat(result.getData().getContentType(), is(nullValue()));
 		assertThat(result.getData().getDataHash(), is(notNullValue()));
 		assertThat(result.getData().getDescription(), is(nullValue()));
-		assertThat(result.getData().getName(), is("test_small_file.txt"));
+		assertThat(result.getData().getName(), is("test_text_file.txt"));
 		assertThat(result.getData().getMetadata(), is(emptyMap()));
 		assertThat(result.getData().getTimestamp(), is(notNullValue()));
 	}
 
 	@Test
 	public void shouldDownloadFileWithCompleteDetails() throws IOException {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFileWithCompleteDetails", "transactionHash");
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadFileWithCompleteDetails", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -133,7 +139,8 @@ public class Downloader_download_integrationTest {
 
 	@Test
 	public void shouldDownloadUrlResource() throws IOException {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadUrlResource", "transactionHash");
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadUrlResource", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -152,7 +159,8 @@ public class Downloader_download_integrationTest {
 
 	@Test
 	public void shouldDownloadUrlResourceWithCompleteDetails() throws IOException {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadUrlResourceWithCompleteDetails", "transactionHash");
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadUrlResourceWithCompleteDetails", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -171,7 +179,8 @@ public class Downloader_download_integrationTest {
 
 	@Test
 	public void shouldDownloadFilesAsZip() throws IOException {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFilesAsZip", "transactionHash");
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadFilesAsZip", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -190,7 +199,8 @@ public class Downloader_download_integrationTest {
 
 	@Test
 	public void shouldDownloadFilesAsZipWithCompleteDetails() throws IOException {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadFilesAsZipWithCompleteDetails", "transactionHash");
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadFilesAsZipWithCompleteDetails", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -209,7 +219,8 @@ public class Downloader_download_integrationTest {
 
 	@Test
 	public void shouldDownloadString() throws IOException {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadString", "transactionHash");
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadString", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -228,7 +239,8 @@ public class Downloader_download_integrationTest {
 
 	@Test
 	public void shouldDownloadStringpWithCompleteDetails() throws IOException {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadStringWithCompleteDetails", "transactionHash");
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadStringWithCompleteDetails", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -247,7 +259,8 @@ public class Downloader_download_integrationTest {
 
 	@Test(expected = DownloadForDataTypeNotSupportedException.class)
 	public void failDownloadOnGetByteStreamWhenContentTypeIsDirectory() {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadPath", "transactionHash");
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadPath", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult download = unitUnderTest.download(param);

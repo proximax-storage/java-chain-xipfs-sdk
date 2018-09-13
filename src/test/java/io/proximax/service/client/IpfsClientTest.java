@@ -18,7 +18,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
-import static io.proximax.testsupport.Constants.PATH_FILE;
+import static io.proximax.testsupport.Constants.TEST_PATH_FILE;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -83,14 +83,14 @@ public class IpfsClientTest {
     public void shouldBubbleUpExceptionOnAddPath() throws IOException {
         given(mockIpfs.add(any())).willThrow(new RuntimeException());
 
-        unitUnderTest.addPath(PATH_FILE).blockingFirst();
+        unitUnderTest.addPath(TEST_PATH_FILE).blockingFirst();
     }
 
     @Test
     public void shouldReturnDataHashOnAddPath() throws IOException {
         given(mockIpfs.add(any())).willReturn(asList(new MerkleNode("QmXrrVBdauMZPNWfHMrtspaCUrfjWyXC2X17qJBykgC8fh"), SAMPLE_MERKLE_NODE));
 
-        final String dataHash = unitUnderTest.addPath(PATH_FILE).blockingFirst();
+        final String dataHash = unitUnderTest.addPath(TEST_PATH_FILE).blockingFirst();
 
         assertThat(dataHash, is(SAMPLE_DATAHASH));
     }

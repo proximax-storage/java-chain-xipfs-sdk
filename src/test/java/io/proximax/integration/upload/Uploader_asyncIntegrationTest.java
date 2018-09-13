@@ -7,6 +7,7 @@ import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.exceptions.UploadFailureException;
 import io.proximax.model.BlockchainNetworkType;
+import io.proximax.testsupport.IntegrationTestProperties;
 import io.proximax.upload.UploadParameter;
 import io.proximax.upload.UploadResult;
 import io.proximax.upload.Uploader;
@@ -17,11 +18,8 @@ import org.junit.Test;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
-import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
-import static io.proximax.testsupport.Constants.PDF_FILE1;
-import static io.proximax.testsupport.Constants.PRIVATE_KEY_1;
-import static io.proximax.testsupport.Constants.SMALL_FILE;
+import static io.proximax.testsupport.Constants.TEST_PDF_FILE_1;
+import static io.proximax.testsupport.Constants.TEST_TEXT_FILE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
@@ -34,14 +32,15 @@ public class Uploader_asyncIntegrationTest {
 	@Before
 	public void setUp() {
 		unitUnderTest = new Uploader(ConnectionConfig.create(
-				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
-				new IpfsConnection(IPFS_MULTI_ADDRESS)));
+				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
+						IntegrationTestProperties.getBlockchainRestUrl()),
+				new IpfsConnection(IntegrationTestProperties.getIpfsMultiAddress())));
 	}
 
 	@Test
 	public void shouldUploadAsynchronouslyWithoutCallback() throws Exception {
-		final UploadParameter param = UploadParameter.createForByteArrayUpload(
-				FileUtils.readFileToByteArray(PDF_FILE1), PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForByteArrayUpload(FileUtils.readFileToByteArray(TEST_PDF_FILE_1), IntegrationTestProperties.getPrivateKey1())
 				.build();
 
 		final AsyncTask asyncTask = unitUnderTest.uploadAsync(param, null);
@@ -54,7 +53,8 @@ public class Uploader_asyncIntegrationTest {
 
 	@Test
 	public void shouldUploadAsynchronouslyWithSuccessCallback() throws Exception {
-		final UploadParameter param = UploadParameter.createForFileUpload(SMALL_FILE, PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForFileUpload(TEST_TEXT_FILE, IntegrationTestProperties.getPrivateKey1())
 				.build();
 		final CompletableFuture<UploadResult> toPopulateOnSuccess = new CompletableFuture<>();
 
@@ -67,7 +67,8 @@ public class Uploader_asyncIntegrationTest {
 
 	@Test
 	public void shouldUploadAsynchronouslyWithFailureCallback() throws Exception {
-		final UploadParameter param = UploadParameter.createForFileUpload(SMALL_FILE, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+		final UploadParameter param = UploadParameter
+				.createForFileUpload(TEST_TEXT_FILE, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 				.build();
 		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
 

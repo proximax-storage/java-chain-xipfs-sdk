@@ -13,7 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static io.proximax.testsupport.Constants.PDF_FILE1;
+import static io.proximax.testsupport.Constants.TEST_PDF_FILE_1;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsArrayContainingInOrder.arrayContaining;
@@ -89,7 +89,7 @@ public class BlockchainKeysCipherEncryptorTest {
 
     private static byte[] getSampleBytes() {
         try {
-            return FileUtils.readFileToByteArray(PDF_FILE1);
+            return FileUtils.readFileToByteArray(TEST_PDF_FILE_1);
         } catch (IOException e) {
             return null;
         }

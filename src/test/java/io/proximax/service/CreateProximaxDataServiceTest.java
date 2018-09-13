@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
+import static io.proximax.testsupport.Constants.TEST_PATH_FILE;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -37,7 +38,7 @@ public class CreateProximaxDataServiceTest {
     private static final String DUMMY_DIGEST = "Qmdsewquywqiyeiuqwyiueyqiuyeuiwyqid";
     private static final String DUMMY_CONTENT_TYPE = "text/plain";
     private static final String DUMMY_DATA_HASH = "Qmdyueoqwoeuowqueowquioeuioqwuoi";
-    private static final File DUMMY_PATH = new File("src//test//resources//test_path");
+    private static final File DUMMY_PATH = TEST_PATH_FILE;
     private static final Long DUMMY_TIMESTAMP = 1000L;
     public static final String SAMPLE_PRIVATE_KEY = "8374B5915AEAB6308C34368B15ABF33C79FD7FEFC0DEAF9CC51BA57F120F1190";
 
