@@ -7,7 +7,7 @@ import org.apache.tika.Tika;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
  * The utility class for detecting content types
@@ -29,7 +29,7 @@ public class ContentTypeUtils {
      * @return the detected content type
      */
     public Observable<String> detectContentType(final InputStream byteStream) {
-        checkArgument(byteStream != null, "byteStream is required");
+        checkParameter(byteStream != null, "byteStream is required");
 
         try {
             return Observable.just(tika.detect(byteStream));

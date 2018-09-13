@@ -54,7 +54,7 @@ public class Uploader_privacyStrategyIntegrationTest {
     @Test
     public void shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy() throws Exception {
         final UploadParameter param = UploadParameter.createForFileUpload(SMALL_FILE, PRIVATE_KEY_1)
-                .securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
+                .withNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
                 .build();
 
         final UploadResult result = unitUnderTest.upload(param);
@@ -70,7 +70,7 @@ public class Uploader_privacyStrategyIntegrationTest {
     @Test
     public void shouldUploadFileWithSecuredWithPasswordPrivacyStrategy() throws Exception {
         final UploadParameter param = UploadParameter.createForFileUpload(SMALL_FILE, PRIVATE_KEY_1)
-                .securedWithPasswordPrivacy(PASSWORD)
+                .withPasswordPrivacy(PASSWORD)
                 .build();
 
         final UploadResult result = unitUnderTest.upload(param);
@@ -86,7 +86,7 @@ public class Uploader_privacyStrategyIntegrationTest {
     @Test
     public void shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy() throws Exception {
         final UploadParameter param = UploadParameter.createForFileUpload(SMALL_FILE, PRIVATE_KEY_1)
-                .securedWithShamirSecretSharing(
+                .withShamirSecretSharing(
                         SHAMIR_SECRET_TOTAL_PART_COUNT,
                         SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         SHAMIR_SECRET_PARTS)

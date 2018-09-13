@@ -60,7 +60,7 @@ public class CreateProximaxMessagePayloadServiceTest {
 
     private UploadParameter sampleUploadParameter() throws UnsupportedEncodingException {
         return UploadParameter.createForStringUpload("sample", SAMPLE_PRIVATE_KEY)
-                .plainPrivacy()
+                .withPlainPrivacy()
                 .build();
     }
 

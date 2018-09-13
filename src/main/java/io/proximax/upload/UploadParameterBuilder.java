@@ -51,7 +51,7 @@ public class UploadParameterBuilder {
      * @param recipientPublicKey the public key of a blockchain account that will receive the transactions being created (if different from signer)
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder recipientPublicKey(String recipientPublicKey) {
+    public UploadParameterBuilder withRecipientPublicKey(String recipientPublicKey) {
         checkParameter(() -> recipientPublicKey == null || PublicKey.fromHexString(recipientPublicKey) != null,
                 "recipientPublicKey should be a valid public key");
 
@@ -64,7 +64,7 @@ public class UploadParameterBuilder {
      * @param recipientAddress the address of a blockchain account that will receive the transactions being created (if different from signer)
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder recipientAddress(String recipientAddress) {
+    public UploadParameterBuilder withRecipientAddress(String recipientAddress) {
         checkParameter(() -> recipientAddress == null || Address.createFromRawAddress(recipientAddress) != null,
                 "recipientAddress should be a valid address");
 
@@ -77,7 +77,7 @@ public class UploadParameterBuilder {
      * @param computeDigest flag that indicates if a digest is required to be calculated
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder computeDigest(Boolean computeDigest) {
+    public UploadParameterBuilder withComputeDigest(Boolean computeDigest) {
         this.computeDigest = computeDigest;
         return this;
     }
@@ -87,7 +87,7 @@ public class UploadParameterBuilder {
      * @param detectContentType flag that indicates if a content type is to be derived
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder detectContentType(Boolean detectContentType) {
+    public UploadParameterBuilder withDetectContentType(Boolean detectContentType) {
         this.detectContentType = detectContentType;
         return this;
     }
@@ -97,7 +97,7 @@ public class UploadParameterBuilder {
      * @param useBlockchainSecureMessage flag that indicates if transaction's message is to be secured
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder useBlockchainSecureMessage(Boolean useBlockchainSecureMessage) {
+    public UploadParameterBuilder withUseBlockchainSecureMessage(Boolean useBlockchainSecureMessage) {
         this.useBlockchainSecureMessage = useBlockchainSecureMessage;
         return this;
     }
@@ -107,7 +107,7 @@ public class UploadParameterBuilder {
      * @param transactionDeadline transaction deadline (duration) for the blockchain transaction to be created. This value is in hours.
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder transactionDeadline(Integer transactionDeadline) {
+    public UploadParameterBuilder withTransactionDeadline(Integer transactionDeadline) {
         checkParameter(transactionDeadline == null || (transactionDeadline >= 1 && transactionDeadline <= 23),
                 "transactionDeadline should be between 1 and 23");
 
@@ -123,7 +123,7 @@ public class UploadParameterBuilder {
      * @param privacyStrategy strategy that defines how the data will be encrypted
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder privacyStrategy(PrivacyStrategy privacyStrategy) {
+    public UploadParameterBuilder withPrivacyStrategy(PrivacyStrategy privacyStrategy) {
         this.privacyStrategy = privacyStrategy;
         return this;
     }
@@ -135,7 +135,7 @@ public class UploadParameterBuilder {
      * Privacy strategy defines how the data will be encrypted
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder plainPrivacy() {
+    public UploadParameterBuilder withPlainPrivacy() {
         this.privacyStrategy = PlainPrivacyStrategy.create();
         return this;
     }
@@ -149,7 +149,7 @@ public class UploadParameterBuilder {
      * @param publicKey the public key of the other blockchain account to encrypt the data
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder securedWithNemKeysPrivacy(String privateKey, String publicKey) {
+    public UploadParameterBuilder withNemKeysPrivacy(String privateKey, String publicKey) {
         this.privacyStrategy = SecuredWithNemKeysPrivacyStrategy.create(privateKey, publicKey);
         return this;
     }
@@ -162,7 +162,7 @@ public class UploadParameterBuilder {
      * @param password a 50-character minimum password
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder securedWithPasswordPrivacy(String password) {
+    public UploadParameterBuilder withPasswordPrivacy(String password) {
         this.privacyStrategy = SecuredWithPasswordPrivacyStrategy.create(password);
         return this;
     }
@@ -177,9 +177,9 @@ public class UploadParameterBuilder {
      * @param secretParts the array of secret parts composed of the part index and the secret part
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder securedWithShamirSecretSharing(int secretTotalPartCount,
-                                                                 int secretMinimumPartCountToBuild,
-                                                                 SecretPart... secretParts) {
+    public UploadParameterBuilder withShamirSecretSharing(int secretTotalPartCount,
+                                                          int secretMinimumPartCountToBuild,
+                                                          SecretPart... secretParts) {
         this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;
@@ -195,9 +195,9 @@ public class UploadParameterBuilder {
      * @param secretParts the list of secret parts composed of the part index and the secret part
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder securedWithShamirSecretSharing(int secretTotalPartCount,
-                                                                 int secretMinimumPartCountToBuild,
-                                                                 List<SecretPart> secretParts) {
+    public UploadParameterBuilder withShamirSecretSharing(int secretTotalPartCount,
+                                                          int secretMinimumPartCountToBuild,
+                                                          List<SecretPart> secretParts) {
         this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;
@@ -213,9 +213,9 @@ public class UploadParameterBuilder {
      * @param secretParts the map containing part index and secret part pairs
      * @return the same instance of this builder
      */
-    public UploadParameterBuilder securedWithShamirSecretSharing(int secretTotalPartCount,
-                                                                 int secretMinimumPartCountToBuild,
-                                                                 Map<Integer, byte[]> secretParts) {
+    public UploadParameterBuilder withShamirSecretSharing(int secretTotalPartCount,
+                                                          int secretMinimumPartCountToBuild,
+                                                          Map<Integer, byte[]> secretParts) {
         this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;

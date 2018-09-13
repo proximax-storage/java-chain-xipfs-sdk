@@ -370,7 +370,7 @@ public class UploadParameterTest {
     @Test
     public void shouldCreateWithPlainPrivacy() {
         final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .plainPrivacy()
+                .withPlainPrivacy()
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(PlainPrivacyStrategy.class));
@@ -379,7 +379,7 @@ public class UploadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithNemKeysPrivacy() {
         final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .securedWithNemKeysPrivacy(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
+                .withNemKeysPrivacy(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithNemKeysPrivacyStrategy.class));
@@ -388,7 +388,7 @@ public class UploadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithPasswordPrivacy() {
         final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .securedWithPasswordPrivacy("hdksahjkdhsakjhdsajhdkjhsajkdsbajjdhsajkhdjksahjkdahjkhdkjsahjdsadasdsadas")
+                .withPasswordPrivacy("hdksahjkdhsakjhdsajhdkjhsajkdsbajjdhsajkhdjksahjkdahjkhdkjsahjdsadasdsadas")
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithPasswordPrivacyStrategy.class));
@@ -401,7 +401,7 @@ public class UploadParameterTest {
         minimumSecretParts.put(3, SHAMIR_SECRET_PARTS.get(3));
         minimumSecretParts.put(5, SHAMIR_SECRET_PARTS.get(5));
         final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .securedWithShamirSecretSharing(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .withShamirSecretSharing(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         minimumSecretParts)
                 .build();
 
@@ -411,7 +411,7 @@ public class UploadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithShamirSecretSharingArrayStrategy() throws UnsupportedEncodingException {
         final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .securedWithShamirSecretSharing(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .withShamirSecretSharing(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SHAMIR_SECRET_PARTS.get(1)),
                         new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SHAMIR_SECRET_PARTS.get(3)),
                         new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, SHAMIR_SECRET_PARTS.get(5)))
@@ -423,7 +423,7 @@ public class UploadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithShamirSecretSharingListStrategy() throws UnsupportedEncodingException {
         final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .securedWithShamirSecretSharing(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .withShamirSecretSharing(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         asList(
                                 new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SHAMIR_SECRET_PARTS.get(1)),
                                 new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SHAMIR_SECRET_PARTS.get(3)),
@@ -451,13 +451,13 @@ public class UploadParameterTest {
     @Test
     public void shouldCreateWithAllParametersConfigured() {
         final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .computeDigest(true)
-                .recipientPublicKey(SAMPLE_RECIPIENT_PUBLIC_KEY)
-                .recipientAddress(SAMPLE_RECIPIENT_ADDRESS)
-                .securedWithPasswordPrivacy("passwordaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-                .detectContentType(true)
-                .transactionDeadline(5)
-                .useBlockchainSecureMessage(true)
+                .withComputeDigest(true)
+                .withRecipientPublicKey(SAMPLE_RECIPIENT_PUBLIC_KEY)
+                .withRecipientAddress(SAMPLE_RECIPIENT_ADDRESS)
+                .withPasswordPrivacy("passwordaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                .withDetectContentType(true)
+                .withTransactionDeadline(5)
+                .withUseBlockchainSecureMessage(true)
                 .build();
 
         assertThat(param, is(notNullValue()));
@@ -473,19 +473,19 @@ public class UploadParameterTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailWhenInvalidRecipientPublicKey() {
         UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .recipientPublicKey("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+                .withRecipientPublicKey("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailWhenInvalidRecipientPublicAddress() {
         UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .recipientAddress("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+                .withRecipientAddress("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailWhenInvalidTransactionDeadline() {
         UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .transactionDeadline(48);
+                .withTransactionDeadline(48);
     }
 
     @Test(expected = IllegalArgumentException.class)

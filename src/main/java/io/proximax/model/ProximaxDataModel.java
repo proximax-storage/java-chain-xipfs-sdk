@@ -16,7 +16,6 @@ import java.util.Map;
  *     <li><b>name</b> - the name for the data (file name by default if a file upload)</li>
  *     <li><b>contentType</b> - the content type of the data (detected if none specified)</li>
  * </ul>
- * @see ProximaxRootDataModel
  */
 public final class ProximaxDataModel extends DataInfoModel {
 

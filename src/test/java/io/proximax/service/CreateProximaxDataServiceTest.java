@@ -166,8 +166,8 @@ public class CreateProximaxDataServiceTest {
         given(mockByteArrayParameterData.getMetadata()).willReturn(DUMMY_METADATA);
 
         return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, SAMPLE_PRIVATE_KEY)
-                .computeDigest(true)
-                .privacyStrategy(mockPrivacyStrategy)
+                .withComputeDigest(true)
+                .withPrivacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 
@@ -179,8 +179,8 @@ public class CreateProximaxDataServiceTest {
         given(mockByteArrayParameterData.getMetadata()).willReturn(DUMMY_METADATA);
 
         return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, SAMPLE_PRIVATE_KEY)
-                .computeDigest(false)
-                .privacyStrategy(mockPrivacyStrategy)
+                .withComputeDigest(false)
+                .withPrivacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 
@@ -191,8 +191,8 @@ public class CreateProximaxDataServiceTest {
         given(mockByteArrayParameterData.getMetadata()).willReturn(DUMMY_METADATA);
 
         return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, SAMPLE_PRIVATE_KEY)
-                .detectContentType(true)
-                .privacyStrategy(mockPrivacyStrategy)
+                .withDetectContentType(true)
+                .withPrivacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 
@@ -203,15 +203,15 @@ public class CreateProximaxDataServiceTest {
         given(mockByteArrayParameterData.getMetadata()).willReturn(DUMMY_METADATA);
 
         return UploadParameter.createForByteArrayUpload(mockByteArrayParameterData, SAMPLE_PRIVATE_KEY)
-                .detectContentType(false)
-                .privacyStrategy(mockPrivacyStrategy)
+                .withDetectContentType(false)
+                .withPrivacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 
     private UploadParameter samplePathUploadParam() {
         return UploadParameter.createForPathUpload(
                 PathParameterData.create(DUMMY_PATH, DUMMY_DESCRIPTION, DUMMY_NAME, DUMMY_METADATA), SAMPLE_PRIVATE_KEY)
-                .privacyStrategy(mockPrivacyStrategy)
+                .withPrivacyStrategy(mockPrivacyStrategy)
                 .build();
     }
 }

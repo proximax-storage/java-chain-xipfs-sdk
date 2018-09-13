@@ -205,6 +205,7 @@ public class Uploader_integrationTest {
 
 		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadFilesAsZip");
 	}
+
 	@Test
 	public void shouldUploadFilesAsZipWithCompleteDetails() throws Exception {
 		final UploadParameter param = UploadParameter.createForFilesAsZipUpload(

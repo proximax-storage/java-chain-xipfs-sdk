@@ -1,6 +1,8 @@
 package io.proximax.service;
 
+import io.nem.sdk.model.transaction.PlainMessage;
 import io.nem.sdk.model.transaction.TransferTransaction;
+import io.proximax.exceptions.DownloadForMessageTypeNotSupportedException;
 import io.proximax.model.ProximaxMessagePayloadModel;
 import io.proximax.utils.JsonUtils;
 
@@ -21,7 +23,12 @@ public class RetrieveProximaxMessagePayloadService {
         checkParameter(transferTransaction != null, "transferTransaction is required");
 
         // TODO handle secure message
-        final String messagePayload = transferTransaction.getMessage().getPayload();
-        return JsonUtils.fromJson(messagePayload, ProximaxMessagePayloadModel.class);
+        if (transferTransaction.getMessage() instanceof PlainMessage) {
+            final String messagePayload = transferTransaction.getMessage().getPayload();
+            return JsonUtils.fromJson(messagePayload, ProximaxMessagePayloadModel.class);
+        } else {
+            throw new DownloadForMessageTypeNotSupportedException(
+                    String.format("Download of message type %s is not supported", transferTransaction.getMessage().getClass().getSimpleName()));
+        }
     }
 }

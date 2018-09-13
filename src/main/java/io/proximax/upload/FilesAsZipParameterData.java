@@ -1,6 +1,5 @@
 package io.proximax.upload;
 
-import io.proximax.utils.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 
 import java.io.ByteArrayInputStream;
@@ -26,7 +25,7 @@ public class FilesAsZipParameterData extends AbstractByteStreamParameterData {
     private FilesAsZipParameterData(List<File> files, String description, String name, Map<String, String> metadata) throws IOException {
         super(description, name, "application/zip", metadata);
 
-        checkParameter(CollectionUtils.isNotEmpty(files), "files cannot be null or empty");
+        checkParameter(files != null && !files.isEmpty(), "files cannot be null or empty");
         checkParameter(files.stream().allMatch(File::isFile), "not all files are file");
 
         this.files = files;

@@ -48,7 +48,7 @@ public class Downloader_directDownload_privacyIntegrationTest {
 				"transactionHash");
 		final DirectDownloadParameter param =
 				DirectDownloadParameter.createFromTransactionHash(transactionHash)
-						.plainPrivacy()
+						.withPlainPrivacy()
 						.build();
 
 		final InputStream result = unitUnderTest.directDownload(param);
@@ -64,7 +64,7 @@ public class Downloader_directDownload_privacyIntegrationTest {
 				"transactionHash");
 		final DirectDownloadParameter param =
 				DirectDownloadParameter.createFromTransactionHash(transactionHash)
-						.securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
+						.withNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
 						.build();
 
 		final InputStream result = unitUnderTest.directDownload(param);
@@ -81,7 +81,7 @@ public class Downloader_directDownload_privacyIntegrationTest {
 				"transactionHash");
 		final DirectDownloadParameter param =
 				DirectDownloadParameter.createFromTransactionHash(transactionHash)
-						.securedWithPasswordPrivacy(PASSWORD)
+						.withPasswordPrivacy(PASSWORD)
 						.build();
 
 		final InputStream result = unitUnderTest.directDownload(param);
@@ -97,7 +97,7 @@ public class Downloader_directDownload_privacyIntegrationTest {
 				"transactionHash");
 		final DirectDownloadParameter param =
 				DirectDownloadParameter.createFromTransactionHash(transactionHash)
-						.securedWithShamirSecretSharingPrivacy(
+						.withShamirSecretSharingPrivacy(
 								SHAMIR_SECRET_TOTAL_PART_COUNT,
 								SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
 								SHAMIR_SECRET_PARTS)
@@ -116,7 +116,7 @@ public class Downloader_directDownload_privacyIntegrationTest {
 				"dataHash");
 		final DirectDownloadParameter param =
 				DirectDownloadParameter.createFromDataHash(dataHash)
-						.plainPrivacy()
+						.withPlainPrivacy()
 						.build();
 
 		final InputStream result = unitUnderTest.directDownload(param);
@@ -132,7 +132,7 @@ public class Downloader_directDownload_privacyIntegrationTest {
 				"dataHash");
 		final DirectDownloadParameter param =
 				DirectDownloadParameter.createFromDataHash(dataHash)
-						.securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
+						.withNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
 						.build();
 
 		final InputStream result = unitUnderTest.directDownload(param);
@@ -149,7 +149,7 @@ public class Downloader_directDownload_privacyIntegrationTest {
 				"dataHash");
 		final DirectDownloadParameter param =
 				DirectDownloadParameter.createFromDataHash(dataHash)
-						.securedWithPasswordPrivacy(PASSWORD)
+						.withPasswordPrivacy(PASSWORD)
 						.build();
 
 		final InputStream result = unitUnderTest.directDownload(param);
@@ -165,7 +165,7 @@ public class Downloader_directDownload_privacyIntegrationTest {
 				"dataHash");
 		final DirectDownloadParameter param =
 				DirectDownloadParameter.createFromDataHash(dataHash)
-						.securedWithShamirSecretSharingPrivacy(
+						.withShamirSecretSharingPrivacy(
 								SHAMIR_SECRET_TOTAL_PART_COUNT,
 								SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
 								SHAMIR_SECRET_PARTS)

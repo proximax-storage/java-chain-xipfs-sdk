@@ -34,7 +34,7 @@ public class Uploader_detectContentTypeIntegrationTest {
 	@Test
 	public void shouldUploadWithEnabledDetectContentType() throws Exception {
 		final UploadParameter param = UploadParameter.createForStringUpload(STRING_TEST, PRIVATE_KEY_1)
-				.detectContentType(true)
+				.withDetectContentType(true)
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -48,7 +48,7 @@ public class Uploader_detectContentTypeIntegrationTest {
 	@Test
 	public void shouldUploadWithDisabledDetectContentType() throws Exception {
 		final UploadParameter param = UploadParameter.createForStringUpload(STRING_TEST, PRIVATE_KEY_1)
-				.detectContentType(false)
+				.withDetectContentType(false)
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);

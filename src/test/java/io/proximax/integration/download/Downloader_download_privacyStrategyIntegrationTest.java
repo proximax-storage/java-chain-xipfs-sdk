@@ -48,7 +48,7 @@ public class Downloader_download_privacyStrategyIntegrationTest {
 				"Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithPlainPrivacyStrategy",
 				"transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash)
-				.plainPrivacy()
+				.withPlainPrivacy()
 				.build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -65,7 +65,7 @@ public class Downloader_download_privacyStrategyIntegrationTest {
 				"Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy",
 				"transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash)
-				.securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
+				.withNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
 				.build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -82,7 +82,7 @@ public class Downloader_download_privacyStrategyIntegrationTest {
 				"Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithPasswordPrivacyStrategy",
 				"transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash)
-				.securedWithPasswordPrivacy(PASSWORD)
+				.withPasswordPrivacy(PASSWORD)
 				.build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -99,7 +99,7 @@ public class Downloader_download_privacyStrategyIntegrationTest {
 				"Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy",
 				"transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash)
-				.securedWithShamirSecretSharingPrivacy(
+				.withShamirSecretSharingPrivacy(
 						SHAMIR_SECRET_TOTAL_PART_COUNT,
 						SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
 						SHAMIR_SECRET_PARTS)

@@ -136,7 +136,7 @@ public class DirectDownloadParameterTest {
     @Test
     public void buildParamWithPrivacyStrategy() {
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(
+                .withPrivacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(
                         "CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C",
                         "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577"
                 ))
@@ -150,7 +150,7 @@ public class DirectDownloadParameterTest {
     @Test
     public void shouldCreateWithPlainPrivacy() {
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .plainPrivacy()
+                .withPlainPrivacy()
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(PlainPrivacyStrategy.class));
@@ -159,7 +159,7 @@ public class DirectDownloadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithNemKeysPrivacy() {
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
+                .withNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithNemKeysPrivacyStrategy.class));
@@ -168,7 +168,7 @@ public class DirectDownloadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithPasswordPrivacy() {
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .securedWithPasswordPrivacy("hdksahjkdhsakjhdsajhdkjhsajkdsbajjdhsajkhdjksahjkdahjkhdkjsahjdsadasdsadas")
+                .withPasswordPrivacy("hdksahjkdhsakjhdsajhdkjhsajkdsbajjdhsajkhdjksahjkdahjkhdkjsahjdsadasdsadas")
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithPasswordPrivacyStrategy.class));
@@ -181,7 +181,7 @@ public class DirectDownloadParameterTest {
         minimumSecretParts.put(3, SHAMIR_SECRET_PARTS.get(3));
         minimumSecretParts.put(5, SHAMIR_SECRET_PARTS.get(5));
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .securedWithShamirSecretSharingPrivacy(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .withShamirSecretSharingPrivacy(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         minimumSecretParts)
                 .build();
 
@@ -191,7 +191,7 @@ public class DirectDownloadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithShamirSecretSharingArrayStrategy() {
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .securedWithShamirSecretSharingPrivacy(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .withShamirSecretSharingPrivacy(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SHAMIR_SECRET_PARTS.get(1)),
                         new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SHAMIR_SECRET_PARTS.get(3)),
                         new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, SHAMIR_SECRET_PARTS.get(5)))
@@ -203,7 +203,7 @@ public class DirectDownloadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithShamirSecretSharingListStrategy() {
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .securedWithShamirSecretSharingPrivacy(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .withShamirSecretSharingPrivacy(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
                         asList(
                                 new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SHAMIR_SECRET_PARTS.get(1)),
                                 new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SHAMIR_SECRET_PARTS.get(3)),

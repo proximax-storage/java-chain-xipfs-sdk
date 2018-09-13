@@ -35,7 +35,7 @@ public class Uploader_transactionConfigIntegrationTest {
 	@Test
 	public void shouldUploadWithRecipientPublicKeyProvided() throws Exception {
 		final UploadParameter param = UploadParameter.createForStringUpload(STRING_TEST, PRIVATE_KEY_1)
-				.recipientPublicKey(PRIVATE_KEY_2)
+				.withRecipientPublicKey(PRIVATE_KEY_2)
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -49,7 +49,7 @@ public class Uploader_transactionConfigIntegrationTest {
 	@Test
 	public void shouldUploadWithRecipientAddressProvided() throws Exception {
 		final UploadParameter param = UploadParameter.createForStringUpload(STRING_TEST, PRIVATE_KEY_1)
-				.recipientAddress(ADDRESS_2)
+				.withRecipientAddress(ADDRESS_2)
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -63,7 +63,7 @@ public class Uploader_transactionConfigIntegrationTest {
 	@Test
 	public void shouldUploadWithTransactionDeadlinesProvided() throws Exception {
 		final UploadParameter param = UploadParameter.createForStringUpload(STRING_TEST, PRIVATE_KEY_1)
-				.transactionDeadline(2)
+				.withTransactionDeadline(2)
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -77,7 +77,7 @@ public class Uploader_transactionConfigIntegrationTest {
 	@Test
 	public void shouldUploadWithUseBlockchainSecureMessageProvided() throws Exception {
 		final UploadParameter param = UploadParameter.createForStringUpload(STRING_TEST, PRIVATE_KEY_1)
-				.useBlockchainSecureMessage(true)
+				.withUseBlockchainSecureMessage(true)
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);

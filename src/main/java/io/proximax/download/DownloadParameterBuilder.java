@@ -39,7 +39,7 @@ public class DownloadParameterBuilder {
      * @param accountPrivateKey the account private key
      * @return the same instance of this builder
      */
-    public DownloadParameterBuilder accountPrivateKey(String accountPrivateKey) {
+    public DownloadParameterBuilder withAccountPrivateKey(String accountPrivateKey) {
         checkParameter(() -> accountPrivateKey == null || PrivateKey.fromHexString(accountPrivateKey) != null,
                 "accountPrivateKey should be a valid private key");
 
@@ -52,7 +52,7 @@ public class DownloadParameterBuilder {
      * @param validateDigest the validate digest flag
      * @return the validate digest flag
      */
-    public DownloadParameterBuilder validateDigest(Boolean validateDigest) {
+    public DownloadParameterBuilder withValidateDigest(Boolean validateDigest) {
         this.validateDigest = validateDigest;
         return this;
     }
@@ -65,7 +65,7 @@ public class DownloadParameterBuilder {
      * @param privacyStrategy the privacy strategy
      * @return the same instance of this builder
      */
-    public DownloadParameterBuilder privacyStrategy(PrivacyStrategy privacyStrategy) {
+    public DownloadParameterBuilder withPrivacyStrategy(PrivacyStrategy privacyStrategy) {
         this.privacyStrategy = privacyStrategy;
         return this;
     }
@@ -77,7 +77,7 @@ public class DownloadParameterBuilder {
      * Privacy strategy defines how the data will be decrypted
      * @return the same instance of this builder
      */
-    public DownloadParameterBuilder plainPrivacy() {
+    public DownloadParameterBuilder withPlainPrivacy() {
         this.privacyStrategy = PlainPrivacyStrategy.create();
         return this;
     }
@@ -91,7 +91,7 @@ public class DownloadParameterBuilder {
      * @param publicKey the public key of the other blockchain account that encrypted the data
      * @return the same instance of this builder
      */
-    public DownloadParameterBuilder securedWithNemKeysPrivacy(String privateKey, String publicKey) {
+    public DownloadParameterBuilder withNemKeysPrivacy(String privateKey, String publicKey) {
         this.privacyStrategy = SecuredWithNemKeysPrivacyStrategy.create(privateKey, publicKey);
         return this;
     }
@@ -104,7 +104,7 @@ public class DownloadParameterBuilder {
      * @param password a 50-character minimum password
      * @return the same instance of this builder
      */
-    public DownloadParameterBuilder securedWithPasswordPrivacy(String password) {
+    public DownloadParameterBuilder withPasswordPrivacy(String password) {
         this.privacyStrategy = SecuredWithPasswordPrivacyStrategy.create(password);
         return this;
     }
@@ -119,9 +119,9 @@ public class DownloadParameterBuilder {
      * @param secretParts the array of secret parts composed of the part index and the secret part
      * @return the same instance of this builder
      */
-    public DownloadParameterBuilder securedWithShamirSecretSharingPrivacy(int secretTotalPartCount,
-                                                                          int secretMinimumPartCountToBuild,
-                                                                          SecretPart... secretParts) {
+    public DownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
+                                                                   int secretMinimumPartCountToBuild,
+                                                                   SecretPart... secretParts) {
         this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;
@@ -137,9 +137,9 @@ public class DownloadParameterBuilder {
      * @param secretParts the list of secret parts composed of the part index and the secret part
      * @return the same instance of this builder
      */
-    public DownloadParameterBuilder securedWithShamirSecretSharingPrivacy(int secretTotalPartCount,
-                                                                          int secretMinimumPartCountToBuild,
-                                                                          List<SecretPart> secretParts) {
+    public DownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
+                                                                   int secretMinimumPartCountToBuild,
+                                                                   List<SecretPart> secretParts) {
         this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;
@@ -155,9 +155,9 @@ public class DownloadParameterBuilder {
      * @param secretParts the map containing part index and secret part pairs
      * @return the same instance of this builder
      */
-    public DownloadParameterBuilder securedWithShamirSecretSharingPrivacy(int secretTotalPartCount,
-                                                                          int secretMinimumPartCountToBuild,
-                                                                          Map<Integer, byte[]> secretParts) {
+    public DownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
+                                                                   int secretMinimumPartCountToBuild,
+                                                                   Map<Integer, byte[]> secretParts) {
         this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;

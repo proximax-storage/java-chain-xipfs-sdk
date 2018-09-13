@@ -7,7 +7,7 @@ import io.reactivex.Observable;
 import java.io.File;
 import java.io.InputStream;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
  * The service class responsible for uploading to IPFS
@@ -34,7 +34,7 @@ public class IpfsUploadService {
      * @return the IPFS upload response
      */
     public Observable<IpfsUploadResponse> uploadByteStream(final InputStream byteStream) {
-        checkArgument(byteStream != null, "byteStream is required");
+        checkParameter(byteStream != null, "byteStream is required");
 
         return ipfsClient.addByteStream(byteStream).map(dataHash -> new IpfsUploadResponse(dataHash, System.currentTimeMillis()));
     }
@@ -45,7 +45,7 @@ public class IpfsUploadService {
      * @return the IPFS upload response
      */
     public Observable<IpfsUploadResponse> uploadPath(final File path) {
-        checkArgument(path != null, "path is required");
+        checkParameter(path != null, "path is required");
 
         return ipfsClient.addPath(path).map(dataHash -> new IpfsUploadResponse(dataHash, System.currentTimeMillis()));
     }

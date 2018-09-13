@@ -1,8 +1,9 @@
 package io.proximax.service;
 
 import io.proximax.connection.IpfsConnection;
-import io.proximax.exceptions.DownloadForTypeNotSupportedException;
+import io.proximax.exceptions.DownloadForDataTypeNotSupportedException;
 import io.proximax.privacy.strategy.PrivacyStrategy;
+import io.proximax.service.client.IpfsClient;
 import io.proximax.utils.DigestUtils;
 import io.reactivex.Observable;
 
@@ -16,7 +17,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  */
 public class RetrieveProximaxDataService {
 
-    private final IpfsDownloadService ipfsDownloadService;
+    private final IpfsClient ipfsClient;
     private final DigestUtils digestUtils;
 
     /**
@@ -24,12 +25,12 @@ public class RetrieveProximaxDataService {
      * @param ipfsConnection the config class to connect to IPFS
      */
     public RetrieveProximaxDataService(IpfsConnection ipfsConnection) {
-        this.ipfsDownloadService = new IpfsDownloadService(ipfsConnection);
+        this.ipfsClient = new IpfsClient(ipfsConnection);
         this.digestUtils = new DigestUtils();
     }
 
-    RetrieveProximaxDataService(IpfsDownloadService ipfsDownloadService, DigestUtils digestUtils) {
-        this.ipfsDownloadService = ipfsDownloadService;
+    RetrieveProximaxDataService(IpfsClient ipfsClient, DigestUtils digestUtils) {
+        this.ipfsClient = ipfsClient;
         this.digestUtils = digestUtils;
     }
 
@@ -48,9 +49,9 @@ public class RetrieveProximaxDataService {
         checkParameter(privacyStrategy != null, "privacyStrategy is required");
 
         if (contentType != null && contentType.equals(PATH_UPLOAD_CONTENT_TYPE)) { // path
-            throw new DownloadForTypeNotSupportedException("download of path is not yet supported");
+            throw new DownloadForDataTypeNotSupportedException("download of path is not yet supported");
         } else { // byte array
-            return ipfsDownloadService.download(dataHash)
+            return ipfsClient.getByteStream(dataHash)
                     .flatMap(undecryptedStream -> validateDigest(validateDigest, digest, dataHash)
                             .map(result -> undecryptedStream))
                     .map(privacyStrategy::decryptStream);
@@ -58,7 +59,7 @@ public class RetrieveProximaxDataService {
     }
 
     private Observable<Boolean> validateDigest(boolean validateDigest, String digest, String dataHash) {
-        return validateDigest ? ipfsDownloadService.download(dataHash)
+        return validateDigest ? ipfsClient.getByteStream(dataHash)
                 .flatMap(undecryptedStream -> digestUtils.validateDigest(undecryptedStream, digest)) : Observable.just(true);
     }
 }

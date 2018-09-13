@@ -34,7 +34,7 @@ public class Uploader_computeDigestIntegrationTest {
 	@Test
 	public void shouldUploadWithEnabledComputeDigest() throws Exception {
 		final UploadParameter param = UploadParameter.createForStringUpload(STRING_TEST, PRIVATE_KEY_1)
-				.computeDigest(true)
+				.withComputeDigest(true)
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -48,7 +48,7 @@ public class Uploader_computeDigestIntegrationTest {
 	@Test
 	public void shouldUploadWithDisabledComputeDigest() throws Exception {
 		final UploadParameter param = UploadParameter.createForStringUpload(STRING_TEST, PRIVATE_KEY_1)
-				.computeDigest(false)
+				.withComputeDigest(false)
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);

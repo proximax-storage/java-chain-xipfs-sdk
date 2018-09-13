@@ -36,7 +36,7 @@ public class Downloader_download_digestIntegrationTest {
 	public void shouldVerifyDownloadWithEnabledValidateDigest() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash)
-				.validateDigest(true)
+				.withValidateDigest(true)
 				.build();
 
 		final DownloadResult result = unitUnderTest.download(param);
@@ -49,7 +49,7 @@ public class Downloader_download_digestIntegrationTest {
 	public void shouldNotVerifyDownloadWithDisabledValidateDigest() throws IOException {
 		final String transactionHash = TestHelper.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithDisabledComputeDigest", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash)
-				.validateDigest(false)
+				.withValidateDigest(false)
 				.build();
 
 		final DownloadResult result = unitUnderTest.download(param);

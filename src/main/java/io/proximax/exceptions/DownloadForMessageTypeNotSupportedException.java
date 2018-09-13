@@ -3,13 +3,13 @@ package io.proximax.exceptions;
 /**
  * The exception when downloading a not supported type
  */
-public class DownloadForTypeNotSupportedException extends RuntimeException {
+public class DownloadForMessageTypeNotSupportedException extends RuntimeException {
 
 	/**
 	 * Create instance of this exception
 	 * @param message the exception message
 	 */
-	public DownloadForTypeNotSupportedException(String message) {
+	public DownloadForMessageTypeNotSupportedException(String message) {
 		super(message);
 	}
 
@@ -18,7 +18,7 @@ public class DownloadForTypeNotSupportedException extends RuntimeException {
 	 * @param message the exception message
 	 * @param cause the cause of this exception
 	 */
-	public DownloadForTypeNotSupportedException(String message, Throwable cause) {
+	public DownloadForMessageTypeNotSupportedException(String message, Throwable cause) {
 		super(message, cause);
 	}
 

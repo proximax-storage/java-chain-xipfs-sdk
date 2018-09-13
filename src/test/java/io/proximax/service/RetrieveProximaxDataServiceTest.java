@@ -1,7 +1,8 @@
 package io.proximax.service;
 
-import io.proximax.exceptions.DownloadForTypeNotSupportedException;
+import io.proximax.exceptions.DownloadForDataTypeNotSupportedException;
 import io.proximax.privacy.strategy.PrivacyStrategy;
+import io.proximax.service.client.IpfsClient;
 import io.proximax.utils.DigestUtils;
 import io.reactivex.Observable;
 import org.junit.Before;
@@ -29,7 +30,7 @@ public class RetrieveProximaxDataServiceTest {
     private RetrieveProximaxDataService unitUnderTest;
 
     @Mock
-    private IpfsDownloadService mockIpfsDownloadService;
+    private IpfsClient mockIpfsClient;
 
     @Mock
     private DigestUtils mockDigestUtils;
@@ -41,7 +42,7 @@ public class RetrieveProximaxDataServiceTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        unitUnderTest = new RetrieveProximaxDataService(mockIpfsDownloadService, mockDigestUtils);
+        unitUnderTest = new RetrieveProximaxDataService(mockIpfsClient, mockDigestUtils);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -54,14 +55,14 @@ public class RetrieveProximaxDataServiceTest {
         unitUnderTest.getDataByteStream(DUMMY_DATA_HASH, null, true, null, null);
     }
 
-    @Test(expected = DownloadForTypeNotSupportedException.class)
+    @Test(expected = DownloadForDataTypeNotSupportedException.class)
     public void failWhenPathContentType() {
         unitUnderTest.getDataByteStream(DUMMY_DATA_HASH, mockPrivacyStrategy, true, null, PATH_UPLOAD_CONTENT_TYPE);
     }
 
     @Test
     public void shouldReturnDownloadedData() {
-        given(mockIpfsDownloadService.download(DUMMY_DATA_HASH)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA_STREAM));
+        given(mockIpfsClient.getByteStream(DUMMY_DATA_HASH)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA_STREAM));
         given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA_STREAM, DUMMY_DIGEST)).willReturn(Observable.just(true));
         given(mockPrivacyStrategy.decryptStream(DUMMY_DOWNLOADED_DATA_STREAM)).willReturn(DUMMY_DECRYPTED_DATA_STREAM);
 
@@ -74,7 +75,7 @@ public class RetrieveProximaxDataServiceTest {
 
     @Test(expected = RuntimeException.class)
     public void failWhenDigestsDoNotMatch() {
-        given(mockIpfsDownloadService.download(DUMMY_DATA_HASH)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA_STREAM));
+        given(mockIpfsClient.getByteStream(DUMMY_DATA_HASH)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA_STREAM));
         given(mockPrivacyStrategy.decryptStream(DUMMY_DOWNLOADED_DATA_STREAM)).willReturn(DUMMY_DECRYPTED_DATA_STREAM);
         given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA_STREAM, DUMMY_DIGEST)).willThrow(RuntimeException.class);
 
