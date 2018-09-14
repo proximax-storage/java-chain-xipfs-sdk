@@ -23,7 +23,7 @@ public class IntegrationTestProperties {
     }
 
     public static String getBlockchainRestUrl() {
-        return PROPERTIES.getProperty("blockchain.rest.url");
+        return PROPERTIES.getProperty("blockchain.api.url");
     }
 
     public static String getPrivateKey1() {

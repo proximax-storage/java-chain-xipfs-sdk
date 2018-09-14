@@ -29,7 +29,7 @@ public class TransactionClient {
 
     public static final String STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION = "SUCCESS";
     private final TransactionHttp transactionHttp;
-    private final String blockchainNetworkEndpointUrl;
+    private final String blockchainNetworkRestApiUrl;
     private final Listener listener;
 
     /**
@@ -40,14 +40,14 @@ public class TransactionClient {
     public TransactionClient(BlockchainNetworkConnection blockchainNetworkConnection) throws MalformedURLException {
         checkParameter(blockchainNetworkConnection != null, "blockchainNetworkConnection is required");
 
-        this.transactionHttp = new TransactionHttp(blockchainNetworkConnection.getEndpointUrl());
-        this.blockchainNetworkEndpointUrl = blockchainNetworkConnection.getEndpointUrl();
+        this.transactionHttp = new TransactionHttp(blockchainNetworkConnection.getRestApiUrl());
+        this.blockchainNetworkRestApiUrl = blockchainNetworkConnection.getRestApiUrl();
         this.listener = null;
     }
 
     TransactionClient(TransactionHttp transactionHttp, Listener listener) {
         this.transactionHttp = transactionHttp;
-        this.blockchainNetworkEndpointUrl = null;
+        this.blockchainNetworkRestApiUrl = null;
         this.listener = listener;
     }
 
@@ -116,7 +116,7 @@ public class TransactionClient {
     }
 
     private Listener getListener() throws MalformedURLException {
-        return listener != null ? listener : new Listener(blockchainNetworkEndpointUrl);
+        return listener != null ? listener : new Listener(blockchainNetworkRestApiUrl);
     }
 
     private Observable<String> getAddedUnconfirmedTransactionStatus(Address address, String transactionHash, Listener listener) {

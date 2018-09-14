@@ -9,15 +9,15 @@ import io.proximax.model.BlockchainNetworkType;
 public class BlockchainNetworkConnection {
 
 	private NetworkType networkType;
-	private String endpointUrl;
+	private String restApiUrl;
 
 	/**
 	 * Construct instance of this config
 	 * @param networkType the network type of the blockchain
-	 * @param endpointUrl the REST API endpoint URL of the blockchain
+	 * @param restApiUrl the REST API endpoint URL of the blockchain
 	 */
-	public BlockchainNetworkConnection(BlockchainNetworkType networkType, String endpointUrl) {
-		this.endpointUrl = endpointUrl;
+	public BlockchainNetworkConnection(BlockchainNetworkType networkType, String restApiUrl) {
+		this.restApiUrl = restApiUrl;
 		this.networkType = networkType.networkType;
 	}
 
@@ -33,7 +33,7 @@ public class BlockchainNetworkConnection {
 	 * Get the REST API endpoint URL of the blockchain
 	 * @return the REST API endpoint URL
 	 */
-	public String getEndpointUrl() {
-		return endpointUrl;
+	public String getRestApiUrl() {
+		return restApiUrl;
 	}
 }
