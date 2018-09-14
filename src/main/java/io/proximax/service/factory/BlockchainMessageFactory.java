@@ -27,7 +27,7 @@ public class BlockchainMessageFactory {
 
         // TODO handle secure message
         final String jsonPayload = JsonUtils.toJson(messagePayload);
-        return new PlainMessage(jsonPayload);
+        return PlainMessage.create(jsonPayload);
     }
 
 }

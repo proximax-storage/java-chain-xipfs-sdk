@@ -4,6 +4,7 @@ import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.model.BlockchainNetworkType;
+import io.proximax.testsupport.IntegrationTestProperties;
 import io.proximax.upload.ByteArrayParameterData;
 import io.proximax.upload.FileParameterData;
 import io.proximax.upload.FilesAsZipParameterData;
@@ -19,16 +20,13 @@ import org.junit.Test;
 
 import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
 import static io.proximax.model.Constants.SCHEMA_VERSION;
-import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
-import static io.proximax.testsupport.Constants.HTML_FILE;
-import static io.proximax.testsupport.Constants.IMAGE_FILE;
-import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
-import static io.proximax.testsupport.Constants.PATH_FILE;
-import static io.proximax.testsupport.Constants.PDF_FILE1;
-import static io.proximax.testsupport.Constants.PRIVATE_KEY_1;
-import static io.proximax.testsupport.Constants.SMALL_FILE;
-import static io.proximax.testsupport.Constants.STRING_TEST;
-import static io.proximax.testsupport.TestHelper.logAndSaveResult;
+import static io.proximax.testsupport.Constants.TEST_HTML_FILE;
+import static io.proximax.testsupport.Constants.TEST_IMAGE_PNG_FILE;
+import static io.proximax.testsupport.Constants.TEST_PATH_FILE;
+import static io.proximax.testsupport.Constants.TEST_PDF_FILE_1;
+import static io.proximax.testsupport.Constants.TEST_STRING;
+import static io.proximax.testsupport.Constants.TEST_TEXT_FILE;
+import static io.proximax.testsupport.TestDataRepository.logAndSaveResult;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -43,14 +41,15 @@ public class Uploader_integrationTest {
 	@Before
 	public void setUp() {
 		unitUnderTest = new Uploader(ConnectionConfig.create(
-				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
-				new IpfsConnection(IPFS_MULTI_ADDRESS)));
+				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
+						IntegrationTestProperties.getBlockchainRestUrl()),
+				new IpfsConnection(IntegrationTestProperties.getIpfsMultiAddress())));
 	}
 
 	@Test
 	public void shouldReturnVersion() throws Exception {
-		final UploadParameter param = UploadParameter.createForByteArrayUpload(
-				FileUtils.readFileToByteArray(PDF_FILE1), PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForByteArrayUpload(FileUtils.readFileToByteArray(TEST_PDF_FILE_1), IntegrationTestProperties.getPrivateKey1())
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -63,8 +62,8 @@ public class Uploader_integrationTest {
 
 	@Test
 	public void shouldUploadByteArray() throws Exception {
-		final UploadParameter param = UploadParameter.createForByteArrayUpload(
-				FileUtils.readFileToByteArray(PDF_FILE1), PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForByteArrayUpload(FileUtils.readFileToByteArray(TEST_PDF_FILE_1), IntegrationTestProperties.getPrivateKey1())
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -83,10 +82,11 @@ public class Uploader_integrationTest {
 
 	@Test
 	public void shouldUploadByteArrayWithCompleteDetails() throws Exception {
-		final UploadParameter param = UploadParameter.createForByteArrayUpload(
-				ByteArrayParameterData.create(FileUtils.readFileToByteArray(PDF_FILE1), "byte array description", "byte array",
-						"application/pdf", singletonMap("bytearraykey", "bytearrayval")),
-				PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForByteArrayUpload(
+						ByteArrayParameterData.create(FileUtils.readFileToByteArray(TEST_PDF_FILE_1), "byte array description", "byte array",
+								"application/pdf", singletonMap("bytearraykey", "bytearrayval")),
+						IntegrationTestProperties.getPrivateKey1())
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -105,7 +105,8 @@ public class Uploader_integrationTest {
 
 	@Test
 	public void shouldUploadFile() throws Exception {
-		final UploadParameter param = UploadParameter.createForFileUpload(SMALL_FILE, PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForFileUpload(TEST_TEXT_FILE, IntegrationTestProperties.getPrivateKey1())
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -115,7 +116,7 @@ public class Uploader_integrationTest {
 		assertThat(result.getData().getContentType(), is(nullValue()));
 		assertThat(result.getData().getDataHash(), is(notNullValue()));
 		assertThat(result.getData().getDescription(), is(nullValue()));
-		assertThat(result.getData().getName(), is("test_small_file.txt"));
+		assertThat(result.getData().getName(), is("test_text_file.txt"));
 		assertThat(result.getData().getMetadata(), is(nullValue()));
 		assertThat(result.getData().getTimestamp(), is(notNullValue()));
 
@@ -124,10 +125,11 @@ public class Uploader_integrationTest {
 
 	@Test
 	public void shouldUploadFileWithCompleteDetails() throws Exception {
-		final UploadParameter param = UploadParameter.createForFileUpload(
-				FileParameterData.create(SMALL_FILE, "file description", "file name",
-						"text/plain", singletonMap("filekey", "filename")),
-				PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForFileUpload(
+						FileParameterData.create(TEST_TEXT_FILE, "file description", "file name",
+								"text/plain", singletonMap("filekey", "filename")),
+						IntegrationTestProperties.getPrivateKey1())
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -146,8 +148,8 @@ public class Uploader_integrationTest {
 
 	@Test
 	public void shouldUploadUrlResource() throws Exception {
-		final UploadParameter param = UploadParameter.createForUrlResourceUpload(
-				IMAGE_FILE.toURI().toURL(), PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForUrlResourceUpload(TEST_IMAGE_PNG_FILE.toURI().toURL(), IntegrationTestProperties.getPrivateKey1())
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -166,10 +168,11 @@ public class Uploader_integrationTest {
 
 	@Test
 	public void shouldUploadUrlResourceWithCompleteDetails() throws Exception {
-		final UploadParameter param = UploadParameter.createForUrlResourceUpload(
-				UrlResourceParameterData.create(IMAGE_FILE.toURI().toURL(),"url description",
-						"url name", "image/png", singletonMap("urlkey", "urlval")),
-				PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForUrlResourceUpload(
+						UrlResourceParameterData.create(TEST_IMAGE_PNG_FILE.toURI().toURL(),"url description",
+								"url name", "image/png", singletonMap("urlkey", "urlval")),
+						IntegrationTestProperties.getPrivateKey1())
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -188,8 +191,8 @@ public class Uploader_integrationTest {
 
 	@Test
 	public void shouldUploadFilesAsZip() throws Exception {
-		final UploadParameter param = UploadParameter.createForFilesAsZipUpload(
-				asList(SMALL_FILE, HTML_FILE), PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForFilesAsZipUpload(asList(TEST_TEXT_FILE, TEST_HTML_FILE), IntegrationTestProperties.getPrivateKey1())
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -205,12 +208,14 @@ public class Uploader_integrationTest {
 
 		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadFilesAsZip");
 	}
+
 	@Test
 	public void shouldUploadFilesAsZipWithCompleteDetails() throws Exception {
-		final UploadParameter param = UploadParameter.createForFilesAsZipUpload(
-				FilesAsZipParameterData.create(asList(SMALL_FILE, HTML_FILE), "zip description",
-						"zip name", singletonMap("zipkey", "zipvalue")),
-				PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForFilesAsZipUpload(
+						FilesAsZipParameterData.create(asList(TEST_TEXT_FILE, TEST_HTML_FILE), "zip description",
+								"zip name", singletonMap("zipkey", "zipvalue")),
+						IntegrationTestProperties.getPrivateKey1())
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -229,7 +234,8 @@ public class Uploader_integrationTest {
 
 	@Test
 	public void shouldUploadString() throws Exception {
-		final UploadParameter param = UploadParameter.createForStringUpload(STRING_TEST, PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForStringUpload(TEST_STRING, IntegrationTestProperties.getPrivateKey1())
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -248,10 +254,11 @@ public class Uploader_integrationTest {
 
 	@Test
 	public void shouldUploadStringWithCompleteDetails() throws Exception {
-		final UploadParameter param = UploadParameter.createForStringUpload(
-				StringParameterData.create(STRING_TEST, "UTF-8", "string description", "string name",
-						"text/plain", singletonMap("keystring", "valstring")),
-				PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForStringUpload(
+						StringParameterData.create(TEST_STRING, "UTF-8", "string description", "string name",
+								"text/plain", singletonMap("keystring", "valstring")),
+						IntegrationTestProperties.getPrivateKey1())
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -270,7 +277,8 @@ public class Uploader_integrationTest {
 
 	@Test
 	public void shouldUploadPath() throws Exception {
-		final UploadParameter param = UploadParameter.createForPathUpload(PATH_FILE, PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForPathUpload(TEST_PATH_FILE, IntegrationTestProperties.getPrivateKey1())
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -289,9 +297,10 @@ public class Uploader_integrationTest {
 
 	@Test
 	public void shouldUploadPathWithCompleteDetails() throws Exception {
-		final UploadParameter param = UploadParameter.createForPathUpload(
-				PathParameterData.create(PATH_FILE, "path description", "path name", singletonMap("pathkey", "pathval")),
-				PRIVATE_KEY_1)
+		final UploadParameter param = UploadParameter
+				.createForPathUpload(
+						PathParameterData.create(TEST_PATH_FILE, "path description", "path name", singletonMap("pathkey", "pathval")),
+						IntegrationTestProperties.getPrivateKey1())
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);

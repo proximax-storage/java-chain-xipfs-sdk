@@ -4,17 +4,15 @@ import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.model.BlockchainNetworkType;
+import io.proximax.testsupport.IntegrationTestProperties;
 import io.proximax.upload.UploadParameter;
 import io.proximax.upload.UploadResult;
 import io.proximax.upload.Uploader;
 import org.junit.Before;
 import org.junit.Test;
 
-import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
-import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
-import static io.proximax.testsupport.Constants.PRIVATE_KEY_1;
-import static io.proximax.testsupport.Constants.STRING_TEST;
-import static io.proximax.testsupport.TestHelper.logAndSaveResult;
+import static io.proximax.testsupport.Constants.TEST_STRING;
+import static io.proximax.testsupport.TestDataRepository.logAndSaveResult;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -27,14 +25,16 @@ public class Uploader_detectContentTypeIntegrationTest {
 	@Before
 	public void setUp() {
 		unitUnderTest = new Uploader(ConnectionConfig.create(
-				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
-				new IpfsConnection(IPFS_MULTI_ADDRESS)));
+				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
+						IntegrationTestProperties.getBlockchainRestUrl()),
+				new IpfsConnection(IntegrationTestProperties.getIpfsMultiAddress())));
 	}
 
 	@Test
 	public void shouldUploadWithEnabledDetectContentType() throws Exception {
-		final UploadParameter param = UploadParameter.createForStringUpload(STRING_TEST, PRIVATE_KEY_1)
-				.detectContentType(true)
+		final UploadParameter param = UploadParameter
+				.createForStringUpload(TEST_STRING, IntegrationTestProperties.getPrivateKey1())
+				.withDetectContentType(true)
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
@@ -47,8 +47,9 @@ public class Uploader_detectContentTypeIntegrationTest {
 
 	@Test
 	public void shouldUploadWithDisabledDetectContentType() throws Exception {
-		final UploadParameter param = UploadParameter.createForStringUpload(STRING_TEST, PRIVATE_KEY_1)
-				.detectContentType(false)
+		final UploadParameter param = UploadParameter
+				.createForStringUpload(TEST_STRING, IntegrationTestProperties.getPrivateKey1())
+				.withDetectContentType(false)
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);

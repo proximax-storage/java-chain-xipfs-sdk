@@ -21,8 +21,6 @@ public class UrlResourceParameterData extends AbstractByteStreamParameterData {
         super(description, name, contentType, metadata);
 
         checkParameter(url != null, "url is required");
-        checkParameter(contentType == null || !RESERVED_CONTENT_TYPES.contains(contentType),
-                String.format("%s cannot be used as it is reserved", contentType));
 
         this.url = url;
     }

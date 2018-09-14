@@ -6,7 +6,8 @@ import io.proximax.connection.IpfsConnection;
 import io.proximax.download.DirectDownloadParameter;
 import io.proximax.download.Downloader;
 import io.proximax.model.BlockchainNetworkType;
-import io.proximax.testsupport.TestHelper;
+import io.proximax.testsupport.IntegrationTestProperties;
+import io.proximax.testsupport.TestDataRepository;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,9 +17,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static io.proximax.integration.bigfile.BigFileConstants.BIG_FILE;
-import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
-import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
+import static io.proximax.integration.bigfile.BigFileConstants.TEST_BIG_FILE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -30,30 +29,33 @@ public class Downloader_directDownload_bigFileIntegrationTest {
 	@Before
 	public void setUp() {
 		unitUnderTest = new Downloader(ConnectionConfig.create(
-				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
-				new IpfsConnection(IPFS_MULTI_ADDRESS)));
+				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
+						IntegrationTestProperties.getBlockchainRestUrl()),
+				new IpfsConnection(IntegrationTestProperties.getIpfsMultiAddress())));
 	}
 
 	@Test
 	public void shouldDownloadBigFileByTransactionHash() throws IOException {
-		final String transactionHash = TestHelper.getData("Uploader_bigFileIntegrationTest.shouldUploadBigFile", "transactionHash");;
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_bigFileIntegrationTest.shouldUploadBigFile", "transactionHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromTransactionHash(transactionHash).build();
 
 		final InputStream result = unitUnderTest.directDownload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(IOUtils.contentEquals(result, new FileInputStream(new File(BIG_FILE))), is(true));
+		assertThat(IOUtils.contentEquals(result, new FileInputStream(new File(TEST_BIG_FILE))), is(true));
 	}
 
 	@Test
 	public void shouldDownloadBigFileByDataHash() throws IOException {
-		final String dataHash = TestHelper.getData("Uploader_bigFileIntegrationTest.shouldUploadBigFile", "dataHash");
+		final String dataHash = TestDataRepository
+				.getData("Uploader_bigFileIntegrationTest.shouldUploadBigFile", "dataHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(dataHash).build();
 
 		final InputStream result = unitUnderTest.directDownload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(IOUtils.contentEquals(result, new FileInputStream(new File(BIG_FILE))), is(true));
+		assertThat(IOUtils.contentEquals(result, new FileInputStream(new File(TEST_BIG_FILE))), is(true));
 	}
 
 }

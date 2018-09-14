@@ -14,7 +14,6 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * The privacy strategy that secures data using the NEM keys (a private key and a public key).
  * This strategy encrypt and decrypt the data using both private and public keys
  */
-// TODO switch to secure message once available
 public final class SecuredWithNemKeysPrivacyStrategy extends PrivacyStrategy {
 
     private final BlockchainKeysCipherEncryptor blockchainKeysCipherEncryptor;

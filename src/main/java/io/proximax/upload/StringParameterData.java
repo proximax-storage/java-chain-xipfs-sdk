@@ -21,8 +21,6 @@ public class StringParameterData extends AbstractByteStreamParameterData {
         super(description, name, contentType, metadata);
 
         checkParameter(string != null, "string is required");
-        checkParameter(contentType == null || !RESERVED_CONTENT_TYPES.contains(contentType),
-                String.format("%s cannot be used as it is reserved", contentType));
 
         this.string = string;
         this.stringData = toStringByteArray(string, encoding);

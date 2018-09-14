@@ -7,7 +7,7 @@ import io.reactivex.Observable;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 import static java.lang.String.format;
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
@@ -22,7 +22,7 @@ public class DigestUtils {
      * @return the sha-256 hex of the data
      */
     public Observable<String> digest(InputStream byteStream) {
-        checkArgument(byteStream != null, "byteStream is required");
+        checkParameter(byteStream != null, "byteStream is required");
 
         return Observable.just(encodeData(byteStream));
     }
@@ -35,7 +35,7 @@ public class DigestUtils {
      * @see DigestDoesNotMatchException
      */
     public Observable<Boolean> validateDigest(InputStream byteStream, String expectedDigest) {
-        checkArgument(byteStream != null, "byteStream is required");
+        checkParameter(byteStream != null, "byteStream is required");
 
         if (expectedDigest != null) {
             return digest(byteStream).map(actualDigest -> {

@@ -19,8 +19,6 @@ public class ByteArrayParameterData extends AbstractByteStreamParameterData {
         super(description, name, contentType, metadata);
 
         checkParameter(data != null, "data is required");
-        checkParameter(contentType == null || !RESERVED_CONTENT_TYPES.contains(contentType),
-                String.format("%s cannot be used as it is reserved", contentType));
 
         this.data = data;
     }

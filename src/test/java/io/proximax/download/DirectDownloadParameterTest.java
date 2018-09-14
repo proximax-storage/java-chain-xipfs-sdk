@@ -10,11 +10,11 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.proximax.testsupport.Constants.PRIVATE_KEY_1;
-import static io.proximax.testsupport.Constants.PUBLIC_KEY_2;
-import static io.proximax.testsupport.Constants.SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD;
-import static io.proximax.testsupport.Constants.SHAMIR_SECRET_PARTS;
-import static io.proximax.testsupport.Constants.SHAMIR_SECRET_TOTAL_PART_COUNT;
+import static io.proximax.testsupport.Constants.TEST_PRIVATE_KEY_1;
+import static io.proximax.testsupport.Constants.TEST_PUBLIC_KEY_2;
+import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_THRESHOLD;
+import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_SHARES;
+import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_TOTAL_SHARES;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
@@ -32,6 +32,11 @@ public class DirectDownloadParameterTest {
     @Test(expected = IllegalArgumentException.class)
     public void failWhenCreatingWithNullDataHash() {
         DirectDownloadParameter.createFromDataHash(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenCreatingWithInvalidDataHash() {
+        DirectDownloadParameter.createFromDataHash("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
     }
 
     @Test
@@ -65,6 +70,11 @@ public class DirectDownloadParameterTest {
     @Test(expected = IllegalArgumentException.class)
     public void failWhenCreatingWithNullTransactionHash() {
         DirectDownloadParameter.createFromTransactionHash(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failWhenInvalidAccountPrivateKey() {
+        DirectDownloadParameter.createFromTransactionHash(SAMPLE_TRANSACTION_HASH, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
     }
 
     @Test
@@ -126,7 +136,7 @@ public class DirectDownloadParameterTest {
     @Test
     public void buildParamWithPrivacyStrategy() {
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .privacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(
+                .withPrivacyStrategy(SecuredWithNemKeysPrivacyStrategy.create(
                         "CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C",
                         "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577"
                 ))
@@ -140,7 +150,7 @@ public class DirectDownloadParameterTest {
     @Test
     public void shouldCreateWithPlainPrivacy() {
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .plainPrivacy()
+                .withPlainPrivacy()
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(PlainPrivacyStrategy.class));
@@ -149,7 +159,7 @@ public class DirectDownloadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithNemKeysPrivacy() {
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .securedWithNemKeysPrivacy(PRIVATE_KEY_1, PUBLIC_KEY_2)
+                .withNemKeysPrivacy(TEST_PRIVATE_KEY_1, TEST_PUBLIC_KEY_2)
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithNemKeysPrivacyStrategy.class));
@@ -158,7 +168,7 @@ public class DirectDownloadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithPasswordPrivacy() {
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .securedWithPasswordPrivacy("hdksahjkdhsakjhdsajhdkjhsajkdsbajjdhsajkhdjksahjkdahjkhdkjsahjdsadasdsadas")
+                .withPasswordPrivacy("hdksahjkdhsakjhdsajhdkjhsajkdsbajjdhsajkhdjksahjkdahjkhdkjsahjdsadasdsadas")
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithPasswordPrivacyStrategy.class));
@@ -167,11 +177,11 @@ public class DirectDownloadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithShamirSecretSharingMapStrategy() {
         final Map<Integer, byte[]> minimumSecretParts = new HashMap<>();
-        minimumSecretParts.put(1, SHAMIR_SECRET_PARTS.get(1));
-        minimumSecretParts.put(3, SHAMIR_SECRET_PARTS.get(3));
-        minimumSecretParts.put(5, SHAMIR_SECRET_PARTS.get(5));
+        minimumSecretParts.put(1, TEST_SHAMIR_SECRET_SHARES.get(1));
+        minimumSecretParts.put(3, TEST_SHAMIR_SECRET_SHARES.get(3));
+        minimumSecretParts.put(5, TEST_SHAMIR_SECRET_SHARES.get(5));
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .securedWithShamirSecretSharingPrivacy(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .withShamirSecretSharingPrivacy(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
                         minimumSecretParts)
                 .build();
 
@@ -181,10 +191,10 @@ public class DirectDownloadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithShamirSecretSharingArrayStrategy() {
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .securedWithShamirSecretSharingPrivacy(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SHAMIR_SECRET_PARTS.get(1)),
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SHAMIR_SECRET_PARTS.get(3)),
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, SHAMIR_SECRET_PARTS.get(5)))
+                .withShamirSecretSharingPrivacy(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
+                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
+                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
+                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5)))
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
@@ -193,11 +203,11 @@ public class DirectDownloadParameterTest {
     @Test
     public void shouldCreateWithSecuredWithShamirSecretSharingListStrategy() {
         final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .securedWithShamirSecretSharingPrivacy(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
+                .withShamirSecretSharingPrivacy(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
                         asList(
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, SHAMIR_SECRET_PARTS.get(1)),
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, SHAMIR_SECRET_PARTS.get(3)),
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, SHAMIR_SECRET_PARTS.get(5))))
+                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
+                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
+                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5))))
                 .build();
 
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));

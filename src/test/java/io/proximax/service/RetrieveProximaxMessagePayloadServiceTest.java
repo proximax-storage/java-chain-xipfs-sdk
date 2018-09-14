@@ -1,6 +1,6 @@
 package io.proximax.service;
 
-import io.nem.sdk.model.transaction.Message;
+import io.nem.sdk.model.transaction.PlainMessage;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import io.proximax.model.ProximaxMessagePayloadModel;
 import org.junit.Before;
@@ -24,7 +24,7 @@ public class RetrieveProximaxMessagePayloadServiceTest {
     private TransferTransaction mockTransferTransaction;
 
     @Mock
-    private Message mockMessage;
+    private PlainMessage mockMessage;
 
     @Before
     public void setUp() {

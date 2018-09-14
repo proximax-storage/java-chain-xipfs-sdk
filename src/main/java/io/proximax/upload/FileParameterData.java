@@ -24,8 +24,6 @@ public class FileParameterData extends AbstractByteStreamParameterData {
 
         checkParameter(file != null, "file is required");
         checkParameter(file.isFile(), "file is not file");
-        checkParameter(contentType == null || !RESERVED_CONTENT_TYPES.contains(contentType),
-                String.format("%s cannot be used as it is reserved", contentType));
 
         this.file = file;
     }

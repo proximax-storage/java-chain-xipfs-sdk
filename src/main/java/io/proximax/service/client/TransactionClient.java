@@ -13,7 +13,6 @@ import io.reactivex.Observable;
 
 import java.net.MalformedURLException;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
@@ -39,7 +38,7 @@ public class TransactionClient {
      * @throws MalformedURLException when the blockchain endpoint url is not valid
      */
     public TransactionClient(BlockchainNetworkConnection blockchainNetworkConnection) throws MalformedURLException {
-        checkArgument(blockchainNetworkConnection != null, "blockchainNetworkConnection is required");
+        checkParameter(blockchainNetworkConnection != null, "blockchainNetworkConnection is required");
 
         this.transactionHttp = new TransactionHttp(blockchainNetworkConnection.getEndpointUrl());
         this.blockchainNetworkEndpointUrl = blockchainNetworkConnection.getEndpointUrl();

@@ -1,5 +1,7 @@
 package io.proximax.download;
 
+import io.ipfs.multihash.Multihash;
+import io.nem.core.crypto.PrivateKey;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
@@ -26,6 +28,9 @@ public class DirectDownloadParameterBuilder {
     private PrivacyStrategy privacyStrategy;
     private String digest;
 
+    private DirectDownloadParameterBuilder() {
+    }
+
     /**
      * Construct the builder class with transaction hash, account private key and validate digest flag
      * @param transactionHash the transaction hash of target download
@@ -35,6 +40,8 @@ public class DirectDownloadParameterBuilder {
      */
     public static DirectDownloadParameterBuilder createFromTransactionHash(String transactionHash, String accountPrivateKey, Boolean validateDigest) {
         checkParameter(transactionHash != null, "transactionHash is required");
+        checkParameter(() -> accountPrivateKey == null || PrivateKey.fromHexString(accountPrivateKey) != null,
+                "accountPrivateKey should be a valid private key");
 
         final DirectDownloadParameterBuilder builder = new DirectDownloadParameterBuilder();
         builder.transactionHash = transactionHash;
@@ -51,6 +58,8 @@ public class DirectDownloadParameterBuilder {
      */
     public static DirectDownloadParameterBuilder createFromDataHash(String dataHash, String digest) {
         checkParameter(dataHash != null, "dataHash is required");
+        checkParameter(() -> Multihash.fromBase58(dataHash) != null,
+                "dataHash should be a valid ipfs hash");
 
         final DirectDownloadParameterBuilder builder = new DirectDownloadParameterBuilder();
         builder.dataHash = dataHash;
@@ -67,7 +76,7 @@ public class DirectDownloadParameterBuilder {
      * @param privacyStrategy the privacy strategy
      * @return the same instance of this builder
      */
-    public DirectDownloadParameterBuilder privacyStrategy(PrivacyStrategy privacyStrategy) {
+    public DirectDownloadParameterBuilder withPrivacyStrategy(PrivacyStrategy privacyStrategy) {
         this.privacyStrategy = privacyStrategy;
         return this;
     }
@@ -79,7 +88,7 @@ public class DirectDownloadParameterBuilder {
      * Privacy strategy defines how the data will be decrypted
      * @return the same instance of this builder
      */
-    public DirectDownloadParameterBuilder plainPrivacy() {
+    public DirectDownloadParameterBuilder withPlainPrivacy() {
         this.privacyStrategy = PlainPrivacyStrategy.create();
         return this;
     }
@@ -93,7 +102,7 @@ public class DirectDownloadParameterBuilder {
      * @param publicKey the public key of the other blockchain account that encrypted the data
      * @return the same instance of this builder
      */
-    public DirectDownloadParameterBuilder securedWithNemKeysPrivacy(String privateKey, String publicKey) {
+    public DirectDownloadParameterBuilder withNemKeysPrivacy(String privateKey, String publicKey) {
         this.privacyStrategy = SecuredWithNemKeysPrivacyStrategy.create(privateKey, publicKey);
         return this;
     }
@@ -106,7 +115,7 @@ public class DirectDownloadParameterBuilder {
      * @param password a 50-character minimum password
      * @return the same instance of this builder
      */
-    public DirectDownloadParameterBuilder securedWithPasswordPrivacy(String password) {
+    public DirectDownloadParameterBuilder withPasswordPrivacy(String password) {
         this.privacyStrategy = SecuredWithPasswordPrivacyStrategy.create(password);
         return this;
     }
@@ -121,9 +130,9 @@ public class DirectDownloadParameterBuilder {
      * @param secretParts the array of secret parts composed of the part index and the secret part
      * @return the same instance of this builder
      */
-    public DirectDownloadParameterBuilder securedWithShamirSecretSharingPrivacy(int secretTotalPartCount,
-                                                                                int secretMinimumPartCountToBuild,
-                                                                                SecretPart... secretParts) {
+    public DirectDownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
+                                                                         int secretMinimumPartCountToBuild,
+                                                                         SecretPart... secretParts) {
         this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;
@@ -139,9 +148,9 @@ public class DirectDownloadParameterBuilder {
      * @param secretParts the list of secret parts composed of the part index and the secret part
      * @return the same instance of this builder
      */
-    public DirectDownloadParameterBuilder securedWithShamirSecretSharingPrivacy(int secretTotalPartCount,
-                                                                                int secretMinimumPartCountToBuild,
-                                                                                List<SecretPart> secretParts) {
+    public DirectDownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
+                                                                         int secretMinimumPartCountToBuild,
+                                                                         List<SecretPart> secretParts) {
         this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;
@@ -157,9 +166,9 @@ public class DirectDownloadParameterBuilder {
      * @param secretParts the map containing part index and secret part pairs
      * @return the same instance of this builder
      */
-    public DirectDownloadParameterBuilder securedWithShamirSecretSharingPrivacy(int secretTotalPartCount,
-                                                                                int secretMinimumPartCountToBuild,
-                                                                                Map<Integer, byte[]> secretParts) {
+    public DirectDownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
+                                                                         int secretMinimumPartCountToBuild,
+                                                                         Map<Integer, byte[]> secretParts) {
         this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
                 secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
         return this;

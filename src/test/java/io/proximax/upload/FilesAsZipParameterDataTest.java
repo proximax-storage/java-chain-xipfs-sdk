@@ -6,9 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static io.proximax.testsupport.Constants.HTML_FILE;
-import static io.proximax.testsupport.Constants.IMAGE_FILE;
-import static io.proximax.testsupport.Constants.PATH_FILE;
+import static io.proximax.testsupport.Constants.TEST_HTML_FILE;
+import static io.proximax.testsupport.Constants.TEST_IMAGE_PNG_FILE;
+import static io.proximax.testsupport.Constants.TEST_PATH_FILE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -32,15 +32,15 @@ public class FilesAsZipParameterDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenSomeFilesIsDirectoryFiles() throws IOException {
-        FilesAsZipParameterData.create(asList(IMAGE_FILE, HTML_FILE, PATH_FILE));
+        FilesAsZipParameterData.create(asList(TEST_IMAGE_PNG_FILE, TEST_HTML_FILE, TEST_PATH_FILE));
     }
 
     @Test
     public void createWithFilesOnly() throws IOException {
-        final FilesAsZipParameterData param = FilesAsZipParameterData.create(singletonList(IMAGE_FILE));
+        final FilesAsZipParameterData param = FilesAsZipParameterData.create(singletonList(TEST_IMAGE_PNG_FILE));
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.getFiles(), is(singletonList(IMAGE_FILE)));
+        assertThat(param.getFiles(), is(singletonList(TEST_IMAGE_PNG_FILE)));
         assertThat(param.getByteStream(), is(notNullValue()));
         assertThat(param.getContentType(), is("application/zip"));
         assertThat(param.getDescription(), is(nullValue()));
@@ -50,11 +50,11 @@ public class FilesAsZipParameterDataTest {
 
     @Test
     public void createWithCompleteDetails() throws IOException {
-        final FilesAsZipParameterData param = FilesAsZipParameterData.create(singletonList(IMAGE_FILE),
+        final FilesAsZipParameterData param = FilesAsZipParameterData.create(singletonList(TEST_IMAGE_PNG_FILE),
                 "describe me", "name here", singletonMap("mykey", "myvalue"));
 
         assertThat(param, is(notNullValue()));
-        assertThat(param.getFiles(), is(singletonList(IMAGE_FILE)));
+        assertThat(param.getFiles(), is(singletonList(TEST_IMAGE_PNG_FILE)));
         assertThat(param.getByteStream(), is(notNullValue()));
         assertThat(param.getContentType(), is("application/zip"));
         assertThat(param.getDescription(), is("describe me"));

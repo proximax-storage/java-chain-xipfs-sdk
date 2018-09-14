@@ -10,8 +10,8 @@ import io.proximax.download.DownloadResult;
 import io.proximax.download.Downloader;
 import io.proximax.exceptions.DownloadFailureException;
 import io.proximax.model.BlockchainNetworkType;
-import io.proximax.model.PrivacyType;
-import io.proximax.testsupport.TestHelper;
+import io.proximax.testsupport.IntegrationTestProperties;
+import io.proximax.testsupport.TestDataRepository;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,11 +19,6 @@ import org.junit.Test;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import static io.proximax.testsupport.Constants.BLOCKCHAIN_ENDPOINT_URL;
-import static io.proximax.testsupport.Constants.IPFS_MULTI_ADDRESS;
-import static io.proximax.testsupport.Constants.PRIVATE_KEY_1;
-import static io.proximax.testsupport.Constants.PUBLIC_KEY_2;
-import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
@@ -36,13 +31,15 @@ public class Downloader_download_asyncIntegrationTest {
 	@Before
 	public void setUp() {
 		unitUnderTest = new Downloader(ConnectionConfig.create(
-				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST, BLOCKCHAIN_ENDPOINT_URL),
-				new IpfsConnection(IPFS_MULTI_ADDRESS)));
+				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
+						IntegrationTestProperties.getBlockchainRestUrl()),
+				new IpfsConnection(IntegrationTestProperties.getIpfsMultiAddress())));
 	}
 
 	@Test
 	public void shouldDownloadAsynchronouslyWithoutCallback() throws Exception {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash)
 				.build();
 
@@ -56,7 +53,8 @@ public class Downloader_download_asyncIntegrationTest {
 
 	@Test
 	public void shouldDownloadAsynchronouslyWithSuccessCallback() throws Exception {
-		final String transactionHash = TestHelper.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash)
 				.build();
 		final CompletableFuture<DownloadResult> toPopulateOnSuccess = new CompletableFuture<>();
@@ -71,8 +69,8 @@ public class Downloader_download_asyncIntegrationTest {
 
 	@Test
 	public void shouldDownloadAsynchronouslyWithFailureCallback() throws Exception {
-		final DownloadParameter param = DownloadParameter.create("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-				.build();
+		final DownloadParameter param = DownloadParameter
+				.create("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
 		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
 
 		unitUnderTest.downloadAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));

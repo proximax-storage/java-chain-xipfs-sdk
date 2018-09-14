@@ -8,8 +8,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 
+import static io.proximax.testsupport.Constants.TEST_PATH_FILE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -18,7 +18,6 @@ import static org.mockito.BDDMockito.given;
 public class IpfsUploadServiceTest {
     private static final byte[] SAMPLE_DATA = "the quick brown fox jumps over the lazy dog".getBytes();
     private static final String SAMPLE_DATAHASH = "QmTxpkEitAczbM5S4uZG3zoDToSDNQZQUV4vxBsW9Q1Nhh";
-    private static final File PATH_FILE = new File("src//test//resources//test_path");
 
     private IpfsUploadService unitUnderTest;
 
@@ -58,10 +57,10 @@ public class IpfsUploadServiceTest {
 
     @Test
     public void shouldReturnDataHashOnUploadPath() {
-        given(mockIpfsClient.addPath(PATH_FILE)).willReturn(Observable.just(SAMPLE_DATAHASH));
+        given(mockIpfsClient.addPath(TEST_PATH_FILE)).willReturn(Observable.just(SAMPLE_DATAHASH));
 
         final IpfsUploadResponse ipfsUploadResponse =
-                unitUnderTest.uploadPath(PATH_FILE).blockingFirst();
+                unitUnderTest.uploadPath(TEST_PATH_FILE).blockingFirst();
 
         assertThat(ipfsUploadResponse, is(notNullValue()));
         assertThat(ipfsUploadResponse.getDataHash(), is(SAMPLE_DATAHASH));
