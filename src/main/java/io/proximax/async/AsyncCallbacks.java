@@ -6,12 +6,12 @@ import java.util.function.Consumer;
  * This model class wraps the callbacks for asynchronous invocation
  * @param <T> the result type that this class will process
  */
-public class AsyncCallback<T> {
+public class AsyncCallbacks<T> {
 
     private final Consumer<T> successCallback;
     private final Consumer<Throwable> failureCallback;
 
-    public AsyncCallback(Consumer<T> successCallback, Consumer<Throwable> failureCallback) {
+    public AsyncCallbacks(Consumer<T> successCallback, Consumer<Throwable> failureCallback) {
         this.successCallback = successCallback;
         this.failureCallback = failureCallback;
     }
@@ -23,8 +23,8 @@ public class AsyncCallback<T> {
      * @param <T> the result type
      * @return the async callback instance
      */
-    public static <T> AsyncCallback<T> create(Consumer<T> successCallback, Consumer<Throwable> failureCallback) {
-        return new AsyncCallback<T>(successCallback, failureCallback);
+    public static <T> AsyncCallbacks<T> create(Consumer<T> successCallback, Consumer<Throwable> failureCallback) {
+        return new AsyncCallbacks<T>(successCallback, failureCallback);
     }
 
     /**

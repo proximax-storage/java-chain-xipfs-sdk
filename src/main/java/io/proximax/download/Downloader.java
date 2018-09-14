@@ -1,7 +1,7 @@
 package io.proximax.download;
 
 import io.nem.sdk.model.transaction.TransferTransaction;
-import io.proximax.async.AsyncCallback;
+import io.proximax.async.AsyncCallbacks;
 import io.proximax.async.AsyncTask;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.exceptions.DirectDownloadFailureException;
@@ -84,15 +84,15 @@ public class Downloader {
      * This would use the blockchain transaction hash to retrieve the data's byte stream and its details.
      * <br>
      * @param downloadParam the download parameter
-     * @param asyncCallback an optional callbacks when succeeded or failed
+     * @param asyncCallbacks an optional callbacks when succeeded or failed
      * @return the download result containing the list of data
      */
-    public AsyncTask downloadAsync(DownloadParameter downloadParam, AsyncCallback<DownloadResult> asyncCallback) {
+    public AsyncTask downloadAsync(DownloadParameter downloadParam, AsyncCallbacks<DownloadResult> asyncCallbacks) {
         checkParameter(downloadParam != null, "downloadParam is required");
 
         final AsyncTask asyncTask = new AsyncTask();
 
-        AsyncUtils.processFirstItem(this.doCompleteDownload(downloadParam), asyncCallback, asyncTask);
+        AsyncUtils.processFirstItem(this.doCompleteDownload(downloadParam), asyncCallbacks, asyncTask);
 
         return asyncTask;
     }
@@ -111,28 +111,32 @@ public class Downloader {
     /**
      * Retrieve asynchronously the data
      * @param directDownloadParameter the direct download data parameter
-     * @param asyncCallback an optional callbacks when succeeded or failed
+     * @param asyncCallbacks an optional callbacks when succeeded or failed
      * @return the data
      */
-    public AsyncTask directDownloadAsync(DirectDownloadParameter directDownloadParameter, AsyncCallback<InputStream> asyncCallback) {
+    public AsyncTask directDownloadAsync(DirectDownloadParameter directDownloadParameter, AsyncCallbacks<InputStream> asyncCallbacks) {
         checkParameter(directDownloadParameter != null, "directDownloadParameter is required");
 
         final AsyncTask asyncTask = new AsyncTask();
 
-        AsyncUtils.processFirstItem(this.doDirectDownload(directDownloadParameter), asyncCallback, asyncTask);
+        AsyncUtils.processFirstItem(this.doDirectDownload(directDownloadParameter), asyncCallbacks, asyncTask);
 
         return asyncTask;
     }
 
     private Observable<DownloadResult> doCompleteDownload(DownloadParameter downloadParam) {
-        return blockchainTransactionService.getTransferTransaction(downloadParam.getTransactionHash())
-                .map(transferTransaction -> retrieveProximaxMessagePayloadService.getMessagePayload(transferTransaction,
-                        downloadParam.getAccountPrivateKey()))
-                .map(messagePayload -> createCompleteDownloadResult(messagePayload,
-                        () -> getDataByteStream(Optional.of(messagePayload), null, downloadParam.getPrivacyStrategy(),
-                                downloadParam.getValidateDigest(), null).blockingFirst(),
-                        downloadParam.getTransactionHash()))
-                .onErrorResumeNext((Throwable ex) -> Observable.error(new DownloadFailureException("Download failed.", ex)));
+        try {
+            final DownloadResult downloadResult = blockchainTransactionService.getTransferTransaction(downloadParam.getTransactionHash())
+                    .map(transferTransaction -> retrieveProximaxMessagePayloadService.getMessagePayload(transferTransaction,
+                            downloadParam.getAccountPrivateKey()))
+                    .map(messagePayload -> createCompleteDownloadResult(messagePayload,
+                            () -> getDataByteStream(Optional.of(messagePayload), null, downloadParam.getPrivacyStrategy(),
+                                    downloadParam.getValidateDigest(), null).blockingFirst(),
+                            downloadParam.getTransactionHash())).blockingFirst();
+            return Observable.just(downloadResult);
+        } catch (RuntimeException ex) {
+            return Observable.error(new DownloadFailureException("Download failed.", ex));
+        }
     }
 
     private DownloadResult createCompleteDownloadResult(ProximaxMessagePayloadModel messagePayload,
@@ -144,12 +148,16 @@ public class Downloader {
     }
 
     private Observable<InputStream> doDirectDownload(DirectDownloadParameter downloadParam) {
-        return getOptionalBlockchainTransaction(downloadParam.getTransactionHash())
-                .map(transferTransactionOpt -> transferTransactionOpt.map(transferTransaction ->
-                        retrieveProximaxMessagePayloadService.getMessagePayload(transferTransaction, downloadParam.getAccountPrivateKey())))
-                .flatMap(messagePayload -> getDataByteStream(messagePayload, downloadParam.getDataHash(), downloadParam.getPrivacyStrategy(),
-                        downloadParam.getValidateDigest(), downloadParam.getDigest()))
-                .onErrorResumeNext((Throwable ex) -> Observable.error(new DirectDownloadFailureException("Direct download failed.", ex)));
+        try {
+            final InputStream inputStream = getOptionalBlockchainTransaction(downloadParam.getTransactionHash())
+                    .map(transferTransactionOpt -> transferTransactionOpt.map(transferTransaction ->
+                            retrieveProximaxMessagePayloadService.getMessagePayload(transferTransaction, downloadParam.getAccountPrivateKey())))
+                    .flatMap(messagePayload -> getDataByteStream(messagePayload, downloadParam.getDataHash(), downloadParam.getPrivacyStrategy(),
+                            downloadParam.getValidateDigest(), downloadParam.getDigest())).blockingFirst();
+            return Observable.just(inputStream);
+        } catch (RuntimeException ex) {
+            return Observable.error(new DirectDownloadFailureException("Direct download failed.", ex));
+        }
     }
 
     private Observable<Optional<TransferTransaction>> getOptionalBlockchainTransaction(String transactionHash) {
