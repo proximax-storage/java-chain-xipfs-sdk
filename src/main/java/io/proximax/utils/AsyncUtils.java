@@ -1,6 +1,6 @@
 package io.proximax.utils;
 
-import io.proximax.async.AsyncCallback;
+import io.proximax.async.AsyncCallbacks;
 import io.proximax.async.AsyncTask;
 import io.reactivex.Observable;
 
@@ -15,27 +15,27 @@ public class AsyncUtils {
     }
 
     /**
-     * Observe for the first item on the Observable then invoke callbacks from AsyncCallback using result.
+     * Observe for the first item on the Observable then invoke callbacks from AsyncCallbacks using result.
      * Finally, update AsyncStatus to done.
      * @param observable the observable
-     * @param asyncCallback the async callbacks
+     * @param asyncCallbacks the async callbacks
      * @param asyncTask the async task that contains the state
      * @param <T> the result type
      */
-    public static <T> void processFirstItem(Observable<T> observable, AsyncCallback<T> asyncCallback, AsyncTask asyncTask) {
+    public static <T> void processFirstItem(Observable<T> observable, AsyncCallbacks<T> asyncCallbacks, AsyncTask asyncTask) {
         checkParameter(observable != null, "observable is required");
         checkParameter(asyncTask != null, "asyncTask is required");
 
         observable.firstOrError()
                 .subscribe(
                         result -> {
-                            if (asyncCallback != null) {
-                                asyncCallback.onSuccess(result);
+                            if (asyncCallbacks != null) {
+                                asyncCallbacks.onSuccess(result);
                             }
                             asyncTask.done();
                         }, throwable -> {
-                            if (asyncCallback != null) {
-                                asyncCallback.onFailure(throwable);
+                            if (asyncCallbacks != null) {
+                                asyncCallbacks.onFailure(throwable);
                             }
                             asyncTask.done();
                         });

@@ -1,6 +1,6 @@
 package io.proximax.integration.download;
 
-import io.proximax.async.AsyncCallback;
+import io.proximax.async.AsyncCallbacks;
 import io.proximax.async.AsyncTask;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
@@ -59,7 +59,7 @@ public class Downloader_download_asyncIntegrationTest {
 				.build();
 		final CompletableFuture<DownloadResult> toPopulateOnSuccess = new CompletableFuture<>();
 
-		unitUnderTest.downloadAsync(param, AsyncCallback.create(toPopulateOnSuccess::complete, null));
+		unitUnderTest.downloadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess::complete, null));
 		final DownloadResult result = toPopulateOnSuccess.get(5, TimeUnit.SECONDS);
 
 		assertThat(result, is(notNullValue()));
@@ -73,7 +73,7 @@ public class Downloader_download_asyncIntegrationTest {
 				.create("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
 		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
 
-		unitUnderTest.downloadAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));
+		unitUnderTest.downloadAsync(param, AsyncCallbacks.create(null, toPopulateOnFailure::complete));
 		final Throwable throwable = toPopulateOnFailure.get(5, TimeUnit.SECONDS);
 
 		assertThat(throwable, instanceOf(DownloadFailureException.class));

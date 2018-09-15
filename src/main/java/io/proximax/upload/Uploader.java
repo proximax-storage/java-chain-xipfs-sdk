@@ -1,6 +1,6 @@
 package io.proximax.upload;
 
-import io.proximax.async.AsyncCallback;
+import io.proximax.async.AsyncCallbacks;
 import io.proximax.async.AsyncTask;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.exceptions.UploadFailureException;
@@ -88,28 +88,31 @@ public class Uploader {
      * <br>
      * The upload throws an UploadFailureException runtime exception if does not succeed.
      * @param uploadParam the upload parameter
-     * @param asyncCallback an optional callbacks when succeeded or failed
+     * @param asyncCallbacks an optional callbacks when succeeded or failed
      * @return the upload result
      */
-    public AsyncTask uploadAsync(UploadParameter uploadParam, AsyncCallback<UploadResult> asyncCallback) {
+    public AsyncTask uploadAsync(UploadParameter uploadParam, AsyncCallbacks<UploadResult> asyncCallbacks) {
         checkParameter(uploadParam != null, "uploadParam is required");
 
         final AsyncTask asyncTask = new AsyncTask();
 
-        AsyncUtils.processFirstItem(this.doUpload(uploadParam), asyncCallback, asyncTask);
+        AsyncUtils.processFirstItem(this.doUpload(uploadParam), asyncCallbacks, asyncTask);
 
         return asyncTask;
     }
 
     private Observable<UploadResult> doUpload(UploadParameter uploadParam) {
-        return createProximaxDataService.createData(uploadParam).flatMap(uploadedData ->
-                createProximaxMessagePayloadService.createMessagePayload(uploadParam, uploadedData)
-                        .flatMap(messagePayload ->
-                                createAndAnnounceTransaction(uploadParam, messagePayload)
-                                        .map(transactionHash ->
-                                                createUploadResult(messagePayload, transactionHash))))
-                .onErrorResumeNext((Throwable ex) ->
-                        Observable.error(new UploadFailureException("Upload failed.", ex)));
+        try {
+            final UploadResult result = createProximaxDataService.createData(uploadParam).flatMap(uploadedData ->
+                    createProximaxMessagePayloadService.createMessagePayload(uploadParam, uploadedData)
+                            .flatMap(messagePayload ->
+                                    createAndAnnounceTransaction(uploadParam, messagePayload)
+                                            .map(transactionHash ->
+                                                    createUploadResult(messagePayload, transactionHash)))).blockingFirst();
+            return Observable.just(result);
+        } catch (RuntimeException ex) {
+            return Observable.error(new UploadFailureException("Upload failed.", ex));
+        }
     }
 
     private Observable<String> createAndAnnounceTransaction(UploadParameter uploadParam, ProximaxMessagePayloadModel messagePayload) {

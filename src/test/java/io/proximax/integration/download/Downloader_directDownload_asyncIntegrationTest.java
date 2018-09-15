@@ -1,6 +1,6 @@
 package io.proximax.integration.download;
 
-import io.proximax.async.AsyncCallback;
+import io.proximax.async.AsyncCallbacks;
 import io.proximax.async.AsyncTask;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
@@ -59,7 +59,7 @@ public class Downloader_directDownload_asyncIntegrationTest {
 				DirectDownloadParameter.createFromDataHash(dataHash).build();
 		final CompletableFuture<InputStream> toPopulateOnSuccess = new CompletableFuture<>();
 
-		unitUnderTest.directDownloadAsync(param, AsyncCallback.create(toPopulateOnSuccess::complete, null));
+		unitUnderTest.directDownloadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess::complete, null));
 		final InputStream result = toPopulateOnSuccess.get(5, TimeUnit.SECONDS);
 
 		assertThat(result, is(notNullValue()));
@@ -72,7 +72,7 @@ public class Downloader_directDownload_asyncIntegrationTest {
 				.createFromTransactionHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
 		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
 
-		unitUnderTest.directDownloadAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));
+		unitUnderTest.directDownloadAsync(param, AsyncCallbacks.create(null, toPopulateOnFailure::complete));
 		final Throwable throwable = toPopulateOnFailure.get(5, TimeUnit.SECONDS);
 
 		assertThat(throwable, instanceOf(DirectDownloadFailureException.class));

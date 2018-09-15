@@ -1,12 +1,13 @@
 package io.proximax.integration.upload;
 
-import io.proximax.async.AsyncCallback;
+import io.proximax.async.AsyncCallbacks;
 import io.proximax.async.AsyncTask;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.exceptions.UploadFailureException;
 import io.proximax.model.BlockchainNetworkType;
+import io.proximax.privacy.strategy.CustomPrivacyStrategy;
 import io.proximax.testsupport.IntegrationTestProperties;
 import io.proximax.upload.UploadParameter;
 import io.proximax.upload.UploadResult;
@@ -15,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -58,7 +60,7 @@ public class Uploader_asyncIntegrationTest {
 				.build();
 		final CompletableFuture<UploadResult> toPopulateOnSuccess = new CompletableFuture<>();
 
-		unitUnderTest.uploadAsync(param, AsyncCallback.create(toPopulateOnSuccess::complete, null));
+		unitUnderTest.uploadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess::complete, null));
 		final UploadResult result = toPopulateOnSuccess.get(5, TimeUnit.SECONDS);
 
 		assertThat(result, is(notNullValue()));
@@ -68,13 +70,26 @@ public class Uploader_asyncIntegrationTest {
 	@Test
 	public void shouldUploadAsynchronouslyWithFailureCallback() throws Exception {
 		final UploadParameter param = UploadParameter
-				.createForFileUpload(TEST_TEXT_FILE, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+				.createForFileUpload(TEST_TEXT_FILE, IntegrationTestProperties.getPrivateKey1())
+				.withPrivacyStrategy(new NotImplementedPrivacyStrategy())
 				.build();
 		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
 
-		unitUnderTest.uploadAsync(param, AsyncCallback.create(null, toPopulateOnFailure::complete));
+		unitUnderTest.uploadAsync(param, AsyncCallbacks.create(null, toPopulateOnFailure::complete));
 		final Throwable throwable = toPopulateOnFailure.get(5, TimeUnit.SECONDS);
 
 		assertThat(throwable, instanceOf(UploadFailureException.class));
+	}
+
+	private class NotImplementedPrivacyStrategy extends CustomPrivacyStrategy{
+		@Override
+		public InputStream encryptStream (InputStream byteStream){
+			throw new RuntimeException("not implemented");
+		}
+
+		@Override
+		public InputStream decryptStream (InputStream byteStream){
+			return byteStream;
+		}
 	}
 }

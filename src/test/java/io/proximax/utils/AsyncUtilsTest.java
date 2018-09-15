@@ -1,6 +1,6 @@
 package io.proximax.utils;
 
-import io.proximax.async.AsyncCallback;
+import io.proximax.async.AsyncCallbacks;
 import io.proximax.async.AsyncTask;
 import io.reactivex.Observable;
 import org.junit.Before;
@@ -15,7 +15,7 @@ import static org.mockito.Mockito.verify;
 public class AsyncUtilsTest {
 
     @Mock
-    private AsyncCallback<String> mockAsyncCallback;
+    private AsyncCallbacks<String> mockAsyncCallbacks;
 
     @Before
     public void setUp() {
@@ -54,19 +54,19 @@ public class AsyncUtilsTest {
 
     @Test
     public void shouldCallSuccessCallback() throws InterruptedException {
-        AsyncUtils.processFirstItem(Observable.just("abc"), mockAsyncCallback, new AsyncTask());
+        AsyncUtils.processFirstItem(Observable.just("abc"), mockAsyncCallbacks, new AsyncTask());
         Thread.sleep(100);
 
-        verify(mockAsyncCallback).onSuccess("abc");
+        verify(mockAsyncCallbacks).onSuccess("abc");
     }
 
     @Test
     public void shouldCallFailureCallback() throws InterruptedException {
         final Exception sampleException = new Exception();
 
-        AsyncUtils.processFirstItem(Observable.error(sampleException), mockAsyncCallback, new AsyncTask());
+        AsyncUtils.processFirstItem(Observable.error(sampleException), mockAsyncCallbacks, new AsyncTask());
         Thread.sleep(100);
 
-        verify(mockAsyncCallback).onFailure(sampleException);
+        verify(mockAsyncCallbacks).onFailure(sampleException);
     }
 }
