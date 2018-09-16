@@ -1,11 +1,11 @@
-package io.proximax.testsupport;
+package io.proximax.integration;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-public class IntegrationTestProperties {
+public class IntegrationTestConfig {
 
     private static final File INTEGRATION_TEST_PROPERTIES = new File("src//test/resources//integrationtest.properties");
     private static Properties PROPERTIES = new Properties();

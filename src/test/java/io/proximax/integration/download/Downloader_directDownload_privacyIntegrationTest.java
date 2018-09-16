@@ -6,8 +6,8 @@ import io.proximax.connection.IpfsConnection;
 import io.proximax.download.DirectDownloadParameter;
 import io.proximax.download.Downloader;
 import io.proximax.model.BlockchainNetworkType;
-import io.proximax.testsupport.IntegrationTestProperties;
-import io.proximax.testsupport.TestDataRepository;
+import io.proximax.integration.IntegrationTestConfig;
+import io.proximax.integration.TestDataRepository;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -37,8 +37,8 @@ public class Downloader_directDownload_privacyIntegrationTest {
 	public void setUp() {
 		unitUnderTest = new Downloader(ConnectionConfig.create(
 				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
-						IntegrationTestProperties.getBlockchainRestUrl()),
-				new IpfsConnection(IntegrationTestProperties.getIpfsMultiAddress())));
+						IntegrationTestConfig.getBlockchainRestUrl()),
+				new IpfsConnection(IntegrationTestConfig.getIpfsMultiAddress())));
 	}
 
 	@Test

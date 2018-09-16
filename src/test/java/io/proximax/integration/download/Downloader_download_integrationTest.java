@@ -9,8 +9,8 @@ import io.proximax.download.Downloader;
 import io.proximax.exceptions.DownloadFailureException;
 import io.proximax.exceptions.DownloadForDataTypeNotSupportedException;
 import io.proximax.model.BlockchainNetworkType;
-import io.proximax.testsupport.IntegrationTestProperties;
-import io.proximax.testsupport.TestDataRepository;
+import io.proximax.integration.IntegrationTestConfig;
+import io.proximax.integration.TestDataRepository;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,8 +33,8 @@ public class Downloader_download_integrationTest {
 	public void setUp() {
 		unitUnderTest = new Downloader(ConnectionConfig.create(
 				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
-						IntegrationTestProperties.getBlockchainRestUrl()),
-				new IpfsConnection(IntegrationTestProperties.getIpfsMultiAddress())));
+						IntegrationTestConfig.getBlockchainRestUrl()),
+				new IpfsConnection(IntegrationTestConfig.getIpfsMultiAddress())));
 	}
 
 	@Test(expected = DownloadFailureException.class)
@@ -48,7 +48,7 @@ public class Downloader_download_integrationTest {
 	@Test
 	public void shouldDownloadWithVersion() {
 		final String transactionHash = TestDataRepository
-				.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
+				.getData("Uploader_integrationTest.shouldReturnVersion", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
 
 		final DownloadResult result = unitUnderTest.download(param);
