@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import static io.proximax.model.Constants.RESERVED_CONTENT_TYPES;
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
@@ -19,7 +18,7 @@ public class FileParameterData extends AbstractByteStreamParameterData {
 
     private final File file;
 
-    private FileParameterData(File file, String description, String name, String contentType, Map<String, String> metadata) throws IOException {
+    private FileParameterData(File file, String description, String name, String contentType, Map<String, String> metadata) {
         super(description, getDefaultName(file, name), contentType, metadata);
 
         checkParameter(file != null, "file is required");
@@ -55,7 +54,7 @@ public class FileParameterData extends AbstractByteStreamParameterData {
      * @return the instance of this class
      * @throws IOException file read failures
      */
-    public static FileParameterData create(File file) throws IOException {
+    public static FileParameterData create(File file) {
         return create(file, null, null, null, null);
     }
 
@@ -69,7 +68,7 @@ public class FileParameterData extends AbstractByteStreamParameterData {
      * @throws IOException file read failures
      * @return the instance of this class
      */
-    public static FileParameterData create(File file, String description, String name, String contentType, Map<String, String> metadata) throws IOException {
+    public static FileParameterData create(File file, String description, String name, String contentType, Map<String, String> metadata) {
         return new FileParameterData(file, description, name, contentType, metadata);
     }
 

@@ -35,7 +35,7 @@ public class Uploader_computeDigestIntegrationTest {
 	}
 
 	@Test
-	public void shouldUploadWithEnabledComputeDigest() throws Exception {
+	public void shouldUploadWithEnabledComputeDigest() {
 		final UploadParameter param = UploadParameter
 				.createForStringUpload(TEST_STRING, IntegrationTestConfig.getPrivateKey1())
 				.withComputeDigest(true)
@@ -50,7 +50,7 @@ public class Uploader_computeDigestIntegrationTest {
 	}
 
 	@Test
-	public void shouldUploadWithDisabledComputeDigest() throws Exception {
+	public void shouldUploadWithDisabledComputeDigest() {
 		final UploadParameter param = UploadParameter
 				.createForStringUpload(TEST_STRING, IntegrationTestConfig.getPrivateKey1())
 				.withComputeDigest(false)

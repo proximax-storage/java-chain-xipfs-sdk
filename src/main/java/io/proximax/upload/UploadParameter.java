@@ -3,8 +3,6 @@ package io.proximax.upload;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.List;
 
@@ -127,10 +125,9 @@ public class UploadParameter {
      * Start creating parameter for a file upload using UploadParameterBuilder
      * @param file the file to upload
      * @param signerPrivateKey the private key of the signer of the blockchain transaction
-     * @throws IOException file read failures
      * @return the upload parameter builder
      */
-    public static UploadParameterBuilder createForFileUpload(File file, String signerPrivateKey) throws IOException {
+    public static UploadParameterBuilder createForFileUpload(File file, String signerPrivateKey) {
         return createForFileUpload(FileParameterData.create(file), signerPrivateKey);
     }
 
@@ -168,10 +165,9 @@ public class UploadParameter {
      * Start creating parameter for a string upload using UploadParameterBuilder
      * @param string the string to upload
      * @param signerPrivateKey the private key of the signer of the blockchain transaction
-     * @throws UnsupportedEncodingException invalid encoding
      * @return the upload parameter builder
      */
-    public static UploadParameterBuilder createForStringUpload(String string, String signerPrivateKey) throws UnsupportedEncodingException {
+    public static UploadParameterBuilder createForStringUpload(String string, String signerPrivateKey) {
         return createForStringUpload(StringParameterData.create(string), signerPrivateKey);
     }
 
@@ -189,10 +185,9 @@ public class UploadParameter {
      * Start creating parameter for a URL resource upload using UploadParameterBuilder
      * @param url the URL resource to upload
      * @param signerPrivateKey the private key of the signer of the blockchain transaction
-     * @throws IOException read failures
      * @return the upload parameter builder
      */
-    public static UploadParameterBuilder createForUrlResourceUpload(URL url, String signerPrivateKey) throws IOException {
+    public static UploadParameterBuilder createForUrlResourceUpload(URL url, String signerPrivateKey) {
         return createForUrlResourceUpload(UrlResourceParameterData.create(url), signerPrivateKey);
     }
 
@@ -210,10 +205,9 @@ public class UploadParameter {
      * Start creating parameter for files to upload as zip using UploadParameterBuilder
      * @param files the files to zip and upload
      * @param signerPrivateKey the private key of the signer of the blockchain transaction
-     * @throws IOException file read failures
      * @return the upload parameter builder
      */
-    public static UploadParameterBuilder createForFilesAsZipUpload(List<File> files, String signerPrivateKey) throws IOException {
+    public static UploadParameterBuilder createForFilesAsZipUpload(List<File> files, String signerPrivateKey) {
         return createForFilesAsZipUpload(FilesAsZipParameterData.create(files), signerPrivateKey);
     }
 

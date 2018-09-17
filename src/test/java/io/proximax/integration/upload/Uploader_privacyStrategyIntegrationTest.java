@@ -39,7 +39,7 @@ public class Uploader_privacyStrategyIntegrationTest {
     }
 
     @Test
-    public void shouldUploadFileWithPlainPrivacyStrategy() throws Exception {
+    public void shouldUploadFileWithPlainPrivacyStrategy() {
         final UploadParameter param = UploadParameter
                 .createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
                 .build();
@@ -55,7 +55,7 @@ public class Uploader_privacyStrategyIntegrationTest {
     }
 
     @Test
-    public void shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy() throws Exception {
+    public void shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy() {
         final UploadParameter param = UploadParameter
                 .createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
                 .withNemKeysPrivacy(IntegrationTestConfig.getPrivateKey1(), IntegrationTestConfig.getPublicKey2())
@@ -72,7 +72,7 @@ public class Uploader_privacyStrategyIntegrationTest {
     }
 
     @Test
-    public void shouldUploadFileWithSecuredWithPasswordPrivacyStrategy() throws Exception {
+    public void shouldUploadFileWithSecuredWithPasswordPrivacyStrategy() {
         final UploadParameter param = UploadParameter
                 .createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
                 .withPasswordPrivacy(TEST_PASSWORD)
@@ -89,7 +89,7 @@ public class Uploader_privacyStrategyIntegrationTest {
     }
 
     @Test
-    public void shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy() throws Exception {
+    public void shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy() {
         final UploadParameter param = UploadParameter
                 .createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
                 .withShamirSecretSharing(

@@ -1,5 +1,6 @@
 package io.proximax.upload;
 
+import io.proximax.exceptions.ParamDataCreateException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.ByteArrayInputStream;
@@ -22,7 +23,7 @@ public class FilesAsZipParameterData extends AbstractByteStreamParameterData {
     private final List<File> files;
     private final byte[] zipData;
 
-    private FilesAsZipParameterData(List<File> files, String description, String name, Map<String, String> metadata) throws IOException {
+    private FilesAsZipParameterData(List<File> files, String description, String name, Map<String, String> metadata) {
         super(description, name, "application/zip", metadata);
 
         checkParameter(files != null && !files.isEmpty(), "files cannot be null or empty");
@@ -49,7 +50,7 @@ public class FilesAsZipParameterData extends AbstractByteStreamParameterData {
         return files;
     }
 
-    private static byte[] zipFiles(List<File> files) throws IOException {
+    private static byte[] zipFiles(List<File> files) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ZipOutputStream zos = new ZipOutputStream(baos)) {
 
@@ -62,6 +63,8 @@ public class FilesAsZipParameterData extends AbstractByteStreamParameterData {
             }
 
             return baos.toByteArray();
+        } catch (Exception e) {
+            throw new ParamDataCreateException("Failed to create zip file", e);
         }
     }
 
@@ -71,7 +74,7 @@ public class FilesAsZipParameterData extends AbstractByteStreamParameterData {
      * @return the instance of this class
      * @throws IOException file read failures
      */
-    public static FilesAsZipParameterData create(List<File> files) throws IOException {
+    public static FilesAsZipParameterData create(List<File> files) {
         return create(files, null, null, null);
     }
 
@@ -84,7 +87,7 @@ public class FilesAsZipParameterData extends AbstractByteStreamParameterData {
      * @return the instance of this class
      * @throws IOException file read failures
      */
-    public static FilesAsZipParameterData create(List<File> files, String description, String name, Map<String, String> metadata) throws IOException {
+    public static FilesAsZipParameterData create(List<File> files, String description, String name, Map<String, String> metadata) {
         return new FilesAsZipParameterData(files, description, name, metadata);
     }
 }

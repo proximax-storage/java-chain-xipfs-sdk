@@ -108,7 +108,7 @@ public class Uploader_integrationTest {
 	}
 
 	@Test
-	public void shouldUploadFile() throws Exception {
+	public void shouldUploadFile() {
 		final UploadParameter param = UploadParameter
 				.createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
 				.build();
@@ -128,7 +128,7 @@ public class Uploader_integrationTest {
 	}
 
 	@Test
-	public void shouldUploadFileWithCompleteDetails() throws Exception {
+	public void shouldUploadFileWithCompleteDetails() {
 		final UploadParameter param = UploadParameter
 				.createForFileUpload(
 						FileParameterData.create(TEST_TEXT_FILE, "file description", "file name",
@@ -194,7 +194,7 @@ public class Uploader_integrationTest {
 	}
 
 	@Test
-	public void shouldUploadFilesAsZip() throws Exception {
+	public void shouldUploadFilesAsZip()  {
 		final UploadParameter param = UploadParameter
 				.createForFilesAsZipUpload(asList(TEST_TEXT_FILE, TEST_HTML_FILE), IntegrationTestConfig.getPrivateKey1())
 				.build();
@@ -214,7 +214,7 @@ public class Uploader_integrationTest {
 	}
 
 	@Test
-	public void shouldUploadFilesAsZipWithCompleteDetails() throws Exception {
+	public void shouldUploadFilesAsZipWithCompleteDetails() {
 		final UploadParameter param = UploadParameter
 				.createForFilesAsZipUpload(
 						FilesAsZipParameterData.create(asList(TEST_TEXT_FILE, TEST_HTML_FILE), "zip description",
@@ -237,7 +237,7 @@ public class Uploader_integrationTest {
 	}
 
 	@Test
-	public void shouldUploadString() throws Exception {
+	public void shouldUploadString() {
 		final UploadParameter param = UploadParameter
 				.createForStringUpload(TEST_STRING, IntegrationTestConfig.getPrivateKey1())
 				.build();
@@ -257,7 +257,7 @@ public class Uploader_integrationTest {
 	}
 
 	@Test
-	public void shouldUploadStringWithCompleteDetails() throws Exception {
+	public void shouldUploadStringWithCompleteDetails() {
 		final UploadParameter param = UploadParameter
 				.createForStringUpload(
 						StringParameterData.create(TEST_STRING, "UTF-8", "string description", "string name",
@@ -280,7 +280,7 @@ public class Uploader_integrationTest {
 	}
 
 	@Test
-	public void shouldUploadPath() throws Exception {
+	public void shouldUploadPath() {
 		final UploadParameter param = UploadParameter
 				.createForPathUpload(TEST_PATH_FILE, IntegrationTestConfig.getPrivateKey1())
 				.build();
@@ -300,7 +300,7 @@ public class Uploader_integrationTest {
 	}
 
 	@Test
-	public void shouldUploadPathWithCompleteDetails() throws Exception {
+	public void shouldUploadPathWithCompleteDetails() {
 		final UploadParameter param = UploadParameter
 				.createForPathUpload(
 						PathParameterData.create(TEST_PATH_FILE, "path description", "path name", singletonMap("pathkey", "pathval")),
