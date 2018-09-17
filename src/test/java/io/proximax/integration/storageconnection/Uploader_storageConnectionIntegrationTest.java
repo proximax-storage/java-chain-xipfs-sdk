@@ -1,8 +1,8 @@
-package io.proximax.integration.upload;
+package io.proximax.integration.storageconnection;
 
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
-import io.proximax.connection.IpfsConnection;
+import io.proximax.connection.StorageConnection;
 import io.proximax.integration.IntegrationTestConfig;
 import io.proximax.upload.UploadParameter;
 import io.proximax.upload.UploadResult;
@@ -15,53 +15,39 @@ import static io.proximax.testsupport.Constants.TEST_STRING;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.IsNull.nullValue;
 
-public class Uploader_detectContentTypeIntegrationTest {
+public class Uploader_storageConnectionIntegrationTest {
 
 	private Uploader unitUnderTest;
 
 	@Before
 	public void setUp() {
-		unitUnderTest = new Uploader(ConnectionConfig.createWithLocalIpfsConnection(
+		unitUnderTest = new Uploader(ConnectionConfig.createWithStorageConnection(
 				new BlockchainNetworkConnection(
 						IntegrationTestConfig.getBlockchainNetworkType(),
 						IntegrationTestConfig.getBlockchainApiHost(),
 						IntegrationTestConfig.getBlockchainApiPort(),
 						IntegrationTestConfig.getBlockchainApiProtocol()),
-				new IpfsConnection(
-						IntegrationTestConfig.getIpfsApiHost(),
-						IntegrationTestConfig.getIpfsApiPort())));
+				new StorageConnection(
+						IntegrationTestConfig.getStorageNodeApiHost(),
+						IntegrationTestConfig.getStorageNodeApiPort(),
+						IntegrationTestConfig.getStorageNodeApiProtocol(),
+						IntegrationTestConfig.getStorageNodeApiBearerToken(),
+						IntegrationTestConfig.getStorageNodeApiNemAddress())));
 	}
 
 	@Test
-	public void shouldUploadWithEnabledDetectContentType() {
+	public void shouldUploadToStorageConnection() {
 		final UploadParameter param = UploadParameter
 				.createForStringUpload(TEST_STRING, IntegrationTestConfig.getPrivateKey1())
-				.withDetectContentType(true)
 				.build();
 
 		final UploadResult result = unitUnderTest.upload(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(result.getData().getContentType(), is(notNullValue()));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
 
-		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithEnabledDetectContentType");
+		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadToStorageConnection");
 	}
 
-	@Test
-	public void shouldUploadWithDisabledDetectContentType() {
-		final UploadParameter param = UploadParameter
-				.createForStringUpload(TEST_STRING, IntegrationTestConfig.getPrivateKey1())
-				.withDetectContentType(false)
-				.build();
-
-		final UploadResult result = unitUnderTest.upload(param);
-
-		assertThat(result, is(notNullValue()));
-		assertThat(result.getData().getContentType(), is(nullValue()));
-
-
-		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithDisabledDetectContentType");
-	}
 }

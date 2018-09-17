@@ -27,7 +27,7 @@ public class Downloader_directDownload_bigFileIntegrationTest {
 
 	@Before
 	public void setUp() {
-		unitUnderTest = new Downloader(ConnectionConfig.create(
+		unitUnderTest = new Downloader(ConnectionConfig.createWithLocalIpfsConnection(
 				new BlockchainNetworkConnection(
 						IntegrationTestConfig.getBlockchainNetworkType(),
 						IntegrationTestConfig.getBlockchainApiHost(),

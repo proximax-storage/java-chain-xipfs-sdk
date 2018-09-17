@@ -32,7 +32,7 @@ public class Downloader_directDownload_integrationTest {
 
 	@Before
 	public void setUp() {
-		unitUnderTest = new Downloader(ConnectionConfig.create(
+		unitUnderTest = new Downloader(ConnectionConfig.createWithLocalIpfsConnection(
 				new BlockchainNetworkConnection(
 						IntegrationTestConfig.getBlockchainNetworkType(),
 						IntegrationTestConfig.getBlockchainApiHost(),

@@ -29,14 +29,15 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * <br>
  * Each upload can be any of the following type:
  * <ul>
- *     <li>byte array</li>
- *     <li>file</li>
- *     <li>url resource</li>
- *     <li>list of files to be compressed as a zip</li>
- *     <li>string</li>
- *     <li>path or directory</li>
+ * <li>byte array</li>
+ * <li>file</li>
+ * <li>url resource</li>
+ * <li>list of files to be compressed as a zip</li>
+ * <li>string</li>
+ * <li>path or directory</li>
  * </ul>
  * <br>
+ *
  * @see ConnectionConfig
  * @see UploadParameter
  */
@@ -48,10 +49,11 @@ public class Uploader {
 
     /**
      * Construct the class with a ConnectionConfig
+     *
      * @param connectionConfig the connection config that defines generally where the upload will be sent
      */
     public Uploader(ConnectionConfig connectionConfig) {
-        this.createProximaxDataService = new CreateProximaxDataService(connectionConfig.getIpfsConnection());
+        this.createProximaxDataService = new CreateProximaxDataService(connectionConfig);
         this.createProximaxMessagePayloadService = new CreateProximaxMessagePayloadService();
 
         try {
@@ -73,6 +75,7 @@ public class Uploader {
      * This upload returns result once the blockchain transaction is validated and already set with `unconfirmed` status
      * <br>
      * The upload throws an UploadFailureException runtime exception if does not succeed.
+     *
      * @param uploadParam the upload parameter
      * @return the upload result
      */
@@ -87,7 +90,8 @@ public class Uploader {
      * This upload returns result once the blockchain transaction is validated and already set with `unconfirmed` status
      * <br>
      * The upload throws an UploadFailureException runtime exception if does not succeed.
-     * @param uploadParam the upload parameter
+     *
+     * @param uploadParam    the upload parameter
      * @param asyncCallbacks an optional callbacks when succeeded or failed
      * @return the upload result
      */

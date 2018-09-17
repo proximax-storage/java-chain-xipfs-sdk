@@ -4,6 +4,7 @@ import io.ipfs.api.NamedStreamable;
 import io.ipfs.multihash.Multihash;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.exceptions.IpfsClientFailureException;
+import io.proximax.service.api.FileStorageClientApi;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -20,17 +21,18 @@ import static java.util.stream.Collectors.toList;
  * <br>
  * This class delegates to IPFS the following:
  * <ul>
- *     <li>adding of file(represented as byte arrays) and returning the hash for it</li>
- *     <li>retrieving of file given a hash</li>
- *     <li>pinning a file given a hash to ensure it is not garbage collected</li>
+ * <li>adding of file(represented as byte arrays) and returning the hash for it</li>
+ * <li>retrieving of file given a hash</li>
+ * <li>pinning a file given a hash to ensure it is not garbage collected</li>
  * </ul>
  */
-public class IpfsClient {
+public class IpfsClient implements FileStorageClientApi {
 
     private final IpfsConnection ipfsConnection;
 
     /**
      * Construct the class with IPFSConnection
+     *
      * @param ipfsConnection the Ipfs connection
      */
     public IpfsClient(IpfsConnection ipfsConnection) {
@@ -44,6 +46,7 @@ public class IpfsClient {
      * <br>
      * <br>
      * This method is equivalent to `ipfs add` CLI command
+     *
      * @param byteStream the byte stream to upload
      * @return the hash (base58) for the data uploaded
      */
@@ -64,6 +67,7 @@ public class IpfsClient {
      * <br>
      * <br>
      * This method is equivalent to `ipfs add` CLI command
+     *
      * @param path the path being added
      * @return the hash (base58) for the data uploaded
      */
@@ -77,7 +81,7 @@ public class IpfsClient {
                 .onErrorResumeNext((Throwable ex) ->
                         Observable.error(new IpfsClientFailureException(String.format("Failed to add path"), ex)))
                 .observeOn(Schedulers.computation())
-                .map(merkleNodes -> merkleNodes.get(merkleNodes.size()-1).hash.toBase58());
+                .map(merkleNodes -> merkleNodes.get(merkleNodes.size() - 1).hash.toBase58());
     }
 
     /**
@@ -85,6 +89,7 @@ public class IpfsClient {
      * <br>
      * <br>
      * This method is equivalent to `ipfs pin add` CLI command
+     *
      * @param dataHash the hash (base58) of an IPFS file
      * @return list of hashes pinned (includes children if hash used is a directory)
      */
@@ -107,6 +112,7 @@ public class IpfsClient {
      * <br>
      * <br>
      * This method is equivalent to `ipfs cat` CLI command
+     *
      * @param dataHash the hash (base58) of an IPFS file
      * @return the file (represented as byte stream)
      */

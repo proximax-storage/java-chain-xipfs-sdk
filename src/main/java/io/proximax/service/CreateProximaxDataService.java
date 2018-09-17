@@ -1,6 +1,6 @@
 package io.proximax.service;
 
-import io.proximax.connection.IpfsConnection;
+import io.proximax.connection.ConnectionConfig;
 import io.proximax.exceptions.UploadParameterDataNotSupportedException;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.upload.AbstractByteStreamParameterData;
@@ -20,28 +20,30 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  */
 public class CreateProximaxDataService {
 
-    private final IpfsUploadService ipfsUploadService;
+    private final FileUploadService fileUploadService;
     private final DigestUtils digestUtils;
     private final ContentTypeUtils contentTypeUtils;
 
     /**
      * Construct this class
-     * @param ipfsConnection the config class to connect to IPFS
+     *
+     * @param connectionConfig the connection config
      */
-    public CreateProximaxDataService(IpfsConnection ipfsConnection) {
-        this.ipfsUploadService = new IpfsUploadService(ipfsConnection);
+    public CreateProximaxDataService(ConnectionConfig connectionConfig) {
+        this.fileUploadService = new FileUploadService(connectionConfig);
         this.digestUtils = new DigestUtils();
         this.contentTypeUtils = new ContentTypeUtils();
     }
 
-    CreateProximaxDataService(IpfsUploadService ipfsUploadService, DigestUtils digestUtils, ContentTypeUtils contentTypeUtils) {
-        this.ipfsUploadService = ipfsUploadService;
+    CreateProximaxDataService(FileUploadService fileUploadService, DigestUtils digestUtils, ContentTypeUtils contentTypeUtils) {
+        this.fileUploadService = fileUploadService;
         this.digestUtils = digestUtils;
         this.contentTypeUtils = contentTypeUtils;
     }
 
     /**
      * Creates the uploaded data object
+     *
      * @param uploadParam the upload parameter
      * @return the uploaded data object
      */
@@ -50,7 +52,8 @@ public class CreateProximaxDataService {
 
         if (uploadParam.getData() instanceof AbstractByteStreamParameterData) { // when byte stream upload
             return uploadByteStream(uploadParam, (AbstractByteStreamParameterData) uploadParam.getData());
-        } if (uploadParam.getData() instanceof PathParameterData) { // when path upload
+        }
+        if (uploadParam.getData() instanceof PathParameterData) { // when path upload
             return uploadPath((PathParameterData) uploadParam.getData());
         } else { // when unknown data
             throw new UploadParameterDataNotSupportedException(String.format("Uploading of %s is not supported",
@@ -63,7 +66,7 @@ public class CreateProximaxDataService {
         final InputStream encryptedByteStream = encryptByteStream(uploadParam, byteStreamParamData);
         final Observable<Optional<String>> digestOb = computeDigest(uploadParam.getComputeDigest(),
                 encryptByteStream(uploadParam, byteStreamParamData));
-        final Observable<IpfsUploadResponse> ipfsUploadResponseOb = ipfsUploadService.uploadByteStream(encryptedByteStream);
+        final Observable<FileUploadResponse> ipfsUploadResponseOb = fileUploadService.uploadByteStream(encryptedByteStream);
 
         return Observable.zip(ipfsUploadResponseOb, digestOb, detectedContentTypeOb,
                 (ipfsUploadResponse, digest, contentTypeOpt) ->
@@ -86,8 +89,8 @@ public class CreateProximaxDataService {
     }
 
     private Observable<ProximaxDataModel> uploadPath(PathParameterData pathParamData) {
-        return ipfsUploadService.uploadPath(pathParamData.getPath()).map(ipfsUploadResponse ->
+        return fileUploadService.uploadPath(pathParamData.getPath()).map(ipfsUploadResponse ->
                 ProximaxDataModel.create(pathParamData, ipfsUploadResponse.getDataHash(),
-                        null,  pathParamData.getContentType(), ipfsUploadResponse.getTimestamp()));
+                        null, pathParamData.getContentType(), ipfsUploadResponse.getTimestamp()));
     }
 }

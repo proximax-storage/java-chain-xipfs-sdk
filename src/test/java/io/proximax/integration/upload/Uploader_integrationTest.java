@@ -39,7 +39,7 @@ public class Uploader_integrationTest {
 
 	@Before
 	public void setUp() {
-		unitUnderTest = new Uploader(ConnectionConfig.create(
+		unitUnderTest = new Uploader(ConnectionConfig.createWithLocalIpfsConnection(
 				new BlockchainNetworkConnection(
 						IntegrationTestConfig.getBlockchainNetworkType(),
 						IntegrationTestConfig.getBlockchainApiHost(),

@@ -1,8 +1,9 @@
-package io.proximax.integration.bigfile;
+package io.proximax.integration.storageconnection;
 
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
+import io.proximax.connection.StorageConnection;
 import io.proximax.download.DownloadParameter;
 import io.proximax.download.DownloadResult;
 import io.proximax.download.Downloader;
@@ -12,43 +13,43 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
-import static io.proximax.integration.bigfile.BigFileConstants.TEST_BIG_FILE;
+import static io.proximax.testsupport.Constants.TEST_STRING;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class Downloader_download_bigfileIntegrationTest {
+public class Downloader_download_storageConnectionIntegrationTest {
 
 	private Downloader unitUnderTest;
 
 	@Before
 	public void setUp() {
-		unitUnderTest = new Downloader(ConnectionConfig.createWithLocalIpfsConnection(
+		unitUnderTest = new Downloader(ConnectionConfig.createWithStorageConnection(
 				new BlockchainNetworkConnection(
 						IntegrationTestConfig.getBlockchainNetworkType(),
 						IntegrationTestConfig.getBlockchainApiHost(),
 						IntegrationTestConfig.getBlockchainApiPort(),
 						IntegrationTestConfig.getBlockchainApiProtocol()),
-				new IpfsConnection(
-						IntegrationTestConfig.getIpfsApiHost(),
-						IntegrationTestConfig.getIpfsApiPort())));
+				new StorageConnection(
+						IntegrationTestConfig.getStorageNodeApiHost(),
+						IntegrationTestConfig.getStorageNodeApiPort(),
+						IntegrationTestConfig.getStorageNodeApiProtocol(),
+						IntegrationTestConfig.getStorageNodeApiBearerToken(),
+						IntegrationTestConfig.getStorageNodeApiNemAddress())));
 	}
 
 	@Test
-	public void shouldDownloadBigFileByTransactionHash() throws IOException {
+	public void shouldDownloadFromStorageConnection() throws IOException {
 		final String transactionHash = TestDataRepository
-				.getData("Uploader_bigFileIntegrationTest.shouldUploadBigFile", "transactionHash");
-		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
+				.getData("Uploader_storageConnectionIntegrationTest.shouldUploadToStorageConnection", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash)
+				.build();
 
 		final DownloadResult result = unitUnderTest.download(param);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(result.getTransactionHash(), is(transactionHash));
-		assertThat(result.getData().getByteStream(), is(notNullValue()));
-		assertThat(IOUtils.contentEquals(result.getData().getByteStream(), new FileInputStream(new File(TEST_BIG_FILE))), is(true));
+		assertThat(new String(IOUtils.toByteArray(result.getData().getByteStream())), is(TEST_STRING));
 	}
 }

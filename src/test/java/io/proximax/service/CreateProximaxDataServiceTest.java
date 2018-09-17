@@ -45,7 +45,7 @@ public class CreateProximaxDataServiceTest {
     private CreateProximaxDataService unitUnderTest;
 
     @Mock
-    private IpfsUploadService mockIpfsUploadService;
+    private FileUploadService mockFileUploadService;
 
     @Mock
     private DigestUtils mockDigestUtils;
@@ -63,7 +63,7 @@ public class CreateProximaxDataServiceTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        unitUnderTest = new CreateProximaxDataService(mockIpfsUploadService, mockDigestUtils, mockContentTypeUtils);
+        unitUnderTest = new CreateProximaxDataService(mockFileUploadService, mockDigestUtils, mockContentTypeUtils);
 
         given(mockPrivacyStrategy.getPrivacyType()).willReturn(PrivacyType.PLAIN.getValue());
     }
@@ -77,8 +77,8 @@ public class CreateProximaxDataServiceTest {
     public void shouldCreateRootDataForByteArrayUpload() {
         given(mockPrivacyStrategy.encryptStream(DUMMY_DATA_STREAM)).willReturn(DUMMY_ENCRYPTED_DATA_STREAM);
         given(mockDigestUtils.digest(DUMMY_ENCRYPTED_DATA_STREAM)).willReturn(Observable.just(DUMMY_DIGEST));
-        given(mockIpfsUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
-                .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
+        given(mockFileUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
+                .willReturn(Observable.just(new FileUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
 
         final ProximaxDataModel result = unitUnderTest.createData(sampleByteArrayUploadParamWithComputeDigestTrue()).blockingFirst();
 
@@ -94,8 +94,8 @@ public class CreateProximaxDataServiceTest {
 
     @Test
     public void shouldCreateRootDataForPathUpload() {
-        given(mockIpfsUploadService.uploadPath(DUMMY_PATH))
-                .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
+        given(mockFileUploadService.uploadPath(DUMMY_PATH))
+                .willReturn(Observable.just(new FileUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
 
         final ProximaxDataModel result = unitUnderTest.createData(samplePathUploadParam()).blockingFirst();
 
@@ -113,8 +113,8 @@ public class CreateProximaxDataServiceTest {
     public void shouldCreateRootDataForByteArrayUploadAndWhenComputeDigestTrue() {
         given(mockPrivacyStrategy.encryptStream(DUMMY_DATA_STREAM)).willReturn(DUMMY_ENCRYPTED_DATA_STREAM);
         given(mockDigestUtils.digest(DUMMY_ENCRYPTED_DATA_STREAM)).willReturn(Observable.just(DUMMY_DIGEST));
-        given(mockIpfsUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
-                .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
+        given(mockFileUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
+                .willReturn(Observable.just(new FileUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
 
         final ProximaxDataModel result = unitUnderTest.createData(sampleByteArrayUploadParamWithComputeDigestTrue()).blockingFirst();
 
@@ -125,8 +125,8 @@ public class CreateProximaxDataServiceTest {
     @Test
     public void shouldCreateRootDataForByteArrayUploadAndWhenComputeDigestFalse() {
         given(mockPrivacyStrategy.encryptStream(DUMMY_DATA_STREAM)).willReturn(DUMMY_ENCRYPTED_DATA_STREAM);
-        given(mockIpfsUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
-                .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
+        given(mockFileUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
+                .willReturn(Observable.just(new FileUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
 
         final ProximaxDataModel result = unitUnderTest.createData(sampleByteArrayUploadParamWithComputeDigestFalse()).blockingFirst();
 
@@ -138,8 +138,8 @@ public class CreateProximaxDataServiceTest {
     public void shouldCreateRootDataForByteArrayUploadAndWhenDetectContentTypeTrue() {
         given(mockPrivacyStrategy.encryptStream(DUMMY_DATA_STREAM)).willReturn(DUMMY_ENCRYPTED_DATA_STREAM);
         given(mockContentTypeUtils.detectContentType(DUMMY_DATA_STREAM)).willReturn(Observable.just(DUMMY_CONTENT_TYPE));
-        given(mockIpfsUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
-                .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
+        given(mockFileUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
+                .willReturn(Observable.just(new FileUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
 
         final ProximaxDataModel result = unitUnderTest.createData(sampleByteArrayUploadParamWithDetectContentTypeTrue()).blockingFirst();
 
@@ -150,8 +150,8 @@ public class CreateProximaxDataServiceTest {
     @Test
     public void shouldCreateRootDataForByteArrayUploadAndWhenDetectContentTypeFalse() {
         given(mockPrivacyStrategy.encryptStream(DUMMY_DATA_STREAM)).willReturn(DUMMY_ENCRYPTED_DATA_STREAM);
-        given(mockIpfsUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
-                .willReturn(Observable.just(new IpfsUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
+        given(mockFileUploadService.uploadByteStream(DUMMY_ENCRYPTED_DATA_STREAM))
+                .willReturn(Observable.just(new FileUploadResponse(DUMMY_DATA_HASH, DUMMY_TIMESTAMP)));
 
         final ProximaxDataModel result = unitUnderTest.createData(sampleByteArrayUploadParamWithDetectContentTypeFalse()).blockingFirst();
 
