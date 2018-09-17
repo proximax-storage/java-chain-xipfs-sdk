@@ -1,6 +1,6 @@
 package io.proximax.upload;
 
-import io.proximax.exceptions.ParamDataCreateException;
+import io.proximax.exceptions.ParamDataCreationException;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -48,7 +48,7 @@ public class StringParameterData extends AbstractByteStreamParameterData {
         try {
             return encoding == null ? string.getBytes() : string.getBytes(encoding);
         } catch (UnsupportedEncodingException e) {
-            throw new ParamDataCreateException("Failed to convert string to bytes", e);
+            throw new ParamDataCreationException("Failed to convert string to bytes", e);
         }
     }
 

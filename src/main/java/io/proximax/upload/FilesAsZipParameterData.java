@@ -1,6 +1,6 @@
 package io.proximax.upload;
 
-import io.proximax.exceptions.ParamDataCreateException;
+import io.proximax.exceptions.ParamDataCreationException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.ByteArrayInputStream;
@@ -64,7 +64,7 @@ public class FilesAsZipParameterData extends AbstractByteStreamParameterData {
 
             return baos.toByteArray();
         } catch (Exception e) {
-            throw new ParamDataCreateException("Failed to create zip file", e);
+            throw new ParamDataCreationException("Failed to create zip file", e);
         }
     }
 
