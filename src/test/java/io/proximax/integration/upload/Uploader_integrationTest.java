@@ -3,7 +3,6 @@ package io.proximax.integration.upload;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
-import io.proximax.model.BlockchainNetworkType;
 import io.proximax.integration.IntegrationTestConfig;
 import io.proximax.upload.ByteArrayParameterData;
 import io.proximax.upload.FileParameterData;
@@ -18,6 +17,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import static io.proximax.integration.TestDataRepository.logAndSaveResult;
 import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
 import static io.proximax.model.Constants.SCHEMA_VERSION;
 import static io.proximax.testsupport.Constants.TEST_HTML_FILE;
@@ -26,7 +26,6 @@ import static io.proximax.testsupport.Constants.TEST_PATH_FILE;
 import static io.proximax.testsupport.Constants.TEST_PDF_FILE_1;
 import static io.proximax.testsupport.Constants.TEST_STRING;
 import static io.proximax.testsupport.Constants.TEST_TEXT_FILE;
-import static io.proximax.integration.TestDataRepository.logAndSaveResult;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,9 +40,14 @@ public class Uploader_integrationTest {
 	@Before
 	public void setUp() {
 		unitUnderTest = new Uploader(ConnectionConfig.create(
-				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
-						IntegrationTestConfig.getBlockchainRestUrl()),
-				new IpfsConnection(IntegrationTestConfig.getIpfsMultiAddress())));
+				new BlockchainNetworkConnection(
+						IntegrationTestConfig.getBlockchainNetworkType(),
+						IntegrationTestConfig.getBlockchainApiHost(),
+						IntegrationTestConfig.getBlockchainApiPort(),
+						IntegrationTestConfig.getBlockchainApiProtocol()),
+				new IpfsConnection(
+						IntegrationTestConfig.getIpfsApiHost(),
+						IntegrationTestConfig.getIpfsApiPort())));
 	}
 
 	@Test

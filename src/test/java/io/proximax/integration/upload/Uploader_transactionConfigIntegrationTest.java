@@ -9,7 +9,6 @@ import io.nem.sdk.model.transaction.TransferTransaction;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
-import io.proximax.model.BlockchainNetworkType;
 import io.proximax.integration.IntegrationTestConfig;
 import io.proximax.upload.UploadParameter;
 import io.proximax.upload.UploadResult;
@@ -17,8 +16,8 @@ import io.proximax.upload.Uploader;
 import org.junit.Before;
 import org.junit.Test;
 
-import static io.proximax.testsupport.Constants.TEST_STRING;
 import static io.proximax.integration.TestDataRepository.logAndSaveResult;
+import static io.proximax.testsupport.Constants.TEST_STRING;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -27,13 +26,20 @@ import static org.hamcrest.core.IsNull.notNullValue;
 public class Uploader_transactionConfigIntegrationTest {
 
 	private Uploader unitUnderTest;
+	private ConnectionConfig connectionConfig;
 
 	@Before
 	public void setUp() {
-		unitUnderTest = new Uploader(ConnectionConfig.create(
-				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
-						IntegrationTestConfig.getBlockchainRestUrl()),
-				new IpfsConnection(IntegrationTestConfig.getIpfsMultiAddress())));
+		connectionConfig = ConnectionConfig.create(
+				new BlockchainNetworkConnection(
+						IntegrationTestConfig.getBlockchainNetworkType(),
+						IntegrationTestConfig.getBlockchainApiHost(),
+						IntegrationTestConfig.getBlockchainApiPort(),
+						IntegrationTestConfig.getBlockchainApiProtocol()),
+				new IpfsConnection(
+						IntegrationTestConfig.getIpfsApiHost(),
+						IntegrationTestConfig.getIpfsApiPort()));
+		unitUnderTest = new Uploader(connectionConfig);
 	}
 
 	@Test
@@ -121,7 +127,7 @@ public class Uploader_transactionConfigIntegrationTest {
 
 	private Transaction waitForTransactionConfirmation(String senderPrivateKey, String transactionHash) {
 		try {
-			final Listener listener = new Listener(IntegrationTestConfig.getBlockchainRestUrl());
+			final Listener listener = new Listener(connectionConfig.getBlockchainNetworkConnection().getApiUrl());
 			listener.open().get();
 			final Transaction transaction = listener.confirmed(Account.createFromPrivateKey(senderPrivateKey, NetworkType.MIJIN_TEST).getAddress())
 					.filter(unconfirmedTxn ->

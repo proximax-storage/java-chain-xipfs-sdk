@@ -40,8 +40,8 @@ public class TransactionClient {
     public TransactionClient(BlockchainNetworkConnection blockchainNetworkConnection) throws MalformedURLException {
         checkParameter(blockchainNetworkConnection != null, "blockchainNetworkConnection is required");
 
-        this.transactionHttp = new TransactionHttp(blockchainNetworkConnection.getRestApiUrl());
-        this.blockchainNetworkRestApiUrl = blockchainNetworkConnection.getRestApiUrl();
+        this.transactionHttp = new TransactionHttp(blockchainNetworkConnection.getApiUrl());
+        this.blockchainNetworkRestApiUrl = blockchainNetworkConnection.getApiUrl();
         this.listener = null;
     }
 

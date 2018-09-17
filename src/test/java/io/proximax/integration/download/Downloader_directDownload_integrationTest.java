@@ -6,7 +6,6 @@ import io.proximax.connection.IpfsConnection;
 import io.proximax.download.DirectDownloadParameter;
 import io.proximax.download.Downloader;
 import io.proximax.exceptions.DirectDownloadFailureException;
-import io.proximax.model.BlockchainNetworkType;
 import io.proximax.integration.IntegrationTestConfig;
 import io.proximax.integration.TestDataRepository;
 import org.apache.commons.io.FileUtils;
@@ -34,9 +33,14 @@ public class Downloader_directDownload_integrationTest {
 	@Before
 	public void setUp() {
 		unitUnderTest = new Downloader(ConnectionConfig.create(
-				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
-						IntegrationTestConfig.getBlockchainRestUrl()),
-				new IpfsConnection(IntegrationTestConfig.getIpfsMultiAddress())));
+				new BlockchainNetworkConnection(
+						IntegrationTestConfig.getBlockchainNetworkType(),
+						IntegrationTestConfig.getBlockchainApiHost(),
+						IntegrationTestConfig.getBlockchainApiPort(),
+						IntegrationTestConfig.getBlockchainApiProtocol()),
+				new IpfsConnection(
+						IntegrationTestConfig.getIpfsApiHost(),
+						IntegrationTestConfig.getIpfsApiPort())));
 	}
 
 	@Test(expected = DirectDownloadFailureException.class)

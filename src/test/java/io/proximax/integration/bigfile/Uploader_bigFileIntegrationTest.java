@@ -3,7 +3,6 @@ package io.proximax.integration.bigfile;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
-import io.proximax.model.BlockchainNetworkType;
 import io.proximax.integration.IntegrationTestConfig;
 import io.proximax.upload.UploadParameter;
 import io.proximax.upload.UploadResult;
@@ -15,9 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import static io.proximax.integration.TestDataRepository.logAndSaveResult;
 import static io.proximax.integration.bigfile.BigFileConstants.TEST_BIG_FILE;
 import static io.proximax.integration.bigfile.BigFileConstants.TEST_BIG_FILE_SIZE;
-import static io.proximax.integration.TestDataRepository.logAndSaveResult;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -29,9 +28,14 @@ public class Uploader_bigFileIntegrationTest {
 	@Before
 	public void setUp() {
 		unitUnderTest = new Uploader(ConnectionConfig.create(
-				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
-						IntegrationTestConfig.getBlockchainRestUrl()),
-				new IpfsConnection(IntegrationTestConfig.getIpfsMultiAddress())));
+				new BlockchainNetworkConnection(
+						IntegrationTestConfig.getBlockchainNetworkType(),
+						IntegrationTestConfig.getBlockchainApiHost(),
+						IntegrationTestConfig.getBlockchainApiPort(),
+						IntegrationTestConfig.getBlockchainApiProtocol()),
+				new IpfsConnection(
+						IntegrationTestConfig.getIpfsApiHost(),
+						IntegrationTestConfig.getIpfsApiPort())));
 	}
 
 	@Test
