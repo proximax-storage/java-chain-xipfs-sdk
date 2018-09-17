@@ -88,24 +88,25 @@ public class Uploader_privacyStrategyIntegrationTest {
         logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadFileWithSecuredWithPasswordPrivacyStrategy");
     }
 
-    @Test
-    public void shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy() {
-        final UploadParameter param = UploadParameter
-                .createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
-                .withShamirSecretSharing(
-                        TEST_SHAMIR_SECRET_TOTAL_SHARES,
-                        TEST_SHAMIR_SECRET_THRESHOLD,
-                        TEST_SHAMIR_SECRET_SHARES)
-                .build();
-
-        final UploadResult result = unitUnderTest.upload(param);
-
-        assertThat(result, is(notNullValue()));
-        assertThat(result.getTransactionHash(), is(notNullValue()));
-        assertThat(result.getPrivacyType(), is(PrivacyType.SHAMIR.getValue()));
-        assertThat(result.getData().getDataHash(), is(notNullValue()));
-
-        logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy");
-    }
+    // TODO - revisit shamir secret sharing implementation that works cross-sdk
+//    @Test
+//    public void shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy() {
+//        final UploadParameter param = UploadParameter
+//                .createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
+//                .withShamirSecretSharing(
+//                        TEST_SHAMIR_SECRET_TOTAL_SHARES,
+//                        TEST_SHAMIR_SECRET_THRESHOLD,
+//                        TEST_SHAMIR_SECRET_SHARES)
+//                .build();
+//
+//        final UploadResult result = unitUnderTest.upload(param);
+//
+//        assertThat(result, is(notNullValue()));
+//        assertThat(result.getTransactionHash(), is(notNullValue()));
+//        assertThat(result.getPrivacyType(), is(PrivacyType.SHAMIR.getValue()));
+//        assertThat(result.getData().getDataHash(), is(notNullValue()));
+//
+//        logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy");
+//    }
 
 }

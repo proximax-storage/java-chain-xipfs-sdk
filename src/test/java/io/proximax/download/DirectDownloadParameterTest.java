@@ -174,43 +174,44 @@ public class DirectDownloadParameterTest {
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithPasswordPrivacyStrategy.class));
     }
 
-    @Test
-    public void shouldCreateWithSecuredWithShamirSecretSharingMapStrategy() {
-        final Map<Integer, byte[]> minimumSecretParts = new HashMap<>();
-        minimumSecretParts.put(1, TEST_SHAMIR_SECRET_SHARES.get(1));
-        minimumSecretParts.put(3, TEST_SHAMIR_SECRET_SHARES.get(3));
-        minimumSecretParts.put(5, TEST_SHAMIR_SECRET_SHARES.get(5));
-        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .withShamirSecretSharingPrivacy(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
-                        minimumSecretParts)
-                .build();
-
-        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
-    }
-
-    @Test
-    public void shouldCreateWithSecuredWithShamirSecretSharingArrayStrategy() {
-        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .withShamirSecretSharingPrivacy(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5)))
-                .build();
-
-        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
-    }
-
-    @Test
-    public void shouldCreateWithSecuredWithShamirSecretSharingListStrategy() {
-        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
-                .withShamirSecretSharingPrivacy(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
-                        asList(
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5))))
-                .build();
-
-        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
-    }
+    // TODO - revisit shamir secret sharing implementation that works cross-sdk
+//    @Test
+//    public void shouldCreateWithSecuredWithShamirSecretSharingMapStrategy() {
+//        final Map<Integer, byte[]> minimumSecretParts = new HashMap<>();
+//        minimumSecretParts.put(1, TEST_SHAMIR_SECRET_SHARES.get(1));
+//        minimumSecretParts.put(3, TEST_SHAMIR_SECRET_SHARES.get(3));
+//        minimumSecretParts.put(5, TEST_SHAMIR_SECRET_SHARES.get(5));
+//        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
+//                .withShamirSecretSharingPrivacy(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
+//                        minimumSecretParts)
+//                .build();
+//
+//        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
+//    }
+//
+//    @Test
+//    public void shouldCreateWithSecuredWithShamirSecretSharingArrayStrategy() {
+//        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
+//                .withShamirSecretSharingPrivacy(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
+//                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
+//                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
+//                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5)))
+//                .build();
+//
+//        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
+//    }
+//
+//    @Test
+//    public void shouldCreateWithSecuredWithShamirSecretSharingListStrategy() {
+//        final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(SAMPLE_DATA_HASH)
+//                .withShamirSecretSharingPrivacy(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
+//                        asList(
+//                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
+//                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
+//                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5))))
+//                .build();
+//
+//        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
+//    }
 
 }

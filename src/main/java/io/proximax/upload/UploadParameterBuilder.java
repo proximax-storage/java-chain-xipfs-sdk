@@ -92,15 +92,16 @@ public class UploadParameterBuilder {
         return this;
     }
 
-    /**
-     * Set the use blockchain secure message flag
-     * @param useBlockchainSecureMessage flag that indicates if transaction's message is to be secured
-     * @return the same instance of this builder
-     */
-    public UploadParameterBuilder withUseBlockchainSecureMessage(Boolean useBlockchainSecureMessage) {
-        this.useBlockchainSecureMessage = useBlockchainSecureMessage;
-        return this;
-    }
+    // TODO - implement secure message
+//    /**
+//     * Set the use blockchain secure message flag
+//     * @param useBlockchainSecureMessage flag that indicates if transaction's message is to be secured
+//     * @return the same instance of this builder
+//     */
+//    public UploadParameterBuilder withUseBlockchainSecureMessage(Boolean useBlockchainSecureMessage) {
+//        this.useBlockchainSecureMessage = useBlockchainSecureMessage;
+//        return this;
+//    }
 
     /**
      * Set the transaction deadline
@@ -167,59 +168,60 @@ public class UploadParameterBuilder {
         return this;
     }
 
-    /**
-     * Set the privacy strategy as secured with shamir secret sharing
-     * <br>
-     * <br>
-     * Privacy strategy defines how the data will be encrypted
-     * @param secretTotalPartCount the total count of parts of the secret
-     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
-     * @param secretParts the array of secret parts composed of the part index and the secret part
-     * @return the same instance of this builder
-     */
-    public UploadParameterBuilder withShamirSecretSharing(int secretTotalPartCount,
-                                                          int secretMinimumPartCountToBuild,
-                                                          SecretPart... secretParts) {
-        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
-                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
-        return this;
-    }
-
-    /**
-     * Set the privacy strategy as secured with shamir secret sharing
-     * <br>
-     * <br>
-     * Privacy strategy defines how the data will be encrypted
-     * @param secretTotalPartCount the total count of parts of the secret
-     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
-     * @param secretParts the list of secret parts composed of the part index and the secret part
-     * @return the same instance of this builder
-     */
-    public UploadParameterBuilder withShamirSecretSharing(int secretTotalPartCount,
-                                                          int secretMinimumPartCountToBuild,
-                                                          List<SecretPart> secretParts) {
-        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
-                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
-        return this;
-    }
-
-    /**
-     * Set the privacy strategy as secured with shamir secret sharing
-     * <br>
-     * <br>
-     * Privacy strategy defines how the data will be encrypted
-     * @param secretTotalPartCount the total count of parts of the secret
-     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
-     * @param secretParts the map containing part index and secret part pairs
-     * @return the same instance of this builder
-     */
-    public UploadParameterBuilder withShamirSecretSharing(int secretTotalPartCount,
-                                                          int secretMinimumPartCountToBuild,
-                                                          Map<Integer, byte[]> secretParts) {
-        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
-                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
-        return this;
-    }
+    // TODO - revisit shamir secret sharing implementation that works cross-sdk
+//    /**
+//     * Set the privacy strategy as secured with shamir secret sharing
+//     * <br>
+//     * <br>
+//     * Privacy strategy defines how the data will be encrypted
+//     * @param secretTotalPartCount the total count of parts of the secret
+//     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
+//     * @param secretParts the array of secret parts composed of the part index and the secret part
+//     * @return the same instance of this builder
+//     */
+//    public UploadParameterBuilder withShamirSecretSharing(int secretTotalPartCount,
+//                                                          int secretMinimumPartCountToBuild,
+//                                                          SecretPart... secretParts) {
+//        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+//                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
+//        return this;
+//    }
+//
+//    /**
+//     * Set the privacy strategy as secured with shamir secret sharing
+//     * <br>
+//     * <br>
+//     * Privacy strategy defines how the data will be encrypted
+//     * @param secretTotalPartCount the total count of parts of the secret
+//     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
+//     * @param secretParts the list of secret parts composed of the part index and the secret part
+//     * @return the same instance of this builder
+//     */
+//    public UploadParameterBuilder withShamirSecretSharing(int secretTotalPartCount,
+//                                                          int secretMinimumPartCountToBuild,
+//                                                          List<SecretPart> secretParts) {
+//        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+//                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
+//        return this;
+//    }
+//
+//    /**
+//     * Set the privacy strategy as secured with shamir secret sharing
+//     * <br>
+//     * <br>
+//     * Privacy strategy defines how the data will be encrypted
+//     * @param secretTotalPartCount the total count of parts of the secret
+//     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
+//     * @param secretParts the map containing part index and secret part pairs
+//     * @return the same instance of this builder
+//     */
+//    public UploadParameterBuilder withShamirSecretSharing(int secretTotalPartCount,
+//                                                          int secretMinimumPartCountToBuild,
+//                                                          Map<Integer, byte[]> secretParts) {
+//        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+//                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
+//        return this;
+//    }
 
     /**
      * Builds the UploadParameter
