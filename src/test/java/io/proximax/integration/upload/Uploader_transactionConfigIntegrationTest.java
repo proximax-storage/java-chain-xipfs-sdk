@@ -30,7 +30,7 @@ public class Uploader_transactionConfigIntegrationTest {
 
 	@Before
 	public void setUp() {
-		connectionConfig = ConnectionConfig.create(
+		connectionConfig = ConnectionConfig.createWithLocalIpfsConnection(
 				new BlockchainNetworkConnection(
 						IntegrationTestConfig.getBlockchainNetworkType(),
 						IntegrationTestConfig.getBlockchainApiHost(),

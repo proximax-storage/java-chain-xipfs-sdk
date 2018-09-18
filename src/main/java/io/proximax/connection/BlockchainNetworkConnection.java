@@ -12,11 +12,11 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  */
 public class BlockchainNetworkConnection {
 
-	private NetworkType networkType;
-	private String restApiUrl;
-	private String apiHost;
-	private int apiPort;
-	private HttpProtocol apiProtocol;
+	private final NetworkType networkType;
+	private final String restApiUrl;
+	private final String apiHost;
+	private final int apiPort;
+	private final HttpProtocol apiProtocol;
 
 	/**
 	 * Construct instance of this config

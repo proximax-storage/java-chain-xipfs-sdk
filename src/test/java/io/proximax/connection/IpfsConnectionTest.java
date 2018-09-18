@@ -21,7 +21,7 @@ public class IpfsConnectionTest {
     }
 
     @Test
-    @Ignore("this test connects to actual ipfs daemon - should be covered by integreation tests")
+    @Ignore("this test connects to actual ipfs daemon - should be covered already by integreation tests")
     public void shouldBuildIpfsConnection() {
         final IpfsConnection result = new IpfsConnection("127.0.0.1", 5001);
 

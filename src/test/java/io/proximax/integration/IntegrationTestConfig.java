@@ -45,6 +45,26 @@ public class IntegrationTestConfig {
         return HttpProtocol.fromString(PROPERTIES.getProperty("blockchain.api.protocol"));
     }
 
+    public static String getStorageNodeApiHost() {
+        return PROPERTIES.getProperty("storage.node.api.host");
+    }
+
+    public static int getStorageNodeApiPort() {
+        return Integer.parseInt(PROPERTIES.getProperty("storage.node.api.port"));
+    }
+
+    public static HttpProtocol getStorageNodeApiProtocol() {
+        return HttpProtocol.fromString(PROPERTIES.getProperty("storage.node.api.protocol"));
+    }
+
+    public static String getStorageNodeApiBearerToken() {
+        return PROPERTIES.getProperty("storage.node.api.bearer");
+    }
+
+    public static String getStorageNodeApiNemAddress() {
+        return PROPERTIES.getProperty("storage.node.api.nemaddress");
+    }
+
     public static String getPrivateKey1() {
         return PROPERTIES.getProperty("privatekey.1");
     }

@@ -1,8 +1,9 @@
-package io.proximax.integration.download;
+package io.proximax.integration.storageconnection;
 
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
+import io.proximax.connection.StorageConnection;
 import io.proximax.download.DownloadParameter;
 import io.proximax.download.DownloadResult;
 import io.proximax.download.Downloader;
@@ -19,43 +20,31 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class Downloader_download_digestIntegrationTest {
+public class Downloader_download_storageConnectionIntegrationTest {
 
 	private Downloader unitUnderTest;
 
 	@Before
 	public void setUp() {
-		unitUnderTest = new Downloader(ConnectionConfig.createWithLocalIpfsConnection(
+		unitUnderTest = new Downloader(ConnectionConfig.createWithStorageConnection(
 				new BlockchainNetworkConnection(
 						IntegrationTestConfig.getBlockchainNetworkType(),
 						IntegrationTestConfig.getBlockchainApiHost(),
 						IntegrationTestConfig.getBlockchainApiPort(),
 						IntegrationTestConfig.getBlockchainApiProtocol()),
-				new IpfsConnection(
-						IntegrationTestConfig.getIpfsApiHost(),
-						IntegrationTestConfig.getIpfsApiPort())));
+				new StorageConnection(
+						IntegrationTestConfig.getStorageNodeApiHost(),
+						IntegrationTestConfig.getStorageNodeApiPort(),
+						IntegrationTestConfig.getStorageNodeApiProtocol(),
+						IntegrationTestConfig.getStorageNodeApiBearerToken(),
+						IntegrationTestConfig.getStorageNodeApiNemAddress())));
 	}
 
 	@Test
-	public void shouldVerifyDownloadWithEnabledValidateDigest() throws IOException {
+	public void shouldDownloadFromStorageConnection() throws IOException {
 		final String transactionHash = TestDataRepository
-				.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithEnabledComputeDigest", "transactionHash");
+				.getData("Uploader_storageConnectionIntegrationTest.shouldUploadToStorageConnection", "transactionHash");
 		final DownloadParameter param = DownloadParameter.create(transactionHash)
-				.withValidateDigest(true)
-				.build();
-
-		final DownloadResult result = unitUnderTest.download(param);
-
-		assertThat(result, is(notNullValue()));
-		assertThat(new String(IOUtils.toByteArray(result.getData().getByteStream())), is(TEST_STRING));
-	}
-
-	@Test
-	public void shouldNotVerifyDownloadWithDisabledValidateDigest() throws IOException {
-		final String transactionHash = TestDataRepository
-				.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithDisabledComputeDigest", "transactionHash");
-		final DownloadParameter param = DownloadParameter.create(transactionHash)
-				.withValidateDigest(false)
 				.build();
 
 		final DownloadResult result = unitUnderTest.download(param);

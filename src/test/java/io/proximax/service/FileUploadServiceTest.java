@@ -15,11 +15,11 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.BDDMockito.given;
 
-public class IpfsUploadServiceTest {
+public class FileUploadServiceTest {
     private static final byte[] SAMPLE_DATA = "the quick brown fox jumps over the lazy dog".getBytes();
     private static final String SAMPLE_DATAHASH = "QmTxpkEitAczbM5S4uZG3zoDToSDNQZQUV4vxBsW9Q1Nhh";
 
-    private IpfsUploadService unitUnderTest;
+    private FileUploadService unitUnderTest;
 
     @Mock
     private IpfsClient mockIpfsClient;
@@ -28,7 +28,7 @@ public class IpfsUploadServiceTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        unitUnderTest = new IpfsUploadService(mockIpfsClient);
+        unitUnderTest = new FileUploadService(mockIpfsClient);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -42,7 +42,7 @@ public class IpfsUploadServiceTest {
         given(mockIpfsClient.addByteStream(byteArrayInputStream))
                 .willReturn(Observable.just(SAMPLE_DATAHASH));
 
-        final IpfsUploadResponse ipfsUploadResponse =
+        final FileUploadResponse ipfsUploadResponse =
                 unitUnderTest.uploadByteStream(byteArrayInputStream).blockingFirst();
 
         assertThat(ipfsUploadResponse, is(notNullValue()));
@@ -59,7 +59,7 @@ public class IpfsUploadServiceTest {
     public void shouldReturnDataHashOnUploadPath() {
         given(mockIpfsClient.addPath(TEST_PATH_FILE)).willReturn(Observable.just(SAMPLE_DATAHASH));
 
-        final IpfsUploadResponse ipfsUploadResponse =
+        final FileUploadResponse ipfsUploadResponse =
                 unitUnderTest.uploadPath(TEST_PATH_FILE).blockingFirst();
 
         assertThat(ipfsUploadResponse, is(notNullValue()));

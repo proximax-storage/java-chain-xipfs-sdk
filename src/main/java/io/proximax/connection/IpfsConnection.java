@@ -10,9 +10,9 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  */
 public class IpfsConnection {
 
-    private IPFS ipfs;
-    private String apiHost;
-    private int apiPort;
+    private final IPFS ipfs;
+    private final String apiHost;
+    private final int apiPort;
 
     /**
      * Construct instance of this config
