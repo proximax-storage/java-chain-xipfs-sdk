@@ -49,7 +49,6 @@ public class UrlResourceParameterData extends AbstractByteStreamParameterData {
      * Create instance by providing the url
      * @param url the URL resource to upload
      * @return the instance of this class
-     * @throws IOException read failures
      */
     public static UrlResourceParameterData create(URL url) {
         return create(url, null, null, null, null);
@@ -63,7 +62,6 @@ public class UrlResourceParameterData extends AbstractByteStreamParameterData {
      * @param contentType the content type attach on the upload
      * @param metadata a searchable key-pair metadata attach on the upload
      * @return the instance of this class
-     * @throws IOException read failures
      */
     public static UrlResourceParameterData create(URL url, String description, String name, String contentType, Map<String, String> metadata) {
         return new UrlResourceParameterData(url, description, name, contentType, metadata);
