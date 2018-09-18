@@ -85,7 +85,8 @@ public class ConnectionConfig {
     /**
      * Create connection config with storage connection
      *
-     * @param storageConnection the storage node connection
+     * @param blockchainNetworkConnection the blockchain network connection
+     * @param storageConnection           the storage node connection
      * @return instance of this connection config
      */
     public static ConnectionConfig createWithStorageConnection(BlockchainNetworkConnection blockchainNetworkConnection, StorageConnection storageConnection) {

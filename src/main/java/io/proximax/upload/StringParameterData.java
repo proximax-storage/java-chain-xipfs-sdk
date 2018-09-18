@@ -56,7 +56,6 @@ public class StringParameterData extends AbstractByteStreamParameterData {
      * Create instance by providing the string
      * @param string the string to upload
      * @return the instance of this class
-     * @throws UnsupportedEncodingException invalid encoding
      */
     public static StringParameterData create(String string) {
         return create(string, null,null, null, null, null);
@@ -71,7 +70,6 @@ public class StringParameterData extends AbstractByteStreamParameterData {
      * @param contentType the content type attach on the upload
      * @param metadata a searchable key-pair metadata attach on the upload
      * @return the instance of this class
-     * @throws UnsupportedEncodingException invalid encoding
      */
     public static StringParameterData create(String string, String encoding, String description, String name, String contentType, Map<String, String> metadata) {
         return new StringParameterData(string, encoding, description, name, contentType, metadata);
