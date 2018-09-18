@@ -394,44 +394,45 @@ public class UploadParameterTest {
         assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithPasswordPrivacyStrategy.class));
     }
 
-    @Test
-    public void shouldCreateWithSecuredWithShamirSecretSharingMapStrategy() {
-        final Map<Integer, byte[]> minimumSecretParts = new HashMap<>();
-        minimumSecretParts.put(1, TEST_SHAMIR_SECRET_SHARES.get(1));
-        minimumSecretParts.put(3, TEST_SHAMIR_SECRET_SHARES.get(3));
-        minimumSecretParts.put(5, TEST_SHAMIR_SECRET_SHARES.get(5));
-        final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .withShamirSecretSharing(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
-                        minimumSecretParts)
-                .build();
-
-        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
-    }
-
-    @Test
-    public void shouldCreateWithSecuredWithShamirSecretSharingArrayStrategy() throws UnsupportedEncodingException {
-        final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .withShamirSecretSharing(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
-                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5)))
-                .build();
-
-        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
-    }
-
-    @Test
-    public void shouldCreateWithSecuredWithShamirSecretSharingListStrategy() throws UnsupportedEncodingException {
-        final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .withShamirSecretSharing(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
-                        asList(
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
-                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5))))
-                .build();
-
-        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
-    }
+    // TODO - revisit shamir secret sharing implementation that works cross-sdk
+//    @Test
+//    public void shouldCreateWithSecuredWithShamirSecretSharingMapStrategy() {
+//        final Map<Integer, byte[]> minimumSecretParts = new HashMap<>();
+//        minimumSecretParts.put(1, TEST_SHAMIR_SECRET_SHARES.get(1));
+//        minimumSecretParts.put(3, TEST_SHAMIR_SECRET_SHARES.get(3));
+//        minimumSecretParts.put(5, TEST_SHAMIR_SECRET_SHARES.get(5));
+//        final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
+//                .withShamirSecretSharing(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
+//                        minimumSecretParts)
+//                .build();
+//
+//        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
+//    }
+//
+//    @Test
+//    public void shouldCreateWithSecuredWithShamirSecretSharingArrayStrategy() {
+//        final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
+//                .withShamirSecretSharing(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
+//                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
+//                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
+//                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5)))
+//                .build();
+//
+//        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
+//    }
+//
+//    @Test
+//    public void shouldCreateWithSecuredWithShamirSecretSharingListStrategy() {
+//        final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
+//                .withShamirSecretSharing(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
+//                        asList(
+//                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
+//                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
+//                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5))))
+//                .build();
+//
+//        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
+//    }
 
     @Test
     public void shouldCreateWithDefaults() {
@@ -457,7 +458,8 @@ public class UploadParameterTest {
                 .withPasswordPrivacy("passwordaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                 .withDetectContentType(true)
                 .withTransactionDeadline(5)
-                .withUseBlockchainSecureMessage(true)
+                // TODO - implement secure message
+//                .withUseBlockchainSecureMessage(true)
                 .build();
 
         assertThat(param, is(notNullValue()));
@@ -467,7 +469,8 @@ public class UploadParameterTest {
         assertThat(param.getPrivacyStrategy(), is(instanceOf(SecuredWithPasswordPrivacyStrategy.class)));
         assertThat(param.getDetectContentType(), is(true));
         assertThat(param.getTransactionDeadline(), is(5));
-        assertThat(param.getUseBlockchainSecureMessage(), is(true));
+        // TODO - implement secure message
+//        assertThat(param.getUseBlockchainSecureMessage(), is(true));
     }
 
     @Test(expected = IllegalArgumentException.class)

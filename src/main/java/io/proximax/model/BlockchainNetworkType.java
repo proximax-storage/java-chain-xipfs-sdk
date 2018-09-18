@@ -2,6 +2,8 @@ package io.proximax.model;
 
 import io.nem.sdk.model.blockchain.NetworkType;
 
+import java.util.stream.Stream;
+
 /**
  * Enumerates the blokchain network types
  */
@@ -34,5 +36,15 @@ public enum BlockchainNetworkType {
 
     BlockchainNetworkType(NetworkType networkType) {
         this.networkType = networkType;
+    }
+
+    /**
+     * Get the enum value from string
+     * @param networkType the network type
+     * @return the enum value
+     */
+
+    public static BlockchainNetworkType fromString(String networkType) {
+        return Stream.of(values()).filter(val -> val.name().equals(networkType)).findFirst().orElse(null);
     }
 }

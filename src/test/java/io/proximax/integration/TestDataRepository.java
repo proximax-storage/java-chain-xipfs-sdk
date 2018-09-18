@@ -1,4 +1,4 @@
-package io.proximax.testsupport;
+package io.proximax.integration;
 
 import io.proximax.upload.UploadResult;
 import io.proximax.utils.JsonUtils;
@@ -41,14 +41,14 @@ public class TestDataRepository {
     private static Map<String, String> loadTestDataMap() {
         try {
             if (TEST_DATA_JSON_FILE.exists()) {
-                final String testDataJson = FileUtils.readFileToString(new File("src//test/resources//test_data//test_data.json"));
+                final String testDataJson = FileUtils.readFileToString(TEST_DATA_JSON_FILE);
                 return JsonUtils.fromJson(testDataJson, Map.class);
             } else {
                 return new HashMap<>();
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return new HashMap<>();
         }
     }
 

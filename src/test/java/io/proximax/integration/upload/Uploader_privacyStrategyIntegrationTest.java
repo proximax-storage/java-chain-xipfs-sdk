@@ -3,21 +3,20 @@ package io.proximax.integration.upload;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
-import io.proximax.model.BlockchainNetworkType;
+import io.proximax.integration.IntegrationTestConfig;
 import io.proximax.model.PrivacyType;
-import io.proximax.testsupport.IntegrationTestProperties;
 import io.proximax.upload.UploadParameter;
 import io.proximax.upload.UploadResult;
 import io.proximax.upload.Uploader;
 import org.junit.Before;
 import org.junit.Test;
 
+import static io.proximax.integration.TestDataRepository.logAndSaveResult;
 import static io.proximax.testsupport.Constants.TEST_PASSWORD;
 import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_SHARES;
 import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_THRESHOLD;
 import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_TOTAL_SHARES;
 import static io.proximax.testsupport.Constants.TEST_TEXT_FILE;
-import static io.proximax.testsupport.TestDataRepository.logAndSaveResult;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -28,16 +27,21 @@ public class Uploader_privacyStrategyIntegrationTest {
 
     @Before
     public void setUp() {
-        unitUnderTest = new Uploader(ConnectionConfig.create(
-                new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
-                        IntegrationTestProperties.getBlockchainRestUrl()),
-                new IpfsConnection(IntegrationTestProperties.getIpfsMultiAddress())));
+        unitUnderTest = new Uploader(ConnectionConfig.createWithLocalIpfsConnection(
+                new BlockchainNetworkConnection(
+                        IntegrationTestConfig.getBlockchainNetworkType(),
+                        IntegrationTestConfig.getBlockchainApiHost(),
+                        IntegrationTestConfig.getBlockchainApiPort(),
+                        IntegrationTestConfig.getBlockchainApiProtocol()),
+                new IpfsConnection(
+                        IntegrationTestConfig.getIpfsApiHost(),
+                        IntegrationTestConfig.getIpfsApiPort())));
     }
 
     @Test
-    public void shouldUploadFileWithPlainPrivacyStrategy() throws Exception {
+    public void shouldUploadFileWithPlainPrivacyStrategy() {
         final UploadParameter param = UploadParameter
-                .createForFileUpload(TEST_TEXT_FILE, IntegrationTestProperties.getPrivateKey1())
+                .createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
                 .build();
 
         final UploadResult result = unitUnderTest.upload(param);
@@ -51,10 +55,10 @@ public class Uploader_privacyStrategyIntegrationTest {
     }
 
     @Test
-    public void shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy() throws Exception {
+    public void shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy() {
         final UploadParameter param = UploadParameter
-                .createForFileUpload(TEST_TEXT_FILE, IntegrationTestProperties.getPrivateKey1())
-                .withNemKeysPrivacy(IntegrationTestProperties.getPrivateKey1(), IntegrationTestProperties.getPublicKey2())
+                .createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
+                .withNemKeysPrivacy(IntegrationTestConfig.getPrivateKey1(), IntegrationTestConfig.getPublicKey2())
                 .build();
 
         final UploadResult result = unitUnderTest.upload(param);
@@ -68,9 +72,9 @@ public class Uploader_privacyStrategyIntegrationTest {
     }
 
     @Test
-    public void shouldUploadFileWithSecuredWithPasswordPrivacyStrategy() throws Exception {
+    public void shouldUploadFileWithSecuredWithPasswordPrivacyStrategy() {
         final UploadParameter param = UploadParameter
-                .createForFileUpload(TEST_TEXT_FILE, IntegrationTestProperties.getPrivateKey1())
+                .createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
                 .withPasswordPrivacy(TEST_PASSWORD)
                 .build();
 
@@ -84,24 +88,25 @@ public class Uploader_privacyStrategyIntegrationTest {
         logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadFileWithSecuredWithPasswordPrivacyStrategy");
     }
 
-    @Test
-    public void shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy() throws Exception {
-        final UploadParameter param = UploadParameter
-                .createForFileUpload(TEST_TEXT_FILE, IntegrationTestProperties.getPrivateKey1())
-                .withShamirSecretSharing(
-                        TEST_SHAMIR_SECRET_TOTAL_SHARES,
-                        TEST_SHAMIR_SECRET_THRESHOLD,
-                        TEST_SHAMIR_SECRET_SHARES)
-                .build();
-
-        final UploadResult result = unitUnderTest.upload(param);
-
-        assertThat(result, is(notNullValue()));
-        assertThat(result.getTransactionHash(), is(notNullValue()));
-        assertThat(result.getPrivacyType(), is(PrivacyType.SHAMIR.getValue()));
-        assertThat(result.getData().getDataHash(), is(notNullValue()));
-
-        logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy");
-    }
+    // TODO - revisit shamir secret sharing implementation that works cross-sdk
+//    @Test
+//    public void shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy() {
+//        final UploadParameter param = UploadParameter
+//                .createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
+//                .withShamirSecretSharing(
+//                        TEST_SHAMIR_SECRET_TOTAL_SHARES,
+//                        TEST_SHAMIR_SECRET_THRESHOLD,
+//                        TEST_SHAMIR_SECRET_SHARES)
+//                .build();
+//
+//        final UploadResult result = unitUnderTest.upload(param);
+//
+//        assertThat(result, is(notNullValue()));
+//        assertThat(result.getTransactionHash(), is(notNullValue()));
+//        assertThat(result.getPrivacyType(), is(PrivacyType.SHAMIR.getValue()));
+//        assertThat(result.getData().getDataHash(), is(notNullValue()));
+//
+//        logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy");
+//    }
 
 }

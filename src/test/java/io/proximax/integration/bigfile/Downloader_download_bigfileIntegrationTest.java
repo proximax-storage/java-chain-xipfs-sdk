@@ -3,12 +3,12 @@ package io.proximax.integration.bigfile;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
+import io.proximax.connection.StorageConnection;
 import io.proximax.download.DownloadParameter;
 import io.proximax.download.DownloadResult;
 import io.proximax.download.Downloader;
-import io.proximax.model.BlockchainNetworkType;
-import io.proximax.testsupport.IntegrationTestProperties;
-import io.proximax.testsupport.TestDataRepository;
+import io.proximax.integration.IntegrationTestConfig;
+import io.proximax.integration.TestDataRepository;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,11 +28,33 @@ public class Downloader_download_bigfileIntegrationTest {
 
 	@Before
 	public void setUp() {
-		unitUnderTest = new Downloader(ConnectionConfig.create(
-				new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST,
-						IntegrationTestProperties.getBlockchainRestUrl()),
-				new IpfsConnection(IntegrationTestProperties.getIpfsMultiAddress())));
+		unitUnderTest = new Downloader(ConnectionConfig.createWithLocalIpfsConnection(
+				new BlockchainNetworkConnection(
+						IntegrationTestConfig.getBlockchainNetworkType(),
+						IntegrationTestConfig.getBlockchainApiHost(),
+						IntegrationTestConfig.getBlockchainApiPort(),
+						IntegrationTestConfig.getBlockchainApiProtocol()),
+				new IpfsConnection(
+						IntegrationTestConfig.getIpfsApiHost(),
+						IntegrationTestConfig.getIpfsApiPort())));
 	}
+
+	// Switch to storage node
+//	@Before
+//	public void setUp() {
+//		unitUnderTest = new Downloader(ConnectionConfig.createWithStorageConnection(
+//				new BlockchainNetworkConnection(
+//						IntegrationTestConfig.getBlockchainNetworkType(),
+//						IntegrationTestConfig.getBlockchainApiHost(),
+//						IntegrationTestConfig.getBlockchainApiPort(),
+//						IntegrationTestConfig.getBlockchainApiProtocol()),
+//				new StorageConnection(
+//						IntegrationTestConfig.getStorageNodeApiHost(),
+//						IntegrationTestConfig.getStorageNodeApiPort(),
+//						IntegrationTestConfig.getStorageNodeApiProtocol(),
+//						IntegrationTestConfig.getStorageNodeApiBearerToken(),
+//						IntegrationTestConfig.getStorageNodeApiNemAddress())));
+//	}
 
 	@Test
 	public void shouldDownloadBigFileByTransactionHash() throws IOException {

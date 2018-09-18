@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 
-import static io.proximax.model.Constants.RESERVED_CONTENT_TYPES;
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
@@ -17,7 +16,7 @@ public class UrlResourceParameterData extends AbstractByteStreamParameterData {
 
     private final URL url;
 
-    private UrlResourceParameterData(URL url, String description, String name, String contentType, Map<String, String> metadata) throws IOException {
+    private UrlResourceParameterData(URL url, String description, String name, String contentType, Map<String, String> metadata) {
         super(description, name, contentType, metadata);
 
         checkParameter(url != null, "url is required");
@@ -50,9 +49,8 @@ public class UrlResourceParameterData extends AbstractByteStreamParameterData {
      * Create instance by providing the url
      * @param url the URL resource to upload
      * @return the instance of this class
-     * @throws IOException read failures
      */
-    public static UrlResourceParameterData create(URL url) throws IOException {
+    public static UrlResourceParameterData create(URL url) {
         return create(url, null, null, null, null);
     }
 
@@ -64,9 +62,8 @@ public class UrlResourceParameterData extends AbstractByteStreamParameterData {
      * @param contentType the content type attach on the upload
      * @param metadata a searchable key-pair metadata attach on the upload
      * @return the instance of this class
-     * @throws IOException read failures
      */
-    public static UrlResourceParameterData create(URL url, String description, String name, String contentType, Map<String, String> metadata) throws IOException {
+    public static UrlResourceParameterData create(URL url, String description, String name, String contentType, Map<String, String> metadata) {
         return new UrlResourceParameterData(url, description, name, contentType, metadata);
     }
 }

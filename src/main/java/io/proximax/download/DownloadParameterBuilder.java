@@ -5,11 +5,6 @@ import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart;
-
-import java.util.List;
-import java.util.Map;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
@@ -109,59 +104,60 @@ public class DownloadParameterBuilder {
         return this;
     }
 
-    /**
-     * Set the privacy strategy as secured with shamir secret sharing
-     * <br>
-     * <br>
-     * Privacy strategy defines how the data will be decrypted
-     * @param secretTotalPartCount the total count of parts of the secret
-     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
-     * @param secretParts the array of secret parts composed of the part index and the secret part
-     * @return the same instance of this builder
-     */
-    public DownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
-                                                                   int secretMinimumPartCountToBuild,
-                                                                   SecretPart... secretParts) {
-        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
-                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
-        return this;
-    }
-
-    /**
-     * Set the privacy strategy as secured with shamir secret sharing
-     * <br>
-     * <br>
-     * Privacy strategy defines how the data will be decrypted
-     * @param secretTotalPartCount the total count of parts of the secret
-     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
-     * @param secretParts the list of secret parts composed of the part index and the secret part
-     * @return the same instance of this builder
-     */
-    public DownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
-                                                                   int secretMinimumPartCountToBuild,
-                                                                   List<SecretPart> secretParts) {
-        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
-                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
-        return this;
-    }
-
-    /**
-     * Set the privacy strategy as secured with shamir secret sharing
-     * <br>
-     * <br>
-     * Privacy strategy defines how the data will be decrypted
-     * @param secretTotalPartCount the total count of parts of the secret
-     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
-     * @param secretParts the map containing part index and secret part pairs
-     * @return the same instance of this builder
-     */
-    public DownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
-                                                                   int secretMinimumPartCountToBuild,
-                                                                   Map<Integer, byte[]> secretParts) {
-        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
-                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
-        return this;
-    }
+    // TODO - revisit shamir secret sharing implementation that works cross-sdk
+//    /**
+//     * Set the privacy strategy as secured with shamir secret sharing
+//     * <br>
+//     * <br>
+//     * Privacy strategy defines how the data will be decrypted
+//     * @param secretTotalPartCount the total count of parts of the secret
+//     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
+//     * @param secretParts the array of secret parts composed of the part index and the secret part
+//     * @return the same instance of this builder
+//     */
+//    public DownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
+//                                                                   int secretMinimumPartCountToBuild,
+//                                                                   SecretPart... secretParts) {
+//        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+//                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
+//        return this;
+//    }
+//
+//    /**
+//     * Set the privacy strategy as secured with shamir secret sharing
+//     * <br>
+//     * <br>
+//     * Privacy strategy defines how the data will be decrypted
+//     * @param secretTotalPartCount the total count of parts of the secret
+//     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
+//     * @param secretParts the list of secret parts composed of the part index and the secret part
+//     * @return the same instance of this builder
+//     */
+//    public DownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
+//                                                                   int secretMinimumPartCountToBuild,
+//                                                                   List<SecretPart> secretParts) {
+//        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+//                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
+//        return this;
+//    }
+//
+//    /**
+//     * Set the privacy strategy as secured with shamir secret sharing
+//     * <br>
+//     * <br>
+//     * Privacy strategy defines how the data will be decrypted
+//     * @param secretTotalPartCount the total count of parts of the secret
+//     * @param secretMinimumPartCountToBuild the minimum count of parts of the secret
+//     * @param secretParts the map containing part index and secret part pairs
+//     * @return the same instance of this builder
+//     */
+//    public DownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
+//                                                                   int secretMinimumPartCountToBuild,
+//                                                                   Map<Integer, byte[]> secretParts) {
+//        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+//                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
+//        return this;
+//    }
 
     /**
      * Builds the DownloadParameter
