@@ -2,7 +2,7 @@ package io.proximax.service;
 
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.mosaic.XEM;
+import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.Message;
 import io.nem.sdk.model.transaction.SignedTransaction;
@@ -36,6 +36,7 @@ public class BlockchainTransactionService {
 
     /**
      * Construct service class
+     *
      * @param blockchainNetworkConnection the config class to connect to blockchain network
      * @throws MalformedURLException when the blockchain endpoint URL fails
      */
@@ -56,6 +57,7 @@ public class BlockchainTransactionService {
 
     /**
      * Retrieves a transfer transaction
+     *
      * @param transactionHash the transfer transaction hash
      * @return the transfer transaction
      */
@@ -75,11 +77,12 @@ public class BlockchainTransactionService {
 
     /**
      * Create and announce a blockchain transaction
-     * @param messagePayload the message payload
-     * @param signerPrivateKey the signer's private key for the transaction
-     * @param recipientPublicKey the recipient's public key for the transaction (if different from signer)
-     * @param recipientAddress the recipient's address for the transaction (if different from signer)
-     * @param transactionDeadline the transaction deadline in hours
+     *
+     * @param messagePayload             the message payload
+     * @param signerPrivateKey           the signer's private key for the transaction
+     * @param recipientPublicKey         the recipient's public key for the transaction (if different from signer)
+     * @param recipientAddress           the recipient's address for the transaction (if different from signer)
+     * @param transactionDeadline        the transaction deadline in hours
      * @param useBlockchainSecureMessage the flag to indicate if secure message will be created
      * @return the transaction hash
      */
@@ -91,16 +94,13 @@ public class BlockchainTransactionService {
 
         final Message message = blockchainMessageFactory.createMessage(messagePayload, signerPrivateKey,
                 recipientPublicKey, recipientAddress, useBlockchainSecureMessage);
-        final Address recipient =  getRecipient(signerPrivateKey, recipientPublicKey, recipientAddress);
+        final Address recipient = getRecipient(signerPrivateKey, recipientPublicKey, recipientAddress);
         final TransferTransaction transaction = createTransaction(recipient, transactionDeadline, message);
         final SignedTransaction signedTransaction = nemUtils.signTransaction(signerPrivateKey, transaction);
 
-        return transactionClient.announce(signedTransaction)
-                .map(response -> {
-                    transactionClient.waitForAnnouncedTransactionToBeUnconfirmed(
-                            nemUtils.getAddressFromPrivateKey(signerPrivateKey), signedTransaction.getHash());
-                    return signedTransaction.getHash();
-                });
+        transactionClient.announce(signedTransaction, nemUtils.getAddressFromPrivateKey(signerPrivateKey));
+
+        return Observable.just(signedTransaction.getHash());
     }
 
     private Address getRecipient(String signerPrivateKey, String recipientPublicKey, String recipientAddress) {
@@ -118,7 +118,7 @@ public class BlockchainTransactionService {
         return TransferTransaction.create(
                 Deadline.create(transactionDeadline, ChronoUnit.HOURS),
                 recipientAddress,
-                Collections.singletonList(new Mosaic(XEM.createRelative(BigInteger.valueOf(1)).getId(), BigInteger.valueOf(1))),
+                Collections.singletonList(new Mosaic(new MosaicId("prx:xpx"), BigInteger.valueOf(1))),
                 message,
                 blockchainNetworkConnection.getNetworkType());
     }

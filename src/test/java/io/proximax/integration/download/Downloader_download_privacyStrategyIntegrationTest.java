@@ -31,73 +31,73 @@ import static org.hamcrest.core.IsNull.notNullValue;
 
 public class Downloader_download_privacyStrategyIntegrationTest {
 
-	private Downloader unitUnderTest;
+    private Downloader unitUnderTest;
 
-	@Before
-	public void setUp() {
-		unitUnderTest = new Downloader(ConnectionConfig.createWithLocalIpfsConnection(
-				new BlockchainNetworkConnection(
-						IntegrationTestConfig.getBlockchainNetworkType(),
-						IntegrationTestConfig.getBlockchainApiHost(),
-						IntegrationTestConfig.getBlockchainApiPort(),
-						IntegrationTestConfig.getBlockchainApiProtocol()),
-				new IpfsConnection(
-						IntegrationTestConfig.getIpfsApiHost(),
-						IntegrationTestConfig.getIpfsApiPort())));
-	}
+    @Before
+    public void setUp() {
+        unitUnderTest = new Downloader(ConnectionConfig.createWithLocalIpfsConnection(
+                new BlockchainNetworkConnection(
+                        IntegrationTestConfig.getBlockchainNetworkType(),
+                        IntegrationTestConfig.getBlockchainApiHost(),
+                        IntegrationTestConfig.getBlockchainApiPort(),
+                        IntegrationTestConfig.getBlockchainApiProtocol()),
+                new IpfsConnection(
+                        IntegrationTestConfig.getIpfsApiHost(),
+                        IntegrationTestConfig.getIpfsApiPort())));
+    }
 
-	@Test
-	public void shouldDownloadWithPlainPrivacyStrategy() throws IOException {
-		final String transactionHash = TestDataRepository.getData(
-				"Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithPlainPrivacyStrategy",
-				"transactionHash");
-		final DownloadParameter param = DownloadParameter.create(transactionHash)
-				.withPlainPrivacy()
-				.build();
+    @Test
+    public void shouldDownloadWithPlainPrivacyStrategy() throws IOException {
+        final String transactionHash = TestDataRepository.getData(
+                "Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithPlainPrivacyStrategy",
+                "transactionHash");
+        final DownloadParameter param = DownloadParameter.create(transactionHash)
+                .withPlainPrivacy()
+                .build();
 
-		final DownloadResult result = unitUnderTest.download(param);
+        final DownloadResult result = unitUnderTest.download(param);
 
-		assertThat(result, is(notNullValue()));
-		assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
-		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result.getData().getByteStream())),
-				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(TEST_TEXT_FILE))))));
-	}
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getPrivacyType(), is(PrivacyType.PLAIN.getValue()));
+        assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result.getData().getByteStream())),
+                is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(TEST_TEXT_FILE))))));
+    }
 
-	@Test
-	public void shouldDownloadWithSecuredWithNemKeysPrivacyStrategy() throws IOException {
-		final String transactionHash = TestDataRepository.getData(
-				"Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy",
-				"transactionHash");
-		final DownloadParameter param = DownloadParameter.create(transactionHash)
-				.withNemKeysPrivacy(TEST_PRIVATE_KEY_1, TEST_PUBLIC_KEY_2)
-				.build();
+    @Test
+    public void shouldDownloadWithSecuredWithNemKeysPrivacyStrategy() throws IOException {
+        final String transactionHash = TestDataRepository.getData(
+                "Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy",
+                "transactionHash");
+        final DownloadParameter param = DownloadParameter.create(transactionHash)
+                .withNemKeysPrivacy(IntegrationTestConfig.getPrivateKey1(), IntegrationTestConfig.getPublicKey2())
+                .build();
 
-		final DownloadResult result = unitUnderTest.download(param);
+        final DownloadResult result = unitUnderTest.download(param);
 
-		assertThat(result, is(notNullValue()));
-		assertThat(result.getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
-		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result.getData().getByteStream())),
-				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(TEST_TEXT_FILE))))));
-	}
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getPrivacyType(), is(PrivacyType.NEMKEYS.getValue()));
+        assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result.getData().getByteStream())),
+                is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(TEST_TEXT_FILE))))));
+    }
 
-	@Test
-	public void shouldDownloadWithSecuredWithPasswordPrivacyStrategy() throws IOException {
-		final String transactionHash = TestDataRepository.getData(
-				"Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithPasswordPrivacyStrategy",
-				"transactionHash");
-		final DownloadParameter param = DownloadParameter.create(transactionHash)
-				.withPasswordPrivacy(TEST_PASSWORD)
-				.build();
+    @Test
+    public void shouldDownloadWithSecuredWithPasswordPrivacyStrategy() throws IOException {
+        final String transactionHash = TestDataRepository.getData(
+                "Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithPasswordPrivacyStrategy",
+                "transactionHash");
+        final DownloadParameter param = DownloadParameter.create(transactionHash)
+                .withPasswordPrivacy(TEST_PASSWORD)
+                .build();
 
-		final DownloadResult result = unitUnderTest.download(param);
+        final DownloadResult result = unitUnderTest.download(param);
 
-		assertThat(result, is(notNullValue()));
-		assertThat(result.getPrivacyType(), is(PrivacyType.PASSWORD.getValue()));
-		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result.getData().getByteStream())),
-				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(TEST_TEXT_FILE))))));
-	}
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getPrivacyType(), is(PrivacyType.PASSWORD.getValue()));
+        assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result.getData().getByteStream())),
+                is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(TEST_TEXT_FILE))))));
+    }
 
-	// TODO - revisit shamir secret sharing implementation that works cross-sdk
+    // TODO - revisit shamir secret sharing implementation that works cross-sdk
 //	@Test
 //	public void shouldDownloadWithSecuredWithShamirSecretSharingPrivacyStrategy() throws IOException {
 //		final String transactionHash = TestDataRepository.getData(

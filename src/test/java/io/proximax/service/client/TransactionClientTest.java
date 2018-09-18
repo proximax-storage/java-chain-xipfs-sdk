@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -53,40 +52,65 @@ public class TransactionClientTest {
         MockitoAnnotations.initMocks(this);
 
         unitUnderTest = new TransactionClient(mockTransactionHttp, mockListener);
+
+        given(mockSignedTransaction.getHash()).willReturn(SAMPLE_TRANSACTION_HASH);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failOnAnnounceWhenNullSignedTransaction() {
-        unitUnderTest.announce(null);
+        unitUnderTest.announce(null, SAMPLE_ADDRESS);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void shouldBubbleUpExceptionOnAnnounce() throws IOException {
-        given(mockTransactionHttp.announce(any())).willThrow(new RuntimeException());
-
-        unitUnderTest.announce(mockSignedTransaction).blockingFirst();
+    @Test(expected = IllegalArgumentException.class)
+    public void failOnAnnounceWhenNullAddress() {
+        unitUnderTest.announce(mockSignedTransaction, null);
     }
 
     @Test
-    public void shouldReturnTransactionAnnounceResponseOnAnnounce() {
+    public void shouldReturnSuccessTransactionStatusOnAnnounce() {
         given(mockTransactionHttp.announce(any())).willReturn(Observable.just(mockTransactionAnnounceResponse));
+        given(mockListener.open()).willReturn(completableFuture(null));
+        given(mockListener.status(SAMPLE_ADDRESS)).willReturn(Observable.empty());
+        given(mockListener.unconfirmedAdded(SAMPLE_ADDRESS)).willReturn(Observable.just(mockTransaction));
+        given(mockTransaction.getTransactionInfo()).willReturn(Optional.of(
+                TransactionInfo.create(BigInteger.ONE, SAMPLE_TRANSACTION_HASH, "blahblah")));
 
-        final TransactionAnnounceResponse transactionAnnounceResponse =
-                unitUnderTest.announce(mockSignedTransaction).blockingFirst();
+        final String transactionStatus = unitUnderTest.announce(mockSignedTransaction, SAMPLE_ADDRESS);
 
-        assertThat(transactionAnnounceResponse, is(mockTransactionAnnounceResponse));
+        assertThat(transactionStatus, is(STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION));
+    }
+
+    @Test(expected = AnnounceBlockchainTransactionFailureException.class)
+    public void failOnWaitForAnnouncedTransactionToBeUnconfirmedWhenHasTransactionError() throws Exception {
+        given(mockTransactionHttp.announce(any())).willReturn(Observable.just(mockTransactionAnnounceResponse));
+        given(mockListener.open()).willReturn(completableFuture(null));
+        given(mockListener.status(SAMPLE_ADDRESS)).willReturn(Observable.just(
+                new TransactionStatusError(SAMPLE_TRANSACTION_HASH, "Failure_Core_Insufficient_Balance", null)));
+        given(mockListener.unconfirmedAdded(SAMPLE_ADDRESS)).willReturn(Observable.just(mockTransaction));
+        given(mockTransaction.getTransactionInfo()).willReturn(Optional.of(
+                TransactionInfo.create(BigInteger.ONE, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "blahblah")));
+
+        unitUnderTest.announce(mockSignedTransaction, SAMPLE_ADDRESS);
+    }
+
+    @Test
+    public void shouldIgnoreFailuresFromOtherTransactions() throws Exception {
+        given(mockTransactionHttp.announce(any())).willReturn(Observable.just(mockTransactionAnnounceResponse));
+        given(mockListener.open()).willReturn(completableFuture(null));
+        given(mockListener.status(SAMPLE_ADDRESS)).willReturn(Observable.just(
+                new TransactionStatusError("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "Failure_Core_Insufficient_Balance", null)));
+        given(mockListener.unconfirmedAdded(SAMPLE_ADDRESS)).willReturn(Observable.just(mockTransaction));
+        given(mockTransaction.getTransactionInfo()).willReturn(Optional.of(
+                TransactionInfo.create(BigInteger.ONE, SAMPLE_TRANSACTION_HASH, "blahblah")));
+
+        final String transactionStatus = unitUnderTest.announce(mockSignedTransaction, SAMPLE_ADDRESS);
+
+        assertThat(transactionStatus, is(STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failOnGetTransactionWhenNullTransactionHash() {
         unitUnderTest.getTransaction(null);
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void shouldBubbleUpExceptionOnGetTransaction() throws IOException {
-        given(mockTransactionHttp.getTransaction(SAMPLE_TRANSACTION_HASH)).willThrow(new RuntimeException());
-
-        unitUnderTest.getTransaction(SAMPLE_TRANSACTION_HASH).blockingFirst();
     }
 
     @Test
@@ -98,58 +122,10 @@ public class TransactionClientTest {
         assertThat(transaction, is(mockTransaction));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void failOnWaitForAnnouncedTransactionToBeUnconfirmedWhenNullAddress() throws Exception {
-        unitUnderTest.waitForAnnouncedTransactionToBeUnconfirmed(null, SAMPLE_TRANSACTION_HASH);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failOnWaitForAnnouncedTransactionToBeUnconfirmedWhenNullTransactionHash() throws Exception {
-        unitUnderTest.waitForAnnouncedTransactionToBeUnconfirmed(SAMPLE_ADDRESS, null);
-    }
-
-    @Test
-    public void shouldReturnStatusOnWaitForAnnouncedTransactionToBeUnconfirmed() throws Exception {
-        final CompletableFuture<Void> completableFuture = new CompletableFuture<>();
-        completableFuture.complete(null);
-        given(mockListener.open()).willReturn(completableFuture);
-        given(mockListener.status(SAMPLE_ADDRESS)).willReturn(Observable.empty());
-        given(mockListener.unconfirmedAdded(SAMPLE_ADDRESS)).willReturn(Observable.just(mockTransaction));
-        given(mockTransaction.getTransactionInfo()).willReturn(Optional.of(
-                TransactionInfo.create(BigInteger.ONE, SAMPLE_TRANSACTION_HASH, "blahblah")));
-
-        final String status = unitUnderTest.waitForAnnouncedTransactionToBeUnconfirmed(SAMPLE_ADDRESS, SAMPLE_TRANSACTION_HASH);
-
-        assertThat(status, is(STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION));
-    }
-
-    @Test(expected = AnnounceBlockchainTransactionFailureException.class)
-    public void failOnWaitForAnnouncedTransactionToBeUnconfirmedWhenHasTransactionError() throws Exception {
-        final CompletableFuture<Void> completableFuture = new CompletableFuture<>();
-        completableFuture.complete(null);
-        given(mockListener.open()).willReturn(completableFuture);
-        given(mockListener.status(SAMPLE_ADDRESS)).willReturn(Observable.just(
-                new TransactionStatusError(SAMPLE_TRANSACTION_HASH, "Failure_Core_Insufficient_Balance", null)));
-        given(mockListener.unconfirmedAdded(SAMPLE_ADDRESS)).willReturn(Observable.just(mockTransaction));
-        given(mockTransaction.getTransactionInfo()).willReturn(Optional.of(
-                TransactionInfo.create(BigInteger.ONE, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "blahblah")));
-        unitUnderTest.waitForAnnouncedTransactionToBeUnconfirmed(SAMPLE_ADDRESS, SAMPLE_TRANSACTION_HASH);
-    }
-
-    @Test
-    public void shouldIgnoreFailuresFromOtherTransactions() throws Exception {
-        final CompletableFuture<Void> completableFuture = new CompletableFuture<>();
-        completableFuture.complete(null);
-        given(mockListener.open()).willReturn(completableFuture);
-        given(mockListener.status(SAMPLE_ADDRESS)).willReturn(Observable.just(
-                new TransactionStatusError("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "Failure_Core_Insufficient_Balance", null)));
-        given(mockListener.unconfirmedAdded(SAMPLE_ADDRESS)).willReturn(Observable.just(mockTransaction));
-        given(mockTransaction.getTransactionInfo()).willReturn(Optional.of(
-                TransactionInfo.create(BigInteger.ONE, SAMPLE_TRANSACTION_HASH, "blahblah")));
-
-        final String status = unitUnderTest.waitForAnnouncedTransactionToBeUnconfirmed(SAMPLE_ADDRESS, SAMPLE_TRANSACTION_HASH);
-
-        assertThat(status, is(STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION));
+    private <T> CompletableFuture<T> completableFuture(T val) {
+        final CompletableFuture<T> completableFuture = new CompletableFuture<>();
+        completableFuture.complete(val);
+        return completableFuture;
     }
 
 }
