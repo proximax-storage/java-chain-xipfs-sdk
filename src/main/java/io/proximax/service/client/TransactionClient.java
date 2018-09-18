@@ -5,13 +5,14 @@ import io.nem.sdk.infrastructure.TransactionHttp;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import io.nem.sdk.model.transaction.TransactionInfo;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.exceptions.AnnounceBlockchainTransactionFailureException;
 import io.reactivex.Observable;
 
 import java.net.MalformedURLException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
@@ -21,8 +22,8 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * <br>
  * This class delegates to blockchain the following:
  * <ul>
- *     <li>retrieval of transaction given a transaction hash</li>
- *     <li>asynchronously announce a signed transaction</li>
+ * <li>retrieval of transaction given a transaction hash</li>
+ * <li>asynchronously announce a signed transaction</li>
  * </ul>
  */
 public class TransactionClient {
@@ -34,6 +35,7 @@ public class TransactionClient {
 
     /**
      * Construct the class with BlockchainNetworkConnection
+     *
      * @param blockchainNetworkConnection the blockchain network connection
      * @throws MalformedURLException when the blockchain endpoint url is not valid
      */
@@ -52,60 +54,37 @@ public class TransactionClient {
     }
 
     /**
-     * Asynchronously announce a signed transaction to blockchain
+     * Synchronously announce a signed transaction to blockchain
      * <br>
      * <br>
      * This method is equivalent to calling `PUT /transaction`
+     *
      * @param signedTransaction the signed transaction
-     * @return the transaction announce response
+     * @return the transaction announce result
      */
-    public Observable<TransactionAnnounceResponse> announce(SignedTransaction signedTransaction) {
+    public synchronized String announce(SignedTransaction signedTransaction, Address address) {
         checkParameter(signedTransaction != null, "signedTransaction is required");
-
-        return transactionHttp.announce(signedTransaction);
-    }
-
-    /**
-     * Retrieves a transaction from blockchain
-     * <br>
-     * <br>
-     * This method is equivalent to calling `GET /transaction/{transactionHash}`
-     * @param transactionHash the signed transaction
-     * @return the transaction announce response
-     */
-    public Observable<Transaction> getTransaction(String transactionHash) {
-        checkParameter(transactionHash != null, "transactionHash is required");
-
-        return transactionHttp.getTransaction(transactionHash);
-    }
-
-    /**
-     * Wait for announced transaction to become 'unconfirmed' status
-     * @param address the address involved in the transaction
-     * @param transactionHash the transaction to wait for
-     * @return the status
-     * @throws MalformedURLException when blockchain network endpoint URL is not correct
-     */
-    public synchronized String waitForAnnouncedTransactionToBeUnconfirmed(Address address, String transactionHash) throws MalformedURLException {
         checkParameter(address != null, "address is required");
-        checkParameter(transactionHash != null, "transactionHash is required");
 
         final Listener listener = getListener();
         try {
-            listener.open().get();
+            listener.open().get(10, TimeUnit.SECONDS);
             final Observable<String> failedTransactionStatusOb =
-                    getAddedFailedTransactionStatus(address, transactionHash, listener);
+                    getAddedFailedTransactionStatus(address, signedTransaction.getHash(), listener);
             final Observable<String> unconfirmedTransactionStatusOb =
-                    getAddedUnconfirmedTransactionStatus(address, transactionHash, listener);
+                    getAddedUnconfirmedTransactionStatus(address, signedTransaction.getHash(), listener);
 
-            return failedTransactionStatusOb.mergeWith(unconfirmedTransactionStatusOb)
+            final Future<String> statusFuture = failedTransactionStatusOb.mergeWith(unconfirmedTransactionStatusOb)
                     .map(status -> {
                         if (status.equals(STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION))
                             return status;
                         else
                             throw new AnnounceBlockchainTransactionFailureException(
                                     String.format("Failed to announce transaction with status %s", status));
-                    }).blockingFirst();
+                    }).take(1).toFuture();
+
+            transactionHttp.announce(signedTransaction).blockingFirst();
+            return statusFuture.get(30, TimeUnit.SECONDS);
         } catch (AnnounceBlockchainTransactionFailureException ex) {
             throw ex;
         } catch (Exception ex) {
@@ -115,8 +94,27 @@ public class TransactionClient {
         }
     }
 
-    private Listener getListener() throws MalformedURLException {
-        return listener != null ? listener : new Listener(blockchainNetworkRestApiUrl);
+    /**
+     * Retrieves a transaction from blockchain
+     * <br>
+     * <br>
+     * This method is equivalent to calling `GET /transaction/{transactionHash}`
+     *
+     * @param transactionHash the signed transaction
+     * @return the transaction announce response
+     */
+    public Observable<Transaction> getTransaction(String transactionHash) {
+        checkParameter(transactionHash != null, "transactionHash is required");
+
+        return transactionHttp.getTransaction(transactionHash);
+    }
+
+    private Listener getListener() {
+        try {
+            return listener != null ? listener : new Listener(blockchainNetworkRestApiUrl);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Unexpected malformed URL", e);
+        }
     }
 
     private Observable<String> getAddedUnconfirmedTransactionStatus(Address address, String transactionHash, Listener listener) {
