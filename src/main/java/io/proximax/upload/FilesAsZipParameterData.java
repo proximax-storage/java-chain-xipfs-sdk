@@ -72,7 +72,6 @@ public class FilesAsZipParameterData extends AbstractByteStreamParameterData {
      * Create instance by providing the list of files
      * @param files the list of files to upload as zip
      * @return the instance of this class
-     * @throws IOException file read failures
      */
     public static FilesAsZipParameterData create(List<File> files) {
         return create(files, null, null, null);
@@ -85,7 +84,6 @@ public class FilesAsZipParameterData extends AbstractByteStreamParameterData {
      * @param name a searchable name attach on the upload
      * @param metadata a searchable key-pair metadata attach on the upload
      * @return the instance of this class
-     * @throws IOException file read failures
      */
     public static FilesAsZipParameterData create(List<File> files, String description, String name, Map<String, String> metadata) {
         return new FilesAsZipParameterData(files, description, name, metadata);

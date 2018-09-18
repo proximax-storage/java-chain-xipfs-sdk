@@ -43,7 +43,7 @@ public class PasswordUtils {
      * Generate password with the specified length and using alphanumeric characters and/or special characters
      * @param length password length
      * @param allowSpecialCharacters whether to include special characters on generated password
-     * @return
+     * @return the generated password
      */
     public static String generatePassword(int length, boolean allowSpecialCharacters) {
         checkParameter(length >= MINIMUM_PASSWORD_LENGTH,
