@@ -3,6 +3,7 @@ package io.proximax.integration.bigfile;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
+import io.proximax.connection.StorageConnection;
 import io.proximax.download.DownloadParameter;
 import io.proximax.download.DownloadResult;
 import io.proximax.download.Downloader;
@@ -37,6 +38,23 @@ public class Downloader_download_bigfileIntegrationTest {
 						IntegrationTestConfig.getIpfsApiHost(),
 						IntegrationTestConfig.getIpfsApiPort())));
 	}
+
+	// Switch to storage node
+//	@Before
+//	public void setUp() {
+//		unitUnderTest = new Downloader(ConnectionConfig.createWithStorageConnection(
+//				new BlockchainNetworkConnection(
+//						IntegrationTestConfig.getBlockchainNetworkType(),
+//						IntegrationTestConfig.getBlockchainApiHost(),
+//						IntegrationTestConfig.getBlockchainApiPort(),
+//						IntegrationTestConfig.getBlockchainApiProtocol()),
+//				new StorageConnection(
+//						IntegrationTestConfig.getStorageNodeApiHost(),
+//						IntegrationTestConfig.getStorageNodeApiPort(),
+//						IntegrationTestConfig.getStorageNodeApiProtocol(),
+//						IntegrationTestConfig.getStorageNodeApiBearerToken(),
+//						IntegrationTestConfig.getStorageNodeApiNemAddress())));
+//	}
 
 	@Test
 	public void shouldDownloadBigFileByTransactionHash() throws IOException {

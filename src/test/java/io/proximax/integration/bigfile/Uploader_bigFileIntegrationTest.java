@@ -3,6 +3,7 @@ package io.proximax.integration.bigfile;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
+import io.proximax.connection.StorageConnection;
 import io.proximax.integration.IntegrationTestConfig;
 import io.proximax.upload.UploadParameter;
 import io.proximax.upload.UploadResult;
@@ -37,6 +38,23 @@ public class Uploader_bigFileIntegrationTest {
 						IntegrationTestConfig.getIpfsApiHost(),
 						IntegrationTestConfig.getIpfsApiPort())));
 	}
+
+	// Switch to storage node
+//	@Before
+//	public void setUp() {
+//		unitUnderTest = new Uploader(ConnectionConfig.createWithStorageConnection(
+//				new BlockchainNetworkConnection(
+//						IntegrationTestConfig.getBlockchainNetworkType(),
+//						IntegrationTestConfig.getBlockchainApiHost(),
+//						IntegrationTestConfig.getBlockchainApiPort(),
+//						IntegrationTestConfig.getBlockchainApiProtocol()),
+//				new StorageConnection(
+//						IntegrationTestConfig.getStorageNodeApiHost(),
+//						IntegrationTestConfig.getStorageNodeApiPort(),
+//						IntegrationTestConfig.getStorageNodeApiProtocol(),
+//						IntegrationTestConfig.getStorageNodeApiBearerToken(),
+//						IntegrationTestConfig.getStorageNodeApiNemAddress())));
+//	}
 
 	@Test
 	public void shouldUploadBigFile() throws Exception {
