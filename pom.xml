@@ -170,7 +170,8 @@
 						<include>**/*Test.java</include>
 					</includes>
 					<excludes>
-						<include>**/*IntegrationTest.java</include>
+						<exclude>**/*IntegrationTest.java</exclude>
+						<exclude>**/*integrationTest.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
@@ -188,6 +189,7 @@
 						<configuration>
 							<includes>
 								<include>**/*IntegrationTest.java</include>
+								<include>**/*integrationTest.java</include>
 							</includes>
 						</configuration>
 					</execution>
