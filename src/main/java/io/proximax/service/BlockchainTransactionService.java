@@ -118,7 +118,6 @@ public class BlockchainTransactionService {
         return TransferTransaction.create(
                 Deadline.create(transactionDeadline, ChronoUnit.HOURS),
                 recipientAddress,
-//                Collections.singletonList(new Mosaic(XEM.createRelative(BigInteger.valueOf(1)).getId(), BigInteger.valueOf(1))),
                 Collections.singletonList(new Mosaic(new MosaicId("prx:xpx"), BigInteger.valueOf(1))),
                 message,
                 blockchainNetworkConnection.getNetworkType());

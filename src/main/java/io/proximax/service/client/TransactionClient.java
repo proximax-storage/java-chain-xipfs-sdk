@@ -23,7 +23,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * This class delegates to blockchain the following:
  * <ul>
  * <li>retrieval of transaction given a transaction hash</li>
- * <li>asynchronously announce a signed transaction</li>
+ * <li>Synchronously announce a signed transaction</li>
  * </ul>
  */
 public class TransactionClient {
@@ -60,6 +60,7 @@ public class TransactionClient {
      * This method is equivalent to calling `PUT /transaction`
      *
      * @param signedTransaction the signed transaction
+     * @param address the signer's address
      * @return the transaction announce result
      */
     public synchronized String announce(SignedTransaction signedTransaction, Address address) {
