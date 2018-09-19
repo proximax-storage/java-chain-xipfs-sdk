@@ -74,7 +74,7 @@ There are primarily two peer setups for DApps
 
 A local peer setup requires individual connections to both blockchain network node and file storage node.  
 
-Note: ProximaX would have available IPFS nodes for testing purposes. These would be customized such that IPFS REST endpoint can be called remotely.
+Note: ProximaX would have available IPFS nodes for testing purposes. These would be customized such that IPFS REST endpoint can be called remotely as well.
 
 ```java
 ConnectionConfig connectionConfig = ConnectionConfig.createWithLocalIpfsConnection(
@@ -111,18 +111,17 @@ For running IPFS locally, please refer to [IPFS](https://ipfs.io/).
 
 #### Connection config for remote peer setup
 
-A remote peer setup only requires connection to ProximaX storage node. A blockchain connection can be set to override the blockchain node associated with the storage node.
+A remote peer setup only requires connection to ProximaX storage node. A blockchain connection can also be set to use a different blockchain node than the one associated with the storage node.
 
 Note: ProximaX currently has no running storage node for development purposes.
 
 Here is an example of connecting to storage connection.   
 
 ```java
-ConnectionConfig connectionConfig = ConnectionConfig.createWithLocalIpfsConnection(
+ConnectionConfig connectionConfig = ConnectionConfig.createWithStorageConnection(
     new StorageConnection(
-            BlockchainNetworkType.MIJIN_TEST,
-            "52.221.231.207",
-            3000,
+            "127.0.0.1",
+            8081,
             HttpProtocol.HTTP,
             "11111",
             "SDB5DP6VGVNPSQJYEC2X3QIWKAFJ3DCMNQCIF6OA"
