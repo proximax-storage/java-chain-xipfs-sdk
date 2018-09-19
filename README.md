@@ -1,10 +1,22 @@
-# Official Proximax P2P Storage Java SDK (Catapult Compatible)
+# Official ProximaX P2P Storage Java SDK (Catapult Compatible)
 ![banner](https://proximax.io/wp-content/uploads/2018/03/ProximaX-logotype.png)
 
 ProximaX is a project that utilizes the NEM blockchain technology with the IPFS P2P storage technology to form a very powerful proofing solution for documents or files which are stored in an immutable and irreversible manner, similar to the blockchain technology solutions.
 
+# Getting started with ProximaX Storage Java SDK
+
+The Storage SDK allows developers to store content on the blockchain. There are currently two primary functions available: Upload and Download.
+
+## Get your XPX Test Tokens
+
+Some functions of the storage SDK will consume XPX tokens.
+
+ProximaX has a running Catapult MIJIN_TEST blockchain network for development purposes with available node at http://52.221.231.207:3000. 
+
+XPX tokens are available at the XPX faucet on [https://proximaxcatapultfaucet20180919121249.azurewebsites.net/](https://proximaxcatapultfaucet20180919121249.azurewebsites.net/)
+
 ## Adding Jitpack Repository
-There are dependencies hosted from Jitpack. Add the JitPack repository to your build file
+Storage SDK libraries are hosted on Jitpack. Add the JitPack repository on the build file.
 
 **Maven**
 ```xml
@@ -26,8 +38,8 @@ allprojects {
 }
 ```
 
-## Getting started with ProximaX Java SDK (NIS1)
-Import the following dependency to your Java Project. Replace with the latest version.
+## Adding the storage SDK
+Add the storage SDK as dependency. Replace the version with the latest available.
 
 **Maven**
 ```xml
@@ -49,434 +61,409 @@ compile 'io.proximax:xpx2-java-sdk:0.1.0-beta.1'
 )
 ```
 
-### Get your XPX Test Tokens
+## Create connection config to use
 
-Visit the XPX faucet at [https://proximaxfaucet20180730014353.azurewebsites.net/](https://proximaxfaucet20180730014353.azurewebsites.net/ "Testnet Faucet")
+The storage SDK needs to connect to the a file storage (eg. IPFS) and a blockchain network node (eg. Catapult) to do most of its functions.
+The required connection config would depend on the peer setup of the DApp.
 
+There are primarily two peer setups for DApps
+1. Local peer setup - the DApp has its own IPFS node running locally that is linked to ProximaX IPFS network. This setup keep file copies in the local IPFS node for better performance.
+2. Remote peer setup - the DApp is a thin client that connects to a remote PromximaX storage node that encapsulates both file storage and blockchain node.
+  
+#### Connection config for local peer setup
 
-### Establishing a connection
-We support 2 types of connection.
+A local peer setup requires individual connections to both blockchain network node and file storage node.  
 
-***Remote Connection***
-
-`RemotePeerConnection` are for clients who wants wants to use a remote storage and doesn't want or prefer to its own device to participate on storage network.
-
-```java
-RemotePeerConnection remotePeerConnection = new RemotePeerConnection("https://testnet.gateway.proximax.io");
-```
-Aside from the testnet connection above, one can also use the following testnet gateways.
-
-+ [https://testnet1.gateway.proximax.io](https://testnet1.gateway.proximax.io/node/info "Testnet 1")
-+ [https://testnet2.gateway.proximax.io](https://testnet2.gateway.proximax.io/node/info "Testnet 2")
-+ [https://testnet3.gateway.proximax.io](https://testnet3.gateway.proximax.io/node/info "Testnet 3")
-
-These testnet gateways are privately hosted storage contributor nodes on our ProximaX servers. All of them are connected to NEM Testnet and Public IPFS network.
-
-We also have mainnet and mijinnet (NIS Mijin)
-
-+ [https://mainnet.gateway.proximax.io](https://mainnet.gateway.proximax.io/node/info "Mainnet")
-+ [https://mijin.gateway.proximax.io](https://mijin.gateway.proximax.io/node/info "Mijin")
-
-***Local Connection***
-
-`LocalHttpPeerConnection` are for local client who is participating as part of the Storage network. The prequisite for this is that the host client should run the `proximax daemon`.
+Note: ProximaX would have available IPFS nodes for testing purposes. These would be customized such that IPFS REST endpoint can be called remotely.
 
 ```java
-LocalHttpPeerConnection remotePeerConnection = new LocalHttpPeerConnection(
-                    ConnectionFactory.createNemNodeConnection("testnet","http", "104.128.226.60", 7890),
-                    ConnectionFactory.createIPFSNodeConnection("/ip4/127.0.0.1/tcp/5001")
-            );
+ConnectionConfig connectionConfig = ConnectionConfig.createWithLocalIpfsConnection(
+    new BlockchainNetworkConnection(
+            BlockchainNetworkType.MIJIN_TEST,
+            "52.221.231.207",
+            3000,
+            HttpProtocol.HTTP),
+    new IpfsConnection(
+            "127.0.0.1",
+            5001));
 ```
 
-Download and extract the proximax daemon here.
+**Blockchain Connection parameters**
 
-+ [Windows](https://testnet1.gateway.proximax.io/xpxfs/61d9360b862e20bc26ab80566e2c7c4190a4ba90324d108f2318dee582ce6607)
-+ [Linux](https://testnet1.gateway.proximax.io/xpxfs/7f27ddb0c33f657237db083739c2ec26d36f67f793fe6b7b04df960d8261bf3b)
+| field | required | allowed values | description |
+| ----- | -------- | -------------- | ----------- |
+| networkType | yes | should be one of Catapult's network eg. MIJIN_TEST | Catapult network which is required to do on some blockchain-related actions |
+| apiHost | yes | domain or IP | the domain or IP of blockchain API |
+| apiPort | yes | int | the port of blockchain API |
+| apiProtocol | yes| http or https | the scheme used of blockchain API |
 
-Run the daemon like so
+For running your own Catapult blockchain locally, please refer to [Catapult Service Bootstrap](https://github.com/tech-bureau/catapult-service-bootstrap).    
 
-```bash
-proximax.exe init
-proximax.exe daemon
-```
+**IPFS Connection parameters**
 
-Now that we've establish the connection, let's get into the coding.
+| field | required | allowed values | description |
+| ----- | -------- | -------------- | ----------- |
+| apiHost |	yes | domain or IP | the domain or IP of local IPFS API |
+| apiPort |	yes | int | the port of local IPFS API |
 
-To easily access each feature/function, we need to initialze the object passing the `peerConnection` variable.
+For running IPFS locally, please refer to [IPFS](https://ipfs.io/).
+
+
+#### Connection config for remote peer setup
+
+A remote peer setup only requires connection to ProximaX storage node. A blockchain connection can be set to override the blockchain node associated with the storage node.
+
+Note: ProximaX currently has no running storage node for development purposes.
+
+Here is an example of connecting to storage connection.   
 
 ```java
-//  To Upload
-final Upload upload = new Upload(peerConnection); // blocking
-final UploadAsync uploadAsync = new UploadAsync(peerConnection); // non-blocking (async)
-
-//  To Download
-final Download download = new Download(peerConnection);
-final DownloadAsync downloadAsync = new DownloadAsync(peerConnection);
-
-//  More functions that can be used
-final Search search = new Search(peerConnection);
-final SearchAsync searchAsync = new SearchAsync(peerConnection);
-
-//  To look up Account
-final Account account = new Account(peerConnection);
-final AccountAsync accountAsync = new AccountAsync(peerConnection);
-
-//  To look up XPX / Proximax Transactions
-final Transactions transactions = new Transactions(peerConnection);
-final TransactionsAsync transactionsAsync = new TransactionsAsync(peerConnection);
+ConnectionConfig connectionConfig = ConnectionConfig.createWithLocalIpfsConnection(
+    new StorageConnection(
+            BlockchainNetworkType.MIJIN_TEST,
+            "52.221.231.207",
+            3000,
+            HttpProtocol.HTTP,
+            "11111",
+            "SDB5DP6VGVNPSQJYEC2X3QIWKAFJ3DCMNQCIF6OA"
+            ));
 ```
 
-### Create / Generate new NEM Account
+###### Storage Connection parameters
 
-To generate a new account, use the `peerConnection` to call the `NemAccountApi()`
+| field | required | allowed values | description |
+| ----- | -------- | -------------- | ----------- |
+| apiHost | yes | domain or IP | the domain or IP of storage API |
+| apiPort | yes | int | the port of storage API |
+| apiProtocol | yes | http or https | the scheme used of storage API |
+| bearerToken | yes | string | the bearer token to allow access to storage API |
+| nemAddress | yes | string | the NEM address to allow access to storage API |
 
+## Uploading content
+
+The storage SDK allows upload of a variety of data like file and URL resource.
+
+At the minimum, each upload requires the data being uploaded and the private key of the signer of blockchain transaction.
+
+Here is the complete list of parameters that can be configured on each upload.
+
+| field | required | allowed values | description |
+| ----- | -------- | -------------- | ----------- |
+| data | yes | any of the upload parameter data | the content to upload and its details |
+| signerPrivateKey | yes | string of valid hex on the blockchain network | private key of signer of the blockchain transaction |
+| recipientPublicKey | no | string of valid hex on the blockchain network | public key of recipient of the blockchain transaction <br><br> if both recipientPublicKey and recipientAddress are not provided, recipient will be also the signer |
+| recipientAddress | no | string of valid hex on the blockchain network | address of recipient of the blockchain transaction <br><br> if both recipientPublicKey and recipientAddress are not provided, recipient will be also the signer |
+| computeDigest | no <br><br> default is false | true or false | when true, computes the digest of data <br> when false, digest calculation is not done |
+| detectContentType | no <br><br> default is false | true or false | determines whether to detect content type when not provided |
+| transactionDeadline | no <br><br> default is 12 hours | 1 to 23 <br><br> in hours | determines how long the transaction can wait to be confirmed |
+| privacyStrategy | no <br><br> default is no or plain privacy | any of the privacy strategy implementation <br><br> (see privacy strategy section) | the privacy strategy that will encrypt the data |
+
+Here are the common details of an upload parameter data.
+
+| field | required | allowed values | description |
+| ----- | -------- | -------------- | ----------- |
+| description | no | string <br><br> (200 char limit) | a searchable description for the data |
+| metadata | no | string to string key-value map <br><br>(500 char limit based on JSON equivalent) | a searchable key-value map  where lookup by key and key-value can be done |
+| name | no | string <br><br> (200 char limit) | a searchable name for the data |
+| contentType | no | string of content type <br><br> (50 char limit) | the content type of the file uploaded |
+
+The following are example on how to create the parameters for the different data that can be uploaded.
+
+###### Building parameter for file upload
 ```java
-peerConnection.getNemAccountApi().generateAccount()
+File file = new File("test.txt");
+UploadParameter param = UploadParameter
+    .createForFileUpload(file, "<private key>")
+    .build();
 ```
 
-***Grab the Address and get XEMs/XPXs.***
-
-Visit the XPX faucet at [https://proximaxfaucet20180730014353.azurewebsites.net/](https://proximaxfaucet20180730014353.azurewebsites.net/ "Testnet Faucet")
-
-### Upload / Upload Async
-
-***Uploading a file***
-
-When uploading a binary file, the `Upload` requires a `UploadFileParameter` object specifying the necessary information. This object is then pass to the Upload API that will in turn return an `UploadResult` object which has the NEM Hash.
+###### Building parameter for file upload with extra details
 ```java
-final UploadFileParameter parameter = UploadFileParameter.create()
-        .senderPrivateKey(PRIVATE_KEY)
-        .receiverPublicKey(PUBLIC_KEY)
-        .file(new File("/path/to/file.pdf"))
-        .keywords("keywords")
-        .metadata(singletonMap("someMetadataKey", "someMetadataValue"))
-        .build();
-
-final UploadResult uploadResult = upload.uploadFile(parameter);
-uploadResult.getNemHash(); // prints the Nem Hash to download file
+File file = new File("test.txt");
+UploadParameter param = UploadParameter
+    .createForFileUpload(
+            FileParameterData.create(
+                    file, 
+                    "file description", 
+                    "file name",
+                    "text/plain", 
+                    singletonMap("filekey", "filename")),
+            "<private key>")
+    .build();
 ```
 
-***Uploading binary data (bytes)***
-
-When uploading a binary file, the `Upload` requires a `UploadBinaryParameter` object.
+###### Building parameter for byte array upload
 ```java
-final UploadBinaryParameter parameter = UploadBinaryParameter.create()
-        .senderPrivateKey(TEST_PRIVATE_KEY)
-        .receiverPublicKey(TEST_PUBLIC_KEY)
-        .data(SOME_BYTE_ARRAY)
-        .keywords("keywords")
-        .metadata(singletonMap("someMetadataKey", "someMetadataValue"))
-        .build();
-
-final UploadResult uploadResult = upload.uploadBinary(parameter);
-uploadResult.getNemHash(); // prints the Nem Hash to download file
+byte[] bytearray = ...;
+UploadParameter param = UploadParameter
+    .createForByteArrayUpload(bytearray, "<private key>")
+    .build();
 ```
 
-***Uploading a text***
-
-When uploading a text file, the `Upload` requires a `UploadTextDataParameter `object.
+###### Building parameter for byte array upload with extra details
 ```java
-final UploadTextDataParameter parameter = UploadTextDataParameter.create()
-        .senderPrivateKey(PRIVATE_KEY)
-        .receiverPublicKey(PUBLIC_KEY)
-        .data("plain - the quick brown fox jumps over the lazy dog UTF-8")
-        .name("SomeName1")
-        .contentType("text/plain")
-        .encoding("UTF-8")
-        .keywords("keywords")
-        .metadata(singletonMap("someMetadataKey", "someMetadataValue"))
-        .build();
-
-final UploadResult uploadResult = upload.uploadTextData(parameter);
-uploadResult.getNemHash(); // prints the Nem Hash to download text
+byte[] bytearray = ...;
+UploadParameter param = UploadParameter
+    .createForByteArrayUpload(
+            ByteArrayParameterData.create(
+                    bytearray, 
+                    "byte array description", 
+                    "byte array",
+                    "application/pdf", 
+                    singletonMap("bytearraykey", "bytearrayval")),
+            "<private key>")
+    .build();
 ```
 
-***Uploading multiple files***
-
-When uploading multiple files at the same time, the `Upload` requires `UploadMultipleFilesParameter` object. This would return an `UploadResult` for each file uploaded.
-
+###### Building parameter for string upload
 ```java
-final UploadMultipleFilesParameter parameter = UploadMultipleFilesParameter.create()
-        .senderPrivateKey(PRIVATE_KEY)
-        .receiverPublicKey(PUBLIC_KEY)
-        .addFile(new File("/path/to/file 1"))
-        .addFile(new File("/path/to/file 2"))
-        .keywords("keywords")
-        .metadata(singletonMap("someMetadataKey", "someMetadataValue"))
-        .build();
-
-final MultiFileUploadResult multiFileUploadResult = upload.uploadMultipleFiles(parameter);
-multiFileUploadResult.getFileUploadResults().get(0).getUploadResult().getNemHash(); // prints the Nem Hash to download first file
-
+String string = "ProximaX";
+UploadParameter param = UploadParameter
+    .createForStringUpload(string, "<private key>")
+    .build();
 ```
 
-***Uploading multiple files as zip***
-
-When uploading multiple files compressed as a zip file, the `Upload` requires `UploadFilesAsZipParameter` object.
-
-
+###### Building parameter for string upload with extra details
 ```java
-final UploadFilesAsZipParameter parameter = UploadFilesAsZipParameter.create()
-        .senderPrivateKey(TEST_PRIVATE_KEY)
-        .receiverPublicKey(TEST_PUBLIC_KEY)
-        .zipFileName(ZIP_FILE_NAME)
-        .addFile("/path/to/file 1")
-        .addFile("/path/to/file 2")
-        .keywords(KEYWORDS_PLAIN_AND_ZIP_FILE)
-        .metadata(METADATA_AS_MAP)
-        .build();
-
-final UploadResult uploadResult = upload.uploadFilesAsZip(parameter);
-uploadResult.getNemHash(); // prints the Nem Hash to download zip file
+String string = "ProximaX";
+UploadParameter param = UploadParameter
+    .createForStringUpload(
+            StringParameterData.create(
+                    string, 
+                    "UTF-8", 
+                    "string description", 
+                    "string name",
+                    "text/plain", 
+                    singletonMap("keystring", "valstring")),
+            "<private key>")
+    .build();
 ```
 
-***Upload files with mosaics***
-
-One can also attach a mosaic as part of the upload.
-
+###### Building parameter for URL resource upload
 ```java
-Mosaic blueNumberAsset = new Mosaic(new MosaicId(new NamespaceId("bluenumber1"), "product"),
-                Quantity.fromValue(10000));
-
-UploadTextDataParameter parameter = UploadTextDataParameter.create()
-                .senderPrivateKey(TEST_PRIVATE_KEY)
-                .receiverPublicKey(TEST_PUBLIC_KEY)
-                .data(new String("plain - the quick brown fox jumps over the lazy dog UTF-8".getBytes(),ENCODING_UTF_8))
-                .name(TEST_NAME_1)
-                .contentType(TEXT_PLAIN.toString())
-                .encoding(ENCODING_UTF_8)
-                .keywords(KEYWORDS_PLAIN_AND_DATA)
-                .metadata(METADATA_AS_MAP)
-                .mosaics(MOSAIC_LAND_REGISTRY)
-                .build();
-
-final UploadResult uploadResult = unitUnderTest.uploadTextData(parameter);
+URL url = new URL(...);
+UploadParameter param = UploadParameter
+    .createForUrlResourceUpload(url, "<private key>")
+    .build();
 ```
 
-***Upload Path***
-
-Note that this feature works on local peer connection and linux/mac machine only
-
+###### Building parameter for URL resource upload with extra details
 ```java
-UploadPathParameter parameter = UploadPathParameter.create()
-				.senderPrivateKey(TEST_PRIVATE_KEY)
-				.receiverPublicKey(TEST_PUBLIC_KEY)
-				.path("src/test/resources/")
-				.metadata(METADATA_AS_MAP)
-				.keywords(KEYWORDS_PLAIN_AND_PATH)
-				.mosaics(MOSAIC_LAND_REGISTRY)
-				.build();
-
-final UploadResult uploadResult = unitUnderTest.uploadPath(parameter);
+URL url = new URL(...);
+UploadParameter param = UploadParameter
+    .createForUrlResourceUpload(
+            UrlResourceParameterData.create(
+                    url,
+                    "url description",
+                    "url name", 
+                    "image/png", 
+                    singletonMap("urlkey", "urlval")),
+            "<private key>")
+    .build();
 ```
 
-You will now be able to visit the path via our proximax or ipfs gateways
-
-*Note: Path is by default, public. Please be careful when loading a directory as it exposes it the open public gateways*
-
-### Securing uploaded content with Privacy Strategies
-By default, any upload will use a plain privacy strategy. This basically means that the file is not in anyway encrypted and can be accessed publicly.
-In order to secure the content being uploaded, other privacy strategies can be use to protect and secure your files.
-
-***Secured with NEM keys privacy strategy***
-
-This will utilise the NEM private and public key provided to encrypt the content.
-In addition to the content, this strategy will create the NEM transaction as a secure/encrypted message.
-
+###### Building parameter for zip upload from list of files
 ```java
-final UploadFileParameter parameter = UploadFileParameter.create()
-        .senderPrivateKey(PRIVATE_KEY)
-        .receiverPublicKey(PUBLIC_KEY)
-        .file(new File("/path/to/file"))
-        .securedWithNemKeysPrivacyStrategy() // sets the privacy strategy
-        .build();
-
-final UploadResult uploadResult = upload.uploadFile(parameter);
+List<File> filesToZip = ...;
+UploadParameter param = UploadParameter
+    .createForFilesAsZipUpload(filesToZip, "<private key>")
+    .build();
 ```
 
-The above code will encrypt the file using the senders private key and receivers public key.
-
-***Secured with password privacy strategy***
-
-This will use a password to encrypt the content. This strategy requires a minimum length of 50 characters for the password.
-
+###### Building parameter for zip upload from list of files with extra details
 ```java
-final UploadFileParameter parameter = UploadFileParameter.create()
-        .senderPrivateKey(PRIVATE_KEY)
-        .receiverPublicKey(PUBLIC_KEY)
-        .file(new File("/path/to/file"))
-        .securedWithPasswordPrivacyStrategy(PASSWORD) // sets the privacy strategy
-        .build();
-
-final UploadResult uploadResult = upload.uploadFile(parameter);
+List<File> filesToZip = ...;
+UploadParameter param = UploadParameter
+    .createForFilesAsZipUpload(
+            FilesAsZipParameterData.create(
+                    filesToZip, 
+                    "zip description",
+                    "zip name", 
+                    singletonMap("zipkey", "zipvalue")),
+            "<private key>")
+    .build();
 ```
 
+###### Building parameter for path upload
 
-***Secured with Shamir Shared Secret Key***
+**Important note: Path is by default, public. Please be careful when loading a directory as it exposes it the open public gateways**
 
-This will use a password to encrypt the content. This strategy requires a minimum length of 50 characters for the password.
+This is only supported for local peer setup.
 
 ```java
-final Map<Integer, byte[]> minimumSecretParts = new HashMap<>();
-minimumSecretParts.put(2, SHAMIR_SECRET_PARTS.get(2));
-minimumSecretParts.put(5, SHAMIR_SECRET_PARTS.get(5));
-minimumSecretParts.put(9, SHAMIR_SECRET_PARTS.get(9));
+File path = new File("../test");
+UploadParameter param = UploadParameter
+    .createForPathUpload(path, "<private key>")
+    .build();
+```
 
-UploadBinaryParameter parameter = UploadBinaryParameter.create()
-        .senderPrivateKey(TEST_PRIVATE_KEY)
-        .receiverPublicKey(TEST_PUBLIC_KEY)
-        .data(FileUtils.readFileToByteArray("/path/to/file"))
-        .securedWithShamirSecretSharingPrivacyStrategy(SHAMIR_SECRET_TOTAL_PART_COUNT, SHAMIR_SECRET_MINIMUM_PART_COUNT_TO_BUILD,
-                minimumSecretParts)
-        .build();
+###### Building parameter for path upload with extra details
+
+```java
+File path = new File("../test");
+UploadParameter param = UploadParameter
+    .createForPathUpload(
+            PathParameterData.create(
+                    path, 
+                    "path description", 
+                    "path name", 
+                    singletonMap("pathkey", "pathval")),
+            "<private key>")
+    .build();
+```
+
+#### Uploading using the parameter
+
+Once the `UploadParameter` is ready, create an instance `Uploader` by passing the `ConnectionConfig` and then uploading using the parameter.
+The `UploadResult` contains the blockchain transaction hash and the IPFS data hash which can be used to retrieve the uploaded content.
+ 
+
+```java
+Uploader uploader = new Uploader(connectionConfig);
+UploadResult result = uploader.upload(param);
+
+result.getTransactionHash(); // the blockchain transaction hash
+result.getData().getDataHash(); // the IPFS data hash
+```
+
+## Downloading content
+The Storage SDK supports two types of download.
+- Complete download - the usual download which retrieves content together with its details
+- Direct download - the download which retrieves only the content 
+
+### Complete download
+
+A complete download is done by providing a hash of a blockchain transaction that has an uploaded content.
+
+Here are the parameters.
+
+| field | required | allowed values | description |
+| ----- | -------- | -------------- | ----------- |
+| transactionHash | yes | string of valid transaction hash | the blockchain transaction hash of an upload instance |
+| privacyStrategy | no <br><br> default is no or plain privacy | any of the privacy strategy implementation <br><br> (see privacy strategy section) | the privacy strategy to decrypt the data
+| validateDigest | no <br><br> default is false | true or false	| whether to validate the content is accurate. <br><br>ignored if digest is not calculated when content was uploaded |
+
+Build the `DownloadParameter` which will be used to download.
+```java
+String transactionHash = ...;
+DownloadParameter param = DownloadParameter.create(transactionHash).build();
+```
+
+Create a `Downloader` instance using the `ConnectionConfig` and download using the parameter.
+The `DownloadResult` contains the content details and the content itself available as a stream.
+
+```java
+Downloader downloader = new Downloader(connectionConfig);
+DownloadResult result = downloader.download(param);
+
+result.getData().getByteStream(); // the stream of the content itself
+result.getData().getContentType(); 
+result.getData().getDescription(); 
+result.getData().getName(); 
+result.getData().getMetadata(); 
+result.getData().getTimestamp(); // the timestamp of the upload
+```
+
+### Direct download
+A direct download is done either by providing the blockchain transaction hash or the IPFS data hash.
+
+Here are the parameters.
+
+| field | required | allowed values | description |
+| ----- | -------- | -------------- | ----------- |
+| transactionHash | one of transactionHash and dataHash is required | string of valid transaction hash | the blockchain transaction hash of an upload instance |
+| dataHash | one of transactionHash and dataHash is required | string of data hash of IPFS | hash for the uploaded data on IPFS |
+| validateDigest | no <br><br> default is false <br><br> can be set only when download by transactionHash | true or false |  whether to validate the content is accurate. <br><br>ignored if digest is not calculated when content was uploaded |
+| digest | no <br><br> can be set only when download by dataHash | sha-256 hex digest of data | digest to verify that the content is accurate |
+| privacyStrategy | no <br><br> default is no or plain privacy | any of the privacy strategy implementation <br><br> (see privacy strategy section) | the privacy strategy to decrypt the data
+
+
+Build the `DirectDownloadParameter` which will be used to download.
+
+**if downloading by transaction hash**
+```java
+String transactionHash = ...;
+DirectDownloadParameter param = 
+    DirectDownloadParameter.createFromTransactionHash(transactionHash).build();
+```
+
+**if downloading by data hash**
+```java
+String dataHash = ...;
+DirectDownloadParameter param = 
+    DirectDownloadParameter.createFromDataHash(dataHash).build();
+```
+
+Create a `Downloader` instance using the `ConnectionConfig` and download using the parameter.
+```java
+Downloader downloader = new Downloader(connectionConfig);
+InputStream result = unitUnderTest.directDownload(param);
+``` 
+
+## Securing content with Privacy Strategies
+By default, any upload uses a plain privacy strategy and does not encrypt content.
+
+In order to secure the content, privacy strategies can be configured as part of the UploadParameter creation. The same can be done on download to ensure data is properly decrypted.
+
+The following are list of available privacy strategies that out-of-the-box with the Storage SDK.
+
+***NEM keys privacy strategy***
+
+This uses a NEM private key and another public key to encrypt the content using Ed25519 ([EdDSA](https://en.wikipedia.org/wiki/EdDSA)).
+
+```java
+UploadParameter param = UploadParameter
+    .createForStringUpload("test string", "<private key>")
+    .withNemKeysPrivacy("<private key>", "<public key>")
+    .build();
+```
+
+***Password privacy strategy***
+
+This uses a password with at least 10 characters to encrypt the content.
+
+```java
+UploadParameter param = UploadParameter
+    .createForStringUpload("test string", "<private key>")
+    .withPasswordPrivacy("averysecuredpassword")
+    .build();
 ```
 
 ***Custom privacy strategy***
 
-Custom privacy strategies to encrypt the content also possible. The developer must implement any of the following classes.
-
-`AbstractPlainMessagePrivacyStrategy` if NEM transactions should be in plain or unencrypted message.
-`AbstractSecureMessagePrivacyStrategy` if NEM transactions should be in secure or encrypted message.
-
-Both of the abstract class requires the following to be overriden.
-```java
-    @Override
-    public byte[] encrypt(byte[] data) {
-        // do encryption
-        return encrytedData;
-    }
-
-    @Override
-    public byte[] decrypt(byte[] data, TransferTransaction transaction, ResourceHashMessage hashMessage) {
-        // do decryption
-        return decryptedData;
-    }
-```
-
-Pass an instance of your custom strategy when building the upload parameter.
-```java
-final UploadFileParameter parameter = UploadFileParameter.create()
-        .senderPrivateKey(PRIVATE_KEY)
-        .receiverPublicKey(PUBLIC_KEY)
-        .file(new File("/path/to/file.pdf"))
-        .privacyStrategy(MY_CUSTOM_STRATEGY) // sets the privacy strategy
-        .build();
-
-final UploadResult uploadResult = upload.uploadFile(parameter);
-```
-
-### Download / Download Async
-Download function allows developers to download a content (binary,text) that are stored on the P2P Storage that is rooted to a NEM Transaction. All downloads requires the NEM Hash as this is the main reference of the Platform to get content.
-
-To initialize the `Download` service, this can be done by passing a `PeerConnection`
-```java
-final Download download = new Download(peerConnection);
-```
-
-***Download Plain Text File/Content***
-
-Use the following code to download a text content that was uploaded using the plain/public privacy strategy.
+Developers can implement their own encryption and decryption strategy by extending the `CustomPrivacyStrategy`. 
 
 ```java
-final DownloadTextDataResult result = download.downloadTextData(DownloadParameter.create().nemHash("7f2d1944016f1259e552b34cb5029d7473074856229094acc5ba479549e59411").build());
+UploadParameter param = UploadParameter
+    .createForStringUpload("test string", "<private key>")
+    .withPrivacyStrategy(new CustomPrivacyStrategy(){
+        @Override
+        public InputStream encryptStream(InputStream byteStream) {
+            return null; // developer encryption strategy
+        }
 
+        @Override
+        public InputStream decryptStream(InputStream byteStream) {
+            return null; // developer decryption strategy
+        }
+    })
+    .build();
 ```
 
-***Download Secure Text File/Content***
+## Asynchronous functions
+All functions of Storage SDK can be called asynchronously. 
 
-Use the following code to download a text content that was uploaded using the secure with nem keys privacy strategy.
+The SDK provides an `AsyncCallbacks` which would handle the result of functionality once ready. When an asynchronous function is called, it will send back an `AsyncTask` which holds the state of function call. Currently however, only the `done` flag is usable. 
 
+**Sample for uploadAsync**
 ```java
+AsyncTask asyncTask = uploader.uploadAsync(param, 
+    AsyncCallbacks.create(
+        (UploadResult result) -> System.out.println(result),
+        (Throwable ex) -> System.out.println(ex)));
 
-final DownloadTextDataResult result = download.downloadTextData(DownloadParameter.create()
-.nemHash("47ef7e2a12ea7413a69ef215e33b1d32f21ccbf743b9358efc9909b869ab7e70")
-.securedWithNemKeysPrivacyStrategy("<private key">, "<public key">)
-.build());
-
+asyncTask.isDone(); // check done status
 ```
-
-***Download Plain Binary/File***
-
-Use the following code to download a binary that was uploaded using the plain/public privacy strategy.
-
-```java
-final DownloadBinaryResult result = download.downloadBinary(DownloadParameter.create().nemHash("7f2d1944016f1259e552b34cb5029d7473074856229094acc5ba479549e59411").build());
-
-```
-
-***Download Secure Binary/File***
-
-Use the following code to download a binary that was uploaded using the secure with nem keys privacy strategy.
-
-```java
-
-final DownloadBinaryResult result = download.downloadBinary(DownloadParameter.create()
-.nemHash("47ef7e2a12ea7413a69ef215e33b1d32f21ccbf743b9358efc9909b869ab7e70")
-.securedWithNemKeysPrivacyStrategy("<private key">, "<public key">)
-.build());
-
-```
-
-***Download Secure with Password Text File***
-
-Use the following code to download a binary that was uploaded using the plain/public privacy strategy.
-```java
-
-final DownloadTextDataResult result = download.downloadTextData(DownloadParameter.create()
-.nemHash("47ef7e2a12ea7413a69ef215e33b1d32f21ccbf743b9358efc9909b869ab7e70")
-.securedWithNemKeysPrivacyStrategy("<private key">, "<public key">)
-.build());
-
-```
-
-***Download Secure with Password Binary/File***
-
-Use the following code to download a binary that was uploaded using the secure with nem keys privacy strategy.
-```java
-
-final DownloadBinaryResult result = download.downloadBinary(DownloadParameter.create()
-.nemHash("47ef7e2a12ea7413a69ef215e33b1d32f21ccbf743b9358efc9909b869ab7e70")
-.securedWithNemKeysPrivacyStrategy("<private key">, "<public key">)
-.build());
-
-```
-
-### Search / Search Async
-
-The SDK also has a service to do basic searching on the blockchain. This is only an additional feature and can be resource extensive as it traverses the entire message and compare.
-
-To initialize the `Search` service, this can be done by passing a `PeerConnection`
-```java
-final Search search = new Search(peerConnection);
-```
-
-***Search by keyword***
-
-Search by keyword or keywords
-```java
-List<ResourceHashMessageJsonEntity> result = search.searchByKeyword(TEST_PRIVATE_KEY, TEST_PUBLIC_KEY, "plain,secure,file");
-byte[] data = peerConnection.getDownloadApi().downloadUsingDataHashUsingGET(result.get(0).hash())
-```
-
-***Search by name***
-
-Search by name field
-```java
-List<ResourceHashMessageJsonEntity> result = search.searchByName(TEST_PRIVATE_KEY, TEST_PUBLIC_KEY, "index.jpg");
-byte[] data =  peerConnection.getDownloadApi().downloadUsingDataHashUsingGET(result.get(0).hash())
-```
-
-***Search by metadata***
-
-Search by metadata
-```java
-List<ResourceHashMessageJsonEntity> result = search.searchByMetaDataKeyValue(TEST_PRIVATE_KEY, TEST_PUBLIC_KEY, "key1","value1");
-byte[] data =  peerConnection.getDownloadApi().downloadUsingDataHashUsingGET(result.get(0).hash())
-```
-
-### Monitoring the Transaction
-
-
 
 ## Contribution
 We'd love to get more people involve in the project. We're looking for enthusiastic conitrbutors that can help us improve the library. Contributing is simple, you can start by
