@@ -30,7 +30,7 @@ public class SecuredWithPasswordPrivacyStrategyTest {
 
     private static final String PASSWORD = "lkNzBmYmYyNTExZjZmNDYyZTdjYWJmNmY1MjJiYjFmZTk3Zjg2NDA5ZDlhOD";
 
-    private static final String PASSWORD_TOO_SHORT = "too short for a password";
+    private static final String PASSWORD_TOO_SHORT = "too short";
 
     @Mock
     private PBECipherEncryptor encryptor;

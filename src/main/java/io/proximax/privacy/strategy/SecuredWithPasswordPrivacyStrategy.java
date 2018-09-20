@@ -7,13 +7,14 @@ import io.proximax.utils.PasswordUtils;
 import java.io.InputStream;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
+import static java.lang.String.format;
 
 /**
  * The privacy strategy that secures the data using a long password, 50 characters minimum.
  */
 public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
 
-    public static final int MINIMUM_PASSWORD_LENGTH = 50;
+    public static final int MINIMUM_PASSWORD_LENGTH = 10;
 
     private final PBECipherEncryptor pbeCipherEncryptor;
 
@@ -22,7 +23,7 @@ public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
 
     SecuredWithPasswordPrivacyStrategy(PBECipherEncryptor pbeCipherEncryptor, String password) {
         checkParameter(password != null, "password is required");
-        checkParameter(password.length() >= MINIMUM_PASSWORD_LENGTH, "minimum length for password is 50");
+        checkParameter(password.length() >= MINIMUM_PASSWORD_LENGTH, format("minimum length for password is %d", MINIMUM_PASSWORD_LENGTH));
 
         this.pbeCipherEncryptor = pbeCipherEncryptor;
         this.password = password;

@@ -127,6 +127,14 @@ public class Downloader_directDownload_integrationTest {
 		unitUnderTest.directDownload(param);
 	}
 
+	@Test(expected = DirectDownloadFailureException.class)
+	public void failDownloadWhenInvalidTransactionHash() throws IOException {
+		final DirectDownloadParameter param =
+				DirectDownloadParameter.createFromTransactionHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
+
+		unitUnderTest.directDownload(param);
+	}
+
 	@Test
 	public void shouldDownloadByteArrayByDataHash() throws IOException {
 		final String dataHash = TestDataRepository

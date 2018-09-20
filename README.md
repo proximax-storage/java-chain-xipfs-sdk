@@ -489,6 +489,25 @@ AsyncTask asyncTask = uploader.uploadAsync(param,
 asyncTask.isDone(); // check done status
 ```
 
+## Error and Troubleshooting
+
+Upload failures will result in `UploadFailureException`.
+- Due announce transaction failures such as insufficient funds
+- Due to announce transaction timeouts
+- Due to connection failures to IPFS
+- Due to connection failures to Blockchain node
+
+Complete and direct download failures will generally return `DownloadFailureException` and `DirectDownloadFailureException`.
+- Due to invalid transaction hash
+- Due to transaction not yet confirmed on blockchain
+- Due to not a transfer transaction with an upload
+- Due to failed digest validation 
+- Due to connection failures to IPFS
+- Due to connection failures to Blockchain node
+
+If the wrong privacy strategy is used, direct download and retrieval of data stream via `DownloadResult.getByteStream()` will result to IOException.
+
+
 ## Contribution
 We'd love to get more people involve in the project. We're looking for enthusiastic conitrbutors that can help us improve the library. Contributing is simple, you can start by
 + Test the SDK and raise an issue.
