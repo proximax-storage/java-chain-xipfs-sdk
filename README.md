@@ -9,7 +9,7 @@ The Storage SDK allows developers to store content on the blockchain. There are 
 
 ## Generate Catapult test account
 
-ProximaX has a running Catapult MIJIN_TEST blockchain network for development purposes with available node at http://52.221.231.207:3000.
+ProximaX has a running Catapult MIJIN_TEST blockchain network for testing and development purposes. The available node to connect to is http://52.221.231.207:3000.
 
 Create a test account by using the [NEM2 CLI](https://nemtech.github.io/cli/overview.html#installation). 
 [NodeJS](https://nodejs.org/en/download/) installation is required.
@@ -89,17 +89,17 @@ compile 'io.proximax:xpx2-java-sdk:0.1.0-beta.1'
 ## Create connection config to use
 
 The storage SDK needs to connect to the a file storage (eg. IPFS) and a blockchain network node (eg. Catapult) to do most of its functions.
-The required connection config would depend on the peer setup of the DApp.
+The required connection config would depend on the peer setup applicable to the DApp.
 
 There are primarily two peer setups for DApps
-1. Local peer setup - the DApp has its own IPFS node running locally that is linked to ProximaX IPFS network. This setup keep file copies in the local IPFS node for better performance.
-2. Remote peer setup - the DApp is a thin client that connects to a remote PromximaX storage node that encapsulates both file storage and blockchain node.
+1. Local peer setup - the DApp would like to have its own IPFS node running locally linked to the ProximaX IPFS network. This setup keeps file copies on the local IPFS node which is ideal if performance is important.
+2. Remote peer setup - the DApp is a thin client (eg. mobile app, web app) and would connect remotely to use the storage. This setup connects to the PromximaX storage node that encapsulates both file storage and blockchain node.
   
 #### Connection config for local peer setup
 
 A local peer setup requires individual connections to both blockchain network node and file storage node.  
 
-Note: ProximaX would have available IPFS nodes for testing purposes. These would be customized such that IPFS REST endpoint can be called remotely as well.
+Note: To ease the testing for development purposes, ProximaX have added IPFS nodes running with port 5001 open.The URLs are http://ipfs1.kyc.proximax.io:5001 and http://ipfs2.kyc.proximax.io:5001
 
 ```java
 ConnectionConfig connectionConfig = ConnectionConfig.createWithLocalIpfsConnection(
@@ -136,9 +136,9 @@ For running IPFS locally, please refer to [IPFS](https://ipfs.io/).
 
 #### Connection config for remote peer setup
 
-A remote peer setup only requires connection to ProximaX storage node. A blockchain connection can also be set to use a different blockchain node than the one associated with the storage node.
+A remote peer setup only requires connection to ProximaX storage node. A blockchain connection can also be set to use a different node than the one associated with the storage node.
 
-Note: ProximaX currently has no running storage node for development purposes.
+Note: ProximaX currently has no running storage node for development and testing purposes.
 
 Here is an example of connecting to storage connection.   
 
@@ -310,7 +310,7 @@ UploadParameter param = UploadParameter
 
 ###### Building parameter for path upload
 
-**Important note: Path is by default, public. Please be careful when loading a directory as it exposes it the open public gateways**
+**Important note: Uploading path is by default public on IPFS. Please be careful when loading a directory as it exposes it the open public gateways**
 
 This is only supported for local peer setup.
 
@@ -352,7 +352,7 @@ result.getData().getDataHash(); // the IPFS data hash
 
 ## Downloading content
 The Storage SDK supports two types of download.
-- Complete download - the usual download which retrieves content together with its details
+- Complete download - the usual download which retrieves content together with its metainfo
 - Direct download - the download which retrieves only the content 
 
 ### Complete download
@@ -428,6 +428,8 @@ InputStream result = unitUnderTest.directDownload(param);
 By default, any upload uses a plain privacy strategy and does not encrypt content.
 
 In order to secure the content, privacy strategies can be configured as part of the UploadParameter creation. The same can be done on download to ensure data is properly decrypted.
+
+Note: Setting privacy strategy has no effect when uploading path.
 
 The following are list of available privacy strategies that out-of-the-box with the Storage SDK.
 
