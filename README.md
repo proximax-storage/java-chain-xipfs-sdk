@@ -1,4 +1,4 @@
-# Official ProximaX P2P Storage Java SDK (Catapult Compatible)
+# Official ProximaX P2P Storage Java SDK
 ![banner](https://proximax.io/wp-content/uploads/2018/03/ProximaX-logotype.png)
 
 ProximaX is a project that utilizes the NEM blockchain technology with the IPFS P2P storage technology to form a very powerful proofing solution for documents or files which are stored in an immutable and irreversible manner, similar to the blockchain technology solutions.
@@ -7,13 +7,38 @@ ProximaX is a project that utilizes the NEM blockchain technology with the IPFS 
 
 The Storage SDK allows developers to store content on the blockchain. There are currently two primary functions available: Upload and Download.
 
+## Generate Catapult test account
+
+ProximaX has a running Catapult MIJIN_TEST blockchain network for development purposes with available node at http://52.221.231.207:3000.
+
+Create a test account by using the [NEM2 CLI](https://nemtech.github.io/cli/overview.html#installation). 
+[NodeJS](https://nodejs.org/en/download/) installation is required.
+
+Install NEM2-CLI (use `sudo` as needed)
+
+`npm install --global nem2-cli` 
+
+Initiate account generation.
+`nem2-cli account generate`
+
+Enter details as required. Network type should be MIJIN_TEST and Node URL is http://52.221.231.207:3000
+```
+Introduce network type (MIJIN_TEST, MIJIN, MAIN_NET, TEST_NET): MIJIN_TEST
+Do you want to save it? [y/n]: y
+Introduce NEM 2 Node URL. (Example: http://localhost:3000): http://52.221.231.207:3000
+Insert profile name (blank means default and it could overwrite the previous profile): my_test_acct
+New Account:    SAETZX-GUDKPY-56DE5E-DJUJWP-357J3N-UODQP2-NPII
+Public Key:     C67E508956FF8E5897AD2AE045F0C7B53ED5A12A9EF19A5943456EB488946A6E
+Private Key:    0C44069C3A1D1D34AF80F8FC1D7258DAB8114C023C42B058A64268E48E5C4351
+```
+
+Save the generate keys and address.
+
 ## Get your XPX Test Tokens
 
-Some functions of the storage SDK will consume XPX tokens.
+Upload function of the storage SDK will consume XPX tokens.
 
-ProximaX has a running Catapult MIJIN_TEST blockchain network for development purposes with available node at http://52.221.231.207:3000. 
-
-XPX tokens are available at the XPX faucet on [https://proximaxcatapultfaucet20180919121249.azurewebsites.net/](https://proximaxcatapultfaucet20180919121249.azurewebsites.net/)
+Get XPX tokens at the faucet on [https://proximaxcatapultfaucet20180919121249.azurewebsites.net/](https://proximaxcatapultfaucet20180919121249.azurewebsites.net/)
 
 ## Adding Jitpack Repository
 Storage SDK libraries are hosted on Jitpack. Add the JitPack repository on the build file.
