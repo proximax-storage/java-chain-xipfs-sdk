@@ -38,7 +38,7 @@ Save the generate keys and address.
 
 Upload function of the storage SDK will consume XPX tokens.
 
-Get XPX tokens at the faucet on [https://proximaxcatapultfaucet20180919121249.azurewebsites.net/](https://proximaxcatapultfaucet20180919121249.azurewebsites.net/)
+Get XPX tokens at the [XPX faucet](https://proximaxcatapultfaucet.azurewebsites.net/)
 
 ## Adding Jitpack Repository
 Storage SDK libraries are hosted on Jitpack. Add the JitPack repository on the build file.
