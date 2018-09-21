@@ -9,6 +9,7 @@ import io.nem.sdk.model.transaction.TransferTransaction;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
+import io.proximax.exceptions.UploadFailureException;
 import io.proximax.integration.IntegrationTestConfig;
 import io.proximax.upload.UploadParameter;
 import io.proximax.upload.UploadResult;
@@ -57,6 +58,15 @@ public class Uploader_transactionConfigIntegrationTest {
 		assertThat(((TransferTransaction)transaction).getRecipient().plain(), is(IntegrationTestConfig.getAddress1()));
 
 		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithRecipientPublicKeyProvided");
+	}
+
+	@Test(expected = UploadFailureException.class)
+	public void failUploadWhenSignerHasNoFunds() {
+		final UploadParameter param = UploadParameter
+				.createForStringUpload(TEST_STRING, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+				.build();
+
+		unitUnderTest.upload(param);
 	}
 
 	@Test

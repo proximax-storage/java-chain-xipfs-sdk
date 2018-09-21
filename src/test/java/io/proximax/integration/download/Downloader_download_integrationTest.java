@@ -270,4 +270,13 @@ public class Downloader_download_integrationTest {
 		final DownloadResult download = unitUnderTest.download(param);
 		download.getData().getByteStream();
 	}
+
+	@Test(expected = DownloadFailureException.class)
+	public void failDownloadWhenInvalidTransactionHash() throws IOException {
+		final DownloadParameter param = DownloadParameter.create("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
+
+		unitUnderTest.download(param);
+	}
+
+
 }

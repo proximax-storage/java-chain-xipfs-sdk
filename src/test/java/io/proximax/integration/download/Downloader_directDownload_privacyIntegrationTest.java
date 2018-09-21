@@ -17,11 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static io.proximax.testsupport.Constants.TEST_PASSWORD;
-import static io.proximax.testsupport.Constants.TEST_PRIVATE_KEY_1;
-import static io.proximax.testsupport.Constants.TEST_PUBLIC_KEY_2;
-import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_SHARES;
-import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_THRESHOLD;
-import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_TOTAL_SHARES;
 import static io.proximax.testsupport.Constants.TEST_TEXT_FILE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsArrayContainingInOrder.arrayContaining;
@@ -46,7 +41,7 @@ public class Downloader_directDownload_privacyIntegrationTest {
     }
 
     @Test
-    public void shouldDownloadDataUsingTransactionHashWithPlainPrivacyStrategy() throws IOException {
+    public void shouldDirectDownloadUsingTransactionHashWithPlainPrivacy() throws IOException {
         final String transactionHash = TestDataRepository.getData(
                 "Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithPlainPrivacyStrategy",
                 "transactionHash");
@@ -62,7 +57,7 @@ public class Downloader_directDownload_privacyIntegrationTest {
     }
 
     @Test
-    public void shouldDownloadDataUsingTransactionHashWithSecuredWithNemKeysPrivacyStrategy() throws IOException {
+    public void shouldDirectDownloadUsingTransactionHashWithNemKeysPrivacy() throws IOException {
         final String transactionHash = TestDataRepository.getData(
                 "Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy",
                 "transactionHash");
@@ -78,8 +73,23 @@ public class Downloader_directDownload_privacyIntegrationTest {
                 is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(TEST_TEXT_FILE))))));
     }
 
+    @Test(expected = IOException.class)
+    public void failDirectDownloadUsingTransactionHashWithIncorrectNemKeys() throws IOException {
+        final String transactionHash = TestDataRepository.getData(
+                "Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy",
+                "transactionHash");
+        final DirectDownloadParameter param =
+                DirectDownloadParameter.createFromTransactionHash(transactionHash)
+                        .withNemKeysPrivacy(IntegrationTestConfig.getPrivateKey1(), IntegrationTestConfig.getPublicKey1())
+                        .build();
+
+        final InputStream result = unitUnderTest.directDownload(param);
+
+        IOUtils.toByteArray(result);
+    }
+
     @Test
-    public void shouldDownloadDataUsingTransactionHashWithSecuredWithPasswordPrivacyStrategy() throws IOException {
+    public void shouldDirectDownloadUsingTransactionHashWithPasswordPrivacy() throws IOException {
         final String transactionHash = TestDataRepository.getData(
                 "Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithPasswordPrivacyStrategy",
                 "transactionHash");
@@ -94,9 +104,24 @@ public class Downloader_directDownload_privacyIntegrationTest {
         assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)), is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(TEST_TEXT_FILE))))));
     }
 
+    @Test(expected = IOException.class)
+    public void failDirectDownloadUsingTransactionHashWithIncorrectPassword() throws IOException {
+        final String transactionHash = TestDataRepository.getData(
+                "Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithPasswordPrivacyStrategy",
+                "transactionHash");
+        final DirectDownloadParameter param =
+                DirectDownloadParameter.createFromTransactionHash(transactionHash)
+                        .withPasswordPrivacy(TEST_PASSWORD + "dummy")
+                        .build();
+
+        final InputStream result = unitUnderTest.directDownload(param);
+
+        IOUtils.toByteArray(result);
+    }
+
     // TODO - revisit shamir secret sharing implementation that works cross-sdk
 //	@Test
-//	public void shouldDownloadDataUsingTransactionHashWithSecuredWithShamirSecretSharingPrivacyStrategy() throws IOException {
+//	public void shouldDirectDownloadUsingTransactionHashWithShamirSecretSharingPrivacy() throws IOException {
 //		final String transactionHash = TestDataRepository.getData(
 //				"Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy",
 //				"transactionHash");
@@ -115,7 +140,7 @@ public class Downloader_directDownload_privacyIntegrationTest {
 //	}
 
     @Test
-    public void shouldDownloadDataUsingDataHashWithPlainPrivacyStrategy() throws IOException {
+    public void shouldDirectDownloadUsingDataHashWithPlainPrivacy() throws IOException {
         final String dataHash = TestDataRepository.getData(
                 "Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithPlainPrivacyStrategy",
                 "dataHash");
@@ -131,7 +156,7 @@ public class Downloader_directDownload_privacyIntegrationTest {
     }
 
     @Test
-    public void shouldDownloadDataUsingDataHashWithSecuredWithNemKeysPrivacyStrategy() throws IOException {
+    public void shouldDirectDownloadUsingDataHashWithNemKeysPrivacy() throws IOException {
         final String dataHash = TestDataRepository.getData(
                 "Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithNemKeysPrivacyStrategy",
                 "dataHash");
@@ -147,8 +172,24 @@ public class Downloader_directDownload_privacyIntegrationTest {
                 is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(TEST_TEXT_FILE))))));
     }
 
+    @Test(expected = IOException.class)
+    public void failDirectDownloadUsingDataHashWhenIncorrectNemKeys() throws IOException {
+        final String dataHash = TestDataRepository.getData(
+                "Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithPasswordPrivacyStrategy",
+                "dataHash");
+        final DirectDownloadParameter param =
+                DirectDownloadParameter.createFromDataHash(dataHash)
+                        .withNemKeysPrivacy(IntegrationTestConfig.getPrivateKey1(), IntegrationTestConfig.getPublicKey1())
+                        .build();
+
+        final InputStream result = unitUnderTest.directDownload(param);
+
+        IOUtils.toByteArray(result);
+    }
+
+
     @Test
-    public void shouldDownloadDataUsingDataHashWithSecuredWithPasswordPrivacyStrategy() throws IOException {
+    public void shouldDirectDownloadUsingDataHashWithPasswordPrivacy() throws IOException {
         final String dataHash = TestDataRepository.getData(
                 "Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithPasswordPrivacyStrategy",
                 "dataHash");
@@ -163,9 +204,24 @@ public class Downloader_directDownload_privacyIntegrationTest {
         assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)), is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(TEST_TEXT_FILE))))));
     }
 
+    @Test(expected = IOException.class)
+    public void failDirectDownloadUsingDataHashWhenIncorrectPassword() throws IOException {
+        final String dataHash = TestDataRepository.getData(
+                "Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithPasswordPrivacyStrategy",
+                "dataHash");
+        final DirectDownloadParameter param =
+                DirectDownloadParameter.createFromDataHash(dataHash)
+                        .withPasswordPrivacy(TEST_PASSWORD + "dummy")
+                        .build();
+
+        final InputStream result = unitUnderTest.directDownload(param);
+
+        IOUtils.toByteArray(result);
+    }
+
     // TODO - revisit shamir secret sharing implementation that works cross-sdk
 //	@Test
-//	public void shouldDownloadDataUsingDataHashWithSecuredWithShamirSecretSharingPrivacyStrategy() throws IOException {
+//	public void shouldDirectDownloadUsingDataHashWithShamirSecretSharingPrivacy() throws IOException {
 //		final String dataHash = TestDataRepository.getData(
 //				"Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithSecuredWithShamirSecretSharingPrivacyStrategy",
 //				"dataHash");
