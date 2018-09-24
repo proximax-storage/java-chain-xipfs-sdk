@@ -14,6 +14,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -73,7 +74,9 @@ public class StorageNodeClient implements FileStorageClientApi {
                         .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
                         .addBinaryBody("file", byteStream,
                                 ContentType.DEFAULT_BINARY, "file").build();
-                final HttpPost httpPost = new HttpPost(apiUrl + "/upload/file");
+                // TODO This should be POST but storage platform went with PUT
+//                final HttpPost httpPost = new HttpPost(apiUrl + "/upload/file");
+                final HttpPut httpPost = new HttpPut(apiUrl + "/upload/file");
                 httpPost.setEntity(file);
                 httpPost.setHeader(HEADER_CREDENTIALS, headerCredentials);
 
