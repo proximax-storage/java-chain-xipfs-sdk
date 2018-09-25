@@ -83,4 +83,31 @@ public class Downloader_download_asyncIntegrationTest {
 		assertThat(throwable, instanceOf(DownloadFailureException.class));
 	}
 
+	@Test
+	public void shouldDownloadMultipleRequestsAsynchronously() throws Exception {
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash)
+				.build();
+		final CompletableFuture<DownloadResult> toPopulateOnSuccess1 = new CompletableFuture<>();
+		final CompletableFuture<DownloadResult> toPopulateOnSuccess2 = new CompletableFuture<>();
+		final CompletableFuture<DownloadResult> toPopulateOnSuccess3 = new CompletableFuture<>();
+
+		unitUnderTest.downloadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess1::complete, null));
+		unitUnderTest.downloadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess2::complete, null));
+		unitUnderTest.downloadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess3::complete, null));
+		final DownloadResult result1 = toPopulateOnSuccess1.get(5, TimeUnit.SECONDS);
+		final DownloadResult result2 = toPopulateOnSuccess2.get(5, TimeUnit.SECONDS);
+		final DownloadResult result3 = toPopulateOnSuccess3.get(5, TimeUnit.SECONDS);
+
+		assertThat(result1, is(notNullValue()));
+		assertThat(result1.getData(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result1.getData().getByteStream()), is(notNullValue()));
+		assertThat(result2, is(notNullValue()));
+		assertThat(result2.getData(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result2.getData().getByteStream()), is(notNullValue()));
+		assertThat(result3, is(notNullValue()));
+		assertThat(result3.getData(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result3.getData().getByteStream()), is(notNullValue()));
+	}
 }

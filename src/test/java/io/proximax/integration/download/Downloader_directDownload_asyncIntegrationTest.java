@@ -41,7 +41,7 @@ public class Downloader_directDownload_asyncIntegrationTest {
 	}
 
 	@Test
-	public void shouldDownloadDataAsynchronouslyWithoutCallback() throws Exception {
+	public void shouldDirectDownloadAsynchronouslyWithoutCallback() throws Exception {
 		final String dataHash =
 				TestDataRepository.getData("Uploader_integrationTest.shouldUploadByteArray", "dataHash");
 		final DirectDownloadParameter param =
@@ -56,7 +56,7 @@ public class Downloader_directDownload_asyncIntegrationTest {
 	}
 
 	@Test
-	public void shouldDownloadDataAsynchronouslyWithSuccessCallback() throws Exception {
+	public void shouldDirectDownloadAsynchronouslyWithSuccessCallback() throws Exception {
 		final String dataHash = TestDataRepository
 				.getData("Uploader_integrationTest.shouldUploadByteArray", "dataHash");
 		final DirectDownloadParameter param =
@@ -71,7 +71,7 @@ public class Downloader_directDownload_asyncIntegrationTest {
 	}
 
 	@Test
-	public void shouldDownloadDataAsynchronouslyWithFailureCallback() throws Exception {
+	public void shouldDirectDownloadAsynchronouslyWithFailureCallback() throws Exception {
 		final DirectDownloadParameter param = DirectDownloadParameter
 				.createFromTransactionHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
 		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
@@ -83,4 +83,28 @@ public class Downloader_directDownload_asyncIntegrationTest {
 
 	}
 
+	@Test
+	public void shouldDirectDownloadMultipleRequestsAsynchronously() throws Exception {
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadByteArray", "transactionHash");
+		final DirectDownloadParameter param =
+				DirectDownloadParameter.createFromTransactionHash(transactionHash).build();
+		final CompletableFuture<InputStream> toPopulateOnSuccess1 = new CompletableFuture<>();
+		final CompletableFuture<InputStream> toPopulateOnSuccess2 = new CompletableFuture<>();
+		final CompletableFuture<InputStream> toPopulateOnSuccess3 = new CompletableFuture<>();
+
+		unitUnderTest.directDownloadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess1::complete, null));
+		unitUnderTest.directDownloadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess2::complete, null));
+		unitUnderTest.directDownloadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess3::complete, null));
+		final InputStream result1 = toPopulateOnSuccess1.get(5, TimeUnit.SECONDS);
+		final InputStream result2 = toPopulateOnSuccess2.get(5, TimeUnit.SECONDS);
+		final InputStream result3 = toPopulateOnSuccess3.get(5, TimeUnit.SECONDS);
+
+		assertThat(result1, is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result1), is(notNullValue()));
+		assertThat(result2, is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result2), is(notNullValue()));
+		assertThat(result3, is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result3), is(notNullValue()));
+	}
 }

@@ -85,6 +85,31 @@ public class Uploader_asyncIntegrationTest {
 		assertThat(throwable, instanceOf(UploadFailureException.class));
 	}
 
+	@Test
+	public void shouldUploadParallelRequestsAsynchronously() throws Exception {
+		final UploadParameter param = UploadParameter
+				.createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
+				.build();
+		final CompletableFuture<UploadResult> toPopulateOnSuccess1 = new CompletableFuture<>();
+		final CompletableFuture<UploadResult> toPopulateOnSuccess2 = new CompletableFuture<>();
+		final CompletableFuture<UploadResult> toPopulateOnSuccess3 = new CompletableFuture<>();
+
+		unitUnderTest.uploadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess1::complete, null));
+		unitUnderTest.uploadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess2::complete, null));
+		unitUnderTest.uploadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess3::complete, null));
+
+		final UploadResult result1 = toPopulateOnSuccess1.get(5, TimeUnit.SECONDS);
+		final UploadResult result2 = toPopulateOnSuccess2.get(5, TimeUnit.SECONDS);
+		final UploadResult result3 = toPopulateOnSuccess3.get(5, TimeUnit.SECONDS);
+
+		assertThat(result1, is(notNullValue()));
+		assertThat(result1.getTransactionHash(), is(notNullValue()));
+		assertThat(result2, is(notNullValue()));
+		assertThat(result2.getTransactionHash(), is(notNullValue()));
+		assertThat(result3, is(notNullValue()));
+		assertThat(result3.getTransactionHash(), is(notNullValue()));
+	}
+
 	private class NotImplementedPrivacyStrategy extends CustomPrivacyStrategy{
 		@Override
 		public InputStream encryptStream (InputStream byteStream){
