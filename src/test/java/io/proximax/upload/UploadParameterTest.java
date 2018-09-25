@@ -493,20 +493,26 @@ public class UploadParameterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failCreateParameterDataWhenDescriptionExceedsLimit() {
-        ByteArrayParameterData.create(SAMPLE_DATA, RandomStringUtils.random(201), "test name",
+        ByteArrayParameterData.create(SAMPLE_DATA, RandomStringUtils.random(101), "test name",
                 "text/plain", singletonMap("testkey", "testvalue"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failCreateParameterDataWhenNameExceedsLimit() {
-        ByteArrayParameterData.create(SAMPLE_DATA, "test description", RandomStringUtils.random(201),
+        ByteArrayParameterData.create(SAMPLE_DATA, "test description", RandomStringUtils.random(101),
                 "text/plain", singletonMap("testkey", "testvalue"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failCreateParameterDataWhenContentTypeExceedsLimit() {
+        ByteArrayParameterData.create(SAMPLE_DATA, "test description", "test name",
+                RandomStringUtils.random(31), singletonMap("testkey", "testvalue"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failCreateParameterDataWhenMetadataJsonExceedsLimit() {
         ByteArrayParameterData.create(SAMPLE_DATA, "test description", "test name",
-                "text/plain", singletonMap(RandomStringUtils.random(250), RandomStringUtils.random(250)));
+                "text/plain", singletonMap(RandomStringUtils.random(201), RandomStringUtils.random(201)));
     }
 
 }
