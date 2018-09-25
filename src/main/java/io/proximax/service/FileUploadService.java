@@ -1,8 +1,8 @@
 package io.proximax.service;
 
 import io.proximax.connection.ConnectionConfig;
-import io.proximax.service.api.FileStorageClientApi;
-import io.proximax.service.factory.FileStorageClientFactory;
+import io.proximax.service.repository.FileRepository;
+import io.proximax.service.factory.FileRepositoryFactory;
 import io.reactivex.Observable;
 
 import java.io.File;
@@ -15,7 +15,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  */
 public class FileUploadService {
 
-    private final FileStorageClientApi fileStorageClientApi;
+    private final FileRepository fileRepository;
 
     /**
      * Construct this class
@@ -23,12 +23,11 @@ public class FileUploadService {
      * @param connectionConfig the connection config
      */
     public FileUploadService(final ConnectionConfig connectionConfig) {
-        this.fileStorageClientApi =
-                FileStorageClientFactory.createFromConnectionConfig(connectionConfig);
+        this.fileRepository = FileRepositoryFactory.createFromConnectionConfig(connectionConfig);
     }
 
-    FileUploadService(final FileStorageClientApi fileStorageClientApi) {
-        this.fileStorageClientApi = fileStorageClientApi;
+    FileUploadService(final FileRepository fileRepository) {
+        this.fileRepository = fileRepository;
     }
 
     /**
@@ -40,7 +39,7 @@ public class FileUploadService {
     public Observable<FileUploadResponse> uploadByteStream(final InputStream byteStream) {
         checkParameter(byteStream != null, "byteStream is required");
 
-        return fileStorageClientApi.addByteStream(byteStream)
+        return fileRepository.addByteStream(byteStream)
                 .map(dataHash -> new FileUploadResponse(dataHash, System.currentTimeMillis()));
     }
 
@@ -53,7 +52,7 @@ public class FileUploadService {
     public Observable<FileUploadResponse> uploadPath(final File path) {
         checkParameter(path != null, "path is required");
 
-        return fileStorageClientApi.addPath(path)
+        return fileRepository.addPath(path)
                 .map(dataHash -> new FileUploadResponse(dataHash, System.currentTimeMillis()));
     }
 }

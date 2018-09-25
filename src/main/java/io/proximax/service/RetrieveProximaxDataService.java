@@ -3,8 +3,8 @@ package io.proximax.service;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.exceptions.DownloadForDataTypeNotSupportedException;
 import io.proximax.privacy.strategy.PrivacyStrategy;
-import io.proximax.service.api.FileStorageClientApi;
-import io.proximax.service.factory.FileStorageClientFactory;
+import io.proximax.service.repository.FileRepository;
+import io.proximax.service.factory.FileRepositoryFactory;
 import io.proximax.utils.DigestUtils;
 import io.reactivex.Observable;
 
@@ -18,7 +18,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  */
 public class RetrieveProximaxDataService {
 
-    private final FileStorageClientApi fileStorageClientApi;
+    private final FileRepository fileRepository;
     private final DigestUtils digestUtils;
 
     /**
@@ -27,12 +27,12 @@ public class RetrieveProximaxDataService {
      * @param connectionConfig the connection config
      */
     public RetrieveProximaxDataService(ConnectionConfig connectionConfig) {
-        this.fileStorageClientApi = FileStorageClientFactory.createFromConnectionConfig(connectionConfig);
+        this.fileRepository = FileRepositoryFactory.createFromConnectionConfig(connectionConfig);
         this.digestUtils = new DigestUtils();
     }
 
-    RetrieveProximaxDataService(FileStorageClientApi fileStorageClientApi, DigestUtils digestUtils) {
-        this.fileStorageClientApi = fileStorageClientApi;
+    RetrieveProximaxDataService(FileRepository fileRepository, DigestUtils digestUtils) {
+        this.fileRepository = fileRepository;
         this.digestUtils = digestUtils;
     }
 
@@ -54,7 +54,7 @@ public class RetrieveProximaxDataService {
         if (contentType != null && contentType.equals(PATH_UPLOAD_CONTENT_TYPE)) { // path
             throw new DownloadForDataTypeNotSupportedException("download of path is not yet supported");
         } else { // byte array
-            return fileStorageClientApi.getByteStream(dataHash)
+            return fileRepository.getByteStream(dataHash)
                     .flatMap(undecryptedStream -> validateDigest(validateDigest, digest, dataHash)
                             .map(result -> undecryptedStream))
                     .map(privacyStrategy::decryptStream);
@@ -62,7 +62,7 @@ public class RetrieveProximaxDataService {
     }
 
     private Observable<Boolean> validateDigest(boolean validateDigest, String digest, String dataHash) {
-        return validateDigest ? fileStorageClientApi.getByteStream(dataHash)
+        return validateDigest ? fileRepository.getByteStream(dataHash)
                 .flatMap(undecryptedStream -> digestUtils.validateDigest(undecryptedStream, digest)) : Observable.just(true);
     }
 }

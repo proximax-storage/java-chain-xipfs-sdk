@@ -1,4 +1,4 @@
-package io.proximax.service.api;
+package io.proximax.service.repository;
 
 import io.reactivex.Observable;
 
@@ -6,9 +6,9 @@ import java.io.File;
 import java.io.InputStream;
 
 /**
- * This interface defines the methods that a file storage client API must implement
+ * This interface defines the methods that a file repository must implement
  */
-public interface FileStorageClientApi {
+public interface FileRepository {
 
     /**
      * Add/Upload a file (represented as byte stream) to storage node

@@ -8,12 +8,11 @@ import io.proximax.connection.StorageConnection;
 import io.proximax.exceptions.StorageNodeConnectionFailureException;
 import io.proximax.exceptions.UploadPathNotSupportedException;
 import io.proximax.model.BlockchainNetworkType;
-import io.proximax.service.api.FileStorageClientApi;
+import io.proximax.service.repository.FileRepository;
 import io.reactivex.Observable;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
@@ -38,7 +37,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * <li>retrieving of file given a hash</li>
  * </ul>
  */
-public class StorageNodeClient implements FileStorageClientApi {
+public class StorageNodeClient implements FileRepository {
 
     public static final String HEADER_CREDENTIALS = "HeaderCredentials";
 

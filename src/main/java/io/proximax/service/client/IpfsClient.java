@@ -4,7 +4,7 @@ import io.ipfs.api.NamedStreamable;
 import io.ipfs.multihash.Multihash;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.exceptions.IpfsClientFailureException;
-import io.proximax.service.api.FileStorageClientApi;
+import io.proximax.service.repository.FileRepository;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -26,7 +26,7 @@ import static java.util.stream.Collectors.toList;
  * <li>pinning a file given a hash to ensure it is not garbage collected</li>
  * </ul>
  */
-public class IpfsClient implements FileStorageClientApi {
+public class IpfsClient implements FileRepository {
 
     private final IpfsConnection ipfsConnection;
 

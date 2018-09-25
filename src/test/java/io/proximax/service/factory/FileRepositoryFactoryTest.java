@@ -4,7 +4,7 @@ import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.connection.StorageConnection;
-import io.proximax.service.api.FileStorageClientApi;
+import io.proximax.service.repository.FileRepository;
 import io.proximax.service.client.IpfsClient;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class FileStorageClientFactoryTest {
+public class FileRepositoryFactoryTest {
 
     @Mock
     private IpfsConnection mockIpfsConnection;
@@ -34,7 +34,7 @@ public class FileStorageClientFactoryTest {
 
     @Test
     public void shouldReturnIpfsClientOnIpfsConnection() {
-        final FileStorageClientApi result = FileStorageClientFactory.createFromConnectionConfig(
+        final FileRepository result = FileRepositoryFactory.createFromConnectionConfig(
                 ConnectionConfig.createWithLocalIpfsConnection(
                         mockBlockchainNetworkConnection, mockIpfsConnection
                 )
@@ -47,14 +47,14 @@ public class FileStorageClientFactoryTest {
 
     @Test
     public void shouldReturnStorageNodeClientOnStorageConnection() {
-        final FileStorageClientApi result = FileStorageClientFactory.createFromConnectionConfig(
+        final FileRepository result = FileRepositoryFactory.createFromConnectionConfig(
                 ConnectionConfig.createWithStorageConnection(
                         mockBlockchainNetworkConnection, mockStorageConnection
                 )
         );
 
         assertThat(result, is(notNullValue()));
-        assertThat(result, is(instanceOf(FileStorageClientApi.class)));
+        assertThat(result, is(instanceOf(FileRepository.class)));
 
     }
 }

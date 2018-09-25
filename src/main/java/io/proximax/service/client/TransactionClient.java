@@ -91,7 +91,7 @@ public class TransactionClient {
         } catch (Exception ex) {
             throw new AnnounceBlockchainTransactionFailureException("Failed to announce transaction", ex);
         } finally {
-            listener.close();
+            closeListener(listener);
         }
     }
 
@@ -133,6 +133,14 @@ public class TransactionClient {
                 .filter(transactionStatusError ->
                         transactionStatusError.getHash().equals(transactionHash))
                 .map(transactionStatusError -> transactionStatusError.getStatus());
+    }
+
+    private void closeListener(Listener listener) {
+        try {
+            listener.close();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
     }
 
 }
