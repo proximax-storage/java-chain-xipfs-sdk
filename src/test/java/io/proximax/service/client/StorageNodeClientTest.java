@@ -21,6 +21,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
@@ -118,7 +119,7 @@ public class StorageNodeClientTest {
     }
 
     private void givenUploadFileResponse() {
-        stubFor(post(urlEqualTo("/upload/file"))
+        stubFor(put(urlEqualTo("/upload/file"))
                 .withHeader(HEADER_CREDENTIALS, equalTo("NemAddress=nem:test; Bearer 11111"))
                 .withHeader("Content-Type", containing("multipart/form-data"))
                 .withHeader("Content-Type", containing("boundary="))
