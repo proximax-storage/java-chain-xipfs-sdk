@@ -28,8 +28,8 @@ public class AccountClient {
 
     /**
      * Create instance of AccountClient
-     * @param blockchainNetworkConnection
-     * @throws MalformedURLException
+     * @param blockchainNetworkConnection the blockchain connection
+     * @throws MalformedURLException exception when invalid blockchain URl
      */
     public AccountClient(BlockchainNetworkConnection blockchainNetworkConnection) throws MalformedURLException {
         checkParameter(blockchainNetworkConnection != null, "blockchainNetworkConnection is required");
