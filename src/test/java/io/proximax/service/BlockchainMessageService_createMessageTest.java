@@ -1,4 +1,4 @@
-package io.proximax.service.factory;
+package io.proximax.service;
 
 import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.PrivateKey;
@@ -21,7 +21,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.BDDMockito.given;
 
-public class BlockchainMessageFactoryTest {
+public class BlockchainMessageService_createMessageTest {
 
     private static final String SAMPLE_SENDER_PRIVATE_KEY = "CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C";
     private static final String SAMPLE_SENDER_PUBLIC_KEY = "0BB0FC937EF6C10AD16ABCC3FF4A2848F16BF360A98D64140E7674F31702903B";
@@ -31,7 +31,7 @@ public class BlockchainMessageFactoryTest {
     private static final String SAMPLE_DATA_HASH = "QmXkGKuB74uVJijEjgmGa9jMiY3MBiziFQPnrzvTZ3DKJf";
     private static final String SAMPLE_DIGEST = "eqwewqewqewqewqewq";
 
-    private BlockchainMessageFactory unitUnderTest;
+    private BlockchainMessageService unitUnderTest;
 
     @Mock
     private AccountClient mockAccountClient;
@@ -39,7 +39,7 @@ public class BlockchainMessageFactoryTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        unitUnderTest = new BlockchainMessageFactory(NetworkType.MIJIN_TEST, mockAccountClient);
+        unitUnderTest = new BlockchainMessageService(NetworkType.MIJIN_TEST, mockAccountClient);
 
     }
 
