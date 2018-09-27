@@ -50,10 +50,10 @@ public class Downloader {
      * @param connectionConfig the connection config that defines generally where the download will be sent
      */
     public Downloader(ConnectionConfig connectionConfig) {
-        this.retrieveProximaxMessagePayloadService = new RetrieveProximaxMessagePayloadService();
         this.retrieveProximaxDataService = new RetrieveProximaxDataService(connectionConfig);
 
         try {
+            this.retrieveProximaxMessagePayloadService = new RetrieveProximaxMessagePayloadService(connectionConfig.getBlockchainNetworkConnection());
             this.blockchainTransactionService = new BlockchainTransactionService(connectionConfig.getBlockchainNetworkConnection());
         } catch (MalformedURLException e) {
             throw new DownloadInitFailureException("Failed to initialize", e);

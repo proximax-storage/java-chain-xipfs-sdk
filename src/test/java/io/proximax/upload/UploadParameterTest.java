@@ -3,28 +3,20 @@ package io.proximax.upload;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategy;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
 import static io.proximax.model.Constants.SCHEMA_VERSION;
 import static io.proximax.testsupport.Constants.TEST_IMAGE_PNG_FILE;
 import static io.proximax.testsupport.Constants.TEST_PATH_FILE;
-import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_SHARES;
-import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_THRESHOLD;
-import static io.proximax.testsupport.Constants.TEST_SHAMIR_SECRET_TOTAL_SHARES;
 import static io.proximax.testsupport.Constants.TEST_STRING;
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -458,8 +450,7 @@ public class UploadParameterTest {
                 .withPasswordPrivacy("passwordaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                 .withDetectContentType(true)
                 .withTransactionDeadline(5)
-                // TODO - implement secure message
-//                .withUseBlockchainSecureMessage(true)
+                .withUseBlockchainSecureMessage(true)
                 .build();
 
         assertThat(param, is(notNullValue()));
@@ -469,8 +460,7 @@ public class UploadParameterTest {
         assertThat(param.getPrivacyStrategy(), is(instanceOf(SecuredWithPasswordPrivacyStrategy.class)));
         assertThat(param.getDetectContentType(), is(true));
         assertThat(param.getTransactionDeadline(), is(5));
-        // TODO - implement secure message
-//        assertThat(param.getUseBlockchainSecureMessage(), is(true));
+        assertThat(param.getUseBlockchainSecureMessage(), is(true));
     }
 
     @Test(expected = IllegalArgumentException.class)

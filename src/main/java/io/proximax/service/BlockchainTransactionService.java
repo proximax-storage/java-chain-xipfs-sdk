@@ -12,7 +12,7 @@ import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.exceptions.GetTransactionFailureException;
 import io.proximax.exceptions.TransactionNotAllowedException;
 import io.proximax.model.ProximaxMessagePayloadModel;
-import io.proximax.service.client.TransactionClient;
+import io.proximax.service.client.catapult.TransactionClient;
 import io.proximax.service.factory.BlockchainMessageFactory;
 import io.proximax.utils.NemUtils;
 import io.reactivex.Observable;
@@ -44,7 +44,7 @@ public class BlockchainTransactionService {
         this.blockchainNetworkConnection = blockchainNetworkConnection;
         this.transactionClient = new TransactionClient(blockchainNetworkConnection);
         this.nemUtils = new NemUtils(blockchainNetworkConnection.getNetworkType());
-        this.blockchainMessageFactory = new BlockchainMessageFactory();
+        this.blockchainMessageFactory = new BlockchainMessageFactory(blockchainNetworkConnection);
     }
 
     BlockchainTransactionService(BlockchainNetworkConnection blockchainNetworkConnection, TransactionClient transactionClient,
@@ -66,7 +66,7 @@ public class BlockchainTransactionService {
 
         return transactionClient.getTransaction(transactionHash)
                 .onErrorResumeNext((Throwable ex) ->
-                        Observable.error(new GetTransactionFailureException(String.format("Unable to getByteStream transaction for %s", transactionHash), ex)))
+                        Observable.error(new GetTransactionFailureException(String.format("Unable to transfer transaction for %s", transactionHash), ex)))
                 .map(transaction -> {
                     if (!(transaction.getType().equals(TransactionType.TRANSFER) &&
                             transaction instanceof TransferTransaction))

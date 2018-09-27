@@ -7,11 +7,6 @@ import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
 import io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart;
-
-import java.util.List;
-import java.util.Map;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
@@ -92,16 +87,15 @@ public class UploadParameterBuilder {
         return this;
     }
 
-    // TODO - implement secure message
-//    /**
-//     * Set the use blockchain secure message flag
-//     * @param useBlockchainSecureMessage flag that indicates if transaction's message is to be secured
-//     * @return the same instance of this builder
-//     */
-//    public UploadParameterBuilder withUseBlockchainSecureMessage(Boolean useBlockchainSecureMessage) {
-//        this.useBlockchainSecureMessage = useBlockchainSecureMessage;
-//        return this;
-//    }
+    /**
+     * Set the use blockchain secure message flag
+     * @param useBlockchainSecureMessage flag that indicates if transaction's message is to be secured
+     * @return the same instance of this builder
+     */
+    public UploadParameterBuilder withUseBlockchainSecureMessage(Boolean useBlockchainSecureMessage) {
+        this.useBlockchainSecureMessage = useBlockchainSecureMessage;
+        return this;
+    }
 
     /**
      * Set the transaction deadline

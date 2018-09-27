@@ -15,7 +15,7 @@ import io.proximax.exceptions.AnnounceBlockchainTransactionFailureException;
 import io.proximax.exceptions.GetTransactionFailureException;
 import io.proximax.exceptions.TransactionNotAllowedException;
 import io.proximax.model.ProximaxMessagePayloadModel;
-import io.proximax.service.client.TransactionClient;
+import io.proximax.service.client.catapult.TransactionClient;
 import io.proximax.service.factory.BlockchainMessageFactory;
 import io.proximax.utils.NemUtils;
 import io.reactivex.Observable;
@@ -30,7 +30,7 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 
-import static io.proximax.service.client.TransactionClient.STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION;
+import static io.proximax.service.client.catapult.TransactionClient.STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION;
 import static org.exparity.hamcrest.date.LocalDateTimeMatchers.sameOrBefore;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
