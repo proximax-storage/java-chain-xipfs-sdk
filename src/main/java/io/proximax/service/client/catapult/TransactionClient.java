@@ -1,4 +1,4 @@
-package io.proximax.service.client;
+package io.proximax.service.client.catapult;
 
 import io.nem.sdk.infrastructure.Listener;
 import io.nem.sdk.infrastructure.TransactionHttp;
@@ -85,7 +85,7 @@ public class TransactionClient {
                     }).take(1).toFuture();
 
             transactionHttp.announce(signedTransaction).blockingFirst();
-            return statusFuture.get(30, TimeUnit.SECONDS);
+            return statusFuture.get(60, TimeUnit.SECONDS);
         } catch (AnnounceBlockchainTransactionFailureException ex) {
             throw ex;
         } catch (Exception ex) {

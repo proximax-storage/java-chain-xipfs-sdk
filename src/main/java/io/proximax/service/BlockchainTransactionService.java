@@ -12,8 +12,7 @@ import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.exceptions.GetTransactionFailureException;
 import io.proximax.exceptions.TransactionNotAllowedException;
 import io.proximax.model.ProximaxMessagePayloadModel;
-import io.proximax.service.client.TransactionClient;
-import io.proximax.service.factory.BlockchainMessageFactory;
+import io.proximax.service.client.catapult.TransactionClient;
 import io.proximax.utils.NemUtils;
 import io.reactivex.Observable;
 
@@ -30,7 +29,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 public class BlockchainTransactionService {
 
     private final BlockchainNetworkConnection blockchainNetworkConnection;
-    private final BlockchainMessageFactory blockchainMessageFactory;
+    private final BlockchainMessageService blockchainMessageService;
     private final TransactionClient transactionClient;
     private final NemUtils nemUtils;
 
@@ -44,15 +43,15 @@ public class BlockchainTransactionService {
         this.blockchainNetworkConnection = blockchainNetworkConnection;
         this.transactionClient = new TransactionClient(blockchainNetworkConnection);
         this.nemUtils = new NemUtils(blockchainNetworkConnection.getNetworkType());
-        this.blockchainMessageFactory = new BlockchainMessageFactory();
+        this.blockchainMessageService = new BlockchainMessageService(blockchainNetworkConnection);
     }
 
     BlockchainTransactionService(BlockchainNetworkConnection blockchainNetworkConnection, TransactionClient transactionClient,
-                                 NemUtils nemUtils, BlockchainMessageFactory blockchainMessageFactory) {
+                                 NemUtils nemUtils, BlockchainMessageService blockchainMessageService) {
         this.blockchainNetworkConnection = blockchainNetworkConnection;
         this.transactionClient = transactionClient;
         this.nemUtils = nemUtils;
-        this.blockchainMessageFactory = blockchainMessageFactory;
+        this.blockchainMessageService = blockchainMessageService;
     }
 
     /**
@@ -66,7 +65,7 @@ public class BlockchainTransactionService {
 
         return transactionClient.getTransaction(transactionHash)
                 .onErrorResumeNext((Throwable ex) ->
-                        Observable.error(new GetTransactionFailureException(String.format("Unable to getByteStream transaction for %s", transactionHash), ex)))
+                        Observable.error(new GetTransactionFailureException(String.format("Unable to transfer transaction for %s", transactionHash), ex)))
                 .map(transaction -> {
                     if (!(transaction.getType().equals(TransactionType.TRANSFER) &&
                             transaction instanceof TransferTransaction))
@@ -92,7 +91,7 @@ public class BlockchainTransactionService {
         checkParameter(signerPrivateKey != null, "signerPrivateKey is required");
         checkParameter(messagePayload != null, "messagePayload is required");
 
-        final Message message = blockchainMessageFactory.createMessage(messagePayload, signerPrivateKey,
+        final Message message = blockchainMessageService.createMessage(messagePayload, signerPrivateKey,
                 recipientPublicKey, recipientAddress, useBlockchainSecureMessage);
         final Address recipient = getRecipient(signerPrivateKey, recipientPublicKey, recipientAddress);
         final TransferTransaction transaction = createTransaction(recipient, transactionDeadline, message);

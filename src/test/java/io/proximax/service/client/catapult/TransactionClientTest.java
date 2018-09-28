@@ -1,4 +1,4 @@
-package io.proximax.service.client;
+package io.proximax.service.client.catapult;
 
 import io.nem.sdk.infrastructure.Listener;
 import io.nem.sdk.infrastructure.TransactionHttp;
@@ -9,6 +9,7 @@ import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import io.nem.sdk.model.transaction.TransactionInfo;
 import io.nem.sdk.model.transaction.TransactionStatusError;
 import io.proximax.exceptions.AnnounceBlockchainTransactionFailureException;
+import io.proximax.service.client.catapult.TransactionClient;
 import io.reactivex.Observable;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +20,7 @@ import java.math.BigInteger;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import static io.proximax.service.client.TransactionClient.STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION;
+import static io.proximax.service.client.catapult.TransactionClient.STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
