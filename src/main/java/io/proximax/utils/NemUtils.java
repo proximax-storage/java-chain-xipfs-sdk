@@ -1,5 +1,6 @@
 package io.proximax.utils;
 
+import io.nem.core.crypto.KeyPair;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -65,6 +66,16 @@ public class NemUtils {
         checkParameter(privateKey != null, "privateKey is required");
 
         return Account.createFromPrivateKey(privateKey, networkType);
+    }
+
+    /**
+     * Generates a new Account
+     * @return
+     */
+    public Account generateNemAccount() {
+        final KeyPair kp = new KeyPair();
+        final Account account = new Account(kp, networkType);
+        return account;
     }
 
     /**
