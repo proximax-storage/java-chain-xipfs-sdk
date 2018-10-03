@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 ProximaX Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.proximax.privacy.strategy;
 
 import io.proximax.cipher.PBECipherEncryptor;
@@ -32,6 +47,7 @@ public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
 
     /**
      * Get the privacy type which is set as PASSWORD
+     *
      * @return the privacy type's int value
      * @see PrivacyType
      */
@@ -42,6 +58,7 @@ public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
 
     /**
      * Get the password
+     *
      * @return the password
      */
     public String getPassword() {
@@ -50,6 +67,7 @@ public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
 
     /**
      * Encrypt byte stream with password
+     *
      * @param byteStream the byte stream to encrypt
      * @return the encrypted byte stream
      */
@@ -60,6 +78,7 @@ public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
 
     /**
      * Decrypt byte stream with password
+     *
      * @param byteStream the byte stream to decrypt
      * @return the decrypted byte stream
      */
@@ -71,6 +90,7 @@ public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
 
     /**
      * Create instance of this strategy
+     *
      * @param password the password
      * @return the instance of this strategy
      */
@@ -80,6 +100,7 @@ public final class SecuredWithPasswordPrivacyStrategy extends PrivacyStrategy {
 
     /**
      * Create instance of this strategy and generate password
+     *
      * @return the instance of this strategy
      */
     public static SecuredWithPasswordPrivacyStrategy create() {

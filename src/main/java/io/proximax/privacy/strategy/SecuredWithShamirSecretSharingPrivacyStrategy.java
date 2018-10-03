@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 ProximaX Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.proximax.privacy.strategy;
 
 import com.codahale.shamir.Scheme;
@@ -29,9 +44,9 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
                                                   Map<Integer, byte[]> secretParts) {
 
         checkParameter(secretTotalPartCount > 0, "secretTotalPartCount should be a positive number");
-    	checkParameter(secretMinimumPartCountToBuild > 0 && secretMinimumPartCountToBuild <= secretTotalPartCount,
+        checkParameter(secretMinimumPartCountToBuild > 0 && secretMinimumPartCountToBuild <= secretTotalPartCount,
                 "secretMinimumPartCountToBuild should be a positive number less than or equal to secretTotalPartCount");
-    	checkParameter(secretParts != null, "secretParts is required");
+        checkParameter(secretParts != null, "secretParts is required");
         checkParameter(secretParts.size() >= secretMinimumPartCountToBuild,
                 "secretParts should meet minimum part count as defined by secretMinimumPartCountToBuild");
 
@@ -41,6 +56,7 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
 
     /**
      * Get the privacy type which is set as SHAMIR
+     *
      * @return the privacy type's int value
      * @see PrivacyType
      */
@@ -51,6 +67,7 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
 
     /**
      * Encrypt byte stream using the shamir secret sharing
+     *
      * @param byteStream the byte stream to encrypt
      * @return the encrypted byte stream
      */
@@ -61,6 +78,7 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
 
     /**
      * Decrypt byte stream using the shamir secret sharing
+     *
      * @param byteStream the byte stream to decrypt
      * @return the decrypted byte stream
      */
@@ -79,7 +97,8 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
 
         /**
          * Construct instance of this model
-         * @param index the index of the secret part
+         *
+         * @param index      the index of the secret part
          * @param secretPart the data of the secret part
          */
         public SecretPart(int index, byte[] secretPart) {
@@ -89,7 +108,8 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
 
         /**
          * Construct instance of this model
-         * @param index the index of the secret part
+         *
+         * @param index      the index of the secret part
          * @param secretPart the data of the secret part
          * @return instance of this model
          */
@@ -100,9 +120,10 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
 
     /**
      * Create instance of this strategy using an array of secret parts
-     * @param secretTotalPartCount the total count of secret parts
+     *
+     * @param secretTotalPartCount          the total count of secret parts
      * @param secretMinimumPartCountToBuild the minimum count of parts to build secret
-     * @param secretParts array of secret parts
+     * @param secretParts                   array of secret parts
      * @return the instance of this strategy
      */
     public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
@@ -115,9 +136,10 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
 
     /**
      * Create instance of this strategy using a list of secret parts
-     * @param secretTotalPartCount the total count of secret parts
+     *
+     * @param secretTotalPartCount          the total count of secret parts
      * @param secretMinimumPartCountToBuild the minimum count of parts to build secret
-     * @param secretParts list of secret parts
+     * @param secretParts                   list of secret parts
      * @return the instance of this strategy
      */
     public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
@@ -131,9 +153,10 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
 
     /**
      * Create instance of this strategy using a map of secret parts
-     * @param secretTotalPartCount the total count of secret parts
+     *
+     * @param secretTotalPartCount          the total count of secret parts
      * @param secretMinimumPartCountToBuild the minimum count of parts to build secret
-     * @param secretParts map of secret parts
+     * @param secretParts                   map of secret parts
      * @return the instance of this strategy
      */
     public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 ProximaX Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.proximax.integration.upload;
 
 import io.proximax.async.AsyncCallbacks;
@@ -28,97 +43,97 @@ import static org.hamcrest.core.IsNull.notNullValue;
 
 public class Uploader_asyncIntegrationTest {
 
-	private Uploader unitUnderTest;
+    private Uploader unitUnderTest;
 
-	@Before
-	public void setUp() {
-		unitUnderTest = new Uploader(ConnectionConfig.createWithLocalIpfsConnection(
-				new BlockchainNetworkConnection(
-						IntegrationTestConfig.getBlockchainNetworkType(),
-						IntegrationTestConfig.getBlockchainApiHost(),
-						IntegrationTestConfig.getBlockchainApiPort(),
-						IntegrationTestConfig.getBlockchainApiProtocol()),
-				new IpfsConnection(
-						IntegrationTestConfig.getIpfsApiHost(),
-						IntegrationTestConfig.getIpfsApiPort())));
-	}
+    @Before
+    public void setUp() {
+        unitUnderTest = new Uploader(ConnectionConfig.createWithLocalIpfsConnection(
+                new BlockchainNetworkConnection(
+                        IntegrationTestConfig.getBlockchainNetworkType(),
+                        IntegrationTestConfig.getBlockchainApiHost(),
+                        IntegrationTestConfig.getBlockchainApiPort(),
+                        IntegrationTestConfig.getBlockchainApiProtocol()),
+                new IpfsConnection(
+                        IntegrationTestConfig.getIpfsApiHost(),
+                        IntegrationTestConfig.getIpfsApiPort())));
+    }
 
-	@Test
-	public void shouldUploadAsynchronouslyWithoutCallback() throws Exception {
-		final UploadParameter param = UploadParameter
-				.createForByteArrayUpload(FileUtils.readFileToByteArray(TEST_PDF_FILE_1), IntegrationTestConfig.getPrivateKey1())
-				.build();
+    @Test
+    public void shouldUploadAsynchronouslyWithoutCallback() throws Exception {
+        final UploadParameter param = UploadParameter
+                .createForByteArrayUpload(FileUtils.readFileToByteArray(TEST_PDF_FILE_1), IntegrationTestConfig.getPrivateKey1())
+                .build();
 
-		final AsyncTask asyncTask = unitUnderTest.uploadAsync(param, null);
-		while (!asyncTask.isDone()) {
-			Thread.sleep(50);
-		}
+        final AsyncTask asyncTask = unitUnderTest.uploadAsync(param, null);
+        while (!asyncTask.isDone()) {
+            Thread.sleep(50);
+        }
 
-		assertThat(asyncTask.isDone(), is(true));
-	}
+        assertThat(asyncTask.isDone(), is(true));
+    }
 
-	@Test
-	public void shouldUploadAsynchronouslyWithSuccessCallback() throws Exception {
-		final UploadParameter param = UploadParameter
-				.createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
-				.build();
-		final CompletableFuture<UploadResult> toPopulateOnSuccess = new CompletableFuture<>();
+    @Test
+    public void shouldUploadAsynchronouslyWithSuccessCallback() throws Exception {
+        final UploadParameter param = UploadParameter
+                .createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
+                .build();
+        final CompletableFuture<UploadResult> toPopulateOnSuccess = new CompletableFuture<>();
 
-		unitUnderTest.uploadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess::complete, null));
-		final UploadResult result = toPopulateOnSuccess.get(5, TimeUnit.SECONDS);
+        unitUnderTest.uploadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess::complete, null));
+        final UploadResult result = toPopulateOnSuccess.get(5, TimeUnit.SECONDS);
 
-		assertThat(result, is(notNullValue()));
-		assertThat(result.getTransactionHash(), is(notNullValue()));
-	}
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getTransactionHash(), is(notNullValue()));
+    }
 
-	@Test
-	public void shouldUploadAsynchronouslyWithFailureCallback() throws Exception {
-		final UploadParameter param = UploadParameter
-				.createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
-				.withPrivacyStrategy(new NotImplementedPrivacyStrategy())
-				.build();
-		final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
+    @Test
+    public void shouldUploadAsynchronouslyWithFailureCallback() throws Exception {
+        final UploadParameter param = UploadParameter
+                .createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
+                .withPrivacyStrategy(new NotImplementedPrivacyStrategy())
+                .build();
+        final CompletableFuture<Throwable> toPopulateOnFailure = new CompletableFuture<>();
 
-		unitUnderTest.uploadAsync(param, AsyncCallbacks.create(null, toPopulateOnFailure::complete));
-		final Throwable throwable = toPopulateOnFailure.get(5, TimeUnit.SECONDS);
+        unitUnderTest.uploadAsync(param, AsyncCallbacks.create(null, toPopulateOnFailure::complete));
+        final Throwable throwable = toPopulateOnFailure.get(5, TimeUnit.SECONDS);
 
-		assertThat(throwable, instanceOf(UploadFailureException.class));
-	}
+        assertThat(throwable, instanceOf(UploadFailureException.class));
+    }
 
-	@Test
-	public void shouldUploadParallelRequestsAsynchronously() throws Exception {
-		final UploadParameter param = UploadParameter
-				.createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
-				.build();
-		final CompletableFuture<UploadResult> toPopulateOnSuccess1 = new CompletableFuture<>();
-		final CompletableFuture<UploadResult> toPopulateOnSuccess2 = new CompletableFuture<>();
-		final CompletableFuture<UploadResult> toPopulateOnSuccess3 = new CompletableFuture<>();
+    @Test
+    public void shouldUploadParallelRequestsAsynchronously() throws Exception {
+        final UploadParameter param = UploadParameter
+                .createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
+                .build();
+        final CompletableFuture<UploadResult> toPopulateOnSuccess1 = new CompletableFuture<>();
+        final CompletableFuture<UploadResult> toPopulateOnSuccess2 = new CompletableFuture<>();
+        final CompletableFuture<UploadResult> toPopulateOnSuccess3 = new CompletableFuture<>();
 
-		unitUnderTest.uploadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess1::complete, null));
-		unitUnderTest.uploadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess2::complete, null));
-		unitUnderTest.uploadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess3::complete, null));
+        unitUnderTest.uploadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess1::complete, null));
+        unitUnderTest.uploadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess2::complete, null));
+        unitUnderTest.uploadAsync(param, AsyncCallbacks.create(toPopulateOnSuccess3::complete, null));
 
-		final UploadResult result1 = toPopulateOnSuccess1.get(5, TimeUnit.SECONDS);
-		final UploadResult result2 = toPopulateOnSuccess2.get(5, TimeUnit.SECONDS);
-		final UploadResult result3 = toPopulateOnSuccess3.get(5, TimeUnit.SECONDS);
+        final UploadResult result1 = toPopulateOnSuccess1.get(5, TimeUnit.SECONDS);
+        final UploadResult result2 = toPopulateOnSuccess2.get(5, TimeUnit.SECONDS);
+        final UploadResult result3 = toPopulateOnSuccess3.get(5, TimeUnit.SECONDS);
 
-		assertThat(result1, is(notNullValue()));
-		assertThat(result1.getTransactionHash(), is(notNullValue()));
-		assertThat(result2, is(notNullValue()));
-		assertThat(result2.getTransactionHash(), is(notNullValue()));
-		assertThat(result3, is(notNullValue()));
-		assertThat(result3.getTransactionHash(), is(notNullValue()));
-	}
+        assertThat(result1, is(notNullValue()));
+        assertThat(result1.getTransactionHash(), is(notNullValue()));
+        assertThat(result2, is(notNullValue()));
+        assertThat(result2.getTransactionHash(), is(notNullValue()));
+        assertThat(result3, is(notNullValue()));
+        assertThat(result3.getTransactionHash(), is(notNullValue()));
+    }
 
-	private class NotImplementedPrivacyStrategy extends CustomPrivacyStrategy{
-		@Override
-		public InputStream encryptStream (InputStream byteStream){
-			throw new RuntimeException("not implemented");
-		}
+    private class NotImplementedPrivacyStrategy extends CustomPrivacyStrategy {
+        @Override
+        public InputStream encryptStream(InputStream byteStream) {
+            throw new RuntimeException("not implemented");
+        }
 
-		@Override
-		public InputStream decryptStream (InputStream byteStream){
-			return byteStream;
-		}
-	}
+        @Override
+        public InputStream decryptStream(InputStream byteStream) {
+            return byteStream;
+        }
+    }
 }

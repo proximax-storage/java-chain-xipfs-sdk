@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 ProximaX Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.proximax.cipher;
 
 import io.nem.core.crypto.Hashes;
@@ -30,82 +45,82 @@ import static java.util.Arrays.asList;
 public class BlockchainKeysCipherEncryptor {
 
 
-	/**
-	 * Encrypt byte stream with private and public keys
-	 *
-	 * @param byteStream the byte stream to encrypt
-	 * @param privateKeyPair the key pair with private key
-	 * @param publicKeyPair the key pair with public key
-	 * @return the encrypted stream
-	 */
-	public InputStream encryptStream(InputStream byteStream, KeyPair privateKeyPair, KeyPair publicKeyPair) {
-		try {
-			byte[] salt = new byte[32];
-			byte[] iv = new byte[16];
-			SecureRandom rand = new SecureRandom();
-			rand.nextBytes(salt);
-			rand.nextBytes(iv);
+    /**
+     * Encrypt byte stream with private and public keys
+     *
+     * @param byteStream     the byte stream to encrypt
+     * @param privateKeyPair the key pair with private key
+     * @param publicKeyPair  the key pair with public key
+     * @return the encrypted stream
+     */
+    public InputStream encryptStream(InputStream byteStream, KeyPair privateKeyPair, KeyPair publicKeyPair) {
+        try {
+            byte[] salt = new byte[32];
+            byte[] iv = new byte[16];
+            SecureRandom rand = new SecureRandom();
+            rand.nextBytes(salt);
+            rand.nextBytes(iv);
 
-			Cipher cipher = getCipherInstance();
-			cipher.init(Cipher.ENCRYPT_MODE,
-					getSharedKey(salt, privateKeyPair, publicKeyPair),
-					getIvParameterSpec(iv));
+            Cipher cipher = getCipherInstance();
+            cipher.init(Cipher.ENCRYPT_MODE,
+                    getSharedKey(salt, privateKeyPair, publicKeyPair),
+                    getIvParameterSpec(iv));
 
-			return new SequenceInputStream(Collections.enumeration(asList(
-					new ByteArrayInputStream(salt),
-					new ByteArrayInputStream(iv),
-					new CipherInputStream(byteStream, cipher)
-			)));
-		} catch (Exception e) {
-			throw new EncryptionFailureException("Failed to encrypt stream", e);
-		}
-	}
+            return new SequenceInputStream(Collections.enumeration(asList(
+                    new ByteArrayInputStream(salt),
+                    new ByteArrayInputStream(iv),
+                    new CipherInputStream(byteStream, cipher)
+            )));
+        } catch (Exception e) {
+            throw new EncryptionFailureException("Failed to encrypt stream", e);
+        }
+    }
 
-	/**
-	 * Decrypt byte stream with private and public keys
-	 *
-	 * @param byteStream the encrypted byte stream
-	 * @param privateKeyPair the key pair with private key
-	 * @param publicKeyPair the key pair with public key
-	 * @return the decrypted stream
-	 */
-	public InputStream decryptStream(InputStream byteStream, KeyPair privateKeyPair, KeyPair publicKeyPair) {
-		try {
-			byte[] salt = new byte[32];
-			byte[] iv = new byte[16];
-			IOUtils.read(byteStream, salt);
-			IOUtils.read(byteStream, iv);;
+    /**
+     * Decrypt byte stream with private and public keys
+     *
+     * @param byteStream     the encrypted byte stream
+     * @param privateKeyPair the key pair with private key
+     * @param publicKeyPair  the key pair with public key
+     * @return the decrypted stream
+     */
+    public InputStream decryptStream(InputStream byteStream, KeyPair privateKeyPair, KeyPair publicKeyPair) {
+        try {
+            byte[] salt = new byte[32];
+            byte[] iv = new byte[16];
+            IOUtils.read(byteStream, salt);
+            IOUtils.read(byteStream, iv);
 
-			Cipher cipher = getCipherInstance();
-			cipher.init(Cipher.DECRYPT_MODE,
-					getSharedKey(salt, privateKeyPair, publicKeyPair),
-					getIvParameterSpec(iv));
+            Cipher cipher = getCipherInstance();
+            cipher.init(Cipher.DECRYPT_MODE,
+                    getSharedKey(salt, privateKeyPair, publicKeyPair),
+                    getIvParameterSpec(iv));
 
-			return new CipherInputStream(byteStream, cipher);
-		} catch (Exception e) {
-			throw new DecryptionFailureException("Failed to decrypt stream", e);
-		}
-	}
+            return new CipherInputStream(byteStream, cipher);
+        } catch (Exception e) {
+            throw new DecryptionFailureException("Failed to decrypt stream", e);
+        }
+    }
 
-	private Cipher getCipherInstance() throws NoSuchAlgorithmException, NoSuchPaddingException {
-		return Cipher.getInstance("AES/CBC/PKCS7Padding");
-	}
+    private Cipher getCipherInstance() throws NoSuchAlgorithmException, NoSuchPaddingException {
+        return Cipher.getInstance("AES/CBC/PKCS7Padding");
+    }
 
-	private IvParameterSpec getIvParameterSpec(byte[] iv) {
-		return new IvParameterSpec(iv);
-	}
+    private IvParameterSpec getIvParameterSpec(byte[] iv) {
+        return new IvParameterSpec(iv);
+    }
 
-	private static SecretKey getSharedKey(byte[] salt, KeyPair privateKeyPair, KeyPair publicKeyPair) {
+    private static SecretKey getSharedKey(byte[] salt, KeyPair privateKeyPair, KeyPair publicKeyPair) {
 
-		Ed25519GroupElement senderA = (new Ed25519EncodedGroupElement(publicKeyPair.getPublicKey().getRaw())).decode();
-		senderA.precomputeForScalarMultiplication();
-		byte[] sharedKey = senderA.scalarMultiply(Ed25519Utils.prepareForScalarMultiply(privateKeyPair.getPrivateKey())).encode().getRaw();
+        Ed25519GroupElement senderA = (new Ed25519EncodedGroupElement(publicKeyPair.getPublicKey().getRaw())).decode();
+        senderA.precomputeForScalarMultiplication();
+        byte[] sharedKey = senderA.scalarMultiply(Ed25519Utils.prepareForScalarMultiply(privateKeyPair.getPrivateKey())).encode().getRaw();
 
-		for(int i = 0; i < 32; ++i) {
-			sharedKey[i] ^= salt[i];
-		}
+        for (int i = 0; i < 32; ++i) {
+            sharedKey[i] ^= salt[i];
+        }
 
-		return new SecretKeySpec(Hashes.sha3_256(new byte[][]{sharedKey}), "AES");
-	}
+        return new SecretKeySpec(Hashes.sha3_256(new byte[][]{sharedKey}), "AES");
+    }
 
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 ProximaX Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.proximax.download;
 
 import io.ipfs.multihash.Multihash;
@@ -17,6 +32,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
  * This builder class creates the DirectDownloadParameter
+ *
  * @see DirectDownloadParameter
  */
 public class DirectDownloadParameterBuilder {
@@ -33,9 +49,10 @@ public class DirectDownloadParameterBuilder {
 
     /**
      * Construct the builder class with transaction hash, account private key and validate digest flag
-     * @param transactionHash the transaction hash of target download
+     *
+     * @param transactionHash   the transaction hash of target download
      * @param accountPrivateKey the private key of the sender or recipient of the transaction (required when downloading from secure message)
-     * @param validateDigest the validate digest flag as to whether to verify data with digest
+     * @param validateDigest    the validate digest flag as to whether to verify data with digest
      * @return the direct download parameter builder
      */
     public static DirectDownloadParameterBuilder createFromTransactionHash(String transactionHash, String accountPrivateKey, Boolean validateDigest) {
@@ -52,8 +69,9 @@ public class DirectDownloadParameterBuilder {
 
     /**
      * Construct the builder class with data hash and digest
+     *
      * @param dataHash the data hash to download
-     * @param digest the digest to verify download
+     * @param digest   the digest to verify download
      * @return the download data parameter builder
      */
     public static DirectDownloadParameterBuilder createFromDataHash(String dataHash, String digest) {
@@ -73,6 +91,7 @@ public class DirectDownloadParameterBuilder {
      * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
+     *
      * @param privacyStrategy the privacy strategy
      * @return the same instance of this builder
      */
@@ -86,6 +105,7 @@ public class DirectDownloadParameterBuilder {
      * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
+     *
      * @return the same instance of this builder
      */
     public DirectDownloadParameterBuilder withPlainPrivacy() {
@@ -98,8 +118,9 @@ public class DirectDownloadParameterBuilder {
      * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
+     *
      * @param privateKey the private key of one blockchain account that encrypted the data
-     * @param publicKey the public key of the other blockchain account that encrypted the data
+     * @param publicKey  the public key of the other blockchain account that encrypted the data
      * @return the same instance of this builder
      */
     public DirectDownloadParameterBuilder withNemKeysPrivacy(String privateKey, String publicKey) {
@@ -112,6 +133,7 @@ public class DirectDownloadParameterBuilder {
      * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
+     *
      * @param password a 50-character minimum password
      * @return the same instance of this builder
      */
@@ -180,8 +202,9 @@ public class DirectDownloadParameterBuilder {
      * <br>
      * Defaults the following if not provided
      * <ul>
-     *     <li><b>privacyStrategy</b> - to plain privacy strategy</li>
+     * <li><b>privacyStrategy</b> - to plain privacy strategy</li>
      * </ul>
+     *
      * @return the download data parameter
      */
     public DirectDownloadParameter build() {

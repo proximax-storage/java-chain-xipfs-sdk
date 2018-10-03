@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 ProximaX Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.proximax.upload;
 
 import io.proximax.exceptions.GetByteStreamFailureException;
@@ -28,6 +43,7 @@ public class FileParameterData extends AbstractByteStreamParameterData {
 
     /**
      * Get the byte stream
+     *
      * @return the byte stream
      */
     @Override
@@ -41,6 +57,7 @@ public class FileParameterData extends AbstractByteStreamParameterData {
 
     /**
      * Get the file to upload
+     *
      * @return the file
      */
     public File getFile() {
@@ -49,6 +66,7 @@ public class FileParameterData extends AbstractByteStreamParameterData {
 
     /**
      * Create instance by providing the file
+     *
      * @param file the file to upload
      * @return the instance of this class
      */
@@ -58,11 +76,12 @@ public class FileParameterData extends AbstractByteStreamParameterData {
 
     /**
      * Create instance by providing the file
-     * @param file the file to upload
+     *
+     * @param file        the file to upload
      * @param description a searchable description attach on the upload
-     * @param name a searchable name attach on the upload
+     * @param name        a searchable name attach on the upload
      * @param contentType the content type attach on the upload
-     * @param metadata a searchable key-pair metadata attach on the upload
+     * @param metadata    a searchable key-pair metadata attach on the upload
      * @return the instance of this class
      */
     public static FileParameterData create(File file, String description, String name, String contentType, Map<String, String> metadata) {

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 ProximaX Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.proximax.download;
 
 import io.nem.core.crypto.PrivateKey;
@@ -10,6 +25,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
  * This builder class creates the DownloadParameter
+ *
  * @see DownloadParameter
  */
 public class DownloadParameterBuilder {
@@ -21,6 +37,7 @@ public class DownloadParameterBuilder {
 
     /**
      * Construct the builder class with transaction hash
+     *
      * @param transactionHash the blockchain transaction hash to download
      */
     public DownloadParameterBuilder(String transactionHash) {
@@ -31,6 +48,7 @@ public class DownloadParameterBuilder {
 
     /**
      * Set the account private key of either sender or recipient of the transaction (required for secure messages)
+     *
      * @param accountPrivateKey the account private key
      * @return the same instance of this builder
      */
@@ -44,6 +62,7 @@ public class DownloadParameterBuilder {
 
     /**
      * Set the flag that indicates if need to verify digest
+     *
      * @param validateDigest the validate digest flag
      * @return the validate digest flag
      */
@@ -57,6 +76,7 @@ public class DownloadParameterBuilder {
      * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
+     *
      * @param privacyStrategy the privacy strategy
      * @return the same instance of this builder
      */
@@ -70,6 +90,7 @@ public class DownloadParameterBuilder {
      * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
+     *
      * @return the same instance of this builder
      */
     public DownloadParameterBuilder withPlainPrivacy() {
@@ -82,8 +103,9 @@ public class DownloadParameterBuilder {
      * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
+     *
      * @param privateKey the private key of one blockchain account that encrypted the data
-     * @param publicKey the public key of the other blockchain account that encrypted the data
+     * @param publicKey  the public key of the other blockchain account that encrypted the data
      * @return the same instance of this builder
      */
     public DownloadParameterBuilder withNemKeysPrivacy(String privateKey, String publicKey) {
@@ -96,6 +118,7 @@ public class DownloadParameterBuilder {
      * <br>
      * <br>
      * Privacy strategy defines how the data will be decrypted
+     *
      * @param password a 50-character minimum password
      * @return the same instance of this builder
      */
@@ -164,9 +187,10 @@ public class DownloadParameterBuilder {
      * <br>
      * Defaults the following if not provided
      * <ul>
-     *     <li><b>privacyStrategy</b> - to plain privacy strategy</li>
-     *     <li><b>validateDigest</b> - to false</li>
+     * <li><b>privacyStrategy</b> - to plain privacy strategy</li>
+     * <li><b>validateDigest</b> - to false</li>
      * </ul>
+     *
      * @return the download data parameter
      */
     public DownloadParameter build() {

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 ProximaX Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.proximax.service.client;
 
 import io.ipfs.api.IPFS;
@@ -74,6 +89,7 @@ public class IpfsClientTest {
 
         assertThat(dataHash, is(SAMPLE_DATAHASH));
     }
+
     @Test(expected = IllegalArgumentException.class)
     public void failOnAddPathWhenNullData() {
         unitUnderTest.addPath(null);
@@ -142,9 +158,9 @@ public class IpfsClientTest {
     private void setMockIpfsPin() throws NoSuchFieldException, IllegalAccessException {
         final Field field = IPFS.class.getDeclaredField("pin");
         field.setAccessible(true);
-        final Field modifiersField  = Field.class.getDeclaredField("modifiers");
-        modifiersField .setAccessible(true);
-        modifiersField .setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        final Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
         field.set(mockIpfs, mockIpfsPin);
     }
 }

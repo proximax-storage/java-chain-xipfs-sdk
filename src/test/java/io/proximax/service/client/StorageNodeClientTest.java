@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 ProximaX Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.proximax.service.client;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -21,7 +36,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
@@ -119,12 +133,12 @@ public class StorageNodeClientTest {
     }
 
     private void givenUploadFileResponse() {
-        stubFor(put(urlEqualTo("/upload/file"))
+        stubFor(post(urlEqualTo("/upload/file"))
                 .withHeader(HEADER_CREDENTIALS, equalTo("NemAddress=nem:test; Bearer 11111"))
                 .withHeader("Content-Type", containing("multipart/form-data"))
                 .withHeader("Content-Type", containing("boundary="))
                 .willReturn(aResponse()
                         .withStatus(200)
-                        .withBody("{\"DataHash\":\"SAMPLE\"}")));
+                        .withBody("{\"dataHash\":\"SAMPLE\"}")));
     }
 }

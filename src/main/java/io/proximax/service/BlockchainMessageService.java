@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 ProximaX Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.proximax.service;
 
 import io.nem.core.crypto.KeyPair;
@@ -46,10 +61,11 @@ public class BlockchainMessageService {
 
     /**
      * Create a transaction message
-     * @param messagePayload the message payload
-     * @param senderPrivateKey the private key of sender
-     * @param recipientPublicKeyRaw an optional recipient public key (if different from signer)
-     * @param recipientAddress the optional address (if different from signer)
+     *
+     * @param messagePayload             the message payload
+     * @param senderPrivateKey           the private key of sender
+     * @param recipientPublicKeyRaw      an optional recipient public key (if different from signer)
+     * @param recipientAddress           the optional address (if different from signer)
      * @param useBlockchainSecureMessage the flag to indicate if to create secure message
      * @return the created transaction message
      */
@@ -71,8 +87,9 @@ public class BlockchainMessageService {
 
     /**
      * Retrieves message payload from blockchain transaction
+     *
      * @param transferTransaction the blockchain transaction
-     * @param accountPrivateKey the private key of either signer or recipient to read secure message
+     * @param accountPrivateKey   the private key of either signer or recipient to read secure message
      * @return the message payload
      */
     public String getMessagePayload(TransferTransaction transferTransaction, String accountPrivateKey) {
@@ -125,7 +142,7 @@ public class BlockchainMessageService {
 
         if (retrieverAddress.equals(recipient)) { // retriever is the recipient, use sender public key
             return PublicKey.fromHexString(senderAccount.getPublicKey());
-        } else if (retrieverAddress.equals(senderAccount.getAddress())){ // retriever is the sender, use recipient public key
+        } else if (retrieverAddress.equals(senderAccount.getAddress())) { // retriever is the sender, use recipient public key
             return accountClient.getPublicKey(recipient.plain());
         } else {
             throw new InvalidPrivateKeyOnDownloadException("accountPrivateKey cannot be used to read secure transaction message");

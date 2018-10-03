@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 ProximaX Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.proximax.utils;
 
 import java.security.SecureRandom;
@@ -15,6 +30,7 @@ public class PasswordUtils {
 
     /**
      * Generate password with default length and using alphanumeric characters
+     *
      * @return the generated password
      */
     public static String generatePassword() {
@@ -23,6 +39,7 @@ public class PasswordUtils {
 
     /**
      * Generate password with the specified length and using alphanumeric characters
+     *
      * @param length password length
      * @return the generated password
      */
@@ -32,6 +49,7 @@ public class PasswordUtils {
 
     /**
      * Generate password with the default length and using alphanumeric characters and/or special characters
+     *
      * @param allowSpecialCharacters whether to include special characters on generated password
      * @return the generated password
      */
@@ -41,7 +59,8 @@ public class PasswordUtils {
 
     /**
      * Generate password with the specified length and using alphanumeric characters and/or special characters
-     * @param length password length
+     *
+     * @param length                 password length
      * @param allowSpecialCharacters whether to include special characters on generated password
      * @return the generated password
      */

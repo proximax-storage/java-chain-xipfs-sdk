@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 ProximaX Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.proximax.upload;
 
 import io.nem.core.crypto.PrivateKey;
@@ -12,6 +27,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
  * This builder class creates the UploadParameter
+ *
  * @see UploadParameter
  */
 public class UploadParameterBuilder {
@@ -28,7 +44,8 @@ public class UploadParameterBuilder {
 
     /**
      * Construct the builder class
-     * @param data the data which contains the data and additional info
+     *
+     * @param data             the data which contains the data and additional info
      * @param signerPrivateKey the private key of a blockchain account that will be used to create transaction for each upload
      */
     public UploadParameterBuilder(UploadParameterData data, String signerPrivateKey) {
@@ -43,6 +60,7 @@ public class UploadParameterBuilder {
 
     /**
      * Set the recipient public key
+     *
      * @param recipientPublicKey the public key of a blockchain account that will receive the transactions being created (if different from signer)
      * @return the same instance of this builder
      */
@@ -56,6 +74,7 @@ public class UploadParameterBuilder {
 
     /**
      * Set the recipient address
+     *
      * @param recipientAddress the address of a blockchain account that will receive the transactions being created (if different from signer)
      * @return the same instance of this builder
      */
@@ -69,6 +88,7 @@ public class UploadParameterBuilder {
 
     /**
      * Set the compute digest flag
+     *
      * @param computeDigest flag that indicates if a digest is required to be calculated
      * @return the same instance of this builder
      */
@@ -79,6 +99,7 @@ public class UploadParameterBuilder {
 
     /**
      * Set the detect content type flag
+     *
      * @param detectContentType flag that indicates if a content type is to be derived
      * @return the same instance of this builder
      */
@@ -89,6 +110,7 @@ public class UploadParameterBuilder {
 
     /**
      * Set the use blockchain secure message flag
+     *
      * @param useBlockchainSecureMessage flag that indicates if transaction's message is to be secured
      * @return the same instance of this builder
      */
@@ -99,6 +121,7 @@ public class UploadParameterBuilder {
 
     /**
      * Set the transaction deadline
+     *
      * @param transactionDeadline transaction deadline (duration) for the blockchain transaction to be created. This value is in hours.
      * @return the same instance of this builder
      */
@@ -115,6 +138,7 @@ public class UploadParameterBuilder {
      * <br>
      * <br>
      * Privacy strategy defines how the data will be encrypted
+     *
      * @param privacyStrategy strategy that defines how the data will be encrypted
      * @return the same instance of this builder
      */
@@ -128,6 +152,7 @@ public class UploadParameterBuilder {
      * <br>
      * <br>
      * Privacy strategy defines how the data will be encrypted
+     *
      * @return the same instance of this builder
      */
     public UploadParameterBuilder withPlainPrivacy() {
@@ -140,8 +165,9 @@ public class UploadParameterBuilder {
      * <br>
      * <br>
      * Privacy strategy defines how the data will be encrypted
+     *
      * @param privateKey the private key of one blockchain account to encrypt the data
-     * @param publicKey the public key of the other blockchain account to encrypt the data
+     * @param publicKey  the public key of the other blockchain account to encrypt the data
      * @return the same instance of this builder
      */
     public UploadParameterBuilder withNemKeysPrivacy(String privateKey, String publicKey) {
@@ -154,6 +180,7 @@ public class UploadParameterBuilder {
      * <br>
      * <br>
      * Privacy strategy defines how the data will be encrypted
+     *
      * @param password a 50-character minimum password
      * @return the same instance of this builder
      */
@@ -222,12 +249,13 @@ public class UploadParameterBuilder {
      * <br>
      * Defaults the following if not provided
      * <ul>
-     *     <li><b>computeDigest</b> - to false</li>
-     *     <li><b>detectContentType</b> - to false</li>
-     *     <li><b>transactionDeadline</b> - to 12</li>
-     *     <li><b>useBlockchainSecureMessage</b> - to false</li>
-     *     <li><b>privacyStrategy</b> - to plain privacy strategy</li>
+     * <li><b>computeDigest</b> - to false</li>
+     * <li><b>detectContentType</b> - to false</li>
+     * <li><b>transactionDeadline</b> - to 12</li>
+     * <li><b>useBlockchainSecureMessage</b> - to false</li>
+     * <li><b>privacyStrategy</b> - to plain privacy strategy</li>
      * </ul>
+     *
      * @return the upload parameter
      */
     public UploadParameter build() {
