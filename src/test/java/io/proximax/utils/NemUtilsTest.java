@@ -99,6 +99,20 @@ public class NemUtilsTest {
         assertThat(signedTransaction, is(notNullValue()));;
     }
 
+    @Test
+    public void shouldGenerateAccount() {
+        final Account account = unitUnderTest.generateAccount();
+
+        assertThat(account, is(notNullValue()));
+        assertThat(account.getAddress(), is(notNullValue()));
+        assertThat(account.getPrivateKey(), is(notNullValue()));
+        assertThat(account.getPublicKey(), is(notNullValue()));
+
+        System.out.println("Address: " + account.getAddress().plain());
+        System.out.println("Private Key: " + account.getPrivateKey());
+        System.out.println("Public Key: " + account.getPublicKey());
+    }
+
     private TransferTransaction sampleTransferTransaction() {
         return TransferTransaction.create(
                 Deadline.create(24, ChronoUnit.HOURS),
