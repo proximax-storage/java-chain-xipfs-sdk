@@ -70,9 +70,9 @@ public class NemUtils {
 
     /**
      * Generates a new Account
-     * @return
+     * @return the generated Account
      */
-    public Account generateNemAccount() {
+    public Account generateAccount() {
         final KeyPair kp = new KeyPair();
         final Account account = new Account(kp, networkType);
         return account;
