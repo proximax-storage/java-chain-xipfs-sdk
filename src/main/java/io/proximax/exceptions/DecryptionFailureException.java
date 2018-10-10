@@ -1,25 +1,22 @@
 package io.proximax.exceptions;
 
-
 /**
- * The Class DecryptionFailureException.
+ * The exception when a privacy strategy decryption process has failed
  */
 public class DecryptionFailureException extends RuntimeException {
 
 	/**
-	 * Instantiates a new decryption failure exception.
-	 *
-	 * @param message the message
+	 * Create instance of this exception
+	 * @param message the exception message
 	 */
 	public DecryptionFailureException(String message) {
 		super(message);
 	}
 
 	/**
-	 * Instantiates a new decryption failure exception.
-	 *
-	 * @param message the message
-	 * @param cause the cause
+	 * Create instance of this exception
+	 * @param message the exception message
+	 * @param cause the cause of this exception
 	 */
 	public DecryptionFailureException(String message, Throwable cause) {
 		super(message, cause);

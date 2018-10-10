@@ -1,55 +1,40 @@
 package io.proximax.utils;
 
+import io.proximax.exceptions.DetectContenTypeFailureException;
+import io.reactivex.Observable;
 import org.apache.tika.Tika;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
- * The Class ContentTypeUtils.
+ * The utility class for detecting content types
  */
 public class ContentTypeUtils {
 
-    /** The Constant TIKA. */
-    private static final Tika TIKA = new Tika();
+    private Tika tika;
 
     /**
-     * Content type lookup.
-     *
-     * @param contentType the content type
-     * @param content the content
-     * @return the string
+     * Construct an instance of this utility class
      */
-    public static String contentTypeLookup(final String contentType, final String content) {
-        return StringUtils.isEmpty(contentType) ? TIKA.detect(content) : contentType;
+    public ContentTypeUtils() {
+        this.tika = new Tika();
     }
 
     /**
-     * Content type lookup.
-     *
-     * @param contentType the content type
-     * @param content the content
-     * @return the string
+     * Detect the content type for the byte stream
+     * @param byteStream the byte stream
+     * @return the detected content type
      */
-    public static String contentTypeLookup(final String contentType, final byte[] content) {
-        return StringUtils.isEmpty(contentType)  ? TIKA.detect(content) : contentType;
-    }
+    public Observable<String> detectContentType(final InputStream byteStream) {
+        checkParameter(byteStream != null, "byteStream is required");
 
-    /**
-     * Detect content type.
-     *
-     * @param content the content
-     * @return the string
-     */
-    public static String detectContentType(final String content) {
-        return StringUtils.isEmpty(content) ? null : TIKA.detect(content);
-    }
-
-    /**
-     * Detect content type.
-     *
-     * @param content the content
-     * @return the string
-     */
-    public static String detectContentType(final byte[] content) {
-        return TIKA.detect(content);
+        try {
+            return Observable.just(tika.detect(byteStream));
+        } catch (IOException e) {
+            throw new DetectContenTypeFailureException("Failed to detect content type", e);
+        }
     }
 }

@@ -1,13 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.proximax</groupId>
 	<artifactId>xpx2-java-sdk</artifactId>
 	<packaging>jar</packaging>
 	<name>xpx2-java-sdk</name>
-	<version>0.1.0-beta.1-SNAPSHOT</version>
-	<description>Proximax P2P File Storage Java SDK (Catapult Compatible)</description>
+	<version>0.1.0-beta.2-SNAPSHOT</version>
+	<description>Proximax P2P File Storage Java SDK</description>
 	<prerequisites>
 		<maven>2.2.0</maven>
 	</prerequisites>
@@ -24,20 +22,33 @@
 			<name>proximax nexus snapshot</name>
 			<url>https://nexus.internal.proximax.io/repository/maven-snapshots/</url>
 		</snapshotRepository>
+		<!--<snapshotRepository>-->
+			<!--<id>ossrh</id>-->
+			<!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+		<!--</snapshotRepository>-->
+		<!--<repository>-->
+			<!--<id>ossrh</id>-->
+			<!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+		<!--</repository>-->
 	</distributionManagement>
 	<scm>
-		<connection>scm:git:https://github.com/proximax-storage/xpx-java-sdk.git</connection>
-		<developerConnection>scm:git:https://github.com/proximax-storage/xpx-java-sdk.git</developerConnection>
+		<connection>scm:git:https://github.com/proximax-storage/xpx2-java-sdk.git</connection>
+		<developerConnection>scm:git:https://github.com/proximax-storage/xpx2-java-sdk.git</developerConnection>
+		<url>https://github.com/proximax-storage/xpx2-java-sdk</url>
 		<tag>HEAD</tag>
 	</scm>
 	<licenses>
 		<license>
-			<name>MIT License</name>
-			<url>http://unlicense.org</url>
+			<name>Apache License</name>
+			<url>https://opensource.org/licenses/Apache-2.0</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
 
+	<organization>
+		<name>ProximaX Limited</name>
+		<url>https://www.proximax.io</url>
+	</organization>
 
 	<developers>
 		<developer>
@@ -85,10 +96,6 @@
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
 		</repository>
-		<repository>
-			<id>nexus</id>
-			<url>https://nexus.internal.proximax.io/repository/maven-public</url>
-		</repository>
 	</repositories>
 
 	<reporting>
@@ -109,6 +116,31 @@
 
 	<build>
 		<plugins>
+			<!--<plugin>-->
+				<!--<groupId>org.sonatype.plugins</groupId>-->
+				<!--<artifactId>nexus-staging-maven-plugin</artifactId>-->
+				<!--<version>1.6.7</version>-->
+				<!--<extensions>true</extensions>-->
+				<!--<configuration>-->
+					<!--<serverId>ossrh</serverId>-->
+					<!--<nexusUrl>https://oss.sonatype.org/</nexusUrl>-->
+					<!--<autoReleaseAfterClose>true</autoReleaseAfterClose>-->
+				<!--</configuration>-->
+			<!--</plugin>-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -148,7 +180,8 @@
 						<include>**/*Test.java</include>
 					</includes>
 					<excludes>
-						<include>**/*IntegrationTest.java</include>
+						<exclude>**/*IntegrationTest.java</exclude>
+						<exclude>**/*integrationTest.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
@@ -166,6 +199,7 @@
 						<configuration>
 							<includes>
 								<include>**/*IntegrationTest.java</include>
+								<include>**/*integrationTest.java</include>
 							</includes>
 						</configuration>
 					</execution>
@@ -178,6 +212,32 @@
 				<configuration>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -239,39 +299,14 @@
 			<version>${jodatime-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>io.nem</groupId>
-			<artifactId>sdk</artifactId>
+			<groupId>com.github.proximax-storage</groupId>
+			<artifactId>proximax-nem2-java-sdk</artifactId>
 			<version>${nem2.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>io.ipfs</groupId>
-			<artifactId>api</artifactId>
+			<groupId>com.github.proximax-storage</groupId>
+			<artifactId>proximax-ipfs-java-api</artifactId>
 			<version>${ipfs.java.api.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.multiformats</groupId>
-			<artifactId>java-multiaddr</artifactId>
-			<version>${java-multiaddr.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.multiformats</groupId>
-			<artifactId>java-multihash</artifactId>
-			<version>${java-multihash.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.multiformats</groupId>
-			<artifactId>java-multibase</artifactId>
-			<version>${java-multibase.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.ipld</groupId>
-			<artifactId>java-cid</artifactId>
-			<version>${java-cid.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.serceman</groupId>
-			<artifactId>jnr-fuse</artifactId>
-			<version>${jnr.fuse.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.java-websocket</groupId>
@@ -298,6 +333,11 @@
 			<artifactId>shamir</artifactId>
 			<version>0.6.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.5.6</version>
+		</dependency>
 		<!-- test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -323,6 +363,18 @@
 			<version>1.3</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.exparity</groupId>
+			<artifactId>hamcrest-date</artifactId>
+			<version>2.0.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.tomakehurst</groupId>
+			<artifactId>wiremock</artifactId>
+			<version>2.18.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<properties>
 		<java.version>1.8</java.version>
@@ -337,8 +389,8 @@
 		<junit-version>4.12</junit-version>
 		<jacoco-maven-plugin>0.8.1</jacoco-maven-plugin>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<nem2.version>0.9.0</nem2.version>
-		<ipfs.java.api.version>v1.2.0</ipfs.java.api.version>
+		<nem2.version>0.9.1-proximax</nem2.version>
+		<ipfs.java.api.version>v1.2.2-proximax</ipfs.java.api.version>
 		<jnr.fuse.version>0.5.1</jnr.fuse.version>
 		<java-cid.version>v1.1.0</java-cid.version>
 		<java-multibase.version>v1.1.0-ipfs</java-multibase.version>

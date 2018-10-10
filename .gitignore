@@ -21,10 +21,13 @@ target
 build
 
 .settings
-.swagger-codegen
 .classpath
 .project
 .gitlab-ci.yml
 
 # Intellij
 .idea/
+
+# Test file
+**/test_big_file.big
+**/test_data/test_data.json
