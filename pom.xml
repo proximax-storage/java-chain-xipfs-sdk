@@ -12,14 +12,26 @@
 		<maven>2.2.0</maven>
 	</prerequisites>
 	<distributionManagement>
-		<snapshotRepository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
 		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<uniqueVersion>false</uniqueVersion>
+			<id>nexus</id>
+			<name>proximax nexus release</name>
+			<url>https://nexus.internal.proximax.io/repository/maven-releases/</url>
 		</repository>
+		<snapshotRepository>
+			<uniqueVersion>true</uniqueVersion>
+			<id>nexus</id>
+			<name>proximax nexus snapshot</name>
+			<url>https://nexus.internal.proximax.io/repository/maven-snapshots/</url>
+		</snapshotRepository>
+		<!--<snapshotRepository>-->
+			<!--<id>ossrh</id>-->
+			<!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+		<!--</snapshotRepository>-->
+		<!--<repository>-->
+			<!--<id>ossrh</id>-->
+			<!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+		<!--</repository>-->
 	</distributionManagement>
 	<scm>
 		<connection>scm:git:https://github.com/proximax-storage/xpx2-java-sdk.git</connection>
@@ -289,8 +301,8 @@
 			<version>${jodatime-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>io.nem</groupId>
-			<artifactId>sdk</artifactId>
+			<groupId>com.github.proximax-storage</groupId>
+			<artifactId>proximax-nem2-java-sdk</artifactId>
 			<version>${nem2.version}</version>
 		</dependency>
 		<dependency>
