@@ -491,6 +491,60 @@ AsyncTask asyncTask = uploader.uploadAsync(param,
 asyncTask.isDone(); // check done status
 ```
 
+## Websocket / Monitoring / Listener
+Catapult transactions can be monitored through [websockets](https://nemtech.github.io/api.html#tag/Websockets) 
+
+NEM SDKs have Listener classes to simplify subscribing to websocket channels. It uses RxJava Observables.
+
+Below is a quick example on how to use Listener to wait for upload transaction to be confirmed. For detailed walkthrough, visit this [link](https://nemtech.github.io/guides/transaction/debugging-transactions.html).
+
+```java
+final Listener listener = new Listener("http://13.229.219.71:3000");
+listener.open().get();
+
+// wait for transaction to be confirmed
+final Transaction transaction = listener.confirmed(Address.createFromRawAddress("<address of signer>"))
+    .filter(confirmedTxn ->
+            confirmedTxn.getTransactionInfo()
+                    .flatMap(TransactionInfo::getHash)
+                    .map(hash -> hash.equals("<upload transaction hash>"))
+                    .orElse(false))
+    .blockingFirst(); 
+```
+
+** Please note websocket monitoring is a pub-sub which means if a message was sent prior to listening, the message was missed already and not gonna arrive again.**
+
+Here are some other usages of Listener.
+
+```java
+// wait for one any confirmed transaction of address
+listener.confirmed(Address.createFromRawAddress("<an address>")).blockingFirst(); 
+
+// wait for one any failed transaction of address
+listener.status(Address.createFromRawAddress("<an address>")).blockingFirst(); 
+
+// wait for one added unconfirmed transaction of address
+listener.unconfirmedAdded(Address.createFromRawAddress("<an address>")).blockingFirst(); 
+
+// wait for one removed unconfirmed transaction of address 
+listener.unconfirmedRemoved(Address.createFromRawAddress("<an address>")).blockingFirst(); 
+
+// wait for one added aggregated bonded transaction of address 
+listener.aggregateBondedAdded(Address.createFromRawAddress("<an address>")).blockingFirst(); 
+
+// wait for one removed aggregated bonded transaction of address 
+listener.aggregateBondedRemoved(Address.createFromRawAddress("<an address>")).blockingFirst(); 
+
+// wait for one added cosignature transaction of address 
+listener.cosignatureAdded(Address.createFromRawAddress("<an address>")).blockingFirst(); 
+
+// wait for one newly added block
+listener.newBlock().blockingFirst(); 
+```
+
+Head over to [RxJava](https://github.com/ReactiveX/RxJava/wiki) to know more about Observables and what operators can be used.
+
+
 ## Error and Troubleshooting
 
 Upload failures will result in `UploadFailureException`.
