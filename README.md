@@ -496,7 +496,7 @@ Catapult transactions can be monitored through [websockets](https://nemtech.gith
 
 NEM SDKs have Listener classes to simplify subscribing to websocket channels. It uses RxJava Observables.
 
-Below is a quick example on how to use Listener to wait for upload transaction to be confirmed. For detailed walkthrough, visit this [link](https://nemtech.github.io/guides/transaction/debugging-transactions.html).
+Below is a quick example on how to use Listener to wait for upload transaction to be confirmed. 
 
 ```java
 final Listener listener = new Listener("http://13.229.219.71:3000");
@@ -514,7 +514,7 @@ final Transaction transaction = listener.confirmed(Address.createFromRawAddress(
 
 ** Please note websocket monitoring is a pub-sub which means if a message was sent prior to listening, the message was missed already and not gonna arrive again.**
 
-Here are some other usages of Listener.
+Here are some other usages of Listener. For more details, visit this [link](https://nemtech.github.io/guides/transaction/debugging-transactions.html).
 
 ```java
 // wait for one any confirmed transaction of address
