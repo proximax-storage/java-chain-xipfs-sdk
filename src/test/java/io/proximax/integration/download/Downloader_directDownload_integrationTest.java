@@ -92,6 +92,20 @@ public class Downloader_directDownload_integrationTest {
 	}
 
 	@Test
+	public void shouldDownloadInputByTransactionHash() throws IOException {
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadInputStream", "transactionHash");
+		final DirectDownloadParameter param =
+				DirectDownloadParameter.createFromTransactionHash(transactionHash).build();
+
+		final InputStream result = unitUnderTest.directDownload(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)),
+				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(TEST_IMAGE_PNG_FILE))))));
+	}
+
+	@Test
 	public void shouldDownloadFilesAsZipByTransactionHash() throws IOException {
 		final String transactionHash = TestDataRepository
 				.getData("Uploader_integrationTest.shouldUploadFilesAsZip", "transactionHash");
@@ -165,6 +179,19 @@ public class Downloader_directDownload_integrationTest {
 	public void shouldDownloadUrlResourceByDataHash() throws IOException {
 		final String dataHash = TestDataRepository
 				.getData("Uploader_integrationTest.shouldUploadUrlResource", "dataHash");
+		final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(dataHash).build();
+
+		final InputStream result = unitUnderTest.directDownload(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(ArrayUtils.toObject(IOUtils.toByteArray(result)),
+				is(arrayContaining(ArrayUtils.toObject((FileUtils.readFileToByteArray(TEST_IMAGE_PNG_FILE))))));
+	}
+
+	@Test
+	public void shouldDownloadInputStreamByDataHash() throws IOException {
+		final String dataHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadInputStream", "dataHash");
 		final DirectDownloadParameter param = DirectDownloadParameter.createFromDataHash(dataHash).build();
 
 		final InputStream result = unitUnderTest.directDownload(param);

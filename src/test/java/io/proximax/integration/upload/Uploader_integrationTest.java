@@ -7,6 +7,7 @@ import io.proximax.integration.IntegrationTestConfig;
 import io.proximax.upload.ByteArrayParameterData;
 import io.proximax.upload.FileParameterData;
 import io.proximax.upload.FilesAsZipParameterData;
+import io.proximax.upload.InputStreamParameterData;
 import io.proximax.upload.PathParameterData;
 import io.proximax.upload.StringParameterData;
 import io.proximax.upload.UploadParameter;
@@ -16,6 +17,8 @@ import io.proximax.upload.UrlResourceParameterData;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static io.proximax.integration.TestDataRepository.logAndSaveResult;
 import static io.proximax.model.Constants.PATH_UPLOAD_CONTENT_TYPE;
@@ -191,6 +194,61 @@ public class Uploader_integrationTest {
 		assertThat(result.getData().getTimestamp(), is(notNullValue()));
 
 		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadUrlResourceWithCompleteDetails");
+	}
+
+	@Test
+	public void shouldUploadInputStream() throws Exception {
+		final UploadParameter param = UploadParameter
+				.createForInputStreamUpload(() -> {
+					try {
+						return TEST_IMAGE_PNG_FILE.toURI().toURL().openStream();
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				}, IntegrationTestConfig.getPrivateKey1())
+				.build();
+
+		final UploadResult result = unitUnderTest.upload(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(notNullValue()));
+		assertThat(result.getData().getContentType(), is(nullValue()));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
+		assertThat(result.getData().getDescription(), is(nullValue()));
+		assertThat(result.getData().getName(), is(nullValue()));
+		assertThat(result.getData().getMetadata(), is(nullValue()));
+		assertThat(result.getData().getTimestamp(), is(notNullValue()));
+
+		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadInputStream");
+	}
+
+	@Test
+	public void shouldUploadInputStreamWithCompleteDetails() throws Exception {
+		final UploadParameter param = UploadParameter
+				.createForInputStreamUpload(
+						InputStreamParameterData.create(() -> {
+									try {
+										return TEST_IMAGE_PNG_FILE.toURI().toURL().openStream();
+									} catch (IOException e) {
+										throw new RuntimeException(e);
+									}
+								},"input stream description",
+								"input stream name", "image/png", singletonMap("streamkey", "streamval")),
+						IntegrationTestConfig.getPrivateKey1())
+				.build();
+
+		final UploadResult result = unitUnderTest.upload(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(notNullValue()));
+		assertThat(result.getData().getContentType(), is("image/png"));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
+		assertThat(result.getData().getDescription(), is("input stream description"));
+		assertThat(result.getData().getName(), is("input stream name"));
+		assertThat(result.getData().getMetadata(), is(singletonMap("streamkey", "streamval")));
+		assertThat(result.getData().getTimestamp(), is(notNullValue()));
+
+		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadInputStreamWithCompleteDetails");
 	}
 
 	@Test

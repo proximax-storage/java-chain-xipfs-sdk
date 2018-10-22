@@ -182,6 +182,46 @@ public class Downloader_download_integrationTest {
 	}
 
 	@Test
+	public void shouldDownloadInputStreamResource() throws IOException {
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadInputStream", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
+
+		final DownloadResult result = unitUnderTest.download(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getByteStream(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result.getData().getByteStream()), is(notNullValue()));
+		assertThat(result.getData().getContentType(), is(nullValue()));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
+		assertThat(result.getData().getDescription(), is(nullValue()));
+		assertThat(result.getData().getName(), is(nullValue()));
+		assertThat(result.getData().getMetadata(), is(emptyMap()));
+		assertThat(result.getData().getTimestamp(), is(notNullValue()));
+	}
+
+	@Test
+	public void shouldDownloadInputStreamWithCompleteDetails() throws IOException {
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_integrationTest.shouldUploadInputStreamWithCompleteDetails", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash).build();
+
+		final DownloadResult result = unitUnderTest.download(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(transactionHash));
+		assertThat(result.getData().getByteStream(), is(notNullValue()));
+		assertThat(IOUtils.toByteArray(result.getData().getByteStream()), is(notNullValue()));
+		assertThat(result.getData().getContentType(), is("image/png"));
+		assertThat(result.getData().getDataHash(), is(notNullValue()));
+		assertThat(result.getData().getDescription(), is("input stream description"));
+		assertThat(result.getData().getName(), is("input stream name"));
+		assertThat(result.getData().getMetadata(), is(singletonMap("streamkey", "streamval")));
+		assertThat(result.getData().getTimestamp(), is(notNullValue()));
+	}
+
+	@Test
 	public void shouldDownloadFilesAsZip() throws IOException {
 		final String transactionHash = TestDataRepository
 				.getData("Uploader_integrationTest.shouldUploadFilesAsZip", "transactionHash");

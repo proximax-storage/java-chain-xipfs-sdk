@@ -3,8 +3,10 @@ package io.proximax.upload;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static io.proximax.model.Constants.SCHEMA_VERSION;
 
@@ -198,6 +200,26 @@ public class UploadParameter {
      * @return the upload parameter builder
      */
     public static UploadParameterBuilder createForUrlResourceUpload(UrlResourceParameterData parameterData, String signerPrivateKey) {
+        return new UploadParameterBuilder(parameterData, signerPrivateKey);
+    }
+
+    /**
+     * Start creating parameter for a input stream upload using InputStreamParameterBuilder
+     * @param inputStreamSupplier the supplier of stream to upload
+     * @param signerPrivateKey the private key of the signer of the blockchain transaction
+     * @return the upload parameter builder
+     */
+    public static UploadParameterBuilder createForInputStreamUpload(Supplier<InputStream> inputStreamSupplier, String signerPrivateKey) {
+        return createForInputStreamUpload(InputStreamParameterData.create(inputStreamSupplier), signerPrivateKey);
+    }
+
+    /**
+     * Start creating parameter for a input stream upload using InputStreamParameterBuilder
+     * @param parameterData the parameter data containing the URL resource and additional details
+     * @param signerPrivateKey the private key of the signer of the blockchain transaction
+     * @return the upload parameter builder
+     */
+    public static UploadParameterBuilder createForInputStreamUpload(InputStreamParameterData parameterData, String signerPrivateKey) {
         return new UploadParameterBuilder(parameterData, signerPrivateKey);
     }
 
