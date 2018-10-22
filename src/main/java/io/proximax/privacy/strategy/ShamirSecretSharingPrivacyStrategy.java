@@ -19,14 +19,14 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * <br>
  * This strategy requires the total count of secret parts, minimum count of parts to build secret, and the secret parts.
  */
-public final class SecuredWithShamirSecretSharingPrivacyStrategy extends PrivacyStrategy {
+public final class ShamirSecretSharingPrivacyStrategy extends PrivacyStrategy {
 
     private final char[] secret;
     private final PBECipherEncryptor pbeCipherEncryptor;
 
-    SecuredWithShamirSecretSharingPrivacyStrategy(PBECipherEncryptor pbeCipherEncryptor,
-                                                  int secretTotalPartCount, int secretMinimumPartCountToBuild,
-                                                  Map<Integer, byte[]> secretParts) {
+    ShamirSecretSharingPrivacyStrategy(PBECipherEncryptor pbeCipherEncryptor,
+                                       int secretTotalPartCount, int secretMinimumPartCountToBuild,
+                                       Map<Integer, byte[]> secretParts) {
 
         checkParameter(secretTotalPartCount > 0, "secretTotalPartCount should be a positive number");
     	checkParameter(secretMinimumPartCountToBuild > 0 && secretMinimumPartCountToBuild <= secretTotalPartCount,
@@ -51,22 +51,22 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
 
     /**
      * Encrypt byte stream using the shamir secret sharing
-     * @param byteStream the byte stream to encrypt
+     * @param stream the byte stream to encrypt
      * @return the encrypted byte stream
      */
     @Override
-    public final InputStream encryptStream(final InputStream byteStream) {
-        return pbeCipherEncryptor.encryptStream(byteStream, secret);
+    public final InputStream encryptStream(final InputStream stream) {
+        return pbeCipherEncryptor.encryptStream(stream, secret);
     }
 
     /**
      * Decrypt byte stream using the shamir secret sharing
-     * @param byteStream the byte stream to decrypt
+     * @param encryptedStream the byte stream to decrypt
      * @return the decrypted byte stream
      */
     @Override
-    public final InputStream decryptStream(final InputStream byteStream) {
-        return pbeCipherEncryptor.decryptStream(byteStream, secret);
+    public final InputStream decryptStream(final InputStream encryptedStream) {
+        return pbeCipherEncryptor.decryptStream(encryptedStream, secret);
     }
 
     /**
@@ -105,10 +105,10 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
      * @param secretParts array of secret parts
      * @return the instance of this strategy
      */
-    public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
-                                                                       int secretMinimumPartCountToBuild,
-                                                                       SecretPart... secretParts) {
-        return new SecuredWithShamirSecretSharingPrivacyStrategy(new PBECipherEncryptor(),
+    public static ShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
+                                                            int secretMinimumPartCountToBuild,
+                                                            SecretPart... secretParts) {
+        return new ShamirSecretSharingPrivacyStrategy(new PBECipherEncryptor(),
                 secretTotalPartCount, secretMinimumPartCountToBuild,
                 Stream.of(secretParts).collect(Collectors.toMap(parts -> parts.index, parts -> parts.secretPart)));
     }
@@ -120,10 +120,10 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
      * @param secretParts list of secret parts
      * @return the instance of this strategy
      */
-    public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
-                                                                       int secretMinimumPartCountToBuild,
-                                                                       List<SecretPart> secretParts) {
-        return new SecuredWithShamirSecretSharingPrivacyStrategy(new PBECipherEncryptor(),
+    public static ShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
+                                                            int secretMinimumPartCountToBuild,
+                                                            List<SecretPart> secretParts) {
+        return new ShamirSecretSharingPrivacyStrategy(new PBECipherEncryptor(),
                 secretTotalPartCount, secretMinimumPartCountToBuild,
                 secretParts == null ? Collections.emptyMap() :
                         secretParts.stream().collect(Collectors.toMap(parts -> parts.index, parts -> parts.secretPart)));
@@ -136,10 +136,10 @@ public final class SecuredWithShamirSecretSharingPrivacyStrategy extends Privacy
      * @param secretParts map of secret parts
      * @return the instance of this strategy
      */
-    public static SecuredWithShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
-                                                                       int secretMinimumPartCountToBuild,
-                                                                       Map<Integer, byte[]> secretParts) {
-        return new SecuredWithShamirSecretSharingPrivacyStrategy(new PBECipherEncryptor(),
+    public static ShamirSecretSharingPrivacyStrategy create(int secretTotalPartCount,
+                                                            int secretMinimumPartCountToBuild,
+                                                            Map<Integer, byte[]> secretParts) {
+        return new ShamirSecretSharingPrivacyStrategy(new PBECipherEncryptor(),
                 secretTotalPartCount, secretMinimumPartCountToBuild,
                 secretParts == null ? Collections.emptyMap() : secretParts);
     }

@@ -4,13 +4,9 @@ import io.ipfs.multihash.Multihash;
 import io.nem.core.crypto.PrivateKey;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart;
+import io.proximax.privacy.strategy.NemKeysPrivacyStrategy;
+import io.proximax.privacy.strategy.PasswordPrivacyStrategy;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
@@ -103,7 +99,7 @@ public class DirectDownloadParameterBuilder {
      * @return the same instance of this builder
      */
     public DirectDownloadParameterBuilder withNemKeysPrivacy(String privateKey, String publicKey) {
-        this.privacyStrategy = SecuredWithNemKeysPrivacyStrategy.create(privateKey, publicKey);
+        this.privacyStrategy = NemKeysPrivacyStrategy.create(privateKey, publicKey);
         return this;
     }
 
@@ -116,7 +112,7 @@ public class DirectDownloadParameterBuilder {
      * @return the same instance of this builder
      */
     public DirectDownloadParameterBuilder withPasswordPrivacy(String password) {
-        this.privacyStrategy = SecuredWithPasswordPrivacyStrategy.create(password);
+        this.privacyStrategy = PasswordPrivacyStrategy.create(password);
         return this;
     }
 
@@ -134,7 +130,7 @@ public class DirectDownloadParameterBuilder {
 //    public DirectDownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
 //                                                                         int secretMinimumPartCountToBuild,
 //                                                                         SecretPart... secretParts) {
-//        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+//        this.privacyStrategy = ShamirSecretSharingPrivacyStrategy.create(
 //                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
 //        return this;
 //    }
@@ -152,7 +148,7 @@ public class DirectDownloadParameterBuilder {
 //    public DirectDownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
 //                                                                         int secretMinimumPartCountToBuild,
 //                                                                         List<SecretPart> secretParts) {
-//        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+//        this.privacyStrategy = ShamirSecretSharingPrivacyStrategy.create(
 //                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
 //        return this;
 //    }
@@ -170,7 +166,7 @@ public class DirectDownloadParameterBuilder {
 //    public DirectDownloadParameterBuilder withShamirSecretSharingPrivacy(int secretTotalPartCount,
 //                                                                         int secretMinimumPartCountToBuild,
 //                                                                         Map<Integer, byte[]> secretParts) {
-//        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+//        this.privacyStrategy = ShamirSecretSharingPrivacyStrategy.create(
 //                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
 //        return this;
 //    }

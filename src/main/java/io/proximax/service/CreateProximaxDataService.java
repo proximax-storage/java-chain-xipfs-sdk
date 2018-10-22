@@ -52,8 +52,7 @@ public class CreateProximaxDataService {
 
         if (uploadParam.getData() instanceof AbstractByteStreamParameterData) { // when byte stream upload
             return uploadByteStream(uploadParam, (AbstractByteStreamParameterData) uploadParam.getData());
-        }
-        if (uploadParam.getData() instanceof PathParameterData) { // when path upload
+        } else if (uploadParam.getData() instanceof PathParameterData) { // when path upload
             return uploadPath((PathParameterData) uploadParam.getData());
         } else { // when unknown data
             throw new UploadParameterDataNotSupportedException(String.format("Uploading of %s is not supported",
@@ -64,8 +63,7 @@ public class CreateProximaxDataService {
     private Observable<ProximaxDataModel> uploadByteStream(UploadParameter uploadParam, AbstractByteStreamParameterData byteStreamParamData) {
         final Observable<Optional<String>> detectedContentTypeOb = detectContentType(uploadParam, byteStreamParamData);
         final InputStream encryptedByteStream = encryptByteStream(uploadParam, byteStreamParamData);
-        final Observable<Optional<String>> digestOb = computeDigest(uploadParam.getComputeDigest(),
-                encryptByteStream(uploadParam, byteStreamParamData));
+        final Observable<Optional<String>> digestOb = computeDigest(uploadParam, byteStreamParamData);
         final Observable<FileUploadResponse> ipfsUploadResponseOb = fileUploadService.uploadByteStream(encryptedByteStream);
 
         return Observable.zip(ipfsUploadResponseOb, digestOb, detectedContentTypeOb,
@@ -84,8 +82,8 @@ public class CreateProximaxDataService {
         return uploadParam.getPrivacyStrategy().encryptStream(byteStreamParamData.getByteStream());
     }
 
-    private Observable<Optional<String>> computeDigest(boolean computeDigest, InputStream encryptedStream) {
-        return computeDigest ? digestUtils.digest(encryptedStream).map(Optional::of) : Observable.just(Optional.empty());
+    private Observable<Optional<String>> computeDigest(UploadParameter uploadParam, AbstractByteStreamParameterData byteStreamParamData) {
+        return uploadParam.getComputeDigest() ? digestUtils.digest(encryptByteStream(uploadParam, byteStreamParamData)).map(Optional::of) : Observable.just(Optional.empty());
     }
 
     private Observable<ProximaxDataModel> uploadPath(PathParameterData pathParamData) {

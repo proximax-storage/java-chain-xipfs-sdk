@@ -2,9 +2,9 @@ package io.proximax.model;
 
 import io.proximax.privacy.strategy.CustomPrivacyStrategy;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithShamirSecretSharingPrivacyStrategy;
+import io.proximax.privacy.strategy.NemKeysPrivacyStrategy;
+import io.proximax.privacy.strategy.PasswordPrivacyStrategy;
+import io.proximax.privacy.strategy.ShamirSecretSharingPrivacyStrategy;
 
 /**
  * Enumerates the different privacy types
@@ -19,17 +19,17 @@ public enum PrivacyType {
     PLAIN(1001),
     /**
      * The type for secured with nem keys privacy strategy
-     * @see SecuredWithNemKeysPrivacyStrategy
+     * @see NemKeysPrivacyStrategy
      */
     NEMKEYS(1002),
     /**
      * The type for secured with shamir secret sharing privacy strategy
-     * @see SecuredWithShamirSecretSharingPrivacyStrategy
+     * @see ShamirSecretSharingPrivacyStrategy
      */
     SHAMIR(1003),
     /**
      * The type for secured with password privacy strategy
-     * @see SecuredWithPasswordPrivacyStrategy
+     * @see PasswordPrivacyStrategy
      */
     PASSWORD(1004),
     /**

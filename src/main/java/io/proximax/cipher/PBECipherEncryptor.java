@@ -11,6 +11,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayInputStream;
@@ -33,10 +34,6 @@ public class PBECipherEncryptor {
 
 	private static final String CONST_ALGO_PBKDF2 = "PBKDF2WithHmacSHA256";
 
-	static {
-		Security.addProvider(new BouncyCastleProvider());
-	}
-
 	/**
 	 * Encrypt byte stream with password
 	 *
@@ -55,7 +52,7 @@ public class PBECipherEncryptor {
 			Cipher cipher = getCipherInstance();
 			cipher.init(Cipher.ENCRYPT_MODE,
 					getPBESecretKey(password, salt),
-					getGCMParameterSpec(iv));
+					getIvParameterSpec(iv));
 
 			return new SequenceInputStream(Collections.enumeration(asList(
 					new ByteArrayInputStream(salt),
@@ -84,7 +81,7 @@ public class PBECipherEncryptor {
 			Cipher cipher = getCipherInstance();
 			cipher.init(Cipher.DECRYPT_MODE,
 					getPBESecretKey(password, salt),
-					getGCMParameterSpec(iv));
+					getIvParameterSpec(iv));
 
 			return new CipherInputStream(byteStream, cipher);
 		} catch (Exception e) {
@@ -94,17 +91,17 @@ public class PBECipherEncryptor {
 
 	private SecretKey getPBESecretKey(char[] password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		SecretKeyFactory factory = SecretKeyFactory.getInstance(CONST_ALGO_PBKDF2);
-		KeySpec keyspec = new PBEKeySpec(password, salt, 65536, 128);
+		KeySpec keyspec = new PBEKeySpec(password, salt, 65536, 256);
 		SecretKey tmp = factory.generateSecret(keyspec);
 		return new SecretKeySpec(tmp.getEncoded(), "AES");
 	}
 
-	private Cipher getCipherInstance() throws NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException {
-		return Cipher.getInstance("AES/GCM/NoPadding", "BC");
+	private Cipher getCipherInstance() throws NoSuchAlgorithmException, NoSuchPaddingException {
+		return Cipher.getInstance("AES/CBC/PKCS5PADDING");
 	}
 
-	private GCMParameterSpec getGCMParameterSpec(byte[] iv) {
-		return new GCMParameterSpec(16 * 8, iv);
+	private IvParameterSpec getIvParameterSpec(byte[] iv) {
+		return new IvParameterSpec(iv);
 	}
 
 }

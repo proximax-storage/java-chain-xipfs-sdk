@@ -112,13 +112,13 @@ public class Uploader_asyncIntegrationTest {
 
 	private class NotImplementedPrivacyStrategy extends CustomPrivacyStrategy{
 		@Override
-		public InputStream encryptStream (InputStream byteStream){
+		public InputStream encryptStream (InputStream stream){
 			throw new RuntimeException("not implemented");
 		}
 
 		@Override
-		public InputStream decryptStream (InputStream byteStream){
-			return byteStream;
+		public InputStream decryptStream (InputStream encryptedStream){
+			return encryptedStream;
 		}
 	}
 }

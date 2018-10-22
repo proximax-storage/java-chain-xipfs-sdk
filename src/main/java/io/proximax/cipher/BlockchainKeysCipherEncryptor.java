@@ -88,7 +88,7 @@ public class BlockchainKeysCipherEncryptor {
 	}
 
 	private Cipher getCipherInstance() throws NoSuchAlgorithmException, NoSuchPaddingException {
-		return Cipher.getInstance("AES/CBC/PKCS7Padding");
+		return Cipher.getInstance("AES/CBC/PKCS5PADDING");
 	}
 
 	private IvParameterSpec getIvParameterSpec(byte[] iv) {
@@ -96,7 +96,6 @@ public class BlockchainKeysCipherEncryptor {
 	}
 
 	private static SecretKey getSharedKey(byte[] salt, KeyPair privateKeyPair, KeyPair publicKeyPair) {
-
 		Ed25519GroupElement senderA = (new Ed25519EncodedGroupElement(publicKeyPair.getPublicKey().getRaw())).decode();
 		senderA.precomputeForScalarMultiplication();
 		byte[] sharedKey = senderA.scalarMultiply(Ed25519Utils.prepareForScalarMultiply(privateKeyPair.getPrivateKey())).encode().getRaw();

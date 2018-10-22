@@ -3,10 +3,11 @@ package io.proximax.service;
 import io.proximax.connection.ConnectionConfig;
 import io.proximax.exceptions.DownloadForDataTypeNotSupportedException;
 import io.proximax.privacy.strategy.PrivacyStrategy;
-import io.proximax.service.repository.FileRepository;
 import io.proximax.service.factory.FileRepositoryFactory;
+import io.proximax.service.repository.FileRepository;
 import io.proximax.utils.DigestUtils;
 import io.reactivex.Observable;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.InputStream;
 
@@ -54,15 +55,16 @@ public class RetrieveProximaxDataService {
         if (contentType != null && contentType.equals(PATH_UPLOAD_CONTENT_TYPE)) { // path
             throw new DownloadForDataTypeNotSupportedException("download of path is not yet supported");
         } else { // byte array
-            return fileRepository.getByteStream(dataHash)
-                    .flatMap(undecryptedStream -> validateDigest(validateDigest, digest, dataHash)
-                            .map(result -> undecryptedStream))
-                    .map(privacyStrategy::decryptStream);
+            validateDigest(validateDigest, digest, dataHash);
+            return fileRepository.getByteStream(dataHash).map(privacyStrategy::decryptStream);
         }
     }
 
-    private Observable<Boolean> validateDigest(boolean validateDigest, String digest, String dataHash) {
-        return validateDigest ? fileRepository.getByteStream(dataHash)
-                .flatMap(undecryptedStream -> digestUtils.validateDigest(undecryptedStream, digest)) : Observable.just(true);
+    private void validateDigest(boolean validateDigest, String digest, String dataHash) {
+        if (validateDigest && StringUtils.isNotEmpty(digest)) {
+            fileRepository.getByteStream(dataHash)
+                    .flatMap(undecryptedStream -> digestUtils.validateDigest(undecryptedStream, digest))
+                    .blockingFirst();
+        }
     }
 }

@@ -28,22 +28,22 @@ public final class PlainPrivacyStrategy extends PrivacyStrategy {
 
     /**
      * Return same byte stream
-     * @param byteStream the byte stream to encrypt
+     * @param stream the byte stream to encrypt
      * @return same byte stream
      */
     @Override
-    public final InputStream encryptStream(final InputStream byteStream) {
-        return byteStream;
+    public final InputStream encryptStream(final InputStream stream) {
+        return stream;
     }
 
     /**
      * Return same byte stream
-     * @param byteStream the byte stream to decrypt
+     * @param encryptedStream the byte stream to decrypt
      * @return same byte stream
      */
     @Override
-    public final InputStream decryptStream(final InputStream byteStream) {
-        return byteStream;
+    public final InputStream decryptStream(final InputStream encryptedStream) {
+        return encryptedStream;
     }
 
     /**

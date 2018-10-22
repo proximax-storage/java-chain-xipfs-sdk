@@ -14,14 +14,14 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * The privacy strategy that secures data using the NEM keys (a private key and a public key).
  * This strategy encrypt and decrypt the data using both private and public keys
  */
-public final class SecuredWithNemKeysPrivacyStrategy extends PrivacyStrategy {
+public final class NemKeysPrivacyStrategy extends PrivacyStrategy {
 
     private final BlockchainKeysCipherEncryptor blockchainKeysCipherEncryptor;
     private final KeyPair keyPairOfPrivateKey;
     private final KeyPair keyPairOfPublicKey;
 
-    SecuredWithNemKeysPrivacyStrategy(BlockchainKeysCipherEncryptor blockchainKeysCipherEncryptor,
-                                              String privateKey, String publicKey) {
+    NemKeysPrivacyStrategy(BlockchainKeysCipherEncryptor blockchainKeysCipherEncryptor,
+                           String privateKey, String publicKey) {
 
         checkParameter(privateKey != null, "private key is required");
         checkParameter(publicKey != null, "public key is required");
@@ -43,22 +43,22 @@ public final class SecuredWithNemKeysPrivacyStrategy extends PrivacyStrategy {
 
     /**
      * Encrypt byte stream using the private and public keys provided
-     * @param byteStream the byte stream to encrypt
+     * @param stream the byte stream to encrypt
      * @return the encrypted byte stream
      */
     @Override
-    public final InputStream encryptStream(final InputStream byteStream) {
-        return blockchainKeysCipherEncryptor.encryptStream(byteStream, keyPairOfPrivateKey, keyPairOfPublicKey);
+    public final InputStream encryptStream(final InputStream stream) {
+        return blockchainKeysCipherEncryptor.encryptStream(stream, keyPairOfPrivateKey, keyPairOfPublicKey);
     }
 
     /**
      * Encrypt byte stream using the private and public keys provided
-     * @param byteStream the byte stream to decrypt
+     * @param encryptedStream the byte stream to decrypt
      * @return the decrypted byte stream
      */
     @Override
-    public final InputStream decryptStream(final InputStream byteStream) {
-        return blockchainKeysCipherEncryptor.decryptStream(byteStream, keyPairOfPrivateKey, keyPairOfPublicKey);
+    public final InputStream decryptStream(final InputStream encryptedStream) {
+        return blockchainKeysCipherEncryptor.decryptStream(encryptedStream, keyPairOfPrivateKey, keyPairOfPublicKey);
     }
 
     /**
@@ -67,7 +67,7 @@ public final class SecuredWithNemKeysPrivacyStrategy extends PrivacyStrategy {
      * @param publicKey the public key
      * @return the instance of this strategy
      */
-    public static SecuredWithNemKeysPrivacyStrategy create(String privateKey, String publicKey) {
-        return new SecuredWithNemKeysPrivacyStrategy(new BlockchainKeysCipherEncryptor(), privateKey, publicKey);
+    public static NemKeysPrivacyStrategy create(String privateKey, String publicKey) {
+        return new NemKeysPrivacyStrategy(new BlockchainKeysCipherEncryptor(), privateKey, publicKey);
     }
 }
