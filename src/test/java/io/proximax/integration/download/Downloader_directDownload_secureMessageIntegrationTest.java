@@ -77,4 +77,14 @@ public class Downloader_directDownload_secureMessageIntegrationTest {
 		unitUnderTest.directDownload(param);
 	}
 
+	@Test(expected = DirectDownloadFailureException.class)
+	public void failDirectDownloadWithNoPrivateKey() throws IOException {
+		final String transactionHash =
+				TestDataRepository.getData("Uploader_secureMessageIntegrationTest.shouldUploadWithUseBlockchainSecureMessageAndRecipientPublicKey", "transactionHash");
+		final DirectDownloadParameter param = DirectDownloadParameter
+				.createFromTransactionHash(transactionHash).build();
+
+		unitUnderTest.directDownload(param);
+	}
+
 }
