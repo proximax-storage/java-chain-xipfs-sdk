@@ -50,7 +50,7 @@ public class Downloader {
      * @param connectionConfig the connection config that defines generally where the download will be sent
      */
     public Downloader(ConnectionConfig connectionConfig) {
-        this.retrieveProximaxDataService = new RetrieveProximaxDataService(connectionConfig);
+        this.retrieveProximaxDataService = new RetrieveProximaxDataService(connectionConfig.getFileStorageConnection());
 
         try {
             this.retrieveProximaxMessagePayloadService = new RetrieveProximaxMessagePayloadService(connectionConfig.getBlockchainNetworkConnection());

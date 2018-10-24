@@ -53,7 +53,7 @@ public class Uploader {
      * @param connectionConfig the connection config that defines generally where the upload will be sent
      */
     public Uploader(ConnectionConfig connectionConfig) {
-        this.createProximaxDataService = new CreateProximaxDataService(connectionConfig);
+        this.createProximaxDataService = new CreateProximaxDataService(connectionConfig.getFileStorageConnection());
         this.createProximaxMessagePayloadService = new CreateProximaxMessagePayloadService();
 
         try {

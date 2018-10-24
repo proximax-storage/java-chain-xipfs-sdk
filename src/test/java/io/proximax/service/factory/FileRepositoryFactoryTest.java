@@ -1,11 +1,9 @@
 package io.proximax.service.factory;
 
-import io.proximax.connection.BlockchainNetworkConnection;
-import io.proximax.connection.ConnectionConfig;
 import io.proximax.connection.IpfsConnection;
 import io.proximax.connection.StorageConnection;
-import io.proximax.service.repository.FileRepository;
 import io.proximax.service.client.IpfsClient;
+import io.proximax.service.repository.FileRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -22,9 +20,6 @@ public class FileRepositoryFactoryTest {
     private IpfsConnection mockIpfsConnection;
 
     @Mock
-    private BlockchainNetworkConnection mockBlockchainNetworkConnection;
-
-    @Mock
     private StorageConnection mockStorageConnection;
 
     @Before
@@ -32,29 +27,24 @@ public class FileRepositoryFactoryTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void failOnNullFileStorageConnection() {
+        FileRepositoryFactory.create(null);
+    }
+
     @Test
     public void shouldReturnIpfsClientOnIpfsConnection() {
-        final FileRepository result = FileRepositoryFactory.createFromConnectionConfig(
-                ConnectionConfig.createWithLocalIpfsConnection(
-                        mockBlockchainNetworkConnection, mockIpfsConnection
-                )
-        );
+        final FileRepository result = FileRepositoryFactory.create(mockIpfsConnection);
 
         assertThat(result, is(notNullValue()));
         assertThat(result, is(instanceOf(IpfsClient.class)));
-
     }
 
     @Test
     public void shouldReturnStorageNodeClientOnStorageConnection() {
-        final FileRepository result = FileRepositoryFactory.createFromConnectionConfig(
-                ConnectionConfig.createWithStorageConnection(
-                        mockBlockchainNetworkConnection, mockStorageConnection
-                )
-        );
+        final FileRepository result = FileRepositoryFactory.create(mockStorageConnection);
 
         assertThat(result, is(notNullValue()));
         assertThat(result, is(instanceOf(FileRepository.class)));
-
     }
 }

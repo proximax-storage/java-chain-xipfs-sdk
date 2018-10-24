@@ -18,6 +18,7 @@ public class RetrieveProximaxMessagePayloadService {
      * Construct this class
      *
      * @param blockchainNetworkConnection the blockchain connection config
+     * @throws MalformedURLException malformed URL
      */
     public RetrieveProximaxMessagePayloadService(BlockchainNetworkConnection blockchainNetworkConnection) throws MalformedURLException {
         this.blockchainMessageService = new BlockchainMessageService(blockchainNetworkConnection);

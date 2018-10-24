@@ -1,9 +1,14 @@
 package io.proximax.service.factory;
 
-import io.proximax.connection.ConnectionConfig;
-import io.proximax.service.repository.FileRepository;
+import io.proximax.connection.FileStorageConnection;
+import io.proximax.connection.IpfsConnection;
+import io.proximax.connection.StorageConnection;
 import io.proximax.service.client.IpfsClient;
 import io.proximax.service.client.StorageNodeClient;
+import io.proximax.service.repository.FileRepository;
+
+import static io.proximax.utils.ParameterValidationUtils.checkParameter;
+import static java.lang.String.format;
 
 /**
  * The factory class to create the file storage client based on connection config
@@ -15,16 +20,20 @@ public class FileRepositoryFactory {
     }
 
     /**
-     * Create the file storage client based on connection config
+     * Create the file storage client based on file storage
      *
-     * @param connectionConfig the connection config
+     * @param fileStorageConnection the connection to file storage
      * @return the file storage client created
      */
-    public static FileRepository createFromConnectionConfig(ConnectionConfig connectionConfig) {
-        if (connectionConfig.getIpfsConnection() != null) {
-            return new IpfsClient(connectionConfig.getIpfsConnection());
+    public static FileRepository create(FileStorageConnection fileStorageConnection) {
+        checkParameter(fileStorageConnection != null, "fileStorageConnection is required");
+
+        if (fileStorageConnection instanceof IpfsConnection) {
+            return new IpfsClient((IpfsConnection) fileStorageConnection);
+        } else if (fileStorageConnection instanceof StorageConnection){
+            return new StorageNodeClient((StorageConnection) fileStorageConnection);
         } else {
-            return new StorageNodeClient(connectionConfig.getStorageConnection());
+            throw new IllegalArgumentException(format("Unknown file storage connection %s", fileStorageConnection.getClass().getSimpleName()));
         }
     }
 }

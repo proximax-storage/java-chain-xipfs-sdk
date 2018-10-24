@@ -1,22 +1,26 @@
 package io.proximax.service;
 
+import io.proximax.privacy.strategy.PrivacyStrategy;
+
 import java.io.File;
-import java.io.InputStream;
+import java.util.function.Supplier;
 
 /**
  * The model class that defines the result of uploading to IPFS
  *
- * @see FileUploadService#uploadByteStream(InputStream)
+ * @see FileUploadService#uploadByteStream(Supplier, PrivacyStrategy, boolean)
  * @see FileUploadService#uploadPath(File)
  */
 public class FileUploadResponse {
 
     private final String dataHash;
     private final Long timestamp;
+    private final String digest;
 
-    FileUploadResponse(String dataHash, Long timestamp) {
+    FileUploadResponse(String dataHash, Long timestamp, String digest) {
         this.dataHash = dataHash;
         this.timestamp = timestamp;
+        this.digest = digest;
     }
 
     /**
@@ -35,5 +39,13 @@ public class FileUploadResponse {
      */
     public Long getTimestamp() {
         return timestamp;
+    }
+
+    /**
+     * Get the digest
+     * @return the digest
+     */
+    public String getDigest() {
+        return digest;
     }
 }

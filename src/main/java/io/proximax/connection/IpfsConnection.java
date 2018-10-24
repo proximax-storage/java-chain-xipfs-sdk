@@ -8,7 +8,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 /**
  * The config class to connect to IPFS
  */
-public class IpfsConnection {
+public class IpfsConnection extends FileStorageConnection {
 
     private final IPFS ipfs;
     private final String apiHost;

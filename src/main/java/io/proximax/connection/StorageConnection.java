@@ -8,7 +8,7 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 /**
  * The config class to connect to storage API
  */
-public class StorageConnection {
+public class StorageConnection extends FileStorageConnection {
 
     private final String apiUrl;
     private final String apiHost;
