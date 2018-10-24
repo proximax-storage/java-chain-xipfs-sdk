@@ -122,7 +122,7 @@ public class Uploader {
     private Observable<String> createAndAnnounceTransaction(UploadParameter uploadParam, ProximaxMessagePayloadModel messagePayload) {
         return blockchainTransactionService.createAndAnnounceTransaction(
                 messagePayload, uploadParam.getSignerPrivateKey(), uploadParam.getRecipientPublicKey(), uploadParam.getRecipientAddress(),
-                uploadParam.getTransactionDeadline(), uploadParam.getUseBlockchainSecureMessage());
+                uploadParam.getTransactionDeadline(), uploadParam.getTransactionMosaics(), uploadParam.getUseBlockchainSecureMessage());
     }
 
     private UploadResult createUploadResult(ProximaxMessagePayloadModel messagePayload, String transactionHash) {
