@@ -46,12 +46,13 @@ public class FileUploadService {
      */
     public Observable<FileUploadResponse> uploadByteStream(final Supplier<InputStream> byteStreamSupplier,
                                                            final PrivacyStrategy privacyStrategy,
-                                                           final boolean computeDigest) {
+                                                           final Boolean computeDigest) {
         checkParameter(byteStreamSupplier != null, "byteStreamSupplier is required");
 
+        final boolean computeDigestToUse = Optional.ofNullable(computeDigest).orElse(false);
         final PrivacyStrategy privacyStrategyToUse = privacyStrategy == null ? PlainPrivacyStrategy.create() : privacyStrategy;
 
-        final Observable<Optional<String>> digestObservable = computeDigest(byteStreamSupplier, privacyStrategyToUse, computeDigest);
+        final Observable<Optional<String>> digestObservable = computeDigest(byteStreamSupplier, privacyStrategyToUse, computeDigestToUse);
         final Observable<String> dataHashObservable = fileRepository.addByteStream(privacyStrategyToUse.encryptStream(byteStreamSupplier.get()));
 
         return Observable.zip(digestObservable, dataHashObservable, (digest, dataHash) ->

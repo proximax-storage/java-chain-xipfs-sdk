@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 /**
  * The model class that defines the result of uploading to IPFS
  *
- * @see FileUploadService#uploadByteStream(Supplier, PrivacyStrategy, boolean)
+ * @see FileUploadService#uploadByteStream(Supplier, PrivacyStrategy, Boolean)
  * @see FileUploadService#uploadPath(File)
  */
 public class FileUploadResponse {
