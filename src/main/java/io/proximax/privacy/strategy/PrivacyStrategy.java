@@ -22,15 +22,15 @@ public abstract class PrivacyStrategy {
 
     /**
      * Encrypt byte stream
-     * @param byteStream the byte stream to encrypt
+     * @param stream the byte stream to encrypt
      * @return encrypted byte stream
      */
-    public abstract InputStream encryptStream(final InputStream byteStream);
+    public abstract InputStream encryptStream(final InputStream stream);
 
     /**
      * Encrypt byte stream
-     * @param byteStream the byte stream to decrypt
+     * @param encryptedStream the byte stream to decrypt
      * @return the decrypted data
      */
-    public abstract InputStream decryptStream(final InputStream byteStream);
+    public abstract InputStream decryptStream(final InputStream encryptedStream);
 }

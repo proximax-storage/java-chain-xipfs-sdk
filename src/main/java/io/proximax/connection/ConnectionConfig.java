@@ -12,20 +12,17 @@ import io.proximax.service.client.StorageNodeClient.NodeInfoResponseBlockchainNe
 public class ConnectionConfig {
 
     private final BlockchainNetworkConnection blockchainNetworkConnection;
-    private final IpfsConnection ipfsConnection;
-    private final StorageConnection storageConnection;
+    private final FileStorageConnection fileStorageConnection;
 
     private ConnectionConfig(BlockchainNetworkConnection blockchainNetworkConnection,
                              IpfsConnection ipfsConnection) {
         this.blockchainNetworkConnection = blockchainNetworkConnection;
-        this.ipfsConnection = ipfsConnection;
-        this.storageConnection = null;
+        this.fileStorageConnection = ipfsConnection;
     }
 
     private ConnectionConfig(BlockchainNetworkConnection blockchainNetworkConnection, StorageConnection storageConnection) {
         this.blockchainNetworkConnection = blockchainNetworkConnection;
-        this.storageConnection = storageConnection;
-        this.ipfsConnection = null;
+        this.fileStorageConnection = storageConnection;
     }
 
     /**
@@ -38,21 +35,12 @@ public class ConnectionConfig {
     }
 
     /**
-     * Get the connection to IPFS
+     * Get the connection to file storage
      *
-     * @return the IPFS connection
+     * @return the file storage connection
      */
-    public IpfsConnection getIpfsConnection() {
-        return ipfsConnection;
-    }
-
-    /**
-     * Get the connection to storage node
-     *
-     * @return the connection to storage node
-     */
-    public StorageConnection getStorageConnection() {
-        return storageConnection;
+    public FileStorageConnection getFileStorageConnection() {
+        return fileStorageConnection;
     }
 
     /**

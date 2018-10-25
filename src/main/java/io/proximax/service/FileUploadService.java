@@ -1,12 +1,15 @@
 package io.proximax.service;
 
-import io.proximax.connection.ConnectionConfig;
+import io.proximax.privacy.strategy.PlainPrivacyStrategy;
+import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.service.repository.FileRepository;
-import io.proximax.service.factory.FileRepositoryFactory;
+import io.proximax.utils.DigestUtils;
 import io.reactivex.Observable;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
@@ -16,31 +19,45 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 public class FileUploadService {
 
     private final FileRepository fileRepository;
+    private final DigestUtils digestUtils;
 
     /**
      * Construct this class
      *
-     * @param connectionConfig the connection config
+     * @param fileRepository the file repository
      */
-    public FileUploadService(final ConnectionConfig connectionConfig) {
-        this.fileRepository = FileRepositoryFactory.createFromConnectionConfig(connectionConfig);
+    public FileUploadService(final FileRepository fileRepository) {
+        this.fileRepository = fileRepository;
+        this.digestUtils = new DigestUtils();
     }
 
-    FileUploadService(final FileRepository fileRepository) {
+    FileUploadService(final FileRepository fileRepository, final DigestUtils digestUtils) {
         this.fileRepository = fileRepository;
+        this.digestUtils = digestUtils;
     }
 
     /**
      * Upload byte stream
      *
-     * @param byteStream the byte stream
+     * @param byteStreamSupplier the byte stream supplier
+     * @param privacyStrategy the privacy strategy
+     * @param computeDigest the compute digest
      * @return the IPFS upload response
      */
-    public Observable<FileUploadResponse> uploadByteStream(final InputStream byteStream) {
-        checkParameter(byteStream != null, "byteStream is required");
+    public Observable<FileUploadResponse> uploadByteStream(final Supplier<InputStream> byteStreamSupplier,
+                                                           final PrivacyStrategy privacyStrategy,
+                                                           final Boolean computeDigest) {
+        checkParameter(byteStreamSupplier != null, "byteStreamSupplier is required");
 
-        return fileRepository.addByteStream(byteStream)
-                .map(dataHash -> new FileUploadResponse(dataHash, System.currentTimeMillis()));
+        final boolean computeDigestToUse = Optional.ofNullable(computeDigest).orElse(false);
+        final PrivacyStrategy privacyStrategyToUse = privacyStrategy == null ? PlainPrivacyStrategy.create() : privacyStrategy;
+
+        final Observable<Optional<String>> digestObservable = computeDigest(byteStreamSupplier, privacyStrategyToUse, computeDigestToUse);
+        final Observable<String> dataHashObservable = fileRepository.addByteStream(privacyStrategyToUse.encryptStream(byteStreamSupplier.get()));
+
+        return Observable.zip(digestObservable, dataHashObservable, (digest, dataHash) ->
+                        new FileUploadResponse(dataHash, System.currentTimeMillis(), digest.orElse(null))
+                );
     }
 
     /**
@@ -53,6 +70,15 @@ public class FileUploadService {
         checkParameter(path != null, "path is required");
 
         return fileRepository.addPath(path)
-                .map(dataHash -> new FileUploadResponse(dataHash, System.currentTimeMillis()));
+                .map(dataHash -> new FileUploadResponse(dataHash, System.currentTimeMillis(), null));
     }
+
+    private Observable<Optional<String>> computeDigest(final Supplier<InputStream> byteStreamSupplier,
+                                                       final PrivacyStrategy privacyStrategy,
+                                                       final boolean computeDigest) {
+        return computeDigest
+                ? digestUtils.digest(privacyStrategy.encryptStream(byteStreamSupplier.get())).map(Optional::of)
+                : Observable.just(Optional.empty());
+    }
+
 }

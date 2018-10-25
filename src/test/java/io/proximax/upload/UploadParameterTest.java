@@ -1,8 +1,8 @@
 package io.proximax.upload;
 
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy;
+import io.proximax.privacy.strategy.NemKeysPrivacyStrategy;
+import io.proximax.privacy.strategy.PasswordPrivacyStrategy;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
@@ -374,7 +374,7 @@ public class UploadParameterTest {
                 .withNemKeysPrivacy(SAMPLE_SIGNER_PRIVATE_KEY, SAMPLE_RECIPIENT_PUBLIC_KEY)
                 .build();
 
-        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithNemKeysPrivacyStrategy.class));
+        assertThat(param.getPrivacyStrategy(), instanceOf(NemKeysPrivacyStrategy.class));
     }
 
     @Test
@@ -383,7 +383,7 @@ public class UploadParameterTest {
                 .withPasswordPrivacy("hdksahjkdhsakjhdsajhdkjhsajkdsbajjdhsajkhdjksahjkdahjkhdkjsahjdsadasdsadas")
                 .build();
 
-        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithPasswordPrivacyStrategy.class));
+        assertThat(param.getPrivacyStrategy(), instanceOf(PasswordPrivacyStrategy.class));
     }
 
     // TODO - revisit shamir secret sharing implementation that works cross-sdk
@@ -398,19 +398,19 @@ public class UploadParameterTest {
 //                        minimumSecretParts)
 //                .build();
 //
-//        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
+//        assertThat(param.getPrivacyStrategy(), instanceOf(ShamirSecretSharingPrivacyStrategy.class));
 //    }
 //
 //    @Test
 //    public void shouldCreateWithSecuredWithShamirSecretSharingArrayStrategy() {
 //        final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
 //                .withShamirSecretSharing(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
-//                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
-//                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
-//                        new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5)))
+//                        new ShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
+//                        new ShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
+//                        new ShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5)))
 //                .build();
 //
-//        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
+//        assertThat(param.getPrivacyStrategy(), instanceOf(ShamirSecretSharingPrivacyStrategy.class));
 //    }
 //
 //    @Test
@@ -418,12 +418,12 @@ public class UploadParameterTest {
 //        final UploadParameter param = UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
 //                .withShamirSecretSharing(TEST_SHAMIR_SECRET_TOTAL_SHARES, TEST_SHAMIR_SECRET_THRESHOLD,
 //                        asList(
-//                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
-//                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
-//                                new SecuredWithShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5))))
+//                                new ShamirSecretSharingPrivacyStrategy.SecretPart(1, TEST_SHAMIR_SECRET_SHARES.get(1)),
+//                                new ShamirSecretSharingPrivacyStrategy.SecretPart(3, TEST_SHAMIR_SECRET_SHARES.get(3)),
+//                                new ShamirSecretSharingPrivacyStrategy.SecretPart(5, TEST_SHAMIR_SECRET_SHARES.get(5))))
 //                .build();
 //
-//        assertThat(param.getPrivacyStrategy(), instanceOf(SecuredWithShamirSecretSharingPrivacyStrategy.class));
+//        assertThat(param.getPrivacyStrategy(), instanceOf(ShamirSecretSharingPrivacyStrategy.class));
 //    }
 
     @Test
@@ -457,7 +457,7 @@ public class UploadParameterTest {
         assertThat(param.getComputeDigest(), is(true));
         assertThat(param.getRecipientPublicKey(), is(SAMPLE_RECIPIENT_PUBLIC_KEY));
         assertThat(param.getRecipientAddress(), is(SAMPLE_RECIPIENT_ADDRESS));
-        assertThat(param.getPrivacyStrategy(), is(instanceOf(SecuredWithPasswordPrivacyStrategy.class)));
+        assertThat(param.getPrivacyStrategy(), is(instanceOf(PasswordPrivacyStrategy.class)));
         assertThat(param.getDetectContentType(), is(true));
         assertThat(param.getTransactionDeadline(), is(5));
         assertThat(param.getUseBlockchainSecureMessage(), is(true));

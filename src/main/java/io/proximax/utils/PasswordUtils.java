@@ -2,7 +2,7 @@ package io.proximax.utils;
 
 import java.security.SecureRandom;
 
-import static io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy.MINIMUM_PASSWORD_LENGTH;
+import static io.proximax.privacy.strategy.PasswordPrivacyStrategy.MINIMUM_PASSWORD_LENGTH;
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**

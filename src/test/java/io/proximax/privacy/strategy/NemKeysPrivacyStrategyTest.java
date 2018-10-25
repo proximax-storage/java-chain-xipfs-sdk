@@ -23,7 +23,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-public class SecuredWithNemKeysPrivacyStrategyTest {
+public class NemKeysPrivacyStrategyTest {
 
     private static final byte[] SAMPLE_RAW_DATA = "the quick brown fox jumps over the lazy dog".getBytes();
     private static final byte[] SAMPLE_ENCRYPTED_DATA = "DIASYUOIDHKJckxhzkhkahdhsao".getBytes();
@@ -44,7 +44,7 @@ public class SecuredWithNemKeysPrivacyStrategyTest {
 
     @Test
     public void shouldReturnCorrectPrivacyType() {
-        final int privacyType = new SecuredWithNemKeysPrivacyStrategy(encryptor, SENDER_KEYPAIR.getPrivateKey().toString(),
+        final int privacyType = new NemKeysPrivacyStrategy(encryptor, SENDER_KEYPAIR.getPrivateKey().toString(),
                 RECEIVER_KEYPAIR.getPublicKey().toString()).getPrivacyType();
 
         assertThat(privacyType, is(PrivacyType.NEMKEYS.getValue()));
@@ -52,12 +52,12 @@ public class SecuredWithNemKeysPrivacyStrategyTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failInitWithoutPrivateKey() {
-        new SecuredWithNemKeysPrivacyStrategy(encryptor, null, RECEIVER_KEYPAIR.getPublicKey().toString());
+        new NemKeysPrivacyStrategy(encryptor, null, RECEIVER_KEYPAIR.getPublicKey().toString());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failInitWithoutPublicKey() {
-        new SecuredWithNemKeysPrivacyStrategy(encryptor, SENDER_KEYPAIR.getPrivateKey().toString(), null);
+        new NemKeysPrivacyStrategy(encryptor, SENDER_KEYPAIR.getPrivateKey().toString(), null);
     }
 
     @Test
@@ -66,8 +66,8 @@ public class SecuredWithNemKeysPrivacyStrategyTest {
         given(encryptor.encryptStream(any(), any(), any()))
                 .willReturn(dummyEncryptedStream);
 
-        final SecuredWithNemKeysPrivacyStrategy unitUnderTest =
-                new SecuredWithNemKeysPrivacyStrategy(encryptor, SENDER_KEYPAIR.getPrivateKey().toString(),
+        final NemKeysPrivacyStrategy unitUnderTest =
+                new NemKeysPrivacyStrategy(encryptor, SENDER_KEYPAIR.getPrivateKey().toString(),
                         RECEIVER_KEYPAIR.getPublicKey().toString());
 
         final InputStream encrypted = unitUnderTest.encryptStream(new ByteArrayInputStream(SAMPLE_RAW_DATA));
@@ -81,8 +81,8 @@ public class SecuredWithNemKeysPrivacyStrategyTest {
         given(encryptor.decryptStream(any(), any(), any()))
                 .willReturn(dummyDecryptedStream);
 
-        final SecuredWithNemKeysPrivacyStrategy unitUnderTest =
-                new SecuredWithNemKeysPrivacyStrategy(encryptor, SENDER_KEYPAIR.getPrivateKey().toString(),
+        final NemKeysPrivacyStrategy unitUnderTest =
+                new NemKeysPrivacyStrategy(encryptor, SENDER_KEYPAIR.getPrivateKey().toString(),
                         RECEIVER_KEYPAIR.getPublicKey().toString());
 
         final InputStream decrypted = unitUnderTest.decryptStream(new ByteArrayInputStream(SAMPLE_ENCRYPTED_DATA));
@@ -92,8 +92,8 @@ public class SecuredWithNemKeysPrivacyStrategyTest {
 
     @Test
     public void shouldReturnSameEncrypted() throws IOException {
-        final SecuredWithNemKeysPrivacyStrategy unitUnderTest =
-                new SecuredWithNemKeysPrivacyStrategy(new BlockchainKeysCipherEncryptor(), SENDER_KEYPAIR.getPrivateKey().toString(),
+        final NemKeysPrivacyStrategy unitUnderTest =
+                new NemKeysPrivacyStrategy(new BlockchainKeysCipherEncryptor(), SENDER_KEYPAIR.getPrivateKey().toString(),
                         RECEIVER_KEYPAIR.getPublicKey().toString());
 
         final InputStream encrypted = unitUnderTest.encryptStream(new ByteArrayInputStream(SAMPLE_RAW_DATA));
@@ -103,8 +103,8 @@ public class SecuredWithNemKeysPrivacyStrategyTest {
 
     @Test
     public void shouldReturnSameDecrypted() throws IOException {
-        final SecuredWithNemKeysPrivacyStrategy unitUnderTest =
-                new SecuredWithNemKeysPrivacyStrategy(new BlockchainKeysCipherEncryptor(), SENDER_KEYPAIR.getPrivateKey().toString(),
+        final NemKeysPrivacyStrategy unitUnderTest =
+                new NemKeysPrivacyStrategy(new BlockchainKeysCipherEncryptor(), SENDER_KEYPAIR.getPrivateKey().toString(),
                         RECEIVER_KEYPAIR.getPublicKey().toString());
 
         final InputStream decrypted = unitUnderTest.decryptStream(new ByteArrayInputStream(sampleEncryptedData()));

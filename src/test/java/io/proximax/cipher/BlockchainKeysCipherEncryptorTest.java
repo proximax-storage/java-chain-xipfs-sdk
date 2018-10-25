@@ -1,14 +1,21 @@
 package io.proximax.cipher;
 
+import io.nem.core.crypto.Hashes;
 import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.PrivateKey;
 import io.nem.core.crypto.PublicKey;
+import io.nem.core.crypto.ed25519.Ed25519Utils;
+import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedGroupElement;
+import io.nem.core.crypto.ed25519.arithmetic.Ed25519GroupElement;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.bouncycastle.util.encoders.Hex;
+import org.bouncycastle.util.encoders.HexEncoder;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,7 +82,7 @@ public class BlockchainKeysCipherEncryptorTest {
     }
 
     @Test(expected = IOException.class)
-    public void failOnDecryptWhenIncorrectKeys() throws IOException {
+    public void failOnDecryptWhenIncorrectPrivateKey() throws IOException {
         final InputStream encryptedStream = unitUnderTest.encryptStream(new ByteArrayInputStream(SAMPLE_DATA),
                 new KeyPair(PrivateKey.fromHexString(PRIVATE_KEY_1)),
                 new KeyPair(PublicKey.fromHexString(PUBLIC_KEY_2)));
@@ -83,6 +90,19 @@ public class BlockchainKeysCipherEncryptorTest {
         final InputStream decrypted = unitUnderTest.decryptStream(encryptedStream,
                 new KeyPair(PrivateKey.fromHexString(PRIVATE_KEY_3)),
                 new KeyPair(PublicKey.fromHexString(PUBLIC_KEY_1)));
+
+        assertThat(ArrayUtils.toObject(IOUtils.toByteArray(decrypted)), is(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
+    }
+
+    @Test(expected = IOException.class)
+    public void failOnDecryptWhenIncorrectPublicKey() throws IOException {
+        final InputStream encryptedStream = unitUnderTest.encryptStream(new ByteArrayInputStream(SAMPLE_DATA),
+                new KeyPair(PrivateKey.fromHexString(PRIVATE_KEY_1)),
+                new KeyPair(PublicKey.fromHexString(PUBLIC_KEY_2)));
+
+        final InputStream decrypted = unitUnderTest.decryptStream(encryptedStream,
+                new KeyPair(PrivateKey.fromHexString(PRIVATE_KEY_1)),
+                new KeyPair(PublicKey.fromHexString(PUBLIC_KEY_3)));
 
         assertThat(ArrayUtils.toObject(IOUtils.toByteArray(decrypted)), is(arrayContaining(ArrayUtils.toObject(SAMPLE_DATA))));
     }

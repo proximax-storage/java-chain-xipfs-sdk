@@ -1,11 +1,15 @@
 package io.proximax.download;
 
 import io.proximax.model.DataInfoModel;
+import io.proximax.upload.StreamUtils;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
  * The model class that defines the downloaded data
@@ -57,5 +61,32 @@ public class DownloadResultData extends DataInfoModel {
      */
     public long getTimestamp() {
         return timestamp;
+    }
+
+    /**
+     * Get content as string
+     * @param encoding string encoding
+     * @return the content as string
+     */
+    public String getContentAsString(String encoding) {
+        return StreamUtils.toString(byteStreamSupplier.get(), encoding);
+    }
+
+    /**
+     * Get content as byte array
+     * @return the content as byte array
+     */
+    public byte[] getContentAsByteArray() {
+        return StreamUtils.toByteArray(byteStreamSupplier.get());
+    }
+
+    /**
+     * Save content to file
+     * @param file the file to save
+     */
+    public void saveToFile(File file) {
+        checkParameter(file != null, "file is required");
+
+        StreamUtils.saveToFile(byteStreamSupplier.get(), file);
     }
 }

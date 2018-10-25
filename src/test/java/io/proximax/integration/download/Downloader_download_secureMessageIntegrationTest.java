@@ -95,4 +95,14 @@ public class Downloader_download_secureMessageIntegrationTest {
 
 		unitUnderTest.download(param);
 	}
+
+	@Test(expected = DownloadFailureException.class)
+	public void failDownloadWithNoPrivateKey() throws IOException {
+		final String transactionHash = TestDataRepository
+				.getData("Uploader_secureMessageIntegrationTest.shouldUploadWithUseBlockchainSecureMessageAndRecipientPublicKey", "transactionHash");
+		final DownloadParameter param = DownloadParameter.create(transactionHash)
+				.build();
+
+		unitUnderTest.download(param);
+	}
 }

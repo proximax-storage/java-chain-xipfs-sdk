@@ -64,7 +64,7 @@ public class StringParameterData extends AbstractByteStreamParameterData {
     /**
      * Create instance by providing the string
      * @param string the string to upload
-     * @param encoding the encoding the string to assist on byte array conversion
+     * @param encoding the encoding of the string
      * @param description a searchable description attach on the upload
      * @param name a searchable name attach on the upload
      * @param contentType the content type attach on the upload

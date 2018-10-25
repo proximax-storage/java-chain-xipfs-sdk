@@ -15,12 +15,12 @@ public class CustomPrivacyStrategyTest {
         final CustomPrivacyStrategy result = new CustomPrivacyStrategy() {
 
             @Override
-            public InputStream encryptStream(InputStream byteStream) {
+            public InputStream encryptStream(InputStream stream) {
                 return null;
             }
 
             @Override
-            public InputStream decryptStream(InputStream byteStream) {
+            public InputStream decryptStream(InputStream encryptedStream) {
                 return null;
             }
         };

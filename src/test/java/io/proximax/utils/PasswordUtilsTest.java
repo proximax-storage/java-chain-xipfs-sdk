@@ -2,7 +2,7 @@ package io.proximax.utils;
 
 import org.junit.Test;
 
-import static io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy.MINIMUM_PASSWORD_LENGTH;
+import static io.proximax.privacy.strategy.PasswordPrivacyStrategy.MINIMUM_PASSWORD_LENGTH;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

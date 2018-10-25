@@ -3,10 +3,13 @@ package io.proximax.upload;
 import io.nem.core.crypto.PrivateKey;
 import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.mosaic.Mosaic;
+import io.proximax.privacy.strategy.NemKeysPrivacyStrategy;
+import io.proximax.privacy.strategy.PasswordPrivacyStrategy;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithNemKeysPrivacyStrategy;
-import io.proximax.privacy.strategy.SecuredWithPasswordPrivacyStrategy;
+
+import java.util.List;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
@@ -23,6 +26,7 @@ public class UploadParameterBuilder {
     private Boolean computeDigest;
     private Boolean detectContentType;
     private Integer transactionDeadline;
+    private List<Mosaic> transactionMosaics;
     private Boolean useBlockchainSecureMessage;
     private PrivacyStrategy privacyStrategy;
 
@@ -111,6 +115,16 @@ public class UploadParameterBuilder {
     }
 
     /**
+     * Set the transaction mosaics
+     * @param transactionMosaics the mosaics to use on upload transaction
+     * @return the same instance of this builder
+     */
+    public UploadParameterBuilder withTransactionMosaic(List<Mosaic> transactionMosaics) {
+        this.transactionMosaics = transactionMosaics;
+        return this;
+    }
+
+    /**
      * Set the privacy strategy
      * <br>
      * <br>
@@ -145,7 +159,7 @@ public class UploadParameterBuilder {
      * @return the same instance of this builder
      */
     public UploadParameterBuilder withNemKeysPrivacy(String privateKey, String publicKey) {
-        this.privacyStrategy = SecuredWithNemKeysPrivacyStrategy.create(privateKey, publicKey);
+        this.privacyStrategy = NemKeysPrivacyStrategy.create(privateKey, publicKey);
         return this;
     }
 
@@ -158,7 +172,7 @@ public class UploadParameterBuilder {
      * @return the same instance of this builder
      */
     public UploadParameterBuilder withPasswordPrivacy(String password) {
-        this.privacyStrategy = SecuredWithPasswordPrivacyStrategy.create(password);
+        this.privacyStrategy = PasswordPrivacyStrategy.create(password);
         return this;
     }
 
@@ -176,7 +190,7 @@ public class UploadParameterBuilder {
 //    public UploadParameterBuilder withShamirSecretSharing(int secretTotalPartCount,
 //                                                          int secretMinimumPartCountToBuild,
 //                                                          SecretPart... secretParts) {
-//        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+//        this.privacyStrategy = ShamirSecretSharingPrivacyStrategy.create(
 //                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
 //        return this;
 //    }
@@ -194,7 +208,7 @@ public class UploadParameterBuilder {
 //    public UploadParameterBuilder withShamirSecretSharing(int secretTotalPartCount,
 //                                                          int secretMinimumPartCountToBuild,
 //                                                          List<SecretPart> secretParts) {
-//        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+//        this.privacyStrategy = ShamirSecretSharingPrivacyStrategy.create(
 //                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
 //        return this;
 //    }
@@ -212,7 +226,7 @@ public class UploadParameterBuilder {
 //    public UploadParameterBuilder withShamirSecretSharing(int secretTotalPartCount,
 //                                                          int secretMinimumPartCountToBuild,
 //                                                          Map<Integer, byte[]> secretParts) {
-//        this.privacyStrategy = SecuredWithShamirSecretSharingPrivacyStrategy.create(
+//        this.privacyStrategy = ShamirSecretSharingPrivacyStrategy.create(
 //                secretTotalPartCount, secretMinimumPartCountToBuild, secretParts);
 //        return this;
 //    }
@@ -243,7 +257,7 @@ public class UploadParameterBuilder {
             this.privacyStrategy = PlainPrivacyStrategy.create();
 
         return new UploadParameter(data, signerPrivateKey, recipientPublicKey, recipientAddress, computeDigest, detectContentType,
-                transactionDeadline, useBlockchainSecureMessage, privacyStrategy);
+                transactionDeadline, transactionMosaics, useBlockchainSecureMessage, privacyStrategy);
     }
 
 }
