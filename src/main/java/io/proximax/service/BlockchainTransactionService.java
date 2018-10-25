@@ -19,9 +19,10 @@ import io.reactivex.Observable;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
+import java.util.List;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
+import static java.util.Collections.singletonList;
 
 /**
  * The service class responsible for handling tasks that work with blockchain transactions
@@ -82,19 +83,20 @@ public class BlockchainTransactionService {
      * @param recipientPublicKey         the recipient's public key for the transaction (if different from signer)
      * @param recipientAddress           the recipient's address for the transaction (if different from signer)
      * @param transactionDeadline        the transaction deadline in hours
+     * @param transactionMosaics         the mosaics to use on upload transaction
      * @param useBlockchainSecureMessage the flag to indicate if secure message will be created
      * @return the transaction hash
      */
     public Observable<String> createAndAnnounceTransaction(ProximaxMessagePayloadModel messagePayload, String signerPrivateKey,
                                                            String recipientPublicKey, String recipientAddress,
-                                                           int transactionDeadline, boolean useBlockchainSecureMessage) {
+                                                           int transactionDeadline, List<Mosaic> transactionMosaics, boolean useBlockchainSecureMessage) {
         checkParameter(signerPrivateKey != null, "signerPrivateKey is required");
         checkParameter(messagePayload != null, "messagePayload is required");
 
         final Message message = blockchainMessageService.createMessage(messagePayload, signerPrivateKey,
                 recipientPublicKey, recipientAddress, useBlockchainSecureMessage);
         final Address recipient = getRecipient(signerPrivateKey, recipientPublicKey, recipientAddress);
-        final TransferTransaction transaction = createTransaction(recipient, transactionDeadline, message);
+        final TransferTransaction transaction = createTransaction(recipient, transactionDeadline, transactionMosaics, message);
         final SignedTransaction signedTransaction = nemUtils.signTransaction(signerPrivateKey, transaction);
 
         transactionClient.announce(signedTransaction, nemUtils.getAddressFromPrivateKey(signerPrivateKey));
@@ -112,12 +114,17 @@ public class BlockchainTransactionService {
         }
     }
 
-    private TransferTransaction createTransaction(Address recipientAddress, int transactionDeadline, Message message) {
+    private TransferTransaction createTransaction(Address recipientAddress, int transactionDeadline,
+                                                  List<Mosaic> transactionMosaicsParam, Message message) {
+
+        final List<Mosaic> mosaics = transactionMosaicsParam == null
+                ? singletonList(new Mosaic(new MosaicId("prx:xpx"), BigInteger.valueOf(1)))
+                : transactionMosaicsParam;
 
         return TransferTransaction.create(
                 Deadline.create(transactionDeadline, ChronoUnit.HOURS),
                 recipientAddress,
-                Collections.singletonList(new Mosaic(new MosaicId("prx:xpx"), BigInteger.valueOf(1))),
+                mosaics,
                 message,
                 blockchainNetworkConnection.getNetworkType());
     }
