@@ -1,10 +1,12 @@
 package io.proximax.upload;
 
+import io.nem.sdk.model.mosaic.Mosaic;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -24,12 +26,14 @@ public class UploadParameter {
     private final boolean computeDigest;
     private final boolean detectContentType;
     private final int transactionDeadline;
+    private final List<Mosaic> transactionMosaics;
     private final boolean useBlockchainSecureMessage;
     private final PrivacyStrategy privacyStrategy;
     private final String version;
 
     UploadParameter(UploadParameterData data, String signerPrivateKey, String recipientPublicKey, String recipientAddress,
                     boolean computeDigest, boolean detectContentType, int transactionDeadline,
+                    List<Mosaic> transactionMosaics,
                     boolean useBlockchainSecureMessage, PrivacyStrategy privacyStrategy) {
         this.data = data;
         this.signerPrivateKey = signerPrivateKey;
@@ -38,6 +42,7 @@ public class UploadParameter {
         this.computeDigest = computeDigest;
         this.detectContentType = detectContentType;
         this.transactionDeadline = transactionDeadline;
+        this.transactionMosaics = transactionMosaics == null ? null : Collections.unmodifiableList(transactionMosaics);
         this.useBlockchainSecureMessage = useBlockchainSecureMessage;
         this.privacyStrategy = privacyStrategy;
         this.version = SCHEMA_VERSION;
@@ -97,6 +102,14 @@ public class UploadParameter {
      */
     public int getTransactionDeadline() {
         return transactionDeadline;
+    }
+
+    /**
+     * Get the transaction mosaics to be used on upload
+     * @return the transaction mosaics
+     */
+    public List<Mosaic> getTransactionMosaics() {
+        return transactionMosaics;
     }
 
     /**
