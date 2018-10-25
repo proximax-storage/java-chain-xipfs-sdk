@@ -22,10 +22,10 @@ import org.junit.Test;
 
 import java.math.BigInteger;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 
 import static io.proximax.integration.TestDataRepository.logAndSaveResult;
 import static io.proximax.testsupport.Constants.TEST_STRING;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.exparity.hamcrest.date.LocalDateTimeMatchers.sameOrBefore;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -149,6 +149,24 @@ public class Uploader_transactionConfigIntegrationTest {
 		assertThat(((TransferTransaction) transaction).getMosaics().get(0).getAmount(), is(BigInteger.valueOf(2)));
 
 		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithTransactionMosaicsProvided");
+	}
+
+	@Test
+	public void shouldUploadWithEmptyTransactionMosaicsProvided() {
+		final UploadParameter param = UploadParameter
+				.createForStringUpload(TEST_STRING, IntegrationTestConfig.getPrivateKey1())
+				.withTransactionMosaic(emptyList())
+				.build();
+
+		final UploadResult result = unitUnderTest.upload(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getTransactionHash(), is(notNullValue()));
+		final Transaction transaction = waitForTransactionConfirmation(IntegrationTestConfig.getPrivateKey1(), result.getTransactionHash());
+		assertThat(transaction, is(instanceOf(TransferTransaction.class)));
+		assertThat(((TransferTransaction) transaction).getMosaics().size(), is(0));
+
+		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithEmptyTransactionMosaicsProvided");
 	}
 
 
