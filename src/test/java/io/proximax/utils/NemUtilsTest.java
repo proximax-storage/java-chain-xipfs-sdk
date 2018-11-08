@@ -9,9 +9,16 @@ import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.PlainMessage;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.TransferTransaction;
+import io.proximax.cipher.PBECipherEncryptor;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.jcajce.provider.digest.SHA3;
+import org.bouncycastle.util.encoders.HexEncoder;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
@@ -101,7 +108,7 @@ public class NemUtilsTest {
 
     @Test
     public void shouldGenerateAccount() {
-        final Account account = unitUnderTest.generateAccount();
+        final Account account = new NemUtils(NetworkType.MIJIN).generateAccount();
 
         assertThat(account, is(notNullValue()));
         assertThat(account.getAddress(), is(notNullValue()));
@@ -111,6 +118,54 @@ public class NemUtilsTest {
         System.out.println("Address: " + account.getAddress().plain());
         System.out.println("Private Key: " + account.getPrivateKey());
         System.out.println("Public Key: " + account.getPublicKey());
+
+        System.out.println("Address: " +
+                Address.createFromPublicKey("1b835c72da29399067e4e6eaaeb06912227db3849d15978d4321b307389660a2",
+                        NetworkType.MIJIN).plain());
+        System.out.println("Address: " +
+                Address.createFromPublicKey("1b835c72da29399067e4e6eaaeb06912227db3849d15978d4321b307389660a2",
+                        NetworkType.MIJIN_TEST).plain());
+        System.out.println("Address: " +
+                Address.createFromPublicKey("1b835c72da29399067e4e6eaaeb06912227db3849d15978d4321b307389660a2",
+                        NetworkType.MAIN_NET).plain());
+        System.out.println("Address: " +
+                Address.createFromPublicKey("1b835c72da29399067e4e6eaaeb06912227db3849d15978d4321b307389660a2",
+                        NetworkType.TEST_NET).plain());
+
+    }
+
+    @Test
+    public void testAddress() {
+        final String publicKey = Account.createFromPrivateKey("2618090794e9c9682f2ac6504369a2f4fb9fe7ee7746f9560aca228d355b1cb9", NetworkType.MIJIN).getPublicKey();
+
+        System.out.println("Public Key: " + publicKey);
+        System.out.println("Address (MIJIN): " + Address.createFromPublicKey(publicKey, NetworkType.MIJIN).plain());
+        System.out.println("Address (MAINNET): " + Address.createFromPublicKey(publicKey, NetworkType.MAIN_NET).plain());
+        System.out.println("Address (TESTNET): " + Address.createFromPublicKey(publicKey, NetworkType.TEST_NET).plain());
+    }
+
+
+    @Test
+    public void testSha3() {
+        String input = "Hello world !";
+        SHA3.DigestSHA3 digestSHA3_512 = new SHA3.Digest512();
+        byte[] digest512 = digestSHA3_512.digest(input.getBytes());
+        System.out.println("SHA3-512 = " + Hex.encodeHexString(digest512));
+        SHA3.DigestSHA3 digestSHA3_256 = new SHA3.Digest256();
+        byte[] digest256 = digestSHA3_256.digest(input.getBytes());
+        System.out.println("SHA3-256 = " + Hex.encodeHexString(digest256));
+    }
+
+    @Test
+    public void testEncryptToHex() throws IOException {
+        final String cipherAsHex = encryptToHex("quick brown fox".getBytes(), "password".toCharArray());
+        System.out.println(cipherAsHex);
+    }
+
+    public static String encryptToHex(byte[] binary, char[] password) throws IOException {
+        PBECipherEncryptor basicBinaryEncryptor = new PBECipherEncryptor();
+        String cipherTextAsHex = Hex.encodeHexString(IOUtils.toByteArray(basicBinaryEncryptor.encryptStream(new ByteArrayInputStream(binary), password)));
+        return cipherTextAsHex;
     }
 
     private TransferTransaction sampleTransferTransaction() {

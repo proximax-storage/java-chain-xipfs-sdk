@@ -42,6 +42,33 @@ public class Downloader_download_privacyStrategyIntegrationTest {
     }
 
     @Test
+    public void testJSNemKeys() throws IOException {
+        final String transactionHash = "06AC4209AAFC5B9FE5CE2C06DA16E21DE5E5753E24AE9B65A1CDB620FFCDA6DA";
+        final DownloadParameter param = DownloadParameter.create(transactionHash)
+                .withNemKeysPrivacy("97226FCCBD876D399BA2A70E640AD2C2C97AD5CE57A40EE9455C226D3C39AD49",
+                        "D1869362F4FAA5F683AEF78FC0D6E04B976833000F3958862A09CC7B6DF347C2")
+                .build();
+
+        final DownloadResult result = unitUnderTest.download(param);
+
+        System.out.println(new String(IOUtils.toByteArray(result.getData().getByteStream())));
+    }
+
+
+    @Test
+    public void testJSPassword() throws IOException {
+        final String transactionHash = "E853948733C1DD97641BEF6D7641FA70ECFDB63B11DE9EA50A2531CD2D0A165F";
+        final DownloadParameter param = DownloadParameter.create(transactionHash)
+                .withPasswordPrivacy("ProximaXIsLit")
+                .build();
+
+        final DownloadResult result = unitUnderTest.download(param);
+
+        System.out.println(new String(IOUtils.toByteArray(result.getData().getByteStream())));
+    }
+
+
+    @Test
     public void shouldDownloadWithPlainPrivacy() throws IOException {
         final String transactionHash = TestDataRepository.getData(
                 "Uploader_privacyStrategyIntegrationTest.shouldUploadFileWithPlainPrivacyStrategy",

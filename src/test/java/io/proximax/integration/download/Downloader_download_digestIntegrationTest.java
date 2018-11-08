@@ -51,6 +51,18 @@ public class Downloader_download_digestIntegrationTest {
 	}
 
 	@Test
+	public void testJsSdk() throws IOException {
+		final String transactionHash = "74B5B26AD0CA967F136B808CF41FEDA6D196E52810144AFBE08921A96B52489E";
+		final DownloadParameter param = DownloadParameter.create(transactionHash)
+				.withValidateDigest(true)
+				.build();
+
+		final DownloadResult result = unitUnderTest.download(param);
+
+		System.out.println(new String(IOUtils.toByteArray(result.getData().getByteStream())));
+	}
+
+	@Test
 	public void shouldNotVerifyDownloadWithDisabledValidateDigest() throws IOException {
 		final String transactionHash = TestDataRepository
 				.getData("Uploader_computeDigestIntegrationTest.shouldUploadWithDisabledComputeDigest", "transactionHash");
