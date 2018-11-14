@@ -66,7 +66,7 @@ public class BlockchainTransactionService {
 
         return transactionClient.getTransaction(transactionHash)
                 .onErrorResumeNext((Throwable ex) ->
-                        Observable.error(new GetTransactionFailureException(String.format("Unable to transfer transaction for %s", transactionHash), ex)))
+                        Observable.error(new GetTransactionFailureException(String.format("Unable to find transfer transaction for %s", transactionHash), ex)))
                 .map(transaction -> {
                     if (!(transaction.getType().equals(TransactionType.TRANSFER) &&
                             transaction instanceof TransferTransaction))

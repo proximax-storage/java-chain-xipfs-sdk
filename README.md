@@ -499,7 +499,7 @@ NEM SDKs have Listener classes to simplify subscribing to websocket channels. It
 Below is a quick example on how to use Listener to wait for upload transaction to be confirmed. 
 
 ```java
-final Listener listener = new Listener("http://13.229.219.71:3000");
+final Listener listener = new Listener("http://privatetest1.proximax.io:3000");
 listener.open().get();
 
 // wait for transaction to be confirmed

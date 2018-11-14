@@ -4,6 +4,7 @@ import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.infrastructure.AccountHttp;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.blockchain.NetworkType;
 import io.proximax.exceptions.AccountNotFoundException;
 import io.proximax.exceptions.PublicKeyNotFoundException;
 import io.reactivex.Observable;
@@ -35,7 +36,7 @@ public class AccountClientTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        unitUnderTest = new AccountClient(mockAccountHttp);
+        unitUnderTest = new AccountClient(mockAccountHttp, NetworkType.MIJIN_TEST);
     }
 
     @Test(expected = IllegalArgumentException.class)
