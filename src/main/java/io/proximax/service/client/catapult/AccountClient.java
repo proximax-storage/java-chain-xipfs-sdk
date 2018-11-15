@@ -6,7 +6,6 @@ import io.nem.sdk.infrastructure.QueryParams;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.Transaction;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.exceptions.AccountNotFoundException;
@@ -32,7 +31,6 @@ public class AccountClient {
     public static final String PUBLIC_KEY_NOT_FOUND = "0000000000000000000000000000000000000000000000000000000000000000";
 
     private final AccountHttp accountHttp;
-    private final NetworkType networkType;
 
     /**
      * Create instance of AccountClient
@@ -43,12 +41,10 @@ public class AccountClient {
         checkParameter(blockchainNetworkConnection != null, "blockchainNetworkConnection is required");
 
         this.accountHttp = new AccountHttp(blockchainNetworkConnection.getApiUrl());
-        this.networkType = blockchainNetworkConnection.getNetworkType();
     }
 
-    AccountClient(AccountHttp accountHttp, NetworkType networkType) {
+    AccountClient(AccountHttp accountHttp) {
         this.accountHttp = accountHttp;
-        this.networkType = networkType;
     }
 
     /**
