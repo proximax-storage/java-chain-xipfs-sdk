@@ -4,7 +4,7 @@
 	<artifactId>xpx2-java-sdk</artifactId>
 	<packaging>jar</packaging>
 	<name>xpx2-java-sdk</name>
-	<version>0.1.0-beta.4-SNAPSHOT</version>
+	<version>0.1.0-beta.4</version>
 	<description>Proximax P2P File Storage Java SDK</description>
 	<prerequisites>
 		<maven>2.2.0</maven>
@@ -35,7 +35,7 @@
 		<connection>scm:git:https://github.com/proximax-storage/xpx2-java-sdk.git</connection>
 		<developerConnection>scm:git:https://github.com/proximax-storage/xpx2-java-sdk.git</developerConnection>
 		<url>https://github.com/proximax-storage/xpx2-java-sdk</url>
-		<tag>HEAD</tag>
+		<tag>v0.1.0-beta.4</tag>
 	</scm>
 	<licenses>
 		<license>
