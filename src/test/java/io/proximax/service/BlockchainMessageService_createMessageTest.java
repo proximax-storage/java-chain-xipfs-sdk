@@ -5,6 +5,7 @@ import io.nem.core.crypto.PrivateKey;
 import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.Message;
+import io.nem.sdk.model.transaction.SecureMessage;
 import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.model.ProximaxMessagePayloadModel;
@@ -16,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static java.util.Collections.singletonMap;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -55,8 +57,7 @@ public class BlockchainMessageService_createMessageTest {
                 SAMPLE_RECIPIENT_PUBLIC_KEY, SAMPLE_RECIPIENT_ADDRESS, false);
 
         assertThat(result, is(notNullValue()));
-        assertThat(result.getEncodedPayload(), is(result.getDecodedPayload(null, null)));
-        assertThat(new String(result.getEncodedPayload()), is("{" +
+        assertThat(result.getPayload(), is("{" +
                 "\"privacyType\":1001," +
                 "\"version\":\"1.0\"," +
                 "\"data\":{" +
@@ -78,8 +79,7 @@ public class BlockchainMessageService_createMessageTest {
                 SAMPLE_RECIPIENT_PUBLIC_KEY, SAMPLE_RECIPIENT_ADDRESS, false);
 
         assertThat(result, is(notNullValue()));
-        assertThat(result.getEncodedPayload(), is(result.getDecodedPayload(null, null)));
-        assertThat(new String(result.getEncodedPayload()), is("{" +
+        assertThat(result.getPayload(), is("{" +
                 "\"privacyType\":1001," +
                 "\"version\":\"1.0\"," +
                 "\"data\":{" +
@@ -94,10 +94,11 @@ public class BlockchainMessageService_createMessageTest {
                 null, null, true);
 
         assertThat(result, is(notNullValue()));
-        assertThat(new String(result.getDecodedPayload(
+        assertThat(result, is(instanceOf(SecureMessage.class)));
+        assertThat(((SecureMessage) result).decrypt(
                 new KeyPair(PrivateKey.fromHexString(SAMPLE_SENDER_PRIVATE_KEY)),
                 new KeyPair(PublicKey.fromHexString(SAMPLE_SENDER_PUBLIC_KEY))
-        )), is("{" +
+        ), is("{" +
                 "\"privacyType\":1001," +
                 "\"version\":\"1.0\"," +
                 "\"data\":{" +
@@ -119,10 +120,11 @@ public class BlockchainMessageService_createMessageTest {
                 SAMPLE_RECIPIENT_PUBLIC_KEY, null, true);
 
         assertThat(result, is(notNullValue()));
-        assertThat(new String(result.getDecodedPayload(
+        assertThat(result, is(instanceOf(SecureMessage.class)));
+        assertThat(((SecureMessage) result).decrypt(
                 new KeyPair(PrivateKey.fromHexString(SAMPLE_SENDER_PRIVATE_KEY)),
                 new KeyPair(PublicKey.fromHexString(SAMPLE_RECIPIENT_PUBLIC_KEY))
-        )), is("{" +
+        ), is("{" +
                 "\"privacyType\":1001," +
                 "\"version\":\"1.0\"," +
                 "\"data\":{" +
@@ -144,10 +146,11 @@ public class BlockchainMessageService_createMessageTest {
                 null, SAMPLE_SENDER_ADDRESS, true);
 
         assertThat(result, is(notNullValue()));
-        assertThat(new String(result.getDecodedPayload(
+        assertThat(result, is(instanceOf(SecureMessage.class)));
+        assertThat(((SecureMessage) result).decrypt(
                 new KeyPair(PrivateKey.fromHexString(SAMPLE_SENDER_PRIVATE_KEY)),
                 new KeyPair(PublicKey.fromHexString(SAMPLE_SENDER_PUBLIC_KEY))
-        )), is("{" +
+        ), is("{" +
                 "\"privacyType\":1001," +
                 "\"version\":\"1.0\"," +
                 "\"data\":{" +
@@ -172,10 +175,11 @@ public class BlockchainMessageService_createMessageTest {
                 null, SAMPLE_RECIPIENT_ADDRESS, true);
 
         assertThat(result, is(notNullValue()));
-        assertThat(new String(result.getDecodedPayload(
+        assertThat(result, is(instanceOf(SecureMessage.class)));
+        assertThat(((SecureMessage) result).decrypt(
                 new KeyPair(PrivateKey.fromHexString(SAMPLE_SENDER_PRIVATE_KEY)),
                 new KeyPair(PublicKey.fromHexString(SAMPLE_RECIPIENT_PUBLIC_KEY))
-        )), is("{" +
+        ), is("{" +
                 "\"privacyType\":1001," +
                 "\"version\":\"1.0\"," +
                 "\"data\":{" +

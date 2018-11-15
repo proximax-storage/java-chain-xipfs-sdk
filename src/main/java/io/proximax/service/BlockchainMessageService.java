@@ -57,13 +57,12 @@ public class BlockchainMessageService {
                                  String recipientAddress, boolean useBlockchainSecureMessage) {
         checkParameter(messagePayload != null, "messagePayload is required");
 
-        final String jsonPayload = JsonUtils.toJson(messagePayload);
-        final byte[] payload = jsonPayload.getBytes(Charset.forName("UTF-8"));
+        final String payload = JsonUtils.toJson(messagePayload);
 
         if (useBlockchainSecureMessage) {
             final PublicKey recipientPublicKey = getRecipientPublicKey(senderPrivateKey, recipientPublicKeyRaw, recipientAddress);
             final PrivateKey signerPrivateKey = PrivateKey.fromHexString(senderPrivateKey);
-            return SecureMessage.createFromDecodedPayload(signerPrivateKey, recipientPublicKey, payload);
+            return SecureMessage.create(signerPrivateKey, recipientPublicKey, payload);
         } else {
             return PlainMessage.create(payload);
         }
@@ -85,9 +84,8 @@ public class BlockchainMessageService {
                 throw new MissingPrivateKeyOnDownloadException("accountPrivateKey is required to download a secure message");
 
             final KeyPair retrieverKeyPair = new KeyPair(PrivateKey.fromHexString(accountPrivateKey));
-            final String messagePayload = new String(transferTransaction.getMessage().getDecodedPayload(
-                    retrieverKeyPair, new KeyPair(getTransactionOtherPartyPublicKey(retrieverKeyPair, transferTransaction))
-            ), Charset.forName("UTF-8"));
+            final String messagePayload = ((SecureMessage) transferTransaction.getMessage()).decrypt(
+                    retrieverKeyPair, new KeyPair(getTransactionOtherPartyPublicKey(retrieverKeyPair, transferTransaction)));
 
             return messagePayload;
         } else {

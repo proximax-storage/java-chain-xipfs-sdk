@@ -1,6 +1,5 @@
 package io.proximax.service;
 
-import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.PrivateKey;
 import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.model.account.Address;
@@ -56,7 +55,7 @@ public class BlockchainMessageService_getMessagePayloadTest {
 
     @Test
     public void shouldReturnPayloadWhenPlainMessage() {
-        given(mockTransferTransaction.getMessage()).willReturn(PlainMessage.create(expectedPayload().getBytes()));
+        given(mockTransferTransaction.getMessage()).willReturn(PlainMessage.create(expectedPayload()));
 
         final String result = unitUnderTest.getMessagePayload(mockTransferTransaction, null);
 
@@ -65,18 +64,18 @@ public class BlockchainMessageService_getMessagePayloadTest {
 
     @Test(expected = MissingPrivateKeyOnDownloadException.class)
     public void failWhenSecureMessageAndNoPrivateKey() {
-        given(mockTransferTransaction.getMessage()).willReturn(SecureMessage.createFromDecodedPayload(
+        given(mockTransferTransaction.getMessage()).willReturn(SecureMessage.create(
                 PrivateKey.fromHexString(SAMPLE_PRIVATE_KEY_1), PublicKey.fromHexString(SAMPLE_PUBLIC_KEY_2),
-                expectedPayload().getBytes()));
+                expectedPayload()));
 
         unitUnderTest.getMessagePayload(mockTransferTransaction, null);
     }
 
     @Test(expected = MissingSignerOnTransferTransactionException.class)
     public void failWhenSecureMessageAndTxnHasNoSigner() {
-        given(mockTransferTransaction.getMessage()).willReturn(SecureMessage.createFromDecodedPayload(
+        given(mockTransferTransaction.getMessage()).willReturn(SecureMessage.create(
                 PrivateKey.fromHexString(SAMPLE_PRIVATE_KEY_1), PublicKey.fromHexString(SAMPLE_PUBLIC_KEY_2),
-                expectedPayload().getBytes()));
+                expectedPayload()));
         given(mockTransferTransaction.getSigner()).willReturn(Optional.empty());
 
         unitUnderTest.getMessagePayload(mockTransferTransaction, SAMPLE_PRIVATE_KEY_1);
@@ -84,9 +83,9 @@ public class BlockchainMessageService_getMessagePayloadTest {
 
     @Test
     public void shouldReturnPayloadWhenSecureMessageAndRetrieverIsTheRecipient() {
-        given(mockTransferTransaction.getMessage()).willReturn(SecureMessage.createFromDecodedPayload(
+        given(mockTransferTransaction.getMessage()).willReturn(SecureMessage.create(
                 PrivateKey.fromHexString(SAMPLE_PRIVATE_KEY_1), PublicKey.fromHexString(SAMPLE_PUBLIC_KEY_2),
-                expectedPayload().getBytes()));
+                expectedPayload()));
         given(mockTransferTransaction.getSigner()).willReturn(Optional.of(PublicAccount.createFromPublicKey(SAMPLE_PUBLIC_KEY_1, NetworkType.MIJIN_TEST)));
         given(mockTransferTransaction.getRecipient()).willReturn(Address.createFromRawAddress(SAMPLE_ADDRESS_2));
 
@@ -97,9 +96,9 @@ public class BlockchainMessageService_getMessagePayloadTest {
 
     @Test
     public void shouldReturnPayloadWhenSecureMessageAndRetrieverIsTheSender() {
-        given(mockTransferTransaction.getMessage()).willReturn(SecureMessage.createFromDecodedPayload(
+        given(mockTransferTransaction.getMessage()).willReturn(SecureMessage.create(
                 PrivateKey.fromHexString(SAMPLE_PRIVATE_KEY_1), PublicKey.fromHexString(SAMPLE_PUBLIC_KEY_2),
-                expectedPayload().getBytes()));
+                expectedPayload()));
         given(mockTransferTransaction.getSigner()).willReturn(Optional.of(PublicAccount.createFromPublicKey(SAMPLE_PUBLIC_KEY_1, NetworkType.MIJIN_TEST)));
         given(mockTransferTransaction.getRecipient()).willReturn(Address.createFromRawAddress(SAMPLE_ADDRESS_2));
         given(mockAccountClient.getPublicKey(SAMPLE_ADDRESS_2)).willReturn(PublicKey.fromHexString(SAMPLE_PUBLIC_KEY_2));
@@ -111,9 +110,9 @@ public class BlockchainMessageService_getMessagePayloadTest {
 
     @Test(expected = InvalidPrivateKeyOnDownloadException.class)
     public void failWhenSecureMessageAndAccountPrivateKeyIsNeitherSenderOrRecipient() {
-        given(mockTransferTransaction.getMessage()).willReturn(SecureMessage.createFromDecodedPayload(
+        given(mockTransferTransaction.getMessage()).willReturn(SecureMessage.create(
                 PrivateKey.fromHexString(SAMPLE_PRIVATE_KEY_1), PublicKey.fromHexString(SAMPLE_PUBLIC_KEY_2),
-                expectedPayload().getBytes()));
+                expectedPayload()));
         given(mockTransferTransaction.getSigner()).willReturn(Optional.of(PublicAccount.createFromPublicKey(SAMPLE_PUBLIC_KEY_1, NetworkType.MIJIN_TEST)));
         given(mockTransferTransaction.getRecipient()).willReturn(Address.createFromRawAddress(SAMPLE_ADDRESS_2));
 
@@ -122,17 +121,7 @@ public class BlockchainMessageService_getMessagePayloadTest {
 
     @Test(expected = DownloadForMessageTypeNotSupportedException.class)
     public void failWhenMessageTypeIsUnknown() {
-        given(mockTransferTransaction.getMessage()).willReturn(new Message(999) {
-            @Override
-            public byte[] getEncodedPayload() {
-                return new byte[0];
-            }
-
-            @Override
-            public byte[] getDecodedPayload(KeyPair pairWithPrivateKey, KeyPair otherPair) {
-                return new byte[0];
-            }
-        });
+        given(mockTransferTransaction.getMessage()).willReturn(new Message(999, null, null){});
 
         unitUnderTest.getMessagePayload(mockTransferTransaction, null);
     }
