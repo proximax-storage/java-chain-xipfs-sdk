@@ -67,6 +67,20 @@ public class Downloader_directDownload_secureMessageIntegrationTest {
 
 	}
 
+	@Test
+	public void testDownloadSecureMessageFromJsSdk() throws IOException {
+//		final String transactionHash = "C6450FAFB9127E3D396DAF2C90A2DBB05AC70AC1575690971C771D16D085042D";
+		final String transactionHash = "3962964B48B0726EA9D3B5D0FD44A21986A5D549DA0DF2D88742BECBBED16DFA";
+		final DirectDownloadParameter param = DirectDownloadParameter
+				.createFromTransactionHash(transactionHash, "97226FCCBD876D399BA2A70E640AD2C2C97AD5CE57A40EE9455C226D3C39AD49").build();
+
+		final InputStream result = unitUnderTest.directDownload(param);
+
+		assertThat(result, is(notNullValue()));
+		assertThat(new String(IOUtils.toByteArray(result)), is(TEST_STRING));
+
+	}
+
 	@Test(expected = DirectDownloadFailureException.class)
 	public void failDirectDownloadWithWrongPrivateKey() throws IOException {
 		final String transactionHash =
