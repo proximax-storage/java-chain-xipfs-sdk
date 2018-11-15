@@ -3,7 +3,6 @@ package io.proximax.service.client.catapult;
 import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.infrastructure.AccountHttp;
 import io.nem.sdk.infrastructure.QueryParams;
-import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
@@ -74,11 +73,9 @@ public class AccountClient {
         }
     }
 
-    public Observable<List<Transaction>> getTransactions(TransactionFilter transactionFilter, int resultSize, String accountPrivateKey,
-                                                         String accountPublicKey, String accountAddress, String fromTransactionId) {
+    public Observable<List<Transaction>> getTransactions(TransactionFilter transactionFilter, int resultSize,
+                                                         PublicAccount publicAccount, String fromTransactionId) {
         checkParameter(transactionFilter != null, "transactionFilter is required");
-
-        final PublicAccount publicAccount = getPublicAccount(accountPrivateKey, accountPublicKey, accountAddress);
 
         final QueryParams queryParams = new QueryParams(resultSize, fromTransactionId);
 
@@ -92,17 +89,4 @@ public class AccountClient {
             throw new IllegalArgumentException(format("Unknown transactionFilter %s", transactionFilter.name()));
         }
     }
-
-    private PublicAccount getPublicAccount(String accountPrivateKey, String accountPublicKey, String accountAddress) {
-        if (accountPrivateKey != null) {
-            return Account.createFromPrivateKey(accountPrivateKey, networkType).getPublicAccount();
-        } else if (accountPublicKey != null) {
-            return PublicAccount.createFromPublicKey(accountPublicKey, networkType);
-        } else if (accountAddress != null) {
-            return PublicAccount.createFromPublicKey(getPublicKey(accountAddress).toString(), networkType);
-        } else {
-            throw new IllegalArgumentException("accountPrivateKey, accountPublicKey or accountAddress must be provided");
-        }
-    }
-
 }

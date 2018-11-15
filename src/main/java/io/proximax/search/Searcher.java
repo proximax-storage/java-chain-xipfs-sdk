@@ -1,5 +1,8 @@
 package io.proximax.search;
 
+import io.nem.sdk.model.account.Account;
+import io.nem.sdk.model.account.PublicAccount;
+import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionInfo;
 import io.nem.sdk.model.transaction.TransferTransaction;
@@ -16,6 +19,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
@@ -23,10 +27,12 @@ public class Searcher {
 
     private static final int BATCH_TRANSACTION_SIZE = 100;
 
+    private final NetworkType networkType;
     private final AccountClient accountClient;
     private final RetrieveProximaxMessagePayloadService retrieveProximaxMessagePayloadService;
 
     public Searcher(ConnectionConfig connectionConfig) {
+        this.networkType = connectionConfig.getBlockchainNetworkConnection().getNetworkType();
         try {
             this.accountClient = new AccountClient(connectionConfig.getBlockchainNetworkConnection());
             this.retrieveProximaxMessagePayloadService = new RetrieveProximaxMessagePayloadService(connectionConfig.getBlockchainNetworkConnection());
@@ -35,7 +41,9 @@ public class Searcher {
         }
     }
 
-    Searcher(AccountClient accountClient, RetrieveProximaxMessagePayloadService retrieveProximaxMessagePayloadService) {
+    Searcher(AccountClient accountClient, RetrieveProximaxMessagePayloadService retrieveProximaxMessagePayloadService,
+             NetworkType networkType) {
+        this.networkType = networkType;
         this.accountClient = accountClient;
         this.retrieveProximaxMessagePayloadService = retrieveProximaxMessagePayloadService;
     }
@@ -58,33 +66,50 @@ public class Searcher {
 
     private Observable<SearchResult> doSearch(SearchParameter param) {
         String fromTransactionId = param.getFromTransactionId();
-        String toTransactionId = null;
         final List<SearchResultItem> results = new ArrayList<>();
+        final PublicAccount publicAccount = getPublicAccount(param.getAccountPrivateKey(), param.getAccountPublicKey(),
+                param.getAccountAddress());
 
         while (results.size() < param.getResultSize()) {
-            final List<Transaction> transactions = accountClient.getTransactions(param.getTransactionFilter(), BATCH_TRANSACTION_SIZE, param.getAccountPrivateKey(),
-                    param.getAccountPublicKey(), param.getAccountAddress(), fromTransactionId).blockingFirst();
 
-            if (transactions != null && transactions.size() > 0) {
-                for (int index = 0; index < transactions.size() && results.size() < param.getResultSize(); index++) {
-                    final Transaction transaction = transactions.get(index);
-                    final Optional<SearchResultItem> resultItem = convertToResultItemIfMatchingCriteria(transaction, param);
+            final List<Transaction> transactions = accountClient.getTransactions(param.getTransactionFilter(),
+                    BATCH_TRANSACTION_SIZE, publicAccount, fromTransactionId).blockingFirst();
 
-                    resultItem.ifPresent(results::add);
+            // Search txns
+            final List<SearchResultItem> resultSet = transactions.parallelStream()
+                    .map(txn -> convertToResultItemIfMatchingCriteria(txn, param))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .limit(param.getResultSize() - results.size())
+                    .collect(Collectors.toList());
 
-                    toTransactionId = transaction.getTransactionInfo().flatMap(TransactionInfo::getId).orElse(null);
-                }
-            }
+            results.addAll(resultSet);
 
-            if (transactions != null && transactions.size() == Searcher.BATCH_TRANSACTION_SIZE) {
+            // if last fetch is full, there might be more transactions in account
+            // otherwise, search is done
+            if (transactions.size() == Searcher.BATCH_TRANSACTION_SIZE) {
                 fromTransactionId = transactions.get(transactions.size() - 1).getTransactionInfo().flatMap(TransactionInfo::getId).orElse(null);
             } else {
                 break;
             }
         }
 
+        final String toTransactionId = results.isEmpty() ? null : results.get(results.size() - 1).getTransactionId();
         return Observable.just(new SearchResult(results, param.getFromTransactionId(), toTransactionId));
     }
+
+    private PublicAccount getPublicAccount(String accountPrivateKey, String accountPublicKey, String accountAddress) {
+        if (accountPrivateKey != null) {
+            return Account.createFromPrivateKey(accountPrivateKey, networkType).getPublicAccount();
+        } else if (accountPublicKey != null) {
+            return PublicAccount.createFromPublicKey(accountPublicKey, networkType);
+        } else if (accountAddress != null) {
+            return PublicAccount.createFromPublicKey(accountClient.getPublicKey(accountAddress).toString(), networkType);
+        } else {
+            throw new IllegalArgumentException("accountPrivateKey, accountPublicKey or accountAddress must be provided");
+        }
+    }
+
 
     private Optional<SearchResultItem> convertToResultItemIfMatchingCriteria(Transaction transaction, SearchParameter param) {
         if (transaction instanceof TransferTransaction) {
@@ -106,6 +131,7 @@ public class Searcher {
                             param.getMetadataValueFilter())) {
                         return Optional.of(new SearchResultItem(
                                 transaction.getTransactionInfo().flatMap(TransactionInfo::getHash).orElse(null),
+                                transaction.getTransactionInfo().flatMap(TransactionInfo::getId).orElse(null),
                                 messagePayload));
                     }
                 }
