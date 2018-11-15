@@ -472,7 +472,7 @@ public class UploadParameterTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailWhenInvalidRecipientPublicAddress() {
         UploadParameter.createForByteArrayUpload(SAMPLE_DATA, SAMPLE_SIGNER_PRIVATE_KEY)
-                .withRecipientAddress("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+                .withRecipientAddress("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     }
 
     @Test(expected = IllegalArgumentException.class)
