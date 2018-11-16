@@ -66,41 +66,45 @@ public class Searcher {
     }
 
     private Observable<SearchResult> doSearch(SearchParameter param) {
-        try {
-            String fromTransactionId = param.getFromTransactionId();
-            final List<SearchResultItem> results = new ArrayList<>();
-            final PublicAccount publicAccount = getPublicAccount(param.getAccountPrivateKey(), param.getAccountPublicKey(),
-                    param.getAccountAddress());
+        return Observable.fromCallable(
+                () -> {
+                    try {
+                        String fromTransactionId = param.getFromTransactionId();
+                        final List<SearchResultItem> results = new ArrayList<>();
+                        final PublicAccount publicAccount = getPublicAccount(param.getAccountPrivateKey(), param.getAccountPublicKey(),
+                                param.getAccountAddress());
 
-            while (results.size() < param.getResultSize()) {
+                        while (results.size() < param.getResultSize()) {
 
-                final List<Transaction> transactions = accountClient.getTransactions(param.getTransactionFilter(),
-                        BATCH_TRANSACTION_SIZE, publicAccount, fromTransactionId).blockingFirst();
+                            final List<Transaction> transactions = accountClient.getTransactions(param.getTransactionFilter(),
+                                    BATCH_TRANSACTION_SIZE, publicAccount, fromTransactionId).blockingFirst();
 
-                // Search txns
-                final List<SearchResultItem> resultSet = transactions.parallelStream()
-                        .map(txn -> convertToResultItemIfMatchingCriteria(txn, param))
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .limit(param.getResultSize() - results.size())
-                        .collect(Collectors.toList());
+                            // Search txns
+                            final List<SearchResultItem> resultSet = transactions.parallelStream()
+                                    .map(txn -> convertToResultItemIfMatchingCriteria(txn, param))
+                                    .filter(Optional::isPresent)
+                                    .map(Optional::get)
+                                    .limit(param.getResultSize() - results.size())
+                                    .collect(Collectors.toList());
 
-                results.addAll(resultSet);
+                            results.addAll(resultSet);
 
-                // if last fetch is full, there might be more transactions in account
-                // otherwise, search is done
-                if (transactions.size() == Searcher.BATCH_TRANSACTION_SIZE) {
-                    fromTransactionId = transactions.get(transactions.size() - 1).getTransactionInfo().flatMap(TransactionInfo::getId).orElse(null);
-                } else {
-                    break;
+                            // if last fetch is full, there might be more transactions in account
+                            // otherwise, search is done
+                            if (transactions.size() == Searcher.BATCH_TRANSACTION_SIZE) {
+                                fromTransactionId = transactions.get(transactions.size() - 1).getTransactionInfo().flatMap(TransactionInfo::getId).orElse(null);
+                            } else {
+                                break;
+                            }
+                        }
+
+                        final String toTransactionId = results.isEmpty() ? null : results.get(results.size() - 1).getTransactionId();
+                        return new SearchResult(results, param.getFromTransactionId(), toTransactionId);
+                    } catch (RuntimeException ex) {
+                        throw new SearchFailureException("Search failed.", ex);
+                    }
                 }
-            }
-
-            final String toTransactionId = results.isEmpty() ? null : results.get(results.size() - 1).getTransactionId();
-            return Observable.just(new SearchResult(results, param.getFromTransactionId(), toTransactionId));
-        } catch (RuntimeException ex) {
-            return Observable.error(new SearchFailureException("Search failed.", ex));
-        }
+        );
     }
 
     private PublicAccount getPublicAccount(String accountPrivateKey, String accountPublicKey, String accountAddress) {
