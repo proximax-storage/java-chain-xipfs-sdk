@@ -27,7 +27,17 @@ public enum BlockchainNetworkType {
     /**
      * The network type for mijin test
      */
-    MIJIN_TEST(io.nem.sdk.model.blockchain.NetworkType.MIJIN_TEST);
+    MIJIN_TEST(io.nem.sdk.model.blockchain.NetworkType.MIJIN_TEST),
+
+    /**
+     * The network type for mijin
+     */
+    PRIVATE(io.nem.sdk.model.blockchain.NetworkType.PRIVATE),
+
+    /**
+     * The network type for mijin test
+     */
+    PRIVATE_TEST(io.nem.sdk.model.blockchain.NetworkType.PRIVATE_TEST);
 
     /**
      * The network type equivalent on nem sdk

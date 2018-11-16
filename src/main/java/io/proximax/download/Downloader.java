@@ -131,18 +131,22 @@ public class Downloader {
     }
 
     private Observable<DownloadResult> doCompleteDownload(DownloadParameter downloadParam) {
-        try {
-            final DownloadResult downloadResult = blockchainTransactionService.getTransferTransaction(downloadParam.getTransactionHash())
-                    .map(transferTransaction -> retrieveProximaxMessagePayloadService.getMessagePayload(transferTransaction,
-                            downloadParam.getAccountPrivateKey()))
-                    .map(messagePayload -> createCompleteDownloadResult(messagePayload,
-                            () -> getDataByteStream(Optional.of(messagePayload), null, downloadParam.getPrivacyStrategy(),
-                                    downloadParam.getValidateDigest(), null).blockingFirst(),
-                            downloadParam.getTransactionHash())).blockingFirst();
-            return Observable.just(downloadResult);
-        } catch (RuntimeException ex) {
-            return Observable.error(new DownloadFailureException("Download failed.", ex));
-        }
+        return Observable.fromCallable(
+                () -> {
+                    try {
+                        final DownloadResult downloadResult = blockchainTransactionService.getTransferTransaction(downloadParam.getTransactionHash())
+                                .map(transferTransaction -> retrieveProximaxMessagePayloadService.getMessagePayload(transferTransaction,
+                                        downloadParam.getAccountPrivateKey()))
+                                .map(messagePayload -> createCompleteDownloadResult(messagePayload,
+                                        () -> getDataByteStream(Optional.of(messagePayload), null, downloadParam.getPrivacyStrategy(),
+                                                downloadParam.getValidateDigest(), null).blockingFirst(),
+                                        downloadParam.getTransactionHash())).blockingFirst();
+                        return downloadResult;
+                    } catch (RuntimeException ex) {
+                        throw new DownloadFailureException("Download failed.", ex);
+                    }
+                }
+        );
     }
 
     private DownloadResult createCompleteDownloadResult(ProximaxMessagePayloadModel messagePayload,
@@ -154,16 +158,20 @@ public class Downloader {
     }
 
     private Observable<InputStream> doDirectDownload(DirectDownloadParameter downloadParam) {
-        try {
-            final InputStream inputStream = getOptionalBlockchainTransaction(downloadParam.getTransactionHash())
-                    .map(transferTransactionOpt -> transferTransactionOpt.map(transferTransaction ->
-                            retrieveProximaxMessagePayloadService.getMessagePayload(transferTransaction, downloadParam.getAccountPrivateKey())))
-                    .flatMap(messagePayload -> getDataByteStream(messagePayload, downloadParam.getDataHash(), downloadParam.getPrivacyStrategy(),
-                            downloadParam.getValidateDigest(), downloadParam.getDigest())).blockingFirst();
-            return Observable.just(inputStream);
-        } catch (RuntimeException ex) {
-            return Observable.error(new DirectDownloadFailureException("Direct download failed.", ex));
-        }
+        return Observable.fromCallable(
+                () -> {
+                    try {
+                        final InputStream inputStream = getOptionalBlockchainTransaction(downloadParam.getTransactionHash())
+                                .map(transferTransactionOpt -> transferTransactionOpt.map(transferTransaction ->
+                                        retrieveProximaxMessagePayloadService.getMessagePayload(transferTransaction, downloadParam.getAccountPrivateKey())))
+                                .flatMap(messagePayload -> getDataByteStream(messagePayload, downloadParam.getDataHash(), downloadParam.getPrivacyStrategy(),
+                                        downloadParam.getValidateDigest(), downloadParam.getDigest())).blockingFirst();
+                        return inputStream;
+                    } catch (RuntimeException ex) {
+                        throw new DirectDownloadFailureException("Direct download failed.", ex);
+                    }
+                }
+        );
     }
 
     private Observable<Optional<TransferTransaction>> getOptionalBlockchainTransaction(String transactionHash) {

@@ -106,17 +106,22 @@ public class Uploader {
     }
 
     private Observable<UploadResult> doUpload(UploadParameter uploadParam) {
-        try {
-            final UploadResult result = createProximaxDataService.createData(uploadParam).flatMap(uploadedData ->
-                    createProximaxMessagePayloadService.createMessagePayload(uploadParam, uploadedData)
-                            .flatMap(messagePayload ->
-                                    createAndAnnounceTransaction(uploadParam, messagePayload)
-                                            .map(transactionHash ->
-                                                    createUploadResult(messagePayload, transactionHash)))).blockingFirst();
-            return Observable.just(result);
-        } catch (RuntimeException ex) {
-            return Observable.error(new UploadFailureException("Upload failed.", ex));
-        }
+        return Observable.fromCallable(
+                () -> {
+                    try {
+                        final UploadResult result = createProximaxDataService.createData(uploadParam).flatMap(uploadedData ->
+                                createProximaxMessagePayloadService.createMessagePayload(uploadParam, uploadedData)
+                                        .flatMap(messagePayload ->
+                                                createAndAnnounceTransaction(uploadParam, messagePayload)
+                                                        .map(transactionHash ->
+                                                                createUploadResult(messagePayload, transactionHash)))).blockingFirst();
+                        return result;
+                    } catch (RuntimeException ex) {
+                        throw new UploadFailureException("Upload failed.", ex);
+                    }
+
+                }
+        );
     }
 
     private Observable<String> createAndAnnounceTransaction(UploadParameter uploadParam, ProximaxMessagePayloadModel messagePayload) {

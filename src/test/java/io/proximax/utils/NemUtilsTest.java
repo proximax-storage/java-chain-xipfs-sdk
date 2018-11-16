@@ -118,7 +118,7 @@ public class NemUtilsTest {
                 Deadline.create(24, ChronoUnit.HOURS),
                 SAMPLE_ADDRESS,
                 Collections.singletonList(new Mosaic(XEM.createRelative(BigInteger.valueOf(1)).getId(), BigInteger.valueOf(1))),
-                new PlainMessage("test".getBytes()),
+                new PlainMessage("test"),
                 NetworkType.MIJIN_TEST);
     }
 

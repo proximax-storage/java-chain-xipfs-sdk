@@ -2,13 +2,19 @@ package io.proximax.service.client.catapult;
 
 import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.infrastructure.AccountHttp;
+import io.nem.sdk.infrastructure.QueryParams;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.account.PublicAccount;
+import io.nem.sdk.model.transaction.Transaction;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.exceptions.AccountNotFoundException;
 import io.proximax.exceptions.PublicKeyNotFoundException;
+import io.proximax.model.TransactionFilter;
+import io.reactivex.Observable;
 
 import java.net.MalformedURLException;
+import java.util.List;
 
 import static io.nem.core.crypto.PublicKey.fromHexString;
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
@@ -63,4 +69,20 @@ public class AccountClient {
         }
     }
 
+    public Observable<List<Transaction>> getTransactions(TransactionFilter transactionFilter, int resultSize,
+                                                         PublicAccount publicAccount, String fromTransactionId) {
+        checkParameter(transactionFilter != null, "transactionFilter is required");
+
+        final QueryParams queryParams = new QueryParams(resultSize, fromTransactionId);
+
+        if (transactionFilter == TransactionFilter.ALL) {
+            return accountHttp.transactions(publicAccount, queryParams);
+        } else if (transactionFilter == TransactionFilter.OUTGOING) {
+            return accountHttp.outgoingTransactions(publicAccount, queryParams);
+        } else if (transactionFilter == TransactionFilter.INCOMING) {
+            return accountHttp.incomingTransactions(publicAccount, queryParams);
+        } else {
+            throw new IllegalArgumentException(format("Unknown transactionFilter %s", transactionFilter.name()));
+        }
+    }
 }
