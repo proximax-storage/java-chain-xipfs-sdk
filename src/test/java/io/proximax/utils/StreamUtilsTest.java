@@ -18,7 +18,6 @@
 
 package io.proximax.utils;
 
-import io.proximax.upload.StreamUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.Test;
 

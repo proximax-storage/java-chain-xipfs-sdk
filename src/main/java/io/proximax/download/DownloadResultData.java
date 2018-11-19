@@ -1,7 +1,7 @@
 package io.proximax.download;
 
 import io.proximax.model.DataInfoModel;
-import io.proximax.upload.StreamUtils;
+import io.proximax.utils.StreamUtils;
 import io.proximax.utils.TimeoutUtils;
 
 import java.io.File;

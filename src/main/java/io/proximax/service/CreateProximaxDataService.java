@@ -58,10 +58,10 @@ public class CreateProximaxDataService {
 
     private Observable<ProximaxDataModel> uploadByteStream(UploadParameter uploadParam, AbstractByteStreamParameterData byteStreamParamData) {
         final Observable<Optional<String>> detectedContentTypeOb = detectContentType(uploadParam, byteStreamParamData);
-        final Observable<FileUploadResponse> ipfsUploadResponseOb = fileUploadService.uploadByteStream(
+        final Observable<FileUploadResponse> fileUploadResponseOb = fileUploadService.uploadByteStream(
                 byteStreamParamData::getByteStream, uploadParam.getPrivacyStrategy(), uploadParam.getComputeDigest());
 
-        return Observable.zip(ipfsUploadResponseOb, detectedContentTypeOb, (ipfsUploadResponse, contentTypeOpt) ->
+        return Observable.zip(fileUploadResponseOb, detectedContentTypeOb, (ipfsUploadResponse, contentTypeOpt) ->
                 ProximaxDataModel.create(byteStreamParamData, ipfsUploadResponse.getDataHash(),
                         ipfsUploadResponse.getDigest(), contentTypeOpt.orElse(null), ipfsUploadResponse.getTimestamp()));
     }

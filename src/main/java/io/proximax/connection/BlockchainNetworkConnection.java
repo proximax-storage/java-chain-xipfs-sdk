@@ -30,7 +30,7 @@ public class BlockchainNetworkConnection {
 			checkParameter(networkType != null, "networkType is required");
 			checkParameter(apiHost != null, "apiHost is required");
 			checkParameter(apiPort > 0, "apiPort must be non-negative int");
-			checkParameter(apiProtocol != null, "apiPort is required");
+			checkParameter(apiProtocol != null, "apiProtocol is required");
 
 			this.networkType = networkType.networkType;
 			this.apiHost = apiHost;

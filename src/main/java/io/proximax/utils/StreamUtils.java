@@ -16,7 +16,7 @@
  *
  */
 
-package io.proximax.upload;
+package io.proximax.utils;
 
 import org.apache.tika.io.IOUtils;
 
