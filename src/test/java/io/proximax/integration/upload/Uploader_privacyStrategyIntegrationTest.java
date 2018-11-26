@@ -42,6 +42,7 @@ public class Uploader_privacyStrategyIntegrationTest {
     public void shouldUploadFileWithPlainPrivacyStrategy() {
         final UploadParameter param = UploadParameter
                 .createForFileUpload(TEST_TEXT_FILE, IntegrationTestConfig.getPrivateKey1())
+                .withPlainPrivacy()
                 .build();
 
         final UploadResult result = unitUnderTest.upload(param);
