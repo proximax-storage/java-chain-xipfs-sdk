@@ -92,7 +92,7 @@ public class Downloader_directDownload_integrationTest {
 	}
 
 	@Test
-	public void shouldDownloadInputByTransactionHash() throws IOException {
+	public void shouldDownloadInputStreamByTransactionHash() throws IOException {
 		final String transactionHash = TestDataRepository
 				.getData("Uploader_integrationTest.shouldUploadInputStream", "transactionHash");
 		final DirectDownloadParameter param =
@@ -141,10 +141,10 @@ public class Downloader_directDownload_integrationTest {
 		unitUnderTest.directDownload(param);
 	}
 
-	@Test(expected = DirectDownloadFailureException.class)
-	public void failDownloadWhenInvalidTransactionHash() throws IOException {
+	@Test(expected = IllegalArgumentException.class)
+	public void failDownloadWhenInvalidDataHash() throws IOException {
 		final DirectDownloadParameter param =
-				DirectDownloadParameter.createFromTransactionHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
+				DirectDownloadParameter.createFromDataHash("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").build();
 
 		unitUnderTest.directDownload(param);
 	}
