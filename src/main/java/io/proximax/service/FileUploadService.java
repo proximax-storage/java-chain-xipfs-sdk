@@ -19,7 +19,6 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 public class FileUploadService {
 
     private final FileRepository fileRepository;
-    private final DigestUtils digestUtils;
 
     /**
      * Construct this class
@@ -28,12 +27,6 @@ public class FileUploadService {
      */
     public FileUploadService(final FileRepository fileRepository) {
         this.fileRepository = fileRepository;
-        this.digestUtils = new DigestUtils();
-    }
-
-    FileUploadService(final FileRepository fileRepository, final DigestUtils digestUtils) {
-        this.fileRepository = fileRepository;
-        this.digestUtils = digestUtils;
     }
 
     /**
@@ -52,12 +45,11 @@ public class FileUploadService {
         final boolean computeDigestToUse = Optional.ofNullable(computeDigest).orElse(false);
         final PrivacyStrategy privacyStrategyToUse = privacyStrategy == null ? PlainPrivacyStrategy.create() : privacyStrategy;
 
-        final Observable<Optional<String>> digestObservable = computeDigest(byteStreamSupplier, privacyStrategyToUse, computeDigestToUse);
+        final Optional<String> digestOpt = computeDigest(byteStreamSupplier, privacyStrategyToUse, computeDigestToUse);
         final Observable<String> dataHashObservable = fileRepository.addByteStream(privacyStrategyToUse.encryptStream(byteStreamSupplier.get()));
 
-        return Observable.zip(digestObservable, dataHashObservable, (digest, dataHash) ->
-                        new FileUploadResponse(dataHash, System.currentTimeMillis(), digest.orElse(null))
-                );
+        return dataHashObservable.map(
+                dataHash -> new FileUploadResponse(dataHash, System.currentTimeMillis(), digestOpt.orElse(null)));
     }
 
     /**
@@ -73,12 +65,12 @@ public class FileUploadService {
                 .map(dataHash -> new FileUploadResponse(dataHash, System.currentTimeMillis(), null));
     }
 
-    private Observable<Optional<String>> computeDigest(final Supplier<InputStream> byteStreamSupplier,
+    private Optional<String> computeDigest(final Supplier<InputStream> byteStreamSupplier,
                                                        final PrivacyStrategy privacyStrategy,
                                                        final boolean computeDigest) {
         return computeDigest
-                ? digestUtils.digest(privacyStrategy.encryptStream(byteStreamSupplier.get())).map(Optional::of)
-                : Observable.just(Optional.empty());
+                ? Optional.of(DigestUtils.digest(privacyStrategy.encryptStream(byteStreamSupplier.get())))
+                : Optional.empty();
     }
 
 }

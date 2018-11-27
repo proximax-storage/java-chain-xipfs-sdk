@@ -37,7 +37,6 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 public class FileDownloadService {
 
     private final FileRepository fileRepository;
-    private final DigestUtils digestUtils;
 
     /**
      * Construct this class
@@ -46,12 +45,10 @@ public class FileDownloadService {
      */
     public FileDownloadService(FileStorageConnection fileStorageConnection) {
         this.fileRepository = FileRepositoryFactory.create(fileStorageConnection);
-        this.digestUtils = new DigestUtils();
     }
 
-    FileDownloadService(FileRepository fileRepository, DigestUtils digestUtils) {
+    FileDownloadService(FileRepository fileRepository) {
         this.fileRepository = fileRepository;
-        this.digestUtils = digestUtils;
     }
 
     /**
@@ -74,7 +71,7 @@ public class FileDownloadService {
     private void validateDigest(String digest, String dataHash) {
         if (StringUtils.isNotEmpty(digest)) {
             fileRepository.getByteStream(dataHash)
-                    .flatMap(undecryptedStream -> digestUtils.validateDigest(undecryptedStream, digest))
+                    .map(undecryptedStream -> DigestUtils.validateDigest(undecryptedStream, digest))
                     .blockingFirst();
         }
     }

@@ -1,5 +1,6 @@
 package io.proximax.service.client;
 
+import io.ipfs.api.MerkleNode;
 import io.ipfs.api.NamedStreamable;
 import io.ipfs.multihash.Multihash;
 import io.proximax.connection.IpfsConnection;
@@ -53,13 +54,15 @@ public class IpfsClient implements FileRepository {
     public Observable<String> addByteStream(InputStream byteStream) {
         checkParameter(byteStream != null, "byteStream is required");
 
-        return Observable.just(byteStream)
-                .observeOn(Schedulers.io())
-                .map(stream -> ipfsConnection.getIpfs().add(new NamedStreamable.InputStreamWrapper(stream)))
-                .onErrorResumeNext((Throwable ex) ->
-                        Observable.error(new IpfsClientFailureException(String.format("Failed to add resource"), ex)))
-                .observeOn(Schedulers.computation())
-                .map(merkleNodes -> merkleNodes.get(0).hash.toBase58());
+        try (InputStream stream = byteStream){
+            final List<MerkleNode> merkleNodes = Observable.just(stream)
+                    .observeOn(Schedulers.io())
+                    .map(inputStream -> ipfsConnection.getIpfs().add(new NamedStreamable.InputStreamWrapper(inputStream)))
+                    .blockingFirst();
+            return Observable.just(merkleNodes.get(0).hash.toBase58());
+        } catch (Exception e) {
+            return Observable.error(new IpfsClientFailureException(String.format("Failed to add resource"), e));
+        }
     }
 
     /**

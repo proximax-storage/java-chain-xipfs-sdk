@@ -3,7 +3,6 @@ package io.proximax.service;
 import io.proximax.model.PrivacyType;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.service.client.IpfsClient;
-import io.proximax.utils.DigestUtils;
 import io.reactivex.Observable;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,15 +25,12 @@ public class FileUploadServiceTest {
     private static final Supplier<InputStream> SAMPLE_DATA_STREAM_SUPPLIER = () -> SAMPLE_DATA_STREAM;
     private static final String SAMPLE_DATAHASH = "QmTxpkEitAczbM5S4uZG3zoDToSDNQZQUV4vxBsW9Q1Nhh";
     private static final InputStream SAMPLE_ENCRYPTED_DATA_STREAM = new ByteArrayInputStream("dsajhjdhaskhdksahkdsaljkjlxnzcm,nxz".getBytes());
-    private static final String SAMPLE_DIGEST = "Qmdsewquywqiyeiuqwyiueyqiuyeuiwyqid";
+    private static final String SAMPLE_DIGEST = "920ca4e7d0f113544f23816b6ab5ff64d86d7e314a3943fb0e964ae9b87cafc0";
 
     private FileUploadService unitUnderTest;
 
     @Mock
     private IpfsClient mockIpfsClient;
-
-    @Mock
-    private DigestUtils mockDigestUtils;
 
     @Mock
     private PrivacyStrategy mockPrivacyStrategy;
@@ -43,7 +39,7 @@ public class FileUploadServiceTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        unitUnderTest = new FileUploadService(mockIpfsClient, mockDigestUtils);
+        unitUnderTest = new FileUploadService(mockIpfsClient);
 
         given(mockPrivacyStrategy.getPrivacyType()).willReturn(PrivacyType.PLAIN.getValue());
     }
@@ -87,8 +83,8 @@ public class FileUploadServiceTest {
     public void shouldAddByteStreamWithComputeDigest() {
         given(mockIpfsClient.addByteStream(SAMPLE_DATA_STREAM))
                 .willReturn(Observable.just(SAMPLE_DATAHASH));
-        given(mockDigestUtils.digest(SAMPLE_DATA_STREAM))
-                .willReturn(Observable.just(SAMPLE_DIGEST));
+//        given(mockDigestUtils.digest(SAMPLE_DATA_STREAM))
+//                .willReturn(Observable.just(SAMPLE_DIGEST));
 
         final FileUploadResponse ipfsUploadResponse =
                 unitUnderTest.uploadByteStream(SAMPLE_DATA_STREAM_SUPPLIER, null, true).blockingFirst();

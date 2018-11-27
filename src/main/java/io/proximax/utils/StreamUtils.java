@@ -23,29 +23,31 @@ import org.apache.tika.io.IOUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.stream.Stream;
 
 public class StreamUtils {
 
     private StreamUtils() {}
 
-    public static String toString(InputStream stream, String encoding) {
-        try {
+    public static String toString(InputStream inputStream, String encoding) {
+        try (InputStream stream = inputStream){
             return IOUtils.toString(stream, encoding);
         } catch(Exception e) {
             throw new RuntimeException("Failed to convert to string", e);
         }
     }
 
-    public static byte[] toByteArray(InputStream stream) {
-        try {
+    public static byte[] toByteArray(InputStream inputStream) {
+        try (InputStream stream = inputStream){
             return IOUtils.toByteArray(stream);
         } catch(Exception e) {
             throw new RuntimeException("Failed to convert to byte array", e);
         }
     }
 
-    public static void saveToFile(InputStream stream, File file) {
-        try (FileOutputStream outputStream = new FileOutputStream(file)) {
+    public static void saveToFile(InputStream inputStream, File file) {
+        try (InputStream stream = inputStream;
+             FileOutputStream outputStream = new FileOutputStream(file)) {
             IOUtils.copy(stream, outputStream);
         } catch(Exception e) {
             throw new RuntimeException("Failed to save to file", e);

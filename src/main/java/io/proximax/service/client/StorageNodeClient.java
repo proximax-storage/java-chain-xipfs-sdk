@@ -68,10 +68,11 @@ public class StorageNodeClient implements FileRepository {
         checkParameter(byteStream != null, "byteStream is required");
 
         return Observable.fromCallable(() -> {
-            try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            try (CloseableHttpClient httpClient = HttpClients.createDefault();
+                InputStream stream = byteStream) {
                 final HttpEntity file = MultipartEntityBuilder.create()
                         .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
-                        .addBinaryBody("file", byteStream,
+                        .addBinaryBody("file", stream,
                                 ContentType.DEFAULT_BINARY, "file").build();
                 final HttpPost httpPost = new HttpPost(apiUrl + "/upload/file");
                 httpPost.setEntity(file);

@@ -20,7 +20,6 @@ package io.proximax.service;
 
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.service.client.IpfsClient;
-import io.proximax.utils.DigestUtils;
 import io.reactivex.Observable;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +38,8 @@ public class FileDownloadServiceTest {
     private static final String DUMMY_DATA_HASH = "Qmdahdksadjksahjk";
     private static final InputStream DUMMY_DOWNLOADED_DATA_STREAM =
             new ByteArrayInputStream("dopsaipdlsnlxnz,cn,zxnclznxlnldsaldslkaj;as.".getBytes());
-    private static final String DUMMY_DIGEST = "iowuqoieuqowueoiqw";
+    private static final String DIGEST = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+    private static final String WRONG_DIGEST = "31232312321312";
     private static final InputStream DUMMY_DECRYPTED_DATA_STREAM =
             new ByteArrayInputStream("dsajhjdhaskhdksahkdsaljkjlxnzcm,nxz".getBytes());
 
@@ -49,16 +49,13 @@ public class FileDownloadServiceTest {
     private IpfsClient mockIpfsClient;
 
     @Mock
-    private DigestUtils mockDigestUtils;
-
-    @Mock
     private PrivacyStrategy mockPrivacyStrategy;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        unitUnderTest = new FileDownloadService(mockIpfsClient, mockDigestUtils);
+        unitUnderTest = new FileDownloadService(mockIpfsClient);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -92,10 +89,9 @@ public class FileDownloadServiceTest {
     @Test
     public void shouldGetByteStreamWithDigest() {
         given(mockIpfsClient.getByteStream(DUMMY_DATA_HASH)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA_STREAM));
-        given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA_STREAM, DUMMY_DIGEST)).willReturn(Observable.just(true));
 
         final InputStream result =
-                unitUnderTest.getByteStream(DUMMY_DATA_HASH, null, DUMMY_DIGEST)
+                unitUnderTest.getByteStream(DUMMY_DATA_HASH, null, DIGEST)
                         .blockingFirst();
 
         assertThat(result, is(DUMMY_DOWNLOADED_DATA_STREAM));
@@ -104,9 +100,8 @@ public class FileDownloadServiceTest {
     @Test(expected = RuntimeException.class)
     public void failWhenDigestDoNotMatch() {
         given(mockIpfsClient.getByteStream(DUMMY_DATA_HASH)).willReturn(Observable.just(DUMMY_DOWNLOADED_DATA_STREAM));
-        given(mockDigestUtils.validateDigest(DUMMY_DOWNLOADED_DATA_STREAM, DUMMY_DIGEST)).willThrow(RuntimeException.class);
 
-        unitUnderTest.getByteStream(DUMMY_DATA_HASH, null, DUMMY_DIGEST)
+        unitUnderTest.getByteStream(DUMMY_DATA_HASH, null, WRONG_DIGEST)
                 .blockingFirst();
     }
 }
