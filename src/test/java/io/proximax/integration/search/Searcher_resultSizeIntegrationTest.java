@@ -84,14 +84,14 @@ public class Searcher_resultSizeIntegrationTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void shouldSearchWithMoreThan20ResultSize() {
+	public void failSearchWithMoreThan20ResultSize() {
 		final SearchParameter param = SearchParameter.createForAddress(IntegrationTestConfig.getAddress1())
 				.withResultSize(21)
 				.build();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void shouldSearchWithLessThan1ResultSize() {
+	public void failSearchWithLessThan1ResultSize() {
 		final SearchParameter param = SearchParameter.createForAddress(IntegrationTestConfig.getAddress1())
 				.withResultSize(0)
 				.build();
