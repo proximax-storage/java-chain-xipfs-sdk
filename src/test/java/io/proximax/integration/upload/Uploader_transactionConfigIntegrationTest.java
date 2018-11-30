@@ -66,7 +66,7 @@ public class Uploader_transactionConfigIntegrationTest {
 		assertThat(transaction, is(instanceOf(TransferTransaction.class)));
 		assertThat(((TransferTransaction)transaction).getRecipient().plain(), is(IntegrationTestConfig.getAddress1()));
 
-		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithRecipientPublicKeyProvided");
+		logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithSignerAsRecipientByDefault");
 	}
 
 	@Test(expected = UploadFailureException.class)
