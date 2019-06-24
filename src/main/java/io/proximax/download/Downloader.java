@@ -1,6 +1,6 @@
 package io.proximax.download;
 
-import io.nem.sdk.model.transaction.TransferTransaction;
+import io.proximax.sdk.model.transaction.TransferTransaction;
 import io.proximax.async.AsyncCallbacks;
 import io.proximax.async.AsyncTask;
 import io.proximax.connection.ConnectionConfig;

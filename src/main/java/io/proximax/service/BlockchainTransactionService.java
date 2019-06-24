@@ -1,13 +1,13 @@
 package io.proximax.service;
 
-import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.mosaic.MosaicId;
-import io.nem.sdk.model.transaction.Deadline;
-import io.nem.sdk.model.transaction.Message;
-import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.TransactionType;
-import io.nem.sdk.model.transaction.TransferTransaction;
+import io.proximax.sdk.model.account.Address;
+import io.proximax.sdk.model.mosaic.Mosaic;
+import io.proximax.sdk.model.mosaic.MosaicId;
+import io.proximax.sdk.model.transaction.Deadline;
+import io.proximax.sdk.model.transaction.Message;
+import io.proximax.sdk.model.transaction.SignedTransaction;
+import io.proximax.sdk.model.transaction.TransactionType;
+import io.proximax.sdk.model.transaction.TransferTransaction;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.exceptions.GetTransactionFailureException;
 import io.proximax.exceptions.TransactionNotAllowedException;

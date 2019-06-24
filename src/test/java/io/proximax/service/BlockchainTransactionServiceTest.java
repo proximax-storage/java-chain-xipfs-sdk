@@ -1,16 +1,16 @@
 package io.proximax.service;
 
-import io.nem.sdk.model.account.Account;
-import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.mosaic.MosaicId;
-import io.nem.sdk.model.transaction.AggregateTransaction;
-import io.nem.sdk.model.transaction.Deadline;
-import io.nem.sdk.model.transaction.Message;
-import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.TransactionType;
-import io.nem.sdk.model.transaction.TransferTransaction;
+import io.proximax.sdk.model.account.Account;
+import io.proximax.sdk.model.account.Address;
+import io.proximax.sdk.model.blockchain.NetworkType;
+import io.proximax.sdk.model.mosaic.Mosaic;
+import io.proximax.sdk.model.mosaic.MosaicId;
+import io.proximax.sdk.model.transaction.AggregateTransaction;
+import io.proximax.sdk.model.transaction.Deadline;
+import io.proximax.sdk.model.transaction.Message;
+import io.proximax.sdk.model.transaction.SignedTransaction;
+import io.proximax.sdk.model.transaction.TransactionType;
+import io.proximax.sdk.model.transaction.TransferTransaction;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.exceptions.AnnounceBlockchainTransactionFailureException;
 import io.proximax.exceptions.GetTransactionFailureException;
@@ -37,6 +37,7 @@ import static org.exparity.hamcrest.date.LocalDateTimeMatchers.sameOrBefore;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 public class BlockchainTransactionServiceTest {
@@ -178,7 +179,8 @@ public class BlockchainTransactionServiceTest {
         assertThat(signerPrivateKeyArgumentCaptor.getValue(), is(SAMPLE_SIGNER_PRIVATE_KEY));
         assertThat(transferTransactionArgumentCaptor.getValue().getMessage(), is(mockMessage));
         assertThat(transferTransactionArgumentCaptor.getValue().getRecipient(), is(SAMPLE_RECIPIENT_ADDRESS));
-        assertThat(transferTransactionArgumentCaptor.getValue().getDeadline().getLocalDateTime(), sameOrBefore(LocalDateTime.now().plusHours(12)));
+        //assertThat(transferTransactionArgumentCaptor.getValue().getDeadline().getLocalDateTime(), sameOrBefore(LocalDateTime.now().plusHours(12)));
+        assertTrue(new Deadline(12, ChronoUnit.HOURS).getInstant() < transferTransactionArgumentCaptor.getValue().getDeadline().getInstant());
         assertThat(transferTransactionArgumentCaptor.getValue().getMosaics(), hasSize(1));
         assertThat(transferTransactionArgumentCaptor.getValue().getMosaics().get(0).getId(),
                 is(new MosaicId("prx:xpx")));
@@ -266,7 +268,8 @@ public class BlockchainTransactionServiceTest {
         unitUnderTest.createAndAnnounceTransaction(mockMessagePayload, SAMPLE_SIGNER_PRIVATE_KEY,
                 null, SAMPLE_RECIPIENT_ADDRESS.plain(), 15, null,false).blockingFirst();
 
-        assertThat(transferTransactionArgumentCaptor.getValue().getDeadline().getLocalDateTime(), sameOrBefore(Deadline.create(15, ChronoUnit.HOURS).getLocalDateTime()));
+        //assertThat(transferTransactionArgumentCaptor.getValue().getDeadline().getLocalDateTime(), sameOrBefore(Deadline.create(15, ChronoUnit.HOURS).getLocalDateTime()));
+        assertTrue(new Deadline(15, ChronoUnit.HOURS).getInstant() < transferTransactionArgumentCaptor.getValue().getDeadline().getInstant());
     }
 
     @Test

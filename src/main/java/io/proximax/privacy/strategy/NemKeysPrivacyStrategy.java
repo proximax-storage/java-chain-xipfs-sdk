@@ -1,8 +1,8 @@
 package io.proximax.privacy.strategy;
 
-import io.nem.core.crypto.KeyPair;
-import io.nem.core.crypto.PrivateKey;
-import io.nem.core.crypto.PublicKey;
+import io.proximax.core.crypto.KeyPair;
+import io.proximax.core.crypto.PrivateKey;
+import io.proximax.core.crypto.PublicKey;
 import io.proximax.cipher.BlockchainKeysCipherEncryptor;
 import io.proximax.model.PrivacyType;
 

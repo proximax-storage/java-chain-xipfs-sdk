@@ -1,11 +1,11 @@
 package io.proximax.service;
 
-import io.nem.core.crypto.KeyPair;
-import io.nem.core.crypto.PrivateKey;
-import io.nem.core.crypto.PublicKey;
-import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.transaction.Message;
-import io.nem.sdk.model.transaction.SecureMessage;
+import io.proximax.core.crypto.KeyPair;
+import io.proximax.core.crypto.PrivateKey;
+import io.proximax.core.crypto.PublicKey;
+import io.proximax.sdk.model.blockchain.NetworkType;
+import io.proximax.sdk.model.transaction.Message;
+import io.proximax.sdk.model.transaction.SecureMessage;
 import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.model.ProximaxMessagePayloadModel;

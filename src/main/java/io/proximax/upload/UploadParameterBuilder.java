@@ -1,9 +1,9 @@
 package io.proximax.upload;
 
-import io.nem.core.crypto.PrivateKey;
-import io.nem.core.crypto.PublicKey;
-import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.mosaic.Mosaic;
+import io.proximax.core.crypto.PrivateKey;
+import io.proximax.core.crypto.PublicKey;
+import io.proximax.sdk.model.account.Address;
+import io.proximax.sdk.model.mosaic.Mosaic;
 import io.proximax.privacy.strategy.NemKeysPrivacyStrategy;
 import io.proximax.privacy.strategy.PasswordPrivacyStrategy;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;

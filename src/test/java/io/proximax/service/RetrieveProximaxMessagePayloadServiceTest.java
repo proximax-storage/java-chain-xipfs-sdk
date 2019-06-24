@@ -1,6 +1,6 @@
 package io.proximax.service;
 
-import io.nem.sdk.model.transaction.TransferTransaction;
+import io.proximax.sdk.model.transaction.TransferTransaction;
 import io.proximax.model.ProximaxMessagePayloadModel;
 import org.junit.Before;
 import org.junit.Test;

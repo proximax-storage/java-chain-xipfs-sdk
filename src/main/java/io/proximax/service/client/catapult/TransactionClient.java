@@ -1,13 +1,14 @@
 package io.proximax.service.client.catapult;
 
-import io.nem.sdk.infrastructure.Listener;
-import io.nem.sdk.infrastructure.TransactionHttp;
-import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionInfo;
+import io.proximax.sdk.infrastructure.Listener;
+import io.proximax.sdk.infrastructure.TransactionHttp;
+import io.proximax.sdk.model.account.Address;
+import io.proximax.sdk.model.transaction.SignedTransaction;
+import io.proximax.sdk.model.transaction.Transaction;
+import io.proximax.sdk.model.transaction.TransactionInfo;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.exceptions.AnnounceBlockchainTransactionFailureException;
+import io.proximax.sdk.BlockchainApi;
 import io.reactivex.Observable;
 
 import java.net.MalformedURLException;
@@ -17,7 +18,8 @@ import java.util.concurrent.TimeUnit;
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
- * The client class that directly interface with the blockchain's transaction APIs
+ * The client class that directly interface with the blockchain's transaction
+ * APIs
  * <br>
  * <br>
  * This class delegates to blockchain the following:
@@ -32,17 +34,19 @@ public class TransactionClient {
     private final TransactionHttp transactionHttp;
     private final String blockchainNetworkRestApiUrl;
     private final Listener listener;
+    private final BlockchainApi blockchainApi;
 
     /**
      * Construct the class with BlockchainNetworkConnection
      *
      * @param blockchainNetworkConnection the blockchain network connection
-     * @throws MalformedURLException when the blockchain endpoint url is not valid
+     * @throws MalformedURLException when the blockchain endpoint url is not
+     * valid
      */
     public TransactionClient(BlockchainNetworkConnection blockchainNetworkConnection) throws MalformedURLException {
         checkParameter(blockchainNetworkConnection != null, "blockchainNetworkConnection is required");
-
-        this.transactionHttp = new TransactionHttp(blockchainNetworkConnection.getApiUrl());
+        blockchainApi = blockchainNetworkConnection.getBlockchainApi();
+        this.transactionHttp = (TransactionHttp) blockchainApi.createTransactionRepository();
         this.blockchainNetworkRestApiUrl = blockchainNetworkConnection.getApiUrl();
         this.listener = null;
     }
@@ -50,6 +54,7 @@ public class TransactionClient {
     TransactionClient(TransactionHttp transactionHttp, Listener listener) {
         this.transactionHttp = transactionHttp;
         this.blockchainNetworkRestApiUrl = null;
+        this.blockchainApi = null;
         this.listener = listener;
     }
 
@@ -70,18 +75,19 @@ public class TransactionClient {
         final Listener listener = getListener();
         try {
             listener.open().get(10, TimeUnit.SECONDS);
-            final Observable<String> failedTransactionStatusOb =
-                    getAddedFailedTransactionStatus(address, signedTransaction.getHash(), listener);
-            final Observable<String> unconfirmedTransactionStatusOb =
-                    getAddedUnconfirmedTransactionStatus(address, signedTransaction.getHash(), listener);
+            final Observable<String> failedTransactionStatusOb
+                    = getAddedFailedTransactionStatus(address, signedTransaction.getHash(), listener);
+            final Observable<String> unconfirmedTransactionStatusOb
+                    = getAddedUnconfirmedTransactionStatus(address, signedTransaction.getHash(), listener);
 
             final Future<String> statusFuture = failedTransactionStatusOb.mergeWith(unconfirmedTransactionStatusOb)
                     .map(status -> {
-                        if (status.equals(STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION))
+                        if (status.equals(STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION)) {
                             return status;
-                        else
+                        } else {
                             throw new AnnounceBlockchainTransactionFailureException(
                                     String.format("Failed to announce transaction with status %s", status));
+                        }
                     }).take(1).toFuture();
 
             transactionHttp.announce(signedTransaction).blockingFirst();
@@ -111,27 +117,23 @@ public class TransactionClient {
     }
 
     private Listener getListener() {
-        try {
-            return listener != null ? listener : new Listener(blockchainNetworkRestApiUrl);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Unexpected malformed URL", e);
-        }
+        return listener != null ? listener : (Listener) blockchainApi.createListener();
     }
 
     private Observable<String> getAddedUnconfirmedTransactionStatus(Address address, String transactionHash, Listener listener) {
         return listener.unconfirmedAdded(address)
-                .filter(unconfirmedTxn ->
-                        unconfirmedTxn.getTransactionInfo()
-                                .flatMap(TransactionInfo::getHash)
-                                .map(hash -> hash.equals(transactionHash))
-                                .orElse(false))
+                .filter(unconfirmedTxn
+                        -> unconfirmedTxn.getTransactionInfo()
+                        .flatMap(TransactionInfo::getHash)
+                        .map(hash -> hash.equals(transactionHash))
+                        .orElse(false))
                 .map(unconfirmedTxn -> STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION);
     }
 
     private Observable<String> getAddedFailedTransactionStatus(Address address, String transactionHash, Listener listener) {
         return listener.status(address)
-                .filter(transactionStatusError ->
-                        transactionStatusError.getHash().equals(transactionHash))
+                .filter(transactionStatusError
+                        -> transactionStatusError.getHash().equals(transactionHash))
                 .map(transactionStatusError -> transactionStatusError.getStatus());
     }
 

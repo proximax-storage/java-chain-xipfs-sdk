@@ -1,14 +1,14 @@
 package io.proximax.utils;
 
-import io.nem.sdk.model.account.Account;
-import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.mosaic.XEM;
-import io.nem.sdk.model.transaction.Deadline;
-import io.nem.sdk.model.transaction.PlainMessage;
-import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.TransferTransaction;
+import io.proximax.sdk.model.account.Account;
+import io.proximax.sdk.model.account.Address;
+import io.proximax.sdk.model.blockchain.NetworkType;
+import io.proximax.sdk.model.mosaic.Mosaic;
+import io.proximax.sdk.model.mosaic.MosaicId;
+import io.proximax.sdk.model.transaction.Deadline;
+import io.proximax.sdk.model.transaction.PlainMessage;
+import io.proximax.sdk.model.transaction.SignedTransaction;
+import io.proximax.sdk.model.transaction.TransferTransaction;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -113,11 +113,12 @@ public class NemUtilsTest {
         System.out.println("Public Key: " + account.getPublicKey());
     }
 
-    private TransferTransaction sampleTransferTransaction() {
+    private TransferTransaction sampleTransferTransaction() {        
+        MosaicId ID = new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16));
         return TransferTransaction.create(
                 Deadline.create(24, ChronoUnit.HOURS),
                 SAMPLE_ADDRESS,
-                Collections.singletonList(new Mosaic(XEM.createRelative(BigInteger.valueOf(1)).getId(), BigInteger.valueOf(1))),
+                Collections.singletonList(new Mosaic(ID, BigInteger.valueOf(1))),
                 new PlainMessage("test"),
                 NetworkType.MIJIN_TEST);
     }

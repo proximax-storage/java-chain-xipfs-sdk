@@ -1,21 +1,13 @@
 package io.proximax.cipher;
 
-import io.nem.core.crypto.Hashes;
-import io.nem.core.crypto.KeyPair;
-import io.nem.core.crypto.PrivateKey;
-import io.nem.core.crypto.PublicKey;
-import io.nem.core.crypto.ed25519.Ed25519Utils;
-import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedGroupElement;
-import io.nem.core.crypto.ed25519.arithmetic.Ed25519GroupElement;
+import io.proximax.core.crypto.KeyPair;
+import io.proximax.core.crypto.PrivateKey;
+import io.proximax.core.crypto.PublicKey;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.bouncycastle.util.encoders.Hex;
-import org.bouncycastle.util.encoders.HexEncoder;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;

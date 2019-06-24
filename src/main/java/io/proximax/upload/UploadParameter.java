@@ -1,6 +1,6 @@
 package io.proximax.upload;
 
-import io.nem.sdk.model.mosaic.Mosaic;
+import io.proximax.sdk.model.mosaic.Mosaic;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 
 import java.io.File;

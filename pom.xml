@@ -4,7 +4,7 @@
 	<artifactId>xpx2-java-sdk</artifactId>
 	<packaging>jar</packaging>
 	<name>xpx2-java-sdk</name>
-	<version>0.1.0-beta.8-SNAPSHOT</version>
+	<version>0.1.0-beta.8</version>
 	<description>Proximax P2P File Storage Java SDK</description>
 	<prerequisites>
 		<maven>2.2.0</maven>
@@ -35,7 +35,7 @@
 		<connection>scm:git:https://github.com/proximax-storage/xpx2-java-sdk.git</connection>
 		<developerConnection>scm:git:https://github.com/proximax-storage/xpx2-java-sdk.git</developerConnection>
 		<url>https://github.com/proximax-storage/xpx2-java-sdk</url>
-		<tag>HEAD</tag>
+		<tag>v0.1.0-beta.8</tag>
 	</scm>
 	<licenses>
 		<license>
@@ -297,12 +297,12 @@
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>${jodatime-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.proximax-storage</groupId>
-			<artifactId>proximax-nem2-java-sdk</artifactId>
-			<version>${nem2.version}</version>
-		</dependency>
+		</dependency>		
+                <dependency>
+                        <groupId>io.proximax</groupId>
+                        <artifactId>java-xpx-chain-sdk</artifactId>
+                        <version>${javaXpxVersion}</version>
+                </dependency>
 		<dependency>
 			<groupId>com.github.proximax-storage</groupId>
 			<artifactId>proximax-ipfs-java-api</artifactId>
@@ -375,6 +375,47 @@
 			<version>2.18.0</version>
 			<scope>test</scope>
 		</dependency>
+                <dependency>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcprov-jdk15on</artifactId>
+                    <version>1.58</version>
+                    <scope>compile</scope>
+                  </dependency>                
+                <dependency>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                    <version>2.9.8</version>
+                    <scope>compile</scope>
+                </dependency>                
+                <dependency>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                    <version>2.9.8</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>io.reactivex.rxjava2</groupId>
+                    <artifactId>rxjava</artifactId>
+                    <version>2.1.7</version>
+                    <scope>compile</scope>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                    <version>3.9</version>
+                </dependency>
+                <dependency>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                    <version>2.4</version>
+                    <scope>compile</scope>
+                  </dependency>
+                  <dependency>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                    <version>2.6</version>
+                    <scope>compile</scope>
+                  </dependency>
 	</dependencies>
 	<properties>
 		<java.version>1.8</java.version>
@@ -388,8 +429,8 @@
 		<maven-plugin-version>2.12</maven-plugin-version>
 		<junit-version>4.12</junit-version>
 		<jacoco-maven-plugin>0.8.1</jacoco-maven-plugin>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<nem2.version>0.9.5-proximax</nem2.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>		
+                <javaXpxVersion>0.2.0</javaXpxVersion>
 		<ipfs.java.api.version>v1.2.2-proximax</ipfs.java.api.version>
 		<jnr.fuse.version>0.5.1</jnr.fuse.version>
 		<java-cid.version>v1.1.0</java-cid.version>

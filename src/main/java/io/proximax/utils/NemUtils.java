@@ -1,11 +1,11 @@
 package io.proximax.utils;
 
-import io.nem.core.crypto.KeyPair;
-import io.nem.sdk.model.account.Account;
-import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.Transaction;
+import io.proximax.core.crypto.KeyPair;
+import io.proximax.sdk.model.account.Account;
+import io.proximax.sdk.model.account.Address;
+import io.proximax.sdk.model.blockchain.NetworkType;
+import io.proximax.sdk.model.transaction.SignedTransaction;
+import io.proximax.sdk.model.transaction.Transaction;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
