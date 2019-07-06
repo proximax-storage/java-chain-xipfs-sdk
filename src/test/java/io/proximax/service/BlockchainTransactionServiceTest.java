@@ -27,13 +27,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static io.proximax.service.client.catapult.TransactionClient.STATUS_FOR_SUCCESSFUL_UNCONFIRMED_TRANSACTION;
 import static java.util.Collections.singletonList;
-import static org.exparity.hamcrest.date.LocalDateTimeMatchers.sameOrBefore;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -220,7 +218,7 @@ public class BlockchainTransactionServiceTest {
         unitUnderTest.createAndAnnounceTransaction(mockMessagePayload, SAMPLE_SIGNER_PRIVATE_KEY,
                 null, null, 12, null, false).blockingFirst();
 
-        assertThat(transferTransactionArgumentCaptor.getValue().getRecipient().plain(), is(SAMPLE_SIGNER_ACCOUNT.getAddress().plain()));
+        assertThat(transferTransactionArgumentCaptor.getValue().getRecipient().getAddress().get().plain(), is(SAMPLE_SIGNER_ACCOUNT.getAddress().plain()));
     }
 
     @Test
@@ -236,7 +234,7 @@ public class BlockchainTransactionServiceTest {
         unitUnderTest.createAndAnnounceTransaction(mockMessagePayload, SAMPLE_SIGNER_PRIVATE_KEY,
                 SAMPLE_RECIPIENT_PUBLIC_KEY, SAMPLE_RECIPIENT_ADDRESS.plain(), 12, null,false).blockingFirst();
 
-        assertThat(transferTransactionArgumentCaptor.getValue().getRecipient().plain(), is(SAMPLE_RECIPIENT_ADDRESS.plain()));
+        assertThat(transferTransactionArgumentCaptor.getValue().getRecipient().getAddress().get().plain(), is(SAMPLE_RECIPIENT_ADDRESS.plain()));
     }
 
     @Test
@@ -252,7 +250,7 @@ public class BlockchainTransactionServiceTest {
         unitUnderTest.createAndAnnounceTransaction(mockMessagePayload, SAMPLE_SIGNER_PRIVATE_KEY,
                 null, SAMPLE_RECIPIENT_ADDRESS.plain(), 12, null,false).blockingFirst();
 
-        assertThat(transferTransactionArgumentCaptor.getValue().getRecipient().plain(), is(SAMPLE_RECIPIENT_ADDRESS.plain()));
+        assertThat(transferTransactionArgumentCaptor.getValue().getRecipient().getAddress().get().plain(), is(SAMPLE_RECIPIENT_ADDRESS.plain()));
     }
 
     @Test

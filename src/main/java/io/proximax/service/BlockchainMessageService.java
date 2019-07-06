@@ -118,7 +118,7 @@ public class BlockchainMessageService {
     private PublicKey getTransactionOtherPartyPublicKey(KeyPair retrieverKeyPair, TransferTransaction transferTransaction) {
         final PublicAccount senderAccount = Optional.of(transferTransaction).flatMap(Transaction::getSigner).orElseThrow(
                 () -> new MissingSignerOnTransferTransactionException("Unexpected missing signer on transfer transaction"));
-        final Address recipient = transferTransaction.getRecipient();
+        final Address recipient = transferTransaction.getRecipient().getAddress().get();
         final Address retrieverAddress = Address.createFromPublicKey(retrieverKeyPair.getPublicKey().toString(), networkType);
 
         if (retrieverAddress.equals(recipient)) { // retriever is the recipient, use sender public key

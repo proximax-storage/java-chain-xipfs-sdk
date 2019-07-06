@@ -87,7 +87,7 @@ public class BlockchainMessageService_getMessagePayloadTest {
                 PrivateKey.fromHexString(SAMPLE_PRIVATE_KEY_1), PublicKey.fromHexString(SAMPLE_PUBLIC_KEY_2),
                 expectedPayload()));
         given(mockTransferTransaction.getSigner()).willReturn(Optional.of(PublicAccount.createFromPublicKey(SAMPLE_PUBLIC_KEY_1, NetworkType.MIJIN_TEST)));
-        given(mockTransferTransaction.getRecipient()).willReturn(Address.createFromRawAddress(SAMPLE_ADDRESS_2));
+        given(mockTransferTransaction.getRecipient().getAddress().get()).willReturn(Address.createFromRawAddress(SAMPLE_ADDRESS_2));
 
         final String result = unitUnderTest.getMessagePayload(mockTransferTransaction, SAMPLE_PRIVATE_KEY_2);
 
@@ -100,7 +100,7 @@ public class BlockchainMessageService_getMessagePayloadTest {
                 PrivateKey.fromHexString(SAMPLE_PRIVATE_KEY_1), PublicKey.fromHexString(SAMPLE_PUBLIC_KEY_2),
                 expectedPayload()));
         given(mockTransferTransaction.getSigner()).willReturn(Optional.of(PublicAccount.createFromPublicKey(SAMPLE_PUBLIC_KEY_1, NetworkType.MIJIN_TEST)));
-        given(mockTransferTransaction.getRecipient()).willReturn(Address.createFromRawAddress(SAMPLE_ADDRESS_2));
+        given(mockTransferTransaction.getRecipient().getAddress().get()).willReturn(Address.createFromRawAddress(SAMPLE_ADDRESS_2));
         given(mockAccountClient.getPublicKey(SAMPLE_ADDRESS_2)).willReturn(PublicKey.fromHexString(SAMPLE_PUBLIC_KEY_2));
 
         final String result = unitUnderTest.getMessagePayload(mockTransferTransaction, SAMPLE_PRIVATE_KEY_1);
@@ -114,7 +114,7 @@ public class BlockchainMessageService_getMessagePayloadTest {
                 PrivateKey.fromHexString(SAMPLE_PRIVATE_KEY_1), PublicKey.fromHexString(SAMPLE_PUBLIC_KEY_2),
                 expectedPayload()));
         given(mockTransferTransaction.getSigner()).willReturn(Optional.of(PublicAccount.createFromPublicKey(SAMPLE_PUBLIC_KEY_1, NetworkType.MIJIN_TEST)));
-        given(mockTransferTransaction.getRecipient()).willReturn(Address.createFromRawAddress(SAMPLE_ADDRESS_2));
+        given(mockTransferTransaction.getRecipient().getAddress().get()).willReturn(Address.createFromRawAddress(SAMPLE_ADDRESS_2));
 
         unitUnderTest.getMessagePayload(mockTransferTransaction, SAMPLE_PRIVATE_KEY_3);
     }

@@ -64,7 +64,7 @@ public class Uploader_transactionConfigIntegrationTest {
         assertThat(result.getTransactionHash(), is(notNullValue()));
         final Transaction transaction = waitForTransactionConfirmation(IntegrationTestConfig.getPrivateKey1(), result.getTransactionHash());
         assertThat(transaction, is(instanceOf(TransferTransaction.class)));
-        assertThat(((TransferTransaction) transaction).getRecipient().plain(), is(IntegrationTestConfig.getAddress1()));
+        assertThat(((TransferTransaction) transaction).getRecipient().getAddress().get().plain(), is(IntegrationTestConfig.getAddress1()));
 
         logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithRecipientPublicKeyProvided");
     }
@@ -91,7 +91,7 @@ public class Uploader_transactionConfigIntegrationTest {
         assertThat(result.getTransactionHash(), is(notNullValue()));
         final Transaction transaction = waitForTransactionConfirmation(IntegrationTestConfig.getPrivateKey1(), result.getTransactionHash());
         assertThat(transaction, is(instanceOf(TransferTransaction.class)));
-        assertThat(((TransferTransaction) transaction).getRecipient().plain(), is(IntegrationTestConfig.getAddress2()));
+        assertThat(((TransferTransaction) transaction).getRecipient().getAddress().get().plain(), is(IntegrationTestConfig.getAddress2()));
 
         logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithRecipientPublicKeyProvided");
     }
@@ -109,7 +109,7 @@ public class Uploader_transactionConfigIntegrationTest {
         assertThat(result.getTransactionHash(), is(notNullValue()));
         final Transaction transaction = waitForTransactionConfirmation(IntegrationTestConfig.getPrivateKey1(), result.getTransactionHash());
         assertThat(transaction, is(instanceOf(TransferTransaction.class)));
-        assertThat(((TransferTransaction) transaction).getRecipient().plain(), is(IntegrationTestConfig.getAddress2()));
+        assertThat(((TransferTransaction) transaction).getRecipient().getAddress().get().plain(), is(IntegrationTestConfig.getAddress2()));
 
         logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithRecipientAddressProvided");
     }
