@@ -34,25 +34,25 @@ publishing {
             pom {
                 name = 'ProximaX P2P Storage Java SDK'
                 description = 'ProximaX P2P Storage Java SDK is a project that utilizes the NEM blockchain technology with the IPFS P2P storage technology'
-                url = 'https://github.com/proximax-storage/xpx2-java-sdk'
+                url = 'https://github.com/proximax-storage/java-chain-xipfs-sdk'
                 organization {
                     name = 'ProximaX'
                     url = 'https://github.com/proximax-storage'
                 }
                 issueManagement {
                     system = 'GitHub'
-                    url = 'https://github.com/proximax-storage/xpx2-java-sdk/issues'
+                    url = 'https://github.com/proximax-storage/java-chain-xipfs-sdk/issues'
                 }
                 licenses {
                     license {
                         name = 'Apache License 2.0'
-                        url = 'https://github.com/proximax-storage/xpx2-java-sdk/blob/master/LICENSE'
+                        url = 'https://github.com/proximax-storage/java-chain-xipfs-sdk/blob/master/LICENSE'
                         distribution = 'repo'
                     }
                 }
                 scm {
-                    url = 'https://github.com/proximax-storage/xpx2-java-sdk'
-                    connection = 'scm:git:git://github.com/proximax-storage/xpx2-java-sdk.git'
+                    url = 'https://github.com/proximax-storage/java-chain-xipfs-sdk'
+                    connection = 'scm:git:git://github.com/proximax-storage/java-chain-xipfs-sdk.git'
                 }
             }
         }

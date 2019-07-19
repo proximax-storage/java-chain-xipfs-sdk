@@ -70,19 +70,19 @@ Add the storage SDK as dependency. Replace the version with the latest available
 ```xml
 <dependency>
     <groupId>io.proximax</groupId>
-    <artifactId>xpx2-java-sdk</artifactId>
+    <artifactId>java-chain-xipfs-sdk</artifactId>
     <version>0.1.0-beta.1</version>
 </dependency>
 ```
 **Gradle**
 ```xml
-compile 'io.proximax:xpx2-java-sdk:0.1.0-beta.1'
+compile 'io.proximax:java-chain-xipfs-sdk:0.1.0-beta.1'
 ```
 
 **Groovy**
 ```xml
 @Grapes(
-    @Grab(group='io.proximax', module='xpx2-java-sdk', version='0.1.0-beta.1')
+    @Grab(group='io.proximax', module='java-chain-xipfs-sdk', version='0.1.0-beta.1')
 )
 ```
 
