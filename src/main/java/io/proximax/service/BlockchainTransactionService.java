@@ -118,7 +118,7 @@ public class BlockchainTransactionService {
                                                   List<Mosaic> transactionMosaicsParam, Message message) {
 
         final List<Mosaic> mosaics = transactionMosaicsParam == null
-                ? singletonList(new Mosaic(new MosaicId("prx:xpx"), BigInteger.valueOf(1)))
+                ? singletonList(new Mosaic(new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16)), BigInteger.valueOf(1)))
                 : transactionMosaicsParam;
 
         return TransferTransaction.create(

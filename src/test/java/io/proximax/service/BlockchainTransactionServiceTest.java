@@ -45,7 +45,7 @@ public class BlockchainTransactionServiceTest {
     private static final String SAMPLE_RECIPIENT_PUBLIC_KEY = "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577";
     private static final Address SAMPLE_RECIPIENT_ADDRESS = Address.createFromRawAddress("SBRHESWCLX3VGQ6CHCZNKDN6DT7GLS6CZKJXCT5F");
     private static final Account SAMPLE_SIGNER_ACCOUNT = Account.createFromPrivateKey(SAMPLE_SIGNER_PRIVATE_KEY, NetworkType.MIJIN_TEST);
-    private static final List<Mosaic> SAMPLE_MOSAICS = singletonList(new Mosaic(new MosaicId("prx:xpx"), BigInteger.TEN));
+    private static final List<Mosaic> SAMPLE_MOSAICS = singletonList(new Mosaic(new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16)), BigInteger.TEN));
 
     private BlockchainTransactionService unitUnderTest;
 
@@ -181,7 +181,7 @@ public class BlockchainTransactionServiceTest {
         assertTrue(new Deadline(12, ChronoUnit.HOURS).getInstant() < transferTransactionArgumentCaptor.getValue().getDeadline().getInstant());
         assertThat(transferTransactionArgumentCaptor.getValue().getMosaics(), hasSize(1));
         assertThat(transferTransactionArgumentCaptor.getValue().getMosaics().get(0).getId(),
-                is(new MosaicId("prx:xpx")));
+                is(new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16))));
         assertThat(transferTransactionArgumentCaptor.getValue().getMosaics().get(0).getAmount(),
                 is(BigInteger.valueOf(1)));
         assertThat(transferTransactionArgumentCaptor.getValue().getNetworkType(),
