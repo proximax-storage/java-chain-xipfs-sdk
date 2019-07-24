@@ -3,11 +3,12 @@ jdk:
   # - oraclejdk8
   # - oraclejdk7
   - openjdk8
-before_install:
+install: true
+before_script:
   - if [ ! -z "$GPG_SECRET_KEYS" ]; then echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import; fi
   - if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust; fi
-install:
-  - mvn --settings .travis/settings.xml install -DskipTests=true -Dgpg.skip -Dmaven.javadoc.skip=true -B -V
+script:
+  - mvn clean install --settings .travis/settings.xml -DskipTests=true -Dgpg.skip -Dmaven.javadoc.skip=true -B -V
 before_deploy:
   - chmod +x .travis/deploy.sh # giving execution permissions to this file to avoid error 127.
   - mv ./.travis ../ # moving this out the publication folder as we don't want to publish it.
