@@ -42,8 +42,8 @@ public class BlockchainTransactionServiceTest {
 
     private static final String SAMPLE_TRANSACTION_HASH = "0166C76DCEC445BA6F4269505F60CB34BBFBDDE7E973697D159FA98286712463";
     private static final String SAMPLE_SIGNER_PRIVATE_KEY = "3C5FE45A711448245203832295523623A5D09A7B49F354B54933E4D5564D50F7";
-    private static final String SAMPLE_RECIPIENT_PUBLIC_KEY = "9C2086FE49B7A00578009B705AD719DB7E02A27870C67966AAA40540C136E248";
-    private static final Address SAMPLE_RECIPIENT_ADDRESS = Address.createFromRawAddress("VDYWAEJF7ZNGEOPAVGMSX6KDAX6PHVRENJVKX2OM");
+    private static final String SAMPLE_RECIPIENT_PUBLIC_KEY = "44AFFBEFF7EE8AFDE907EAD933C88374DE22F359CCBB6575BB14A8CB96B11C90";
+    private static final Address SAMPLE_RECIPIENT_ADDRESS = Address.createFromRawAddress("VC6LV4EP2MT3I5AV76IKVTPVAZRJUQDMKSABLE2M");
     private static final Account SAMPLE_SIGNER_ACCOUNT = Account.createFromPrivateKey(SAMPLE_SIGNER_PRIVATE_KEY, NetworkType.TEST_NET);
     private static final List<Mosaic> SAMPLE_MOSAICS = singletonList(new Mosaic(new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16)), BigInteger.TEN));
 
@@ -175,10 +175,12 @@ public class BlockchainTransactionServiceTest {
                 null, null, 12, null,false).blockingFirst();
 
         assertThat(signerPrivateKeyArgumentCaptor.getValue(), is(SAMPLE_SIGNER_PRIVATE_KEY));
-        assertThat(transferTransactionArgumentCaptor.getValue().getMessage(), is(mockMessage));
-        assertThat(transferTransactionArgumentCaptor.getValue().getRecipient(), is(SAMPLE_RECIPIENT_ADDRESS));
-        //assertThat(transferTransactionArgumentCaptor.getValue().getDeadline().getLocalDateTime(), sameOrBefore(LocalDateTime.now().plusHours(12)));
-        assertTrue(new Deadline(12, ChronoUnit.HOURS).getInstant() < transferTransactionArgumentCaptor.getValue().getDeadline().getInstant());
+        assertThat(transferTransactionArgumentCaptor.getValue().getMessage(), is(mockMessage));		
+        assertThat(transferTransactionArgumentCaptor.getValue().getRecipient().getAddress().get(), is(SAMPLE_RECIPIENT_ADDRESS));
+        //assertThat(transferTransactionArgumentCaptor.getValue().getDeadline().getLocalDateTime(), sameOrBefore(LocalDateTime.now().plusHours(12)));		
+		long nowSinceNemesis = new Deadline(0, ChronoUnit.SECONDS).getInstant();		
+        assertTrue(nowSinceNemesis < transferTransactionArgumentCaptor.getValue().getDeadline().getInstant());
+        // assertTrue(new Deadline(12, ChronoUnit.HOURS).getInstant() < transferTransactionArgumentCaptor.getValue().getDeadline().getInstant());
         assertThat(transferTransactionArgumentCaptor.getValue().getMosaics(), hasSize(1));
         assertThat(transferTransactionArgumentCaptor.getValue().getMosaics().get(0).getId(),
                 is(new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16))));
@@ -267,7 +269,9 @@ public class BlockchainTransactionServiceTest {
                 null, SAMPLE_RECIPIENT_ADDRESS.plain(), 15, null,false).blockingFirst();
 
         //assertThat(transferTransactionArgumentCaptor.getValue().getDeadline().getLocalDateTime(), sameOrBefore(Deadline.create(15, ChronoUnit.HOURS).getLocalDateTime()));
-        assertTrue(new Deadline(15, ChronoUnit.HOURS).getInstant() < transferTransactionArgumentCaptor.getValue().getDeadline().getInstant());
+        //assertTrue(new Deadline(15, ChronoUnit.HOURS).getInstant() < transferTransactionArgumentCaptor.getValue().getDeadline().getInstant());
+		long nowSinceNemesis = new Deadline(0, ChronoUnit.SECONDS).getInstant();		
+        assertTrue(nowSinceNemesis < transferTransactionArgumentCaptor.getValue().getDeadline().getInstant());
     }
 
     @Test
