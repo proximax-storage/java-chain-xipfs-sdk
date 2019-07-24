@@ -57,8 +57,8 @@ public class StorageNodeClientTest {
 
         assertThat(nodeInfoResponse, is(notNullValue()));
         assertThat(nodeInfoResponse.getBlockchainNetwork(), is(notNullValue()));
-        assertThat(nodeInfoResponse.getBlockchainNetwork().getHost(), is("52.221.231.207"));
-        assertThat(nodeInfoResponse.getBlockchainNetwork().getNetworkType(), is(BlockchainNetworkType.MIJIN_TEST));
+        assertThat(nodeInfoResponse.getBlockchainNetwork().getHost(), is("bctestnet1.xpxsirius.io"));
+        assertThat(nodeInfoResponse.getBlockchainNetwork().getNetworkType(), is(BlockchainNetworkType.TEST_NET));
         assertThat(nodeInfoResponse.getBlockchainNetwork().getPort(), is(3000));
         assertThat(nodeInfoResponse.getBlockchainNetwork().getProtocol(), is(HttpProtocol.HTTP));
     }
@@ -103,8 +103,8 @@ public class StorageNodeClientTest {
                                 "    \"blockchainNetwork\": {\n" +
                                 "        \"protocol\": \"http\",\n" +
                                 "        \"port\": 3000,\n" +
-                                "        \"host\": \"52.221.231.207\",\n" +
-                                "        \"network\": \"MIJIN_TEST\"\n" +
+                                "        \"host\": \"bctestnet1.xpxsirius.io\",\n" +
+                                "        \"network\": \"TEST_NET\"\n" +
                                 "    }\n" +
                                 "}")));
     }

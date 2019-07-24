@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.proximax</groupId>
-    <artifactId>xpx2-java-sdk</artifactId>
+    <artifactId>java-chain-xipfs-sdk</artifactId>
     <packaging>jar</packaging>
-    <name>xpx2-java-sdk</name>
+    <name>java-chain-xipfs-sdk</name>
     <version>0.2.0-beta.1</version>
     <description>Proximax P2P File Storage Java SDK</description>
     <prerequisites>
@@ -32,10 +32,10 @@
         </repository>
     </distributionManagement>
     <scm>
-        <connection>scm:git:https://github.com/proximax-storage/xpx2-java-sdk.git</connection>
-        <developerConnection>scm:git:https://github.com/proximax-storage/xpx2-java-sdk.git</developerConnection>
-        <url>https://github.com/proximax-storage/xpx2-java-sdk</url>
-        <tag>v0.1.0-beta.8</tag>
+        <connection>scm:git:https://github.com/proximax-storage/java-chain-xipfs-sdk.git</connection>
+        <developerConnection>scm:git:https://github.com/proximax-storage/java-chain-xipfs-sdk.git</developerConnection>
+        <url>https://github.com/proximax-storage/java-chain-xipfs-sdk</url>
+        <tag>v0.2.0-beta.1</tag>
     </scm>
     <licenses>
         <license>

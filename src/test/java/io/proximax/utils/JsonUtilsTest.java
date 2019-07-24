@@ -13,7 +13,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 
 public class JsonUtilsTest {
 
-    private static final String SAMPLE_DATA_HASH = "QmXkGKuB74uVJijEjgmGa9jMiY3MBiziFQPnrzvTZ3DKJf";
+    private static final String SAMPLE_DATA_HASH = "QmNZqVc7tBvjs1rohmcBbRUVUNmijEzexTQ9vi7435DTys";
     private static final String SAMPLE_DIGEST = "eqwewqewqewqewqewq";
 
     @Test
@@ -54,7 +54,7 @@ public class JsonUtilsTest {
                 "\"version\":\"1.0\"," +
                 "\"data\":{" +
                     "\"digest\":\"eqwewqewqewqewqewq\"," +
-                    "\"dataHash\":\"QmXkGKuB74uVJijEjgmGa9jMiY3MBiziFQPnrzvTZ3DKJf\"," +
+                    "\"dataHash\":\"QmNZqVc7tBvjs1rohmcBbRUVUNmijEzexTQ9vi7435DTys\"," +
                     "\"timestamp\":1," +
                     "\"description\":\"test description\"," +
                     "\"metadata\":{" +

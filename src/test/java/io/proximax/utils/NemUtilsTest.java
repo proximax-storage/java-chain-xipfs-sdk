@@ -22,15 +22,15 @@ import static org.hamcrest.core.IsNull.notNullValue;
 
 public class NemUtilsTest {
 
-    private static final String SAMPLE_PRIVATE_KEY = "1A5B81AE8830B8A79232CD366552AF6496FE548B4A23D4173FEEBA41B8ABA81F";
-    private static final String SAMPLE_PUBLIC_KEY = "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577";
-    private static final Address SAMPLE_ADDRESS = Address.createFromRawAddress("SBRHESWCLX3VGQ6CHCZNKDN6DT7GLS6CZKJXCT5F");
+    private static final String SAMPLE_PRIVATE_KEY = "322EB09F00E1F6AE6ABA96977E7676575E315CBDF79A83164FFA03B7CAE88927";
+    private static final String SAMPLE_PUBLIC_KEY = "2EEDB614740F60B11F3E4EC387388D8826CDFF33C0B0DACB9BA0BB8793DEBF6E";
+    private static final Address SAMPLE_ADDRESS = Address.createFromRawAddress("VAFHIY4GYEAQUZK4ECTAZD5R3JU2KFWEPW54ZBHA");
 
     private NemUtils unitUnderTest;
 
     @Before
     public void setUp() {
-        unitUnderTest = new NemUtils(NetworkType.MIJIN_TEST);
+        unitUnderTest = new NemUtils(NetworkType.TEST_NET);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -120,7 +120,7 @@ public class NemUtilsTest {
                 SAMPLE_ADDRESS,
                 Collections.singletonList(new Mosaic(ID, BigInteger.valueOf(1))),
                 new PlainMessage("test"),
-                NetworkType.MIJIN_TEST);
+                NetworkType.TEST_NET);
     }
 
 }

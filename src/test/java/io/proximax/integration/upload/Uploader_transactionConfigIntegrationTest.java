@@ -136,7 +136,7 @@ public class Uploader_transactionConfigIntegrationTest {
     public void shouldUploadWithTransactionMosaicsProvided() {
         final UploadParameter param = UploadParameter
                 .createForStringUpload(TEST_STRING, IntegrationTestConfig.getPrivateKey1())
-                .withTransactionMosaic(singletonList(new Mosaic(new MosaicId("prx:xpx"), BigInteger.valueOf(2))))
+                .withTransactionMosaic(singletonList(new Mosaic(new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16)), BigInteger.valueOf(2))))
                 .build();
 
         final UploadResult result = unitUnderTest.upload(param);
@@ -145,7 +145,7 @@ public class Uploader_transactionConfigIntegrationTest {
         assertThat(result.getTransactionHash(), is(notNullValue()));
         final Transaction transaction = waitForTransactionConfirmation(IntegrationTestConfig.getPrivateKey1(), result.getTransactionHash());
         assertThat(transaction, is(instanceOf(TransferTransaction.class)));
-        assertThat(((TransferTransaction) transaction).getMosaics().get(0).getId(), is(new MosaicId("prx:xpx")));
+        assertThat(((TransferTransaction) transaction).getMosaics().get(0).getId(), is(new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16))));
         assertThat(((TransferTransaction) transaction).getMosaics().get(0).getAmount(), is(BigInteger.valueOf(2)));
 
         logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithTransactionMosaicsProvided");
@@ -173,7 +173,7 @@ public class Uploader_transactionConfigIntegrationTest {
         try {
             final Listener listener = (Listener) connectionConfig.getBlockchainNetworkConnection().getBlockchainApi().createListener();
             listener.open().get();
-            final Transaction transaction = listener.confirmed(Account.createFromPrivateKey(senderPrivateKey, NetworkType.MIJIN_TEST).getAddress())
+            final Transaction transaction = listener.confirmed(Account.createFromPrivateKey(senderPrivateKey, NetworkType.TEST_NET).getAddress())
                     .filter(unconfirmedTxn
                             -> unconfirmedTxn.getTransactionInfo()
                             .flatMap(TransactionInfo::getHash)

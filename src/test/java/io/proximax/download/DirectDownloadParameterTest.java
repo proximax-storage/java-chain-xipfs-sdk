@@ -18,7 +18,7 @@ public class DirectDownloadParameterTest {
 
     private static final String SAMPLE_TRANSACTION_HASH = "F08E3C327DD5DE258EF20532F4D3C7638E9AC44885C34FDDC1A5740FD3C56EBB";
     private static final String SAMPLE_PRIVATE_KEY = "CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C";
-    private static final String SAMPLE_DATA_HASH = "QmXkGKuB74uVJijEjgmGa9jMiY3MBiziFQPnrzvTZ3DKJf";
+    private static final String SAMPLE_DATA_HASH = "QmNZqVc7tBvjs1rohmcBbRUVUNmijEzexTQ9vi7435DTys";
     private static final String SAMPLE_DIGEST = "eqwewqewqewqewqewq";
 
     @Test(expected = IllegalArgumentException.class)
