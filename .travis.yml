@@ -13,12 +13,12 @@ before_deploy:
   - mv ./.travis ../ # moving this out the publication folder as we don't want to publish it.
 deploy:
   provider: script
-    script: ../.travis/deploy.sh
-    # skip_cleanup: true
-    on:
-      repo: proximax-storage/java-chain-xipfs-sdk
-      branch: feature/DEVOPS-473
-      jdk: openjdk8
+  script: ../.travis/deploy.sh
+  # skip_cleanup: true
+  on:
+    repo: proximax-storage/java-chain-xipfs-sdk
+    branch: feature/DEVOPS-473
+    jdk: openjdk8
   # - provider: script
   #   script: ../.travis/deploy.sh
   #   skip_cleanup: true
