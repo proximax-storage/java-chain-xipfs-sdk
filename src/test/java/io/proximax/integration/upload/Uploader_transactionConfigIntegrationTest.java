@@ -173,7 +173,7 @@ public class Uploader_transactionConfigIntegrationTest {
         try {
             final Listener listener = (Listener) connectionConfig.getBlockchainNetworkConnection().getBlockchainApi().createListener();
             listener.open().get();
-            final Transaction transaction = listener.confirmed(Account.createFromPrivateKey(senderPrivateKey, NetworkType.MIJIN_TEST).getAddress())
+            final Transaction transaction = listener.confirmed(Account.createFromPrivateKey(senderPrivateKey, NetworkType.TEST_NET).getAddress())
                     .filter(unconfirmedTxn
                             -> unconfirmedTxn.getTransactionInfo()
                             .flatMap(TransactionInfo::getHash)

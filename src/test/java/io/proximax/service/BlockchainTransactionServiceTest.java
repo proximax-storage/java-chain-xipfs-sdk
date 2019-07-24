@@ -40,11 +40,11 @@ import static org.mockito.BDDMockito.given;
 
 public class BlockchainTransactionServiceTest {
 
-    private static final String SAMPLE_TRANSACTION_HASH = "F08E3C327DD5DE258EF20532F4D3C7638E9AC44885C34FDDC1A5740FD3C56EBB";
-    private static final String SAMPLE_SIGNER_PRIVATE_KEY = "CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C";
-    private static final String SAMPLE_RECIPIENT_PUBLIC_KEY = "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577";
-    private static final Address SAMPLE_RECIPIENT_ADDRESS = Address.createFromRawAddress("SBRHESWCLX3VGQ6CHCZNKDN6DT7GLS6CZKJXCT5F");
-    private static final Account SAMPLE_SIGNER_ACCOUNT = Account.createFromPrivateKey(SAMPLE_SIGNER_PRIVATE_KEY, NetworkType.MIJIN_TEST);
+    private static final String SAMPLE_TRANSACTION_HASH = "0166C76DCEC445BA6F4269505F60CB34BBFBDDE7E973697D159FA98286712463";
+    private static final String SAMPLE_SIGNER_PRIVATE_KEY = "3C5FE45A711448245203832295523623A5D09A7B49F354B54933E4D5564D50F7";
+    private static final String SAMPLE_RECIPIENT_PUBLIC_KEY = "9C2086FE49B7A00578009B705AD719DB7E02A27870C67966AAA40540C136E248";
+    private static final Address SAMPLE_RECIPIENT_ADDRESS = Address.createFromRawAddress("VDYWAEJF7ZNGEOPAVGMSX6KDAX6PHVRENJVKX2OM");
+    private static final Account SAMPLE_SIGNER_ACCOUNT = Account.createFromPrivateKey(SAMPLE_SIGNER_PRIVATE_KEY, NetworkType.TEST_NET);
     private static final List<Mosaic> SAMPLE_MOSAICS = singletonList(new Mosaic(new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16)), BigInteger.TEN));
 
     private BlockchainTransactionService unitUnderTest;
@@ -88,7 +88,7 @@ public class BlockchainTransactionServiceTest {
 
         unitUnderTest = new BlockchainTransactionService(mockBlockchainNetworkConnection, mockTransactionClient, mockNemUtils, mockBlockchainMessageService);
 
-        given(mockBlockchainNetworkConnection.getNetworkType()).willReturn(NetworkType.MIJIN_TEST);
+        given(mockBlockchainNetworkConnection.getNetworkType()).willReturn(NetworkType.TEST_NET);
         given(mockTransferTransaction.getType()).willReturn(TransactionType.TRANSFER);
         given(mockAggregateTransaction.getType()).willReturn(TransactionType.AGGREGATE_COMPLETE);
         given(mockSignedTransaction.getHash()).willReturn(SAMPLE_TRANSACTION_HASH);
@@ -185,7 +185,7 @@ public class BlockchainTransactionServiceTest {
         assertThat(transferTransactionArgumentCaptor.getValue().getMosaics().get(0).getAmount(),
                 is(BigInteger.valueOf(1)));
         assertThat(transferTransactionArgumentCaptor.getValue().getNetworkType(),
-                is(NetworkType.MIJIN_TEST));
+                is(NetworkType.TEST_NET));
     }
 
     @Test

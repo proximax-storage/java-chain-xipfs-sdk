@@ -12,7 +12,7 @@ public class BlockchainNetworkConnectionTest {
 
     @Test(expected = ConnectionConfigNotValidException.class)
     public void failWhenNullApiHost() {
-        new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST, null, 3000, HttpProtocol.HTTP);
+        new BlockchainNetworkConnection(BlockchainNetworkType.TEST_NET, null, 3000, HttpProtocol.HTTP);
     }
 
     @Test(expected = ConnectionConfigNotValidException.class)
@@ -22,26 +22,26 @@ public class BlockchainNetworkConnectionTest {
 
     @Test(expected = ConnectionConfigNotValidException.class)
     public void failWhenPortIsNegativeInt() {
-        new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST, "127.0.0.1", -3000, HttpProtocol.HTTP);
+        new BlockchainNetworkConnection(BlockchainNetworkType.TEST_NET, "127.0.0.1", -3000, HttpProtocol.HTTP);
     }
 
     @Test(expected = ConnectionConfigNotValidException.class)
     public void failWhenNullHttpProtocol() {
-        new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST, "127.0.0.1", 3000, null);
+        new BlockchainNetworkConnection(BlockchainNetworkType.TEST_NET, "127.0.0.1", 3000, null);
     }
 
     @Test(expected = ConnectionConfigNotValidException.class)
     public void failWhenRestApiUrlCannotBeBuilt() {
-        new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST, "ASdasdas\\", 3000, HttpProtocol.HTTP);
+        new BlockchainNetworkConnection(BlockchainNetworkType.TEST_NET, "ASdasdas\\", 3000, HttpProtocol.HTTP);
     }
 
     @Test
     public void shouldBuildBlockchainNetworkConnection() {
         final BlockchainNetworkConnection result =
-                new BlockchainNetworkConnection(BlockchainNetworkType.MIJIN_TEST, "127.0.0.1", 3000, HttpProtocol.HTTP);
+                new BlockchainNetworkConnection(BlockchainNetworkType.TEST_NET, "127.0.0.1", 3000, HttpProtocol.HTTP);
 
         assertThat(result, is(notNullValue()));
-        assertThat(result.getNetworkType(), is(BlockchainNetworkType.MIJIN_TEST.networkType));
+        assertThat(result.getNetworkType(), is(BlockchainNetworkType.TEST_NET.networkType));
         assertThat(result.getApiHost(), is("127.0.0.1"));
         assertThat(result.getApiPort(), is(3000));
         assertThat(result.getApiProtocol(), is(HttpProtocol.HTTP));
