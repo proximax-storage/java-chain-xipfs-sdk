@@ -10,7 +10,7 @@
         <maven>2.2.0</maven>
     </prerequisites>
     <distributionManagement>
-        <repository>
+        <!-- <repository>
             <uniqueVersion>false</uniqueVersion>
             <id>nexus</id>
             <name>proximax nexus release</name>
@@ -21,15 +21,15 @@
             <id>nexus</id>
             <name>proximax nexus snapshot</name>
             <url>https://nexus.internal.proximax.io/repository/maven-snapshots/</url>
-        </snapshotRepository>		
-        <!--snapshotRepository>            
+        </snapshotRepository>		 -->
+        <snapshotRepository>            
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>            
-        </snapshotRepository-->
-        <!--<repository>-->
-        <!--<id>ossrh</id>-->
-        <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
-        <!--</repository>-->
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
     <scm>
         <connection>scm:git:https://github.com/proximax-storage/xpx2-java-sdk.git</connection>
@@ -103,17 +103,17 @@
     </repositories>    
     <build>
         <plugins>
-            <!--<plugin>-->
-            <!--<groupId>org.sonatype.plugins</groupId>-->
-            <!--<artifactId>nexus-staging-maven-plugin</artifactId>-->
-            <!--<version>1.6.7</version>-->
-            <!--<extensions>true</extensions>-->
-            <!--<configuration>-->
-            <!--<serverId>ossrh</serverId>-->
-            <!--<nexusUrl>https://oss.sonatype.org/</nexusUrl>-->
-            <!--<autoReleaseAfterClose>true</autoReleaseAfterClose>-->
-            <!--</configuration>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
