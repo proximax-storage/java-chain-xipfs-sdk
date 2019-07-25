@@ -3,9 +3,10 @@
     <groupId>io.proximax</groupId>
     <artifactId>java-chain-xipfs-sdk</artifactId>
     <packaging>jar</packaging>
-    <name>java-chain-xipfs-sdk</name>
+    <name>Official Proximax P2P Storage Java SDK</name>
+    <description>The Storage SDK allows developers to store content on the blockchain. There are currently two primary functions available: Upload and Download.</description>
+    <url>https://www.proximax.io/</url>
     <version>0.2.0-beta.1</version>
-    <description>Proximax P2P File Storage Java SDK</description>
     <prerequisites>
         <maven>2.2.0</maven>
     </prerequisites>
