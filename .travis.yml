@@ -26,4 +26,4 @@ deploy:
     on:
       repo: proximax-storage/java-chain-xipfs-sdk
       tags: true
-      condition: "$TRAVIS_TAG =~^v\d*$"
+      condition: "$TRAVIS_TAG =~^v*"
