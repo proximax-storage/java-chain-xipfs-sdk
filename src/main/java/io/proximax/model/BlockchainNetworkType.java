@@ -1,6 +1,6 @@
 package io.proximax.model;
 
-import io.nem.sdk.model.blockchain.NetworkType;
+import io.proximax.sdk.model.blockchain.NetworkType;
 
 import java.util.stream.Stream;
 
@@ -12,37 +12,37 @@ public enum BlockchainNetworkType {
     /**
      * The network type for mainnet
      */
-    MAIN_NET(io.nem.sdk.model.blockchain.NetworkType.MAIN_NET),
+    MAIN_NET(io.proximax.sdk.model.blockchain.NetworkType.MAIN_NET),
 
     /**
      * The network type for testnet
      */
-    TEST_NET(io.nem.sdk.model.blockchain.NetworkType.TEST_NET),
+    TEST_NET(io.proximax.sdk.model.blockchain.NetworkType.TEST_NET),
 
     /**
      * The network type for mijin
      */
-    MIJIN(io.nem.sdk.model.blockchain.NetworkType.MIJIN),
+    MIJIN(io.proximax.sdk.model.blockchain.NetworkType.MIJIN),
 
     /**
      * The network type for mijin test
      */
-    MIJIN_TEST(io.nem.sdk.model.blockchain.NetworkType.MIJIN_TEST),
+    MIJIN_TEST(io.proximax.sdk.model.blockchain.NetworkType.MIJIN_TEST),
 
     /**
      * The network type for mijin
      */
-    PRIVATE(io.nem.sdk.model.blockchain.NetworkType.PRIVATE),
+    PRIVATE(io.proximax.sdk.model.blockchain.NetworkType.PRIVATE),
 
     /**
      * The network type for mijin test
      */
-    PRIVATE_TEST(io.nem.sdk.model.blockchain.NetworkType.PRIVATE_TEST);
+    PRIVATE_TEST(io.proximax.sdk.model.blockchain.NetworkType.PRIVATE_TEST);
 
     /**
      * The network type equivalent on nem sdk
      */
-    public io.nem.sdk.model.blockchain.NetworkType networkType;
+    public io.proximax.sdk.model.blockchain.NetworkType networkType;
 
     BlockchainNetworkType(NetworkType networkType) {
         this.networkType = networkType;

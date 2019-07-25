@@ -1,13 +1,13 @@
 package io.proximax.service;
 
-import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.mosaic.MosaicId;
-import io.nem.sdk.model.transaction.Deadline;
-import io.nem.sdk.model.transaction.Message;
-import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.TransactionType;
-import io.nem.sdk.model.transaction.TransferTransaction;
+import io.proximax.sdk.model.account.Address;
+import io.proximax.sdk.model.mosaic.Mosaic;
+import io.proximax.sdk.model.mosaic.MosaicId;
+import io.proximax.sdk.model.transaction.Deadline;
+import io.proximax.sdk.model.transaction.Message;
+import io.proximax.sdk.model.transaction.SignedTransaction;
+import io.proximax.sdk.model.transaction.TransactionType;
+import io.proximax.sdk.model.transaction.TransferTransaction;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.exceptions.GetTransactionFailureException;
 import io.proximax.exceptions.TransactionNotAllowedException;
@@ -118,7 +118,7 @@ public class BlockchainTransactionService {
                                                   List<Mosaic> transactionMosaicsParam, Message message) {
 
         final List<Mosaic> mosaics = transactionMosaicsParam == null
-                ? singletonList(new Mosaic(new MosaicId("prx:xpx"), BigInteger.valueOf(1)))
+                ? singletonList(new Mosaic(new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16)), BigInteger.valueOf(1)))
                 : transactionMosaicsParam;
 
         return TransferTransaction.create(

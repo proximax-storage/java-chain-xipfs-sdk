@@ -1,11 +1,11 @@
 package io.proximax.search;
 
-import io.nem.sdk.model.account.Account;
-import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionInfo;
-import io.nem.sdk.model.transaction.TransferTransaction;
+import io.proximax.sdk.model.account.Account;
+import io.proximax.sdk.model.account.PublicAccount;
+import io.proximax.sdk.model.blockchain.NetworkType;
+import io.proximax.sdk.model.transaction.Transaction;
+import io.proximax.sdk.model.transaction.TransactionInfo;
+import io.proximax.sdk.model.transaction.TransferTransaction;
 import io.proximax.async.AsyncCallbacks;
 import io.proximax.async.AsyncTask;
 import io.proximax.connection.ConnectionConfig;

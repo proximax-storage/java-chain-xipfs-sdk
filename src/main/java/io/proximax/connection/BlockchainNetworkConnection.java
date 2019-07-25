@@ -1,11 +1,13 @@
 package io.proximax.connection;
 
-import io.nem.sdk.model.blockchain.NetworkType;
+import io.proximax.sdk.model.blockchain.NetworkType;
 import io.proximax.exceptions.ConnectionConfigNotValidException;
 import io.proximax.model.BlockchainNetworkType;
+import io.proximax.sdk.BlockchainApi;
 import org.apache.http.client.utils.URIBuilder;
 
 import static io.proximax.utils.ParameterValidationUtils.checkParameter;
+import java.net.URL;
 
 /**
  * The config class to connect to blockchain network
@@ -17,6 +19,7 @@ public class BlockchainNetworkConnection {
 	private final String apiHost;
 	private final int apiPort;
 	private final HttpProtocol apiProtocol;
+        private final BlockchainApi blockchainApi;
 
 	/**
 	 * Construct instance of this config
@@ -42,6 +45,7 @@ public class BlockchainNetworkConnection {
 					.setScheme(apiProtocol.getProtocol())
 					.build()
 					.toString();
+                        this.blockchainApi = new BlockchainApi(new URL(restApiUrl), this.networkType);
 		} catch (Exception e) {
 			throw new ConnectionConfigNotValidException("Invalid api config provided", e);
 		}
@@ -86,4 +90,8 @@ public class BlockchainNetworkConnection {
 	public HttpProtocol getApiProtocol() {
 		return apiProtocol;
 	}
+
+    public BlockchainApi getBlockchainApi() {
+        return blockchainApi;
+    }
 }

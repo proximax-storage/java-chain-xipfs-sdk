@@ -1,16 +1,16 @@
 package io.proximax.service;
 
-import io.nem.core.crypto.KeyPair;
-import io.nem.core.crypto.PrivateKey;
-import io.nem.core.crypto.PublicKey;
-import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.transaction.Message;
-import io.nem.sdk.model.transaction.PlainMessage;
-import io.nem.sdk.model.transaction.SecureMessage;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransferTransaction;
+import io.proximax.core.crypto.KeyPair;
+import io.proximax.core.crypto.PrivateKey;
+import io.proximax.core.crypto.PublicKey;
+import io.proximax.sdk.model.account.Address;
+import io.proximax.sdk.model.account.PublicAccount;
+import io.proximax.sdk.model.blockchain.NetworkType;
+import io.proximax.sdk.model.transaction.Message;
+import io.proximax.sdk.model.transaction.PlainMessage;
+import io.proximax.sdk.model.transaction.SecureMessage;
+import io.proximax.sdk.model.transaction.Transaction;
+import io.proximax.sdk.model.transaction.TransferTransaction;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.exceptions.DownloadForMessageTypeNotSupportedException;
 import io.proximax.exceptions.InvalidPrivateKeyOnDownloadException;
@@ -118,7 +118,8 @@ public class BlockchainMessageService {
     private PublicKey getTransactionOtherPartyPublicKey(KeyPair retrieverKeyPair, TransferTransaction transferTransaction) {
         final PublicAccount senderAccount = Optional.of(transferTransaction).flatMap(Transaction::getSigner).orElseThrow(
                 () -> new MissingSignerOnTransferTransactionException("Unexpected missing signer on transfer transaction"));
-        final Address recipient = transferTransaction.getRecipient();
+        final Address recipient = transferTransaction.getRecipient().getAddress().orElseThrow(
+                () -> new RuntimeException("Unexpected missing recipient address of transfer transaction"));
         final Address retrieverAddress = Address.createFromPublicKey(retrieverKeyPair.getPublicKey().toString(), networkType);
 
         if (retrieverAddress.equals(recipient)) { // retriever is the recipient, use sender public key

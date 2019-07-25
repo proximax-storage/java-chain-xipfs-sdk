@@ -1,7 +1,7 @@
 package io.proximax.download;
 
 import io.ipfs.multihash.Multihash;
-import io.nem.core.crypto.PrivateKey;
+import io.proximax.core.crypto.PrivateKey;
 import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.PrivacyStrategy;
 import io.proximax.privacy.strategy.NemKeysPrivacyStrategy;

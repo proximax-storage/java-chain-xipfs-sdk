@@ -1,6 +1,6 @@
 package io.proximax.service;
 
-import io.nem.sdk.model.transaction.TransferTransaction;
+import io.proximax.sdk.model.transaction.TransferTransaction;
 import io.proximax.model.ProximaxMessagePayloadModel;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class RetrieveProximaxMessagePayloadServiceTest {
         assertThat(result.getVersion(), is("1.0"));
         assertThat(result.getPrivacyType(), is(1001));
         assertThat(result.getData().getDigest(), is("eqwewqewqewqewqewq"));
-        assertThat(result.getData().getDataHash(), is("QmXkGKuB74uVJijEjgmGa9jMiY3MBiziFQPnrzvTZ3DKJf"));
+        assertThat(result.getData().getDataHash(), is("QmNZqVc7tBvjs1rohmcBbRUVUNmijEzexTQ9vi7435DTys"));
         assertThat(result.getData().getTimestamp(), is(1L));
         assertThat(result.getData().getDescription(), is("test description"));
         assertThat(result.getData().getName(), is("test name"));
@@ -56,7 +56,7 @@ public class RetrieveProximaxMessagePayloadServiceTest {
             "\"version\":\"1.0\"," +
             "\"data\":{" +
                 "\"digest\":\"eqwewqewqewqewqewq\"," +
-                "\"dataHash\":\"QmXkGKuB74uVJijEjgmGa9jMiY3MBiziFQPnrzvTZ3DKJf\"," +
+                "\"dataHash\":\"QmNZqVc7tBvjs1rohmcBbRUVUNmijEzexTQ9vi7435DTys\"," +
                 "\"timestamp\":1," +
                 "\"description\":\"test description\"," +
                 "\"metadata\":{" +

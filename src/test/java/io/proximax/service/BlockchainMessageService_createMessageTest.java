@@ -1,11 +1,11 @@
 package io.proximax.service;
 
-import io.nem.core.crypto.KeyPair;
-import io.nem.core.crypto.PrivateKey;
-import io.nem.core.crypto.PublicKey;
-import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.transaction.Message;
-import io.nem.sdk.model.transaction.SecureMessage;
+import io.proximax.core.crypto.KeyPair;
+import io.proximax.core.crypto.PrivateKey;
+import io.proximax.core.crypto.PublicKey;
+import io.proximax.sdk.model.blockchain.NetworkType;
+import io.proximax.sdk.model.transaction.Message;
+import io.proximax.sdk.model.transaction.SecureMessage;
 import io.proximax.model.PrivacyType;
 import io.proximax.model.ProximaxDataModel;
 import io.proximax.model.ProximaxMessagePayloadModel;
@@ -25,12 +25,12 @@ import static org.mockito.BDDMockito.given;
 
 public class BlockchainMessageService_createMessageTest {
 
-    private static final String SAMPLE_SENDER_PRIVATE_KEY = "CDB825EBFED7ABA031E19AB6A91B637E5A6B13DACF50F0EA579885F68BED778C";
-    private static final String SAMPLE_SENDER_PUBLIC_KEY = "0BB0FC937EF6C10AD16ABCC3FF4A2848F16BF360A98D64140E7674F31702903B";
-    private static final String SAMPLE_SENDER_ADDRESS = "SDROED2EKLFO3WNGK2VADE7QVENDZBK5JUKNAGME";
-    private static final String SAMPLE_RECIPIENT_PUBLIC_KEY = "E9F6576AF9F05E6738CD4E55B875A823CC75B4E8AE8984747DF7B235685C1577";
-    private static final String SAMPLE_RECIPIENT_ADDRESS = "SBRHESWCLX3VGQ6CHCZNKDN6DT7GLS6CZKJXCT5F";
-    private static final String SAMPLE_DATA_HASH = "QmXkGKuB74uVJijEjgmGa9jMiY3MBiziFQPnrzvTZ3DKJf";
+    private static final String SAMPLE_SENDER_PRIVATE_KEY = "3C5FE45A711448245203832295523623A5D09A7B49F354B54933E4D5564D50F7";
+    private static final String SAMPLE_SENDER_PUBLIC_KEY = "F100416F5831943979A7D5F53BEBA7CBD9535D9CF920A88074D698C08E9FB42B";
+    private static final String SAMPLE_SENDER_ADDRESS = "VBJPBI23LGXD5FEPZRLFSZ3WJPG5NVKYAIWVBQV5";
+    private static final String SAMPLE_RECIPIENT_PUBLIC_KEY = "2EEDB614740F60B11F3E4EC387388D8826CDFF33C0B0DACB9BA0BB8793DEBF6E";
+    private static final String SAMPLE_RECIPIENT_ADDRESS = "VAFHIY4GYEAQUZK4ECTAZD5R3JU2KFWEPW54ZBHA";
+    private static final String SAMPLE_DATA_HASH = "QmNZqVc7tBvjs1rohmcBbRUVUNmijEzexTQ9vi7435DTys";
     private static final String SAMPLE_DIGEST = "eqwewqewqewqewqewq";
 
     private BlockchainMessageService unitUnderTest;
@@ -41,7 +41,7 @@ public class BlockchainMessageService_createMessageTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        unitUnderTest = new BlockchainMessageService(NetworkType.MIJIN_TEST, mockAccountClient);
+        unitUnderTest = new BlockchainMessageService(NetworkType.TEST_NET, mockAccountClient);
 
     }
 
@@ -62,7 +62,7 @@ public class BlockchainMessageService_createMessageTest {
                 "\"version\":\"1.0\"," +
                 "\"data\":{" +
                     "\"digest\":\"eqwewqewqewqewqewq\"," +
-                    "\"dataHash\":\"QmXkGKuB74uVJijEjgmGa9jMiY3MBiziFQPnrzvTZ3DKJf\"," +
+                    "\"dataHash\":\"QmNZqVc7tBvjs1rohmcBbRUVUNmijEzexTQ9vi7435DTys\"," +
                     "\"timestamp\":1," +
                     "\"description\":\"test description\"," +
                     "\"metadata\":{" +
@@ -83,7 +83,7 @@ public class BlockchainMessageService_createMessageTest {
                 "\"privacyType\":1001," +
                 "\"version\":\"1.0\"," +
                 "\"data\":{" +
-                    "\"dataHash\":\"QmXkGKuB74uVJijEjgmGa9jMiY3MBiziFQPnrzvTZ3DKJf\"," +
+                    "\"dataHash\":\"QmNZqVc7tBvjs1rohmcBbRUVUNmijEzexTQ9vi7435DTys\"," +
                     "\"timestamp\":1" +
                 "}}"));
     }
@@ -103,7 +103,7 @@ public class BlockchainMessageService_createMessageTest {
                 "\"version\":\"1.0\"," +
                 "\"data\":{" +
                     "\"digest\":\"eqwewqewqewqewqewq\"," +
-                    "\"dataHash\":\"QmXkGKuB74uVJijEjgmGa9jMiY3MBiziFQPnrzvTZ3DKJf\"," +
+                    "\"dataHash\":\"QmNZqVc7tBvjs1rohmcBbRUVUNmijEzexTQ9vi7435DTys\"," +
                     "\"timestamp\":1," +
                     "\"description\":\"test description\"," +
                     "\"metadata\":{" +
@@ -129,7 +129,7 @@ public class BlockchainMessageService_createMessageTest {
                 "\"version\":\"1.0\"," +
                 "\"data\":{" +
                     "\"digest\":\"eqwewqewqewqewqewq\"," +
-                    "\"dataHash\":\"QmXkGKuB74uVJijEjgmGa9jMiY3MBiziFQPnrzvTZ3DKJf\"," +
+                    "\"dataHash\":\"QmNZqVc7tBvjs1rohmcBbRUVUNmijEzexTQ9vi7435DTys\"," +
                     "\"timestamp\":1," +
                     "\"description\":\"test description\"," +
                     "\"metadata\":{" +
@@ -155,7 +155,7 @@ public class BlockchainMessageService_createMessageTest {
                 "\"version\":\"1.0\"," +
                 "\"data\":{" +
                     "\"digest\":\"eqwewqewqewqewqewq\"," +
-                    "\"dataHash\":\"QmXkGKuB74uVJijEjgmGa9jMiY3MBiziFQPnrzvTZ3DKJf\"," +
+                    "\"dataHash\":\"QmNZqVc7tBvjs1rohmcBbRUVUNmijEzexTQ9vi7435DTys\"," +
                     "\"timestamp\":1," +
                     "\"description\":\"test description\"," +
                     "\"metadata\":{" +
@@ -184,7 +184,7 @@ public class BlockchainMessageService_createMessageTest {
                 "\"version\":\"1.0\"," +
                 "\"data\":{" +
                     "\"digest\":\"eqwewqewqewqewqewq\"," +
-                    "\"dataHash\":\"QmXkGKuB74uVJijEjgmGa9jMiY3MBiziFQPnrzvTZ3DKJf\"," +
+                    "\"dataHash\":\"QmNZqVc7tBvjs1rohmcBbRUVUNmijEzexTQ9vi7435DTys\"," +
                     "\"timestamp\":1," +
                     "\"description\":\"test description\"," +
                     "\"metadata\":{" +

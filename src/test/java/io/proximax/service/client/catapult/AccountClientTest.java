@@ -1,9 +1,9 @@
 package io.proximax.service.client.catapult;
 
-import io.nem.core.crypto.PublicKey;
-import io.nem.sdk.infrastructure.AccountHttp;
-import io.nem.sdk.model.account.AccountInfo;
-import io.nem.sdk.model.account.Address;
+import io.proximax.core.crypto.PublicKey;
+import io.proximax.sdk.infrastructure.AccountHttp;
+import io.proximax.sdk.model.account.AccountInfo;
+import io.proximax.sdk.model.account.Address;
 import io.proximax.exceptions.AccountNotFoundException;
 import io.proximax.exceptions.PublicKeyNotFoundException;
 import io.reactivex.Observable;

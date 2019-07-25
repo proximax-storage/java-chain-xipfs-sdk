@@ -1,6 +1,6 @@
 package io.proximax.service;
 
-import io.nem.sdk.model.transaction.TransferTransaction;
+import io.proximax.sdk.model.transaction.TransferTransaction;
 import io.proximax.connection.BlockchainNetworkConnection;
 import io.proximax.model.ProximaxMessagePayloadModel;
 import io.proximax.utils.JsonUtils;

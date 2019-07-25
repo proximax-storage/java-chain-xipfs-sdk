@@ -11,6 +11,7 @@ import io.proximax.service.CreateProximaxDataService;
 import io.proximax.service.CreateProximaxMessagePayloadService;
 import io.proximax.utils.AsyncUtils;
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 import java.net.MalformedURLException;
 
@@ -20,11 +21,13 @@ import static io.proximax.utils.ParameterValidationUtils.checkParameter;
  * The Uploader class that handles the upload functionality
  * <br>
  * <br>
- * The Uploader creation requires a ConnectionConfig that defines generally where and how the upload will be done.
- * The instance of the class can be reused to upload multiple times.
+ * The Uploader creation requires a ConnectionConfig that defines generally
+ * where and how the upload will be done. The instance of the class can be
+ * reused to upload multiple times.
  * <br>
  * <br>
- * Each upload requires an UploadParameter that contains what is being uploaded along with additional details.
+ * Each upload requires an UploadParameter that contains what is being uploaded
+ * along with additional details.
  * <br>
  * <br>
  * Each upload can be any of the following type:
@@ -50,7 +53,8 @@ public class Uploader {
     /**
      * Construct the class with a ConnectionConfig
      *
-     * @param connectionConfig the connection config that defines generally where the upload will be sent
+     * @param connectionConfig the connection config that defines generally
+     *                         where the upload will be sent
      */
     public Uploader(ConnectionConfig connectionConfig) {
         this.createProximaxDataService = new CreateProximaxDataService(connectionConfig.getFileStorageConnection());
@@ -72,9 +76,11 @@ public class Uploader {
 
     /**
      * Upload a data synchronously and attach it on a blockchain transaction.
-     * This upload returns result once the blockchain transaction is validated and already set with `unconfirmed` status
+     * This upload returns result once the blockchain transaction is validated
+     * and already set with `unconfirmed` status
      * <br>
-     * The upload throws an UploadFailureException runtime exception if does not succeed.
+     * The upload throws an UploadFailureException runtime exception if does not
+     * succeed.
      *
      * @param uploadParam the upload parameter
      * @return the upload result
@@ -87,9 +93,11 @@ public class Uploader {
 
     /**
      * Upload a data asynchronously and attach it on a blockchain transaction.
-     * This upload returns result once the blockchain transaction is validated and already set with `unconfirmed` status
+     * This upload returns result once the blockchain transaction is validated
+     * and already set with `unconfirmed` status
      * <br>
-     * The upload throws an UploadFailureException runtime exception if does not succeed.
+     * The upload throws an UploadFailureException runtime exception if does not
+     * succeed.
      *
      * @param uploadParam    the upload parameter
      * @param asyncCallbacks an optional callbacks when succeeded or failed
@@ -100,7 +108,7 @@ public class Uploader {
 
         final AsyncTask asyncTask = new AsyncTask();
 
-        AsyncUtils.processFirstItem(this.doUpload(uploadParam), asyncCallbacks, asyncTask);
+        AsyncUtils.processFirstItem(this.doUpload(uploadParam).subscribeOn(Schedulers.newThread()), asyncCallbacks, asyncTask);
 
         return asyncTask;
     }
@@ -109,12 +117,12 @@ public class Uploader {
         return Observable.fromCallable(
                 () -> {
                     try {
-                        final UploadResult result = createProximaxDataService.createData(uploadParam).flatMap(uploadedData ->
-                                createProximaxMessagePayloadService.createMessagePayload(uploadParam, uploadedData)
-                                        .flatMap(messagePayload ->
-                                                createAndAnnounceTransaction(uploadParam, messagePayload)
-                                                        .map(transactionHash ->
-                                                                createUploadResult(messagePayload, transactionHash)))).blockingFirst();
+                        final UploadResult result = createProximaxDataService.createData(uploadParam).flatMap(uploadedData
+                                -> createProximaxMessagePayloadService.createMessagePayload(uploadParam, uploadedData)
+                                .flatMap(messagePayload
+                                        -> createAndAnnounceTransaction(uploadParam, messagePayload)
+                                        .map(transactionHash
+                                                -> createUploadResult(messagePayload, transactionHash)))).blockingFirst();
                         return result;
                     } catch (RuntimeException ex) {
                         throw new UploadFailureException("Upload failed.", ex);

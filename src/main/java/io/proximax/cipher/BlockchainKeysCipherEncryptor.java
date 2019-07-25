@@ -1,10 +1,10 @@
 package io.proximax.cipher;
 
-import io.nem.core.crypto.Hashes;
-import io.nem.core.crypto.KeyPair;
-import io.nem.core.crypto.ed25519.Ed25519Utils;
-import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedGroupElement;
-import io.nem.core.crypto.ed25519.arithmetic.Ed25519GroupElement;
+import io.proximax.core.crypto.Hashes;
+import io.proximax.core.crypto.KeyPair;
+import io.proximax.core.crypto.ed25519.Ed25519Utils;
+import io.proximax.core.crypto.ed25519.arithmetic.Ed25519EncodedGroupElement;
+import io.proximax.core.crypto.ed25519.arithmetic.Ed25519GroupElement;
 import io.proximax.exceptions.DecryptionFailureException;
 import io.proximax.exceptions.EncryptionFailureException;
 import org.apache.commons.io.IOUtils;

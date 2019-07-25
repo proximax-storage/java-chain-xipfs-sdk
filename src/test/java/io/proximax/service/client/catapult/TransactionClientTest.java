@@ -1,15 +1,14 @@
 package io.proximax.service.client.catapult;
 
-import io.nem.sdk.infrastructure.Listener;
-import io.nem.sdk.infrastructure.TransactionHttp;
-import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
-import io.nem.sdk.model.transaction.TransactionInfo;
-import io.nem.sdk.model.transaction.TransactionStatusError;
+import io.proximax.sdk.infrastructure.Listener;
+import io.proximax.sdk.infrastructure.TransactionHttp;
+import io.proximax.sdk.model.account.Address;
+import io.proximax.sdk.model.transaction.SignedTransaction;
+import io.proximax.sdk.model.transaction.Transaction;
+import io.proximax.sdk.model.transaction.TransactionAnnounceResponse;
+import io.proximax.sdk.model.transaction.TransactionInfo;
+import io.proximax.sdk.model.transaction.TransactionStatusError;
 import io.proximax.exceptions.AnnounceBlockchainTransactionFailureException;
-import io.proximax.service.client.catapult.TransactionClient;
 import io.reactivex.Observable;
 import org.junit.Before;
 import org.junit.Test;
