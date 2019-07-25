@@ -365,7 +365,13 @@
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
-        
+        <!-- TODO Temporarily added as java-xpx-chain-sdk does not include it as dependency -->
+        <dependency>
+            <groupId>org.threeten</groupId>
+            <artifactId>threetenbp</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
         <!-- test dependencies -->
         <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
         <dependency>

@@ -29,6 +29,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertTrue;
@@ -127,8 +128,7 @@ public class Uploader_transactionConfigIntegrationTest {
         assertThat(result.getTransactionHash(), is(notNullValue()));
         final Transaction transaction = waitForTransactionConfirmation(IntegrationTestConfig.getPrivateKey1(), result.getTransactionHash());
         assertThat(transaction, is(instanceOf(TransferTransaction.class)));
-        assertTrue(new Deadline(5, ChronoUnit.HOURS).getInstant() < transaction.getDeadline().getInstant());
-        //assertThat(transaction.getDeadline().getInstant(), sameOrBefore(Deadline.create(5, ChronoUnit.HOURS).getInstant()));
+        assertThat(transaction.getDeadline().getInstant(), is(lessThanOrEqualTo(new Deadline(5, ChronoUnit.HOURS).getInstant())));
         logAndSaveResult(result, getClass().getSimpleName() + ".shouldUploadWithTransactionDeadlineProvided");
     }
 

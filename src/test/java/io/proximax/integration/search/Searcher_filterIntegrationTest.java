@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
@@ -56,7 +57,7 @@ public class Searcher_filterIntegrationTest {
 
 		assertThat(search, is(notNullValue()));
 		assertThat(search.getResults(), is(notNullValue()));
-		assertThat(search.getResults().size(), is(10));
+		assertThat(search.getResults().size(), is(lessThanOrEqualTo(10)));
 		assertThat(search.getResults().stream().allMatch(r ->
 				r.getMessagePayload().getData().getName().contains("byte array")), is(true));
 	}
@@ -71,7 +72,7 @@ public class Searcher_filterIntegrationTest {
 
 		assertThat(search, is(notNullValue()));
 		assertThat(search.getResults(), is(notNullValue()));
-		assertThat(search.getResults().size(), is(10));
+		assertThat(search.getResults().size(), is(lessThanOrEqualTo(10)));
 		assertThat(search.getResults().stream().allMatch(r ->
 				r.getMessagePayload().getData().getDescription().contains("byte array description")), is(true));
 	}
@@ -86,7 +87,7 @@ public class Searcher_filterIntegrationTest {
 
 		assertThat(search, is(notNullValue()));
 		assertThat(search.getResults(), is(notNullValue()));
-		assertThat(search.getResults().size(), is(10));
+		assertThat(search.getResults().size(), is(lessThanOrEqualTo(10)));
 		assertThat(search.getResults().stream().allMatch(r ->
 				r.getMessagePayload().getData().getMetadata().containsKey("bytearraykey")), is(true));
 	}
@@ -102,7 +103,7 @@ public class Searcher_filterIntegrationTest {
 
 		assertThat(search, is(notNullValue()));
 		assertThat(search.getResults(), is(notNullValue()));
-		assertThat(search.getResults().size(), is(10));
+		assertThat(search.getResults().size(), is(lessThanOrEqualTo(10)));
 		assertThat(search.getResults().stream().allMatch(r ->
 				"bytearrayval".equals(r.getMessagePayload().getData().getMetadata().get("bytearraykey"))), is(true));
 	}
@@ -120,7 +121,7 @@ public class Searcher_filterIntegrationTest {
 
 		assertThat(search, is(notNullValue()));
 		assertThat(search.getResults(), is(notNullValue()));
-		assertThat(search.getResults().size(), is(10));
+		assertThat(search.getResults().size(), is(lessThanOrEqualTo(10)));
 		assertThat(search.getResults().stream().allMatch(r ->
 				r.getMessagePayload().getData().getName().contains("byte array")), is(true));
 		assertThat(search.getResults().stream().allMatch(r ->

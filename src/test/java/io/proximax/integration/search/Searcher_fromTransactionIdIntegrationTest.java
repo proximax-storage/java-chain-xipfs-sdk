@@ -25,9 +25,11 @@ import io.proximax.search.SearchParameter;
 import io.proximax.search.SearchResult;
 import io.proximax.search.Searcher;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
@@ -48,18 +50,22 @@ public class Searcher_fromTransactionIdIntegrationTest {
 
 	@Test
 	public void shouldSearchWithFromTransactionId() {
-		final SearchParameter param = SearchParameter.createForAddress("SDB5DP6VGVNPSQJYEC2X3QIWKAFJ3DCMNQCIF6OA")
-				.withFromTransactionId("5BDEDB565D6F4B0001155AFF")
+		final SearchParameter initParam = SearchParameter.createForAddress(IntegrationTestConfig.getAddress1())
+				.build();
+		final SearchResult initSearch = unitUnderTest.search(initParam);
+
+		final SearchParameter param = SearchParameter.createForAddress(IntegrationTestConfig.getAddress1())
+				.withFromTransactionId(initSearch.getResults().get(0).getTransactionId())
 				.build();
 
 		final SearchResult search = unitUnderTest.search(param);
 
 		assertThat(search, is(notNullValue()));
 		assertThat(search.getResults(), is(notNullValue()));
-		assertThat(search.getResults().size(), is(10));
-		assertThat(search.getResults().get(0).getTransactionHash(), is("90F151B2672F56157937CC3B56DF13A021E20A488DA5853D08FDA415B68742BA"));
+		assertThat(search.getResults().size(), is(lessThanOrEqualTo(10)));
+		assertThat(search.getResults().get(0).getTransactionHash(), is(initSearch.getResults().get(1).getTransactionHash()));
 		assertThat(search.getToTransactionId(), is(notNullValue()));
-		assertThat(search.getFromTransactionId(), is("5BDEDB565D6F4B0001155AFF"));
+		assertThat(search.getFromTransactionId(), is(initSearch.getResults().get(0).getTransactionId()));
 	}
 
 }
