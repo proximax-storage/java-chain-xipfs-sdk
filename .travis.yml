@@ -13,8 +13,8 @@ before_install:
   # - chmod +x .travis/deploy.sh # giving execution permissions to this file to avoid error 127.
   # - mv ./.travis ../ # moving this out the publication folder as we don't want to publish it.
 
-install:
-  - mvn clean install --settings .travis/settings.xml -B -V
+install: 
+  - echo 'Skip default Travis CI install step' # this is to avoid an error with pub in Travis
 
 jobs:
   include:
@@ -22,10 +22,10 @@ jobs:
       if: type = push AND branch = master
       script:
         - echo "Publishing snapshot"
-        - mvn deploy --settings .travis/settings.xml -DskipTests=true -B -U
+        - mvn deploy --settings .travis/settings.xml -B -U
     - stage: prepare release
       if: tag IS present
       script:
         - echo "Publishing release $TRAVIS_TAG to public repository"
         - mvn --settings .travis/settings.xml org.codehaus.mojo:versions-maven-plugin:2.1:set -DnewVersion=$TRAVIS_TAG 1>/dev/null 2>/dev/null
-        - mvn deploy --settings .travis/settings.xml -DskipTests=true -B -U
+        - mvn deploy --settings .travis/settings.xml -B -U
