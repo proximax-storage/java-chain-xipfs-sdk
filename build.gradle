@@ -1,0 +1,94 @@
+/*
+ * Copyright 2018 NEM
+ * Copyright 2019 ProximaX
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+plugins {
+    // main language plugin
+    id 'java-library'
+    // distribution of library and dependencies
+    id 'java-library-distribution'
+    // publishing to maven repository
+    id 'maven-publish'
+    // sign the artifacts and pom
+    id 'signing'
+    // code coverage reporting
+    id 'jacoco'
+    // integrate coverage with github
+    id 'com.github.kt3k.coveralls' version '2.8.4'
+}
+
+// define contents of the build
+apply from: "$rootDir/gradle/content.gradle"
+// load setup for integration tests
+apply from: "$rootDir/gradle/integration.gradle"
+// load setup for coverage reports
+apply from: "$rootDir/gradle/coverage.gradle"
+// loak setup for publishing
+apply from: "$rootDir/gradle/publishing.gradle"
+// load Travis CI specific support
+apply from: "$rootDir/gradle/travis.gradle"
+
+// Java8
+sourceCompatibility = 1.8
+
+// take dependencies from maven central
+repositories {
+    mavenCentral()
+    // TODO remove this once proximax ipfs is in maven central
+    mavenLocal()
+}
+
+// testing details
+test {
+    // use JUnit5
+    // TODO this should be restored once we get rid of wiremock
+//    useJUnitPlatform()
+}
+
+// versions of dependencies
+ext {
+    okHttp3Version = '3.14.1'
+    junitVersion = '5.4.2'
+}
+
+dependencies {
+	implementation 'io.proximax:java-xpx-chain-sdk:0.3.1'
+	implementation 'io.proximax:java-xpx-ipfs-api:0.4.0-SNAPSHOT'
+
+	implementation 'commons-io:commons-io:2.6'
+	implementation 'org.apache.httpcomponents:httpmime:4.5.9'
+    implementation 'org.apache.commons:commons-lang3:3.9'
+	implementation 'com.codahale:shamir:0.6.0'
+	implementation 'com.fasterxml.jackson.core:jackson-core:2.9.9'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9.2'
+	implementation 'org.apache.tika:tika-core:1.17'
+	implementation 'com.google.code.gson:gson:2.8.5'
+	
+    // Logging facade
+	testImplementation 'org.slf4j:slf4j-api:1.7.26'
+	// log implementation
+	testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.3'
+	
+    // Tests
+    testImplementation 'org.hamcrest:hamcrest-all:1.3'
+    testImplementation 'org.mockito:mockito-core:2.18.3'
+    testImplementation 'org.mockito:mockito-inline:2.18.3'
+    // TODO wiremock pulls junit4 => no need for platform
+    testImplementation 'com.github.tomakehurst:wiremock:2.18.0'
+//    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+//    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
+//    testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+}

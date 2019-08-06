@@ -5,7 +5,7 @@ import io.proximax.core.crypto.PrivateKey;
 import io.proximax.core.crypto.PublicKey;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
 import java.io.ByteArrayInputStream;
