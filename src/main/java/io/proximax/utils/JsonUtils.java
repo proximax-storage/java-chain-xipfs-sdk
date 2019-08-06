@@ -1,5 +1,10 @@
 package io.proximax.utils;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -34,22 +39,40 @@ public class JsonUtils {
 		return gson;
 	}
 
-	/**
-	 * Read a JSON into an object of given type
-	 *
-	 * @param <T>
-	 *     		the generic type
-	 * @param json
-	 *            the string from which the object is to be deserialized.
-	 * @param targetType
-	 *            the target type
-	 * @return an object of type T from the string. Returns null if json is
-	 *         null.
-	 * @see Gson#fromJson(String, Class)
-	 */
-	public static <T> T fromJson(String json, Class<T> targetType) {
-		return getGson().fromJson(json, targetType);
-	}
+   /**
+    * Read a JSON into an object of given type
+    *
+    * @param <T>
+    *          the generic type
+    * @param json
+    *            the string from which the object is to be deserialized.
+    * @param targetType
+    *            the target type
+    * @return an object of type T from the string. Returns null if json is
+    *         null.
+    * @see Gson#fromJson(String, Class)
+    */
+   public static <T> T fromJson(String json, Class<T> targetType) {
+      return getGson().fromJson(json, targetType);
+   }
+
+   /**
+    * Read a JSON into an object of given type
+    *
+    * @param <T>
+    *          the generic type
+    * @param is
+    *            the input stream from which the object is to be deserialized.
+    * @param targetType
+    *            the target type
+    * @return an object of type T from the string. Returns null if json is
+    *         null.
+    * @see Gson#fromJson(String, Class)
+    */
+   public static <T> T fromJson(InputStream is, Class<T> targetType) {
+      Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
+      return getGson().fromJson(reader, targetType);
+   }
 
 	/**
 	 * Create a JSON representation of the object
