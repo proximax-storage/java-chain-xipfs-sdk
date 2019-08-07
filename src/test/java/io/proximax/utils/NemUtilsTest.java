@@ -1,5 +1,16 @@
 package io.proximax.utils;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
+
+import java.math.BigInteger;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import io.proximax.sdk.model.account.Account;
 import io.proximax.sdk.model.account.Address;
 import io.proximax.sdk.model.blockchain.NetworkType;
@@ -9,19 +20,10 @@ import io.proximax.sdk.model.transaction.Deadline;
 import io.proximax.sdk.model.transaction.PlainMessage;
 import io.proximax.sdk.model.transaction.SignedTransaction;
 import io.proximax.sdk.model.transaction.TransferTransaction;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.math.BigInteger;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
 
 public class NemUtilsTest {
 
+    private static final String NETWORK_GENERATION_HASH = "122EB09F00E1F6AE6ABA96977E7676575E315CBDF79A83164FFA03B7CAE88927";
     private static final String SAMPLE_PRIVATE_KEY = "322EB09F00E1F6AE6ABA96977E7676575E315CBDF79A83164FFA03B7CAE88927";
     private static final String SAMPLE_PUBLIC_KEY = "2EEDB614740F60B11F3E4EC387388D8826CDFF33C0B0DACB9BA0BB8793DEBF6E";
     private static final Address SAMPLE_ADDRESS = Address.createFromRawAddress("VAFHIY4GYEAQUZK4ECTAZD5R3JU2KFWEPW54ZBHA");
@@ -84,17 +86,17 @@ public class NemUtilsTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failOnSignTransactionWhenNullSignerPrivateKey() {
-        unitUnderTest.signTransaction(null, sampleTransferTransaction());
+        unitUnderTest.signTransaction(null, sampleTransferTransaction(), NETWORK_GENERATION_HASH);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failOnSignTransactionWhenNullTransferTransaction() {
-        unitUnderTest.signTransaction(SAMPLE_PRIVATE_KEY, null);
+        unitUnderTest.signTransaction(SAMPLE_PRIVATE_KEY, null, NETWORK_GENERATION_HASH);
     }
 
     @Test
     public void shouldReturnSignedTransactionOnSignTransaction() {
-        final SignedTransaction signedTransaction = unitUnderTest.signTransaction(SAMPLE_PRIVATE_KEY, sampleTransferTransaction());
+        final SignedTransaction signedTransaction = unitUnderTest.signTransaction(SAMPLE_PRIVATE_KEY, sampleTransferTransaction(), NETWORK_GENERATION_HASH);
 
         assertThat(signedTransaction, is(notNullValue()));;
     }
