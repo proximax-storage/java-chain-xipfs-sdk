@@ -1,5 +1,17 @@
 package io.proximax.service;
 
+import static io.proximax.utils.ParameterValidationUtils.checkParameter;
+import static java.util.Collections.singletonList;
+
+import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+
+import io.proximax.connection.BlockchainNetworkConnection;
+import io.proximax.exceptions.GetTransactionFailureException;
+import io.proximax.exceptions.TransactionNotAllowedException;
+import io.proximax.model.ProximaxMessagePayloadModel;
 import io.proximax.sdk.model.account.Address;
 import io.proximax.sdk.model.mosaic.Mosaic;
 import io.proximax.sdk.model.mosaic.MosaicId;
@@ -8,21 +20,9 @@ import io.proximax.sdk.model.transaction.Message;
 import io.proximax.sdk.model.transaction.SignedTransaction;
 import io.proximax.sdk.model.transaction.TransactionType;
 import io.proximax.sdk.model.transaction.TransferTransaction;
-import io.proximax.connection.BlockchainNetworkConnection;
-import io.proximax.exceptions.GetTransactionFailureException;
-import io.proximax.exceptions.TransactionNotAllowedException;
-import io.proximax.model.ProximaxMessagePayloadModel;
 import io.proximax.service.client.catapult.TransactionClient;
 import io.proximax.utils.NemUtils;
 import io.reactivex.Observable;
-
-import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-
-import static io.proximax.utils.ParameterValidationUtils.checkParameter;
-import static java.util.Collections.singletonList;
 
 /**
  * The service class responsible for handling tasks that work with blockchain transactions
@@ -97,7 +97,8 @@ public class BlockchainTransactionService {
                 recipientPublicKey, recipientAddress, useBlockchainSecureMessage);
         final Address recipient = getRecipient(signerPrivateKey, recipientPublicKey, recipientAddress);
         final TransferTransaction transaction = createTransaction(recipient, transactionDeadline, transactionMosaics, message);
-        final SignedTransaction signedTransaction = nemUtils.signTransaction(signerPrivateKey, transaction);
+        final String networkGenerationHash = blockchainNetworkConnection.getBlockchainApi().getNetworkGenerationHash();
+        final SignedTransaction signedTransaction = nemUtils.signTransaction(signerPrivateKey, transaction, networkGenerationHash);
 
         transactionClient.announce(signedTransaction, nemUtils.getAddressFromPrivateKey(signerPrivateKey));
 

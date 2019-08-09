@@ -31,3 +31,4 @@ build
 # Test file
 **/test_big_file.big
 **/test_data/test_data.json
+/bin/

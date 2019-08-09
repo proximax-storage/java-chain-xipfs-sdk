@@ -6,7 +6,7 @@ import io.proximax.core.crypto.PrivateKey;
 import io.proximax.cipher.BlockchainKeysCipherEncryptor;
 import io.proximax.model.PrivacyType;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

@@ -1,15 +1,11 @@
 package io.proximax.service.client;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.proximax.connection.HttpProtocol;
-import io.proximax.connection.StorageConnection;
-import io.proximax.exceptions.StorageNodeConnectionFailureException;
-import io.proximax.exceptions.UploadPathNotSupportedException;
-import io.proximax.model.BlockchainNetworkType;
-import io.proximax.service.repository.FileRepository;
-import io.reactivex.Observable;
+import static io.proximax.utils.ParameterValidationUtils.checkParameter;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -21,11 +17,16 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import com.google.gson.Gson;
 
-import static io.proximax.utils.ParameterValidationUtils.checkParameter;
+import io.proximax.connection.HttpProtocol;
+import io.proximax.connection.StorageConnection;
+import io.proximax.exceptions.StorageNodeConnectionFailureException;
+import io.proximax.exceptions.UploadPathNotSupportedException;
+import io.proximax.model.BlockchainNetworkType;
+import io.proximax.service.repository.FileRepository;
+import io.proximax.utils.JsonUtils;
+import io.reactivex.Observable;
 
 /**
  * The client class that directly interface with Storage Node API
@@ -43,7 +44,7 @@ public class StorageNodeClient implements FileRepository {
 
     private final String apiUrl;
     private final String headerCredentials;
-    private final ObjectMapper objectMapper;
+    private final Gson gson;
 
     /**
      * Construct the class with Storage connection
@@ -55,7 +56,7 @@ public class StorageNodeClient implements FileRepository {
 
         this.apiUrl = storageConnection.getApiUrl();
         this.headerCredentials = String.format("NemAddress=%s; Bearer %s", storageConnection.getNemAddress(), storageConnection.getBearerToken());
-        this.objectMapper = new ObjectMapper();
+        this.gson = new Gson();
     }
 
     /**
@@ -79,8 +80,8 @@ public class StorageNodeClient implements FileRepository {
                 httpPost.setHeader(HEADER_CREDENTIALS, headerCredentials);
 
                 final CloseableHttpResponse response = httpClient.execute(httpPost);
-                final UploadFileResponse uploadFileResponse = objectMapper.readValue(response.getEntity().getContent(), UploadFileResponse.class);
-                return uploadFileResponse.dataHash;
+                final UploadFileResponse uploadFileResponse = JsonUtils.fromJson(response.getEntity().getContent(), UploadFileResponse.class);
+                return uploadFileResponse.getDataHash();
             } catch (IOException e) {
                 throw new StorageNodeConnectionFailureException("Failed to upload", e);
             }
@@ -90,18 +91,15 @@ public class StorageNodeClient implements FileRepository {
     /**
      * The response model when calling storage API GET /upload/file
      */
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class UploadFileResponse {
-        private final String dataHash;
+        private String dataHash;
 
-        /**
-         * Constructor for this class
-         *
-         * @param dataHash the ipfs data hash
-         */
-        public UploadFileResponse(@JsonProperty("dataHash") String dataHash) {
-            this.dataHash = dataHash;
-        }
+      /**
+       * @return the dataHash
+       */
+      public String getDataHash() {
+         return dataHash;
+      }
 
     }
 
@@ -147,7 +145,7 @@ public class StorageNodeClient implements FileRepository {
                 httpGet.setHeader(HEADER_CREDENTIALS, headerCredentials);
 
                 final CloseableHttpResponse response = httpClient.execute(httpGet);
-                return objectMapper.readValue(response.getEntity().getContent(), NodeInfoResponse.class);
+                return JsonUtils.fromJson(response.getEntity().getContent(), NodeInfoResponse.class);
             }
         });
     }
@@ -155,18 +153,8 @@ public class StorageNodeClient implements FileRepository {
     /**
      * The response model when calling storage API GET /node/info
      */
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class NodeInfoResponse {
-        private final NodeInfoResponseBlockchainNetwork blockchainNetwork;
-
-        /**
-         * Constructor for this class
-         *
-         * @param blockchainNetwork the blockchain network details
-         */
-        public NodeInfoResponse(@JsonProperty("blockchainNetwork") NodeInfoResponseBlockchainNetwork blockchainNetwork) {
-            this.blockchainNetwork = blockchainNetwork;
-        }
+        private NodeInfoResponseBlockchainNetwork blockchainNetwork;
 
         /**
          * Get the blockchain network details
@@ -181,38 +169,20 @@ public class StorageNodeClient implements FileRepository {
     /**
      * The model for blockchain network details of NodeInfoResponse
      */
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class NodeInfoResponseBlockchainNetwork {
-        private final HttpProtocol protocol;
-        private final int port;
-        private final String host;
-        private final BlockchainNetworkType networkType;
+        private String protocol;
+        private int port;
+        private String host;
+        private BlockchainNetworkType network;
 
-        /**
-         * Constructor for this class
-         *
-         * @param protocol    the blockchain protocol
-         * @param port        the blockchain port
-         * @param host        the blockchain host
-         * @param networkType the blockchain network type
-         */
-        public NodeInfoResponseBlockchainNetwork(@JsonProperty("protocol") String protocol,
-                                                 @JsonProperty("port") int port,
-                                                 @JsonProperty("host") String host,
-                                                 @JsonProperty("network") String networkType) {
-            this.protocol = HttpProtocol.fromString(protocol);
-            this.port = port;
-            this.host = host;
-            this.networkType = BlockchainNetworkType.fromString(networkType);
-        }
-
+        
         /**
          * Get the blockchain protocol
          *
          * @return the blockchain protocol
          */
         public HttpProtocol getProtocol() {
-            return protocol;
+            return HttpProtocol.fromString(protocol);
         }
 
         /**
@@ -239,7 +209,7 @@ public class StorageNodeClient implements FileRepository {
          * @return the blockchain network type
          */
         public BlockchainNetworkType getNetworkType() {
-            return networkType;
+            return network;
         }
     }
 }

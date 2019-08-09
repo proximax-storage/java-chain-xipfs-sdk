@@ -3,7 +3,7 @@ package io.proximax.privacy.strategy;
 import com.codahale.shamir.Scheme;
 import io.proximax.model.PrivacyType;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

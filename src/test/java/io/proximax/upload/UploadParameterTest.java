@@ -4,7 +4,7 @@ import io.proximax.privacy.strategy.PlainPrivacyStrategy;
 import io.proximax.privacy.strategy.NemKeysPrivacyStrategy;
 import io.proximax.privacy.strategy.PasswordPrivacyStrategy;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 
 import java.io.File;

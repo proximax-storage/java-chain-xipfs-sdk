@@ -84,10 +84,10 @@ public class NemUtils {
      * @param transaction the transaction to sign
      * @return the signed transaction
      */
-    public SignedTransaction signTransaction(String signerPrivateKey, Transaction transaction) {
+    public SignedTransaction signTransaction(String signerPrivateKey, Transaction transaction, String networkGenerationHash) {
         checkParameter(signerPrivateKey != null, "signerPrivateKey is required");
         checkParameter(transaction != null, "transaction is required");
 
-        return getAccount(signerPrivateKey).sign(transaction);
+        return getAccount(signerPrivateKey).sign(transaction, networkGenerationHash);
     }
 }
