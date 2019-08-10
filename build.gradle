@@ -47,8 +47,9 @@ sourceCompatibility = 1.8
 // take dependencies from maven central
 repositories {
     mavenCentral()
-    // TODO remove this once proximax ipfs is in maven central
-    mavenLocal()
+	maven {
+		url 'https://oss.sonatype.org/content/repositories/snapshots/'
+	}
 }
 
 // testing details
