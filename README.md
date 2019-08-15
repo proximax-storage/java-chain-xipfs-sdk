@@ -2,7 +2,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/proximax-storage/java-chain-xipfs-sdk/badge.svg?branch=master)](https://coveralls.io/github/proximax-storage/java-chain-xipfs-sdk?branch=master)
 [![Build Status](https://travis-ci.com/proximax-storage/java-chain-xipfs-sdk.svg?branch=master)](https://travis-ci.com/proximax-storage/java-chain-xipfs-sdk)
 
-# Official ProximaX P2P Storage Java SDK
+# ProximaX P2P Storage Java SDK
 
 Official ProximaX P2P Storage SDK Library in Java.
 
