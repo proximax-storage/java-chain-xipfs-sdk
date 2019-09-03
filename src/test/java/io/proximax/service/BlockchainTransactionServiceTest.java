@@ -33,9 +33,11 @@ import io.proximax.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.proximax.sdk.model.transaction.AggregateTransaction;
 import io.proximax.sdk.model.transaction.Deadline;
 import io.proximax.sdk.model.transaction.Message;
+import io.proximax.sdk.model.transaction.PlainMessage;
 import io.proximax.sdk.model.transaction.SignedTransaction;
 import io.proximax.sdk.model.transaction.TransactionType;
 import io.proximax.sdk.model.transaction.TransferTransaction;
+import io.proximax.sdk.model.transaction.builder.TransactionBuilderFactory;
 import io.proximax.service.client.catapult.TransactionClient;
 import io.proximax.utils.NemUtils;
 import io.reactivex.Observable;
@@ -92,18 +94,25 @@ public class BlockchainTransactionServiceTest {
     private ArgumentCaptor<TransferTransaction> transferTransactionArgumentCaptor;
 
     @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+   public void setUp() {
+      MockitoAnnotations.initMocks(this);
 
-        unitUnderTest = new BlockchainTransactionService(mockBlockchainNetworkConnection, mockTransactionClient, mockNemUtils, mockBlockchainMessageService);
-        
-        given(mockBlockchainApi.getNetworkGenerationHash()).willReturn(NETWORK_GENERATION_HASH);
-        given(mockBlockchainNetworkConnection.getNetworkType()).willReturn(NetworkType.TEST_NET);
-        given(mockBlockchainNetworkConnection.getBlockchainApi()).willReturn(mockBlockchainApi);
-        given(mockTransferTransaction.getType()).willReturn(TransactionType.TRANSFER);
-        given(mockAggregateTransaction.getType()).willReturn(TransactionType.AGGREGATE_COMPLETE);
-        given(mockSignedTransaction.getHash()).willReturn(SAMPLE_TRANSACTION_HASH);
-    }
+      unitUnderTest = new BlockchainTransactionService(mockBlockchainNetworkConnection, mockTransactionClient,
+            mockNemUtils, mockBlockchainMessageService);
+
+      TransactionBuilderFactory fac = new TransactionBuilderFactory();
+      fac.setNetworkType(NetworkType.TEST_NET);
+
+      given(mockBlockchainApi.getNetworkGenerationHash()).willReturn(NETWORK_GENERATION_HASH);
+      given(mockBlockchainApi.transact()).willReturn(fac);
+      given(mockBlockchainNetworkConnection.getNetworkType()).willReturn(NetworkType.TEST_NET);
+      given(mockBlockchainNetworkConnection.getBlockchainApi()).willReturn(mockBlockchainApi);
+      given(mockTransferTransaction.getType()).willReturn(TransactionType.TRANSFER);
+      given(mockAggregateTransaction.getType()).willReturn(TransactionType.AGGREGATE_COMPLETE);
+      given(mockSignedTransaction.getHash()).willReturn(SAMPLE_TRANSACTION_HASH);
+      
+      given(mockMessage.getEncodedPayload()).willReturn(PlainMessage.create("hellomock").getEncodedPayload());
+   }
 
     @Test(expected = IllegalArgumentException.class)
     public void failOnGetTransferTransactionWhenNullTransactionHash() {

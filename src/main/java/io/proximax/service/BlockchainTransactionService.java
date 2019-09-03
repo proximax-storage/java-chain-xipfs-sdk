@@ -116,17 +116,13 @@ public class BlockchainTransactionService {
     }
 
     private TransferTransaction createTransaction(Address recipientAddress, int transactionDeadline,
-                                                  List<Mosaic> transactionMosaicsParam, Message message) {
+         List<Mosaic> transactionMosaicsParam, Message message) {
 
-        final List<Mosaic> mosaics = transactionMosaicsParam == null
-                ? singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.ONE))
-                : transactionMosaicsParam;
+      final List<Mosaic> mosaics = transactionMosaicsParam == null
+            ? singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.ONE))
+            : transactionMosaicsParam;
 
-        return TransferTransaction.create(
-                Deadline.create(transactionDeadline, ChronoUnit.HOURS),
-                recipientAddress,
-                mosaics,
-                message,
-                blockchainNetworkConnection.getNetworkType());
-    }
+      return blockchainNetworkConnection.getBlockchainApi().transact().transfer().mosaics(mosaics).to(recipientAddress)
+            .message(message).deadline(Deadline.create(transactionDeadline, ChronoUnit.HOURS)).build();
+   }
 }
