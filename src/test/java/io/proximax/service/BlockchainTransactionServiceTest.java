@@ -29,7 +29,7 @@ import io.proximax.sdk.model.account.Account;
 import io.proximax.sdk.model.account.Address;
 import io.proximax.sdk.model.blockchain.NetworkType;
 import io.proximax.sdk.model.mosaic.Mosaic;
-import io.proximax.sdk.model.mosaic.MosaicId;
+import io.proximax.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.proximax.sdk.model.transaction.AggregateTransaction;
 import io.proximax.sdk.model.transaction.Deadline;
 import io.proximax.sdk.model.transaction.Message;
@@ -48,7 +48,7 @@ public class BlockchainTransactionServiceTest {
     private static final String SAMPLE_RECIPIENT_PUBLIC_KEY = "44AFFBEFF7EE8AFDE907EAD933C88374DE22F359CCBB6575BB14A8CB96B11C90";
     private static final Address SAMPLE_RECIPIENT_ADDRESS = Address.createFromRawAddress("VC6LV4EP2MT3I5AV76IKVTPVAZRJUQDMKSABLE2M");
     private static final Account SAMPLE_SIGNER_ACCOUNT = Account.createFromPrivateKey(SAMPLE_SIGNER_PRIVATE_KEY, NetworkType.TEST_NET);
-    private static final List<Mosaic> SAMPLE_MOSAICS = singletonList(new Mosaic(new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16)), BigInteger.TEN));
+    private static final List<Mosaic> SAMPLE_MOSAICS = singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.TEN));
 
     private BlockchainTransactionService unitUnderTest;
 
@@ -193,8 +193,8 @@ public class BlockchainTransactionServiceTest {
         assertTrue(nowSinceNemesis < transferTransactionArgumentCaptor.getValue().getDeadline().getInstant());
         // assertTrue(new Deadline(12, ChronoUnit.HOURS).getInstant() < transferTransactionArgumentCaptor.getValue().getDeadline().getInstant());
         assertThat(transferTransactionArgumentCaptor.getValue().getMosaics(), hasSize(1));
-        assertThat(transferTransactionArgumentCaptor.getValue().getMosaics().get(0).getId(),
-                is(new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16))));
+//        assertThat(transferTransactionArgumentCaptor.getValue().getMosaics().get(0).getId(),
+//                is(new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16))));
         assertThat(transferTransactionArgumentCaptor.getValue().getMosaics().get(0).getAmount(),
                 is(BigInteger.valueOf(1)));
         assertThat(transferTransactionArgumentCaptor.getValue().getNetworkType(),

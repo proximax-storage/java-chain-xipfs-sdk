@@ -14,8 +14,7 @@ import org.junit.Test;
 import io.proximax.sdk.model.account.Account;
 import io.proximax.sdk.model.account.Address;
 import io.proximax.sdk.model.blockchain.NetworkType;
-import io.proximax.sdk.model.mosaic.Mosaic;
-import io.proximax.sdk.model.mosaic.MosaicId;
+import io.proximax.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.proximax.sdk.model.transaction.Deadline;
 import io.proximax.sdk.model.transaction.PlainMessage;
 import io.proximax.sdk.model.transaction.SignedTransaction;
@@ -115,12 +114,11 @@ public class NemUtilsTest {
         System.out.println("Public Key: " + account.getPublicKey());
     }
 
-    private TransferTransaction sampleTransferTransaction() {        
-        MosaicId ID = new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16));
+    private TransferTransaction sampleTransferTransaction() {                
         return TransferTransaction.create(
                 Deadline.create(24, ChronoUnit.HOURS),
                 SAMPLE_ADDRESS,
-                Collections.singletonList(new Mosaic(ID, BigInteger.valueOf(1))),
+                Collections.singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.ONE)),
                 new PlainMessage("test"),
                 NetworkType.TEST_NET);
     }
