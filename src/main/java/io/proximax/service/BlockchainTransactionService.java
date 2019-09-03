@@ -14,7 +14,7 @@ import io.proximax.exceptions.TransactionNotAllowedException;
 import io.proximax.model.ProximaxMessagePayloadModel;
 import io.proximax.sdk.model.account.Address;
 import io.proximax.sdk.model.mosaic.Mosaic;
-import io.proximax.sdk.model.mosaic.MosaicId;
+import io.proximax.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.proximax.sdk.model.transaction.Deadline;
 import io.proximax.sdk.model.transaction.Message;
 import io.proximax.sdk.model.transaction.SignedTransaction;
@@ -119,7 +119,7 @@ public class BlockchainTransactionService {
                                                   List<Mosaic> transactionMosaicsParam, Message message) {
 
         final List<Mosaic> mosaics = transactionMosaicsParam == null
-                ? singletonList(new Mosaic(new MosaicId(new BigInteger("0DC67FBE1CAD29E3", 16)), BigInteger.valueOf(1)))
+                ? singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.ONE))
                 : transactionMosaicsParam;
 
         return TransferTransaction.create(
