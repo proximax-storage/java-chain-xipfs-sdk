@@ -16,9 +16,9 @@ import io.proximax.sdk.model.account.Address;
 import io.proximax.sdk.model.mosaic.Mosaic;
 import io.proximax.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.proximax.sdk.model.transaction.Deadline;
+import io.proximax.sdk.model.transaction.EntityType;
 import io.proximax.sdk.model.transaction.Message;
 import io.proximax.sdk.model.transaction.SignedTransaction;
-import io.proximax.sdk.model.transaction.TransactionType;
 import io.proximax.sdk.model.transaction.TransferTransaction;
 import io.proximax.service.client.catapult.TransactionClient;
 import io.proximax.utils.NemUtils;
@@ -68,7 +68,7 @@ public class BlockchainTransactionService {
                 .onErrorResumeNext((Throwable ex) ->
                         Observable.error(new GetTransactionFailureException(String.format("Unable to find transfer transaction for %s", transactionHash), ex)))
                 .map(transaction -> {
-                    if (!(transaction.getType().equals(TransactionType.TRANSFER) &&
+                    if (!(transaction.getType().equals(EntityType.TRANSFER) &&
                             transaction instanceof TransferTransaction))
                         throw new TransactionNotAllowedException("Expecting a transfer transaction");
                     return (TransferTransaction) transaction;

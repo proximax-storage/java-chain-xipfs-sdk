@@ -32,10 +32,10 @@ import io.proximax.sdk.model.mosaic.Mosaic;
 import io.proximax.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.proximax.sdk.model.transaction.AggregateTransaction;
 import io.proximax.sdk.model.transaction.Deadline;
+import io.proximax.sdk.model.transaction.EntityType;
 import io.proximax.sdk.model.transaction.Message;
 import io.proximax.sdk.model.transaction.PlainMessage;
 import io.proximax.sdk.model.transaction.SignedTransaction;
-import io.proximax.sdk.model.transaction.TransactionType;
 import io.proximax.sdk.model.transaction.TransferTransaction;
 import io.proximax.sdk.model.transaction.builder.TransactionBuilderFactory;
 import io.proximax.service.client.catapult.TransactionClient;
@@ -107,8 +107,8 @@ public class BlockchainTransactionServiceTest {
       given(mockBlockchainApi.transact()).willReturn(fac);
       given(mockBlockchainNetworkConnection.getNetworkType()).willReturn(NetworkType.TEST_NET);
       given(mockBlockchainNetworkConnection.getBlockchainApi()).willReturn(mockBlockchainApi);
-      given(mockTransferTransaction.getType()).willReturn(TransactionType.TRANSFER);
-      given(mockAggregateTransaction.getType()).willReturn(TransactionType.AGGREGATE_COMPLETE);
+      given(mockTransferTransaction.getType()).willReturn(EntityType.TRANSFER);
+      given(mockAggregateTransaction.getType()).willReturn(EntityType.AGGREGATE_COMPLETE);
       given(mockSignedTransaction.getHash()).willReturn(SAMPLE_TRANSACTION_HASH);
       
       given(mockMessage.getEncodedPayload()).willReturn(PlainMessage.create("hellomock").getEncodedPayload());
