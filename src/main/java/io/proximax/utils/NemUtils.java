@@ -1,13 +1,13 @@
 package io.proximax.utils;
 
+import static io.proximax.utils.ParameterValidationUtils.checkParameter;
+
 import io.proximax.core.crypto.KeyPair;
 import io.proximax.sdk.model.account.Account;
 import io.proximax.sdk.model.account.Address;
 import io.proximax.sdk.model.blockchain.NetworkType;
 import io.proximax.sdk.model.transaction.SignedTransaction;
 import io.proximax.sdk.model.transaction.Transaction;
-
-import static io.proximax.utils.ParameterValidationUtils.checkParameter;
 
 /**
  * The utility class for handling blockchain-related actions
@@ -82,6 +82,7 @@ public class NemUtils {
      * Sign a transaction
      * @param signerPrivateKey the signer's private key
      * @param transaction the transaction to sign
+     * @param networkGenerationHash generation hash of the block 1
      * @return the signed transaction
      */
     public SignedTransaction signTransaction(String signerPrivateKey, Transaction transaction, String networkGenerationHash) {
