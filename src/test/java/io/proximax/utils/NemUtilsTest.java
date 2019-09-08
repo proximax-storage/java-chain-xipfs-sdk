@@ -6,7 +6,6 @@ import static org.hamcrest.core.IsNull.notNullValue;
 
 import java.math.BigInteger;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +18,7 @@ import io.proximax.sdk.model.transaction.Deadline;
 import io.proximax.sdk.model.transaction.PlainMessage;
 import io.proximax.sdk.model.transaction.SignedTransaction;
 import io.proximax.sdk.model.transaction.TransferTransaction;
+import io.proximax.sdk.model.transaction.builder.TransferTransactionBuilder;
 
 public class NemUtilsTest {
 
@@ -114,13 +114,11 @@ public class NemUtilsTest {
         System.out.println("Public Key: " + account.getPublicKey());
     }
 
-    private TransferTransaction sampleTransferTransaction() {                
-        return TransferTransaction.create(
-                Deadline.create(24, ChronoUnit.HOURS),
-                SAMPLE_ADDRESS,
-                Collections.singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.ONE)),
-                new PlainMessage("test"),
-                NetworkType.TEST_NET);
-    }
+   private TransferTransaction sampleTransferTransaction() {
+      return new TransferTransactionBuilder().networkType(NetworkType.TEST_NET)
+            .mosaics(NetworkCurrencyMosaic.createAbsolute(BigInteger.ONE)).to(SAMPLE_ADDRESS)
+            .message(new PlainMessage("test")).deadline(Deadline.create(24, ChronoUnit.HOURS)).build();
+
+   }
 
 }

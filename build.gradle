@@ -47,6 +47,7 @@ sourceCompatibility = 1.8
 // take dependencies from maven central
 repositories {
     mavenCentral()
+    // snapshot repository to allow use of snapshot releases
 	maven {
 		url 'https://oss.sonatype.org/content/repositories/snapshots/'
 	}
@@ -66,8 +67,8 @@ ext {
 }
 
 dependencies {
-	implementation 'io.proximax:java-xpx-chain-sdk:0.4.0'
-	implementation 'io.proximax:java-xpx-ipfs-api:0.4.0-SNAPSHOT'
+	implementation 'io.proximax:java-xpx-chain-sdk:0.5.+'
+	implementation 'io.proximax:java-xpx-ipfs-api:0.4.+'
 
 	implementation 'commons-io:commons-io:2.6'
 	implementation 'org.apache.httpcomponents:httpmime:4.5.9'

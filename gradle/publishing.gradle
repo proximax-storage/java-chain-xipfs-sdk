@@ -32,8 +32,8 @@ publishing {
                 }
             }
             pom {
-                name = 'ProximaX Sirius Blockchain Java SDK'
-                description = 'The ProximaX Storage Java SDK is a Java library for interacting with the Sirius Blockchain.'
+                name = 'ProximaX P2P Storage Java SDK'
+                description = 'Official ProximaX P2P Storage SDK Library in Java.'
                 url = 'https://github.com/proximax-storage/java-chain-xipfs-sdk'
                 organization {
                     name = 'ProximaX'
