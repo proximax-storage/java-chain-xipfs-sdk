@@ -10,7 +10,7 @@ ProximaX is a project that utilizes the NEM blockchain technology with the IPFS 
 
 ## Use the library ##
 
-Current version of the library is <b>0.5.0</b>
+See [wiki](https://github.com/proximax-storage/java-chain-xipfs-sdk/wiki) for current version of library.
 
 This library requires use of Java8. Library is published to [Maven Central](https://search.maven.org/). To include library and its dependencies, add following to your build script:
 
