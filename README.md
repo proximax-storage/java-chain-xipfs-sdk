@@ -30,6 +30,13 @@ This library requires use of Java8. Library is published to [Maven Central](http
 compile "io.proximax:java-chain-xipfs-sdk:${javaXipfsVersion}"
 ```
 
+### Groovy ###
+```xml
+@Grapes(
+    @Grab(group='io.proximax', module='java-chain-xipfs-sdk', version=javaXipfsVersion)
+)
+```
+
 ## Documentation ##
 
 For SDK documentation and examples see [wiki](https://github.com/proximax-storage/java-chain-xipfs-sdk/wiki) and [JavaDoc](https://proximax-storage.github.io/java-chain-xipfs-sdk/javadoc/).
